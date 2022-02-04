@@ -1,0 +1,62 @@
+{
+  "name": "memento-sveltekit-electron-typescript",
+  "productName": "memento-sveltekit-electron-typescript",
+  "description": "Memento: how to use Svelte with Electron and TypeScript",
+  "author": "Samuele de Tomasi <samuele@stranianelli.com>",
+  "license": "MIT",
+  "version": "0.0.4",
+  "main": "dist/index.js",
+  "scripts": {
+    "nodemon": "nodemon",
+    "start": "npm run compile && electron .",
+    "svelte:dev": "cd svelte && npm run dev",
+    "svelte:build": "cd svelte && npm run build",
+    "compile": "tsc",
+    "out:win": "npm run svelte:build && npm run compile && electron-builder build --win --publish never",
+    "publish:win": "npm run svelte:build && npm run compile && electron-builder build --win --publish always",
+    "out:mac": "npm run svelte:build && npm run compile && electron-builder build --mac --publish never",
+    "publish:mac": "npm run svelte:build && npm run compile && electron-builder build --mac --publish always",
+    "out:linux": "npm run svelte:build && npm run compile && electron-builder build --linux --publish never",
+    "publish:linux": "npm run svelte:build && npm run compile && electron-builder build --linux --publish always",
+    "out:all": "npm run out:win && npm run out:mac && npm run out:linux",
+    "publish:all": "npm run publish:win && npm run publish:mac && npm run publish:linux",
+    "dev": "npm run svelte:build && nodemon"
+  },
+  "devDependencies": {
+    "concurrently": "^6.2.0",
+    "electron": "^13.3.0",
+    "electron-builder": "^22.11.7",
+    "nodemon": "^2.0.12",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "electron-reload": "^1.5.0",
+    "electron-serve": "^1.1.0",
+    "electron-updater": "^4.3.9"
+  },
+  "build": {
+    "appId": "memento-ket",
+    "directories": {
+      "output": "out"
+    },
+    "publish": [{
+      "provider": "github",
+      "owner": "el3um4s",
+      "repo": "memento-sveltekit-electron-typescript"
+    }],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "uninstallDisplayName": "Memento KET (SvelteKit+Electron+TypeScript)",
+      "license": "license.txt",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

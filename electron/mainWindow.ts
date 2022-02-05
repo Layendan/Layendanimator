@@ -6,18 +6,22 @@ import { DeveloperOptions } from "./configureDev";
 
 const appName = "Layendanimator";
 
+function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 const defaultSettings = {
   title:  "Layendanimator",
   minWidth: 400,
   minHeight: 400,
   width: 800,
   height: 600,
-  fullscreen: true,
+  // fullscreen: true,
   webPreferences: {
-      scrollBounce: true,
       nodeIntegration: true,
       webSecurity: false,
-      nativeWindowOpen: true,
   },
 }
 
@@ -47,7 +51,9 @@ class Main {
 
     loading.once('show', async () => {
       this.window = await this.createWindow();
+      
       this.onEvent.emit("window-created");
+      await sleep(1000);
       loading.hide()
       loading.close()
 
@@ -67,17 +73,15 @@ class Main {
     app.name = appName;
     let window = new BrowserWindow({
       ...settings,
-      show: false, // false
-      minWidth: 800,
-      minHeight: 600,
-      width: 1920,
-      height: 1080,
-      webPreferences: {
-          // scrollBounce: true,
-          nodeIntegration: true,
-          webSecurity: false,
-          nativeWindowOpen: true,
-  },
+      // show: false, // false
+      // minWidth: 800,
+      // minHeight: 600,
+      // width: 1200,
+      // height: 800,
+      // webPreferences: {
+      //     nodeIntegration: true,
+      //     webSecurity: false,
+      // },
     });
 
     if (this.configDev.isLocalHost()) {
@@ -96,7 +100,11 @@ class Main {
       }
     }
 
+    window.maximize();
+
     window.show();
+
+    window.focus();
 
     // Create a global shortcut to go back on command and left arrow
     globalShortcut.register('CommandOrControl+Left', () => {

@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "concurrently": "^6.2.0",
-    "electron": "^13.3.0",
+    "electron": "^17.0.0",
     "electron-builder": "^22.11.7",
     "nodemon": "^2.0.12",
     "typescript": "^4.3.5"
@@ -39,11 +39,13 @@
     "directories": {
       "output": "out"
     },
-    "publish": [{
-      "provider": "github",
-      "owner": "el3um4s",
-      "repo": "memento-sveltekit-electron-typescript"
-    }],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "el3um4s",
+        "repo": "memento-sveltekit-electron-typescript"
+      }
+    ],
     "win": {
       "target": [
         "nsis"

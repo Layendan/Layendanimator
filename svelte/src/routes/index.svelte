@@ -127,6 +127,8 @@
 		console.log(animes);
 		return animes.data.Media;
 	}
+	// chech to see if running in windows
+	// console.log(process.platform);
 </script>
 
 <svelte:head>
@@ -143,7 +145,8 @@
 			>
 				<hr class="solid" />
 				<p class="title">{section.title}</p>
-				<div class="items" transition:fade>
+				<!-- change windows-scrollbar to check if running on windows -->
+				<div class="items" class:windows-scrollbar={true} transition:fade>
 					{#await section.data}
 						<Anime />
 						<Anime />
@@ -188,6 +191,7 @@
 
 	.items {
 		overflow-x: scroll;
+		overflow-y: visible;
 		width: auto;
 		white-space: nowrap;
 		padding-bottom: 15px;
@@ -216,6 +220,23 @@
 		bottom: 0;
 		pointer-events: none;
 		background: linear-gradient(to right, rgba(51, 51, 51, 0) 98%, rgba(51, 51, 51, 1) 100%);
+	}
+
+	.windows-scrollbar::-webkit-scrollbar {
+		height: 0.5em;
+	}
+
+	.windows-scrollbar::-webkit-scrollbar-track {
+		box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+	}
+
+	.windows-scrollbar::-webkit-scrollbar-thumb {
+		background-color: rgba(169, 169, 169, 0.7);
+		border-radius: 5px;
+	}
+
+	.windows-scrollbar::-webkit-scrollbar-thumb:hover {
+		background: rgba(85, 85, 85, 0.7);
 	}
 
 	.title {

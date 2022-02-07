@@ -25,9 +25,8 @@ const windowSettings = {
   minHeight: 400,
   width: 800,
   height: 600,
-  fullscreen: true,
+  // fullscreen: true,
   webPreferences: {
-      nodeIntegration: true,
       webSecurity: false,
       nativeWindowOpen: true,
   },

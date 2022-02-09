@@ -1,12 +1,27 @@
 <script>
+	// Import required packages
 	import { fade } from 'svelte/transition';
 	import loadingFailure from '$lib/components/loading_failure.jpeg';
 
+	// Export component definitions
 	export let name = undefined;
 	export let link = null;
 	export let thumbnail = loadingFailure;
 	export let banner = loadingFailure;
 	export let description = 'unavailable';
+
+	// Instance variables for line clamping
+	// Default 9 lines to clamp, but can be changed to be more or less
+	let pHeight = 0;
+	let titleHeight = 0;
+	let linesToClamp = 9;
+
+	// Clamps the lines of the description until it fits within the given height
+	// 220 is the height of the description + title text
+	// 20 is for padding - can be changed
+	$: if (pHeight > 220 - titleHeight - 20 && linesToClamp > 1) {
+		linesToClamp -= 1;
+	}
 </script>
 
 <main transition:fade>
@@ -16,20 +31,24 @@
 			class:unselectable={link == null}
 		>
 			<span class="holder">
-				<!-- svelte-ignore a11y-missing-attribute -->
 				<img
 					on:error={() => (thumbnail = loadingFailure)}
 					src={thumbnail}
 					class:unselectable={!link}
 					in:fade
 					loading="lazy"
+					alt={name}
 				/>
 				<div class="info">
 					<div class="text" in:fade={{ delay: 200 }}>
-						<h1>{name}</h1>
+						<h1 bind:clientHeight={titleHeight}>{name}</h1>
 						<div class="module">
-							<p class="line-clamp">
-								{@html description}
+							<p
+								class="line-clamp"
+								bind:clientHeight={pHeight}
+								style="-webkit-line-clamp: {linesToClamp};"
+							>
+								{@html description.replaceAll('<br>', ' ')}
 							</p>
 						</div>
 					</div>
@@ -101,7 +120,6 @@
 		margin: 0;
 		margin-left: 1em;
 		margin-top: 1em;
-		max-width: fit-content;
 		height: auto;
 		word-wrap: break-word;
 		white-space: normal;
@@ -137,16 +155,21 @@
 	.text {
 		transition: transform 0.2s ease-in-out;
 		color: white;
+		height: min-content;
+		margin-bottom: 1em;
+		overflow-y: hidden;
 	}
 
 	.module {
 		overflow-y: hidden;
+		height: min-content;
 	}
 
 	.line-clamp {
 		display: -webkit-box;
 		/* number of lines to clamp */
-		-webkit-line-clamp: 5;
+		/* -webkit-line-clamp: 5; */
 		-webkit-box-orient: vertical;
+		height: min-content;
 	}
 </style>

@@ -1,26 +1,28 @@
 <script lang="ts">
+	// Import required packages
 	import Header from '$lib/header/Header.svelte';
 	import '../app.css';
 	import NProgress from 'nprogress';
 	import { navigating } from '$app/stores';
 	import '$lib/components/nprogress.css';
 
+	// Configure NProgress bar
 	NProgress.configure({
 		// Full list: https://github.com/rstacruz/nprogress#configuration
 		minimum: 0.16,
-		showSpinner: false
+		showSpinner: false,
+		trickle: false
 	});
-
 	$: {
 		if ($navigating) {
 			NProgress.start();
-			NProgress.set(0.3);
 		}
 		if (!$navigating) {
 			NProgress.done();
 		}
 	}
 
+	// To delete maybe
 	let isHidden = false;
 </script>
 

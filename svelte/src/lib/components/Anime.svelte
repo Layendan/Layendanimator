@@ -19,6 +19,7 @@
 	// Clamps the lines of the description until it fits within the given height
 	// 220 is the height of the description + title text
 	// 20 is for padding - can be changed
+	// From: https://stackoverflow.com/questions/11856136/is-css3-line-clamp-possible-in-javascript
 	$: if (pHeight > 220 - titleHeight - 20 && linesToClamp > 1) {
 		linesToClamp -= 1;
 	}
@@ -78,6 +79,7 @@
 		background-size: cover;
 		background-position: center;
 		background-repeat: no-repeat;
+		width: 160px;
 		max-width: 160px;
 		min-width: 160px;
 		border-radius: 10px 0 0 10px;
@@ -108,7 +110,6 @@
 		margin-left: 1em;
 		margin-right: 1em;
 		padding-bottom: 0;
-		max-width: 160px;
 		height: auto;
 		word-wrap: break-word;
 		white-space: normal;
@@ -167,8 +168,6 @@
 
 	.line-clamp {
 		display: -webkit-box;
-		/* number of lines to clamp */
-		/* -webkit-line-clamp: 5; */
 		-webkit-box-orient: vertical;
 		height: min-content;
 	}

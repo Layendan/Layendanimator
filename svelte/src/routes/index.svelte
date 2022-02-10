@@ -26,7 +26,7 @@
 	  media (id: $id, search: $search, type: ANIME, isAdult: ${isAdult}, format_in: [TV, TV_SHORT, MOVIE, ONA, OVA, SPECIAL], sort: [TRENDING_DESC, POPULARITY_DESC, START_DATE_DESC]) {
 		id
 		title {
-		  romaji
+		  romaji,
 		  english
 		}
 		coverImage {
@@ -35,9 +35,12 @@
 		bannerImage
 		siteUrl
 		description (asHtml: false)
-	  trailer {
-		site
-	  }
+		streamingEpisodes {
+			title,
+			thumbnail,
+			url,
+			site
+		}
 	  }
 	}
   }
@@ -163,6 +166,7 @@
 								banner={anime.bannerImage}
 								link={anime.siteUrl}
 								description={anime.description}
+								episodes={anime.streamingEpisodes}
 							/>
 						{/each}
 					{:catch error}

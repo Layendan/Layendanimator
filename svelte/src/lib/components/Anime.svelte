@@ -1,14 +1,19 @@
-<script>
+<script lang="ts">
 	// Import required packages
 	import { fade } from 'svelte/transition';
 	import loadingFailure from '$lib/components/loading_failure.jpeg';
 
 	// Export component definitions
-	export let name = undefined;
-	export let link = null;
-	export let thumbnail = loadingFailure;
-	export let banner = loadingFailure;
-	export let description = 'unavailable';
+	export let name: string = undefined;
+	export let link: string = null;
+	export let thumbnail: string = loadingFailure;
+	export let banner: string = loadingFailure;
+	export let description: string = 'unavailable';
+	export let episodes: Array<any> = null;
+
+	if (episodes) {
+		window.sessionStorage.setItem(name + '-episodes', JSON.stringify(episodes));
+	}
 
 	// Instance variables for line clamping
 	// Default 9 lines to clamp, but can be changed to be more or less
@@ -35,7 +40,6 @@
 				<img
 					on:error={() => (thumbnail = loadingFailure)}
 					src={thumbnail}
-					class:unselectable={!link}
 					in:fade
 					loading="lazy"
 					alt={name}

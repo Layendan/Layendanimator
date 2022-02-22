@@ -4,6 +4,7 @@
 	import { page } from '$app/stores';
 	import loadingFailure from '$lib/components/loading_failure.jpeg';
 	import EpisodeHolder from '$lib/player/EpisodeHolder.svelte';
+import { onMount } from 'svelte';
 
 	// read queries from link
 	let link: string = $page.url.searchParams.get('link');
@@ -17,7 +18,14 @@
 		$page.url.searchParams.get('description') != 'null'
 			? $page.url.searchParams.get('description')
 			: 'Failed to load description';
-	let episodes: Array<any> = JSON.parse(window.sessionStorage.getItem(name + '-episodes'));
+	let episodes: Array<any>;
+
+	// Have to wait for window to load before asking for cookies
+	// Prevents error when reloading page
+	onMount(() => {
+		episodes = JSON.parse(window.sessionStorage.getItem(name + '-episodes'));
+	})
+	
 
 	// Page scroll
 	let y = 0;

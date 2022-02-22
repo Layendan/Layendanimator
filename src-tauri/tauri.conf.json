@@ -55,10 +55,12 @@
     },
     "windows": [{
       "title": "NineAnimator",
-      "width": 800,
-      "height": 600,
+      "width": 1200,
+      "height": 800,
       "resizable": true,
-      "fullscreen": true,
+      "fullscreen": false,
+      "maximized": true,
+      "focus": true,
       "center": true
     }],
     "security": {

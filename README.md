@@ -1,40 +1,61 @@
-# create-svelte
+# ![NineAnimataur(i)](Misc/Media/nineanimator_banner.jpg)
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+<!-- add buttons here -->
 
-## Creating a project
+A simple yet elegant way of waching anime on your favorite anime websites.
+NineAnimataur(i) is a free and open source anime watching app for Desktop, using [Sveltekit](https://github.com/sveltejs/kit) and [Tauri](https://github.com/tauri-apps/tauri).
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Table of Contents
 
-```bash
-# create a new project in the current directory
-npm init svelte@next
+- [NineAnimataur(i)](#)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Picture in Picture Playback](#picture-in-picture-playback)
+  - [Notifications & Subscription](#notifications--subscription)
+  - [Download Episodes](#download-episodes)
+  - [Google Cast](#google-cast)
+  - [Screenshots](#screenshots)
+    - [Dark Appearance](#dark-appearance)
+    - [Light Appearance](#light-appearance)
+  - [License](#license)
 
-# create a new project in my-app
-npm init svelte@next my-app
-```
+## Features
 
-> Note: the `@next` is temporary
+- [ ] Ads Free and no logins
+- [ ] Super-duper clean UIs + Dark Mode
+- [ ] Get notifications when new episodes come out
+- [ ] Custom video playback interface
+- [ ] Picture in Picture playback
+- [ ] Chromecast/Google Cast integration
+- [ ] Playback History & Auto Resumes
+- [ ] Support Custom Sources
+- [ ] Discord Rich Presence integration
+- [ ] Download & play episodes offline
+- [ ] Third party anime
+- [ ] Custom anime lists, e.g. favorites and to-watch list
 
-## Developing
+## Picture in Picture Playback
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+WIP
 
-```bash
-npm run dev
+## Notifications & Subscription
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+WIP
 
-## Building
+## Download Episodes
 
-To create a production version of your app:
+WIP
 
-```bash
-npm run build
-```
+## Google Cast
 
-You can preview the production build with `npm run preview`.
+WIP
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+## Screenshots
+
+### Dark Appearance
+
+### Light Appearance
+
+## License
+
+Enter License Here

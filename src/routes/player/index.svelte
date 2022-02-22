@@ -43,9 +43,9 @@ import { onMount } from 'svelte';
 			<img
 				src={banner}
 				alt={name}
-				style="transform: scale({y < 345 ? 0.005 * y + 1 : 0.005 * 345 + 1}); filter: blur({y < 345
-					? 0.05 * y
-					: 0.05 * 345}px) brightness({y < 345 ? -y / 345 + 1 : 0});"
+				style="transform: scale({y < 345 ? 0.005 * Math.abs(y) + 1 : 0.005 * 345 + 1}); filter: blur({y < 345
+					? 0.05 * Math.abs(y)
+					: 0.05 * 345}px) brightness({y < 345 ? -Math.abs(y) / 345 + 1 : 0});"
 			/>
 		</div>
 	{/if}

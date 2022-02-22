@@ -1,64 +1,41 @@
 {
-  "name": "memento-sveltekit-electron-typescript",
-  "productName": "memento-sveltekit-electron-typescript",
-  "description": "Memento: how to use Svelte with Electron and TypeScript",
-  "author": "Samuele de Tomasi <samuele@stranianelli.com>",
-  "license": "MIT",
-  "version": "0.0.4",
-  "main": "dist/index.js",
+  "name": "nineanimator",
+  "version": "0.0.1",
   "scripts": {
-    "nodemon": "nodemon",
-    "start": "npm run compile && electron .",
-    "svelte:dev": "cd svelte && npm run dev",
-    "svelte:build": "cd svelte && npm run build",
+    "dev": "tauri dev",
+    "build": "tauri build",
     "compile": "tsc",
-    "out:win": "npm run svelte:build && npm run compile && electron-builder build --win --publish never",
-    "publish:win": "npm run svelte:build && npm run compile && electron-builder build --win --publish always",
-    "out:mac": "npm run svelte:build && npm run compile && electron-builder build --mac --publish never",
-    "publish:mac": "npm run svelte:build && npm run compile && electron-builder build --mac --publish always",
-    "out:linux": "npm run svelte:build && npm run compile && electron-builder build --linux --publish never",
-    "publish:linux": "npm run svelte:build && npm run compile && electron-builder build --linux --publish always",
-    "out:all": "npm run out:win && npm run out:mac && npm run out:linux",
-    "publish:all": "npm run publish:win && npm run publish:mac && npm run publish:linux",
-    "dev": "npm run svelte:build && nodemon"
+    "package": "svelte-kit package",
+    "preview": "svelte-kit preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
+    "lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
+    "format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. .",
+    "tauri": "tauri",
+    "svelte-dev": "svelte-kit dev",
+    "svelte-build": "svelte-kit build"
   },
   "devDependencies": {
-    "concurrently": "^6.2.0",
-    "electron": "^17.0.0",
-    "electron-builder": "^22.11.7",
-    "nodemon": "^2.0.12",
-    "typescript": "^4.3.5"
+    "@sveltejs/adapter-static": "^1.0.0-next.28",
+    "@sveltejs/kit": "next",
+    "@tauri-apps/cli": "^1.0.0-rc.5",
+    "@typescript-eslint/eslint-plugin": "^5.10.1",
+    "@typescript-eslint/parser": "^5.10.1",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-svelte3": "^3.2.1",
+    "prettier": "^2.5.1",
+    "prettier-plugin-svelte": "^2.5.0",
+    "svelte": "^3.44.0",
+    "svelte-check": "^2.2.6",
+    "svelte-preprocess": "^4.10.1",
+    "tslib": "^2.3.1",
+    "typescript": "~4.5.4"
   },
+  "type": "module",
   "dependencies": {
-    "electron-reload": "^1.5.0",
-    "electron-serve": "^1.1.0",
-    "electron-updater": "^4.3.9"
-  },
-  "build": {
-    "appId": "memento-ket",
-    "directories": {
-      "output": "out"
-    },
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "el3um4s",
-        "repo": "memento-sveltekit-electron-typescript"
-      }
-    ],
-    "win": {
-      "target": [
-        "nsis"
-      ],
-      "icon": "icon.ico"
-    },
-    "nsis": {
-      "installerIcon": "icon.ico",
-      "uninstallerIcon": "icon.ico",
-      "uninstallDisplayName": "Memento KET (SvelteKit+Electron+TypeScript)",
-      "license": "license.txt",
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true
-    }
+    "@fontsource/fira-mono": "^4.5.3",
+    "@tauri-apps/api": "^1.0.0-rc.1",
+    "nprogress": "^0.2.0"
   }
 }

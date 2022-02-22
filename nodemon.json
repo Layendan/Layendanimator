@@ -1,5 +1,0 @@
-{
-  "watch": ["electron/"],
-  "ext": "js, json, ts, css, png, jpeg, jpg, ico",
-  "exec": "npm run start"
-}

@@ -1,5 +1,6 @@
 @import "@fontsource/fira-mono";
-@tailwind base;
+/* Removing base because it messes up with line clap, can add back later */
+/* @tailwind base; */
 /* Removing components because it messes up the view atm, can add back later */
 /* @tailwind components; */
 @tailwind utilities;

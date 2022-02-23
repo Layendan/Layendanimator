@@ -11,7 +11,8 @@
   export let description: string = "unavailable";
   export let episodes: Array<any> = null;
 
-  if (episodes) {
+  // Check if there is data to store before looking at the length or else returns null error
+  if (episodes && episodes.length > 0) {
     window.sessionStorage.setItem(name + "-episodes", JSON.stringify(episodes));
   }
 
@@ -130,7 +131,8 @@
     white-space: normal;
     hyphens: auto;
     font-weight: 100;
-    text-align: justify;
+    /* Breaks on safari */
+    /* text-align: justify; */
     padding-right: 1em;
   }
 

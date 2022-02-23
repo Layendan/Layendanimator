@@ -32,14 +32,7 @@
   <slot />
 </main>
 
-<footer>
-  <p>
-    <a href="#top">∧ back to top ∧</a>
-  </p>
-  <p>
-    <!-- Online Status: {navigator.onLine ? 'Online' : 'Offline'} -->
-  </p>
-</footer>
+<footer />
 
 <style>
   main {
@@ -65,10 +58,6 @@
     padding: 40px;
 
     color: white;
-  }
-
-  footer a {
-    font-weight: bold;
   }
 
   @media (min-width: 480px) {

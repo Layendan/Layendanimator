@@ -39,6 +39,8 @@
   "dependencies": {
     "@fontsource/fira-mono": "^4.5.3",
     "@tauri-apps/api": "^1.0.0-rc.1",
+    "@vime/core": "^5.3.1",
+    "@vime/svelte": "^5.3.1",
     "nprogress": "^0.2.0"
   }
 }

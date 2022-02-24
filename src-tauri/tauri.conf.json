@@ -59,9 +59,9 @@
       "height": 800,
       "resizable": true,
       "fullscreen": false,
+      "center": true,
       "maximized": true,
-      "focus": true,
-      "center": true
+      "focus": true
     }],
     "security": {
       "csp": null

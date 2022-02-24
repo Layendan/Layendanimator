@@ -11,14 +11,9 @@
   export let captionLabel: string = "English";
 </script>
 
-<Player
-  controls
-  autoplay={true}
-  theme="dark"
-  style="--vm-player-theme: #895ef4;"
->
+<Player autoplay={true} theme="dark" style="--vm-player-theme: #895ef4;">
   <!-- Provider component is placed here. -->
-  <Video {poster} class="player">
+  <Video {poster} class="player" autoPiP={true}>
     <!-- These are passed directly to the underlying HTML5 `<video>` element. -->
     <!-- Why `data-src`? Lazy loading, you can always use `src` if you prefer.  -->
     <source data-src={videoSrc} type={videoType} />
@@ -30,12 +25,9 @@
       label={captionLabel}
     />
   </Video>
+
+  <DefaultUi />
 </Player>
 
 <style>
-  .player {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
 </style>

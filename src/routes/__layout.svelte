@@ -55,7 +55,9 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 40px;
+    /* padding-top: 40px;
+    padding-left: 40px;
+    padding-right: 40px; */
 
     color: white;
   }

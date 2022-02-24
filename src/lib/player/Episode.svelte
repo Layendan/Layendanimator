@@ -1,9 +1,12 @@
 <script lang="ts">
+  import { page } from "$app/stores";
+
   export let episode: any;
+  // let url = episode.url;
 </script>
 
 <hr class="solid" />
-<a href={episode.url}>
+<a href="{$page.url.pathname}/video">
   <span>
     <img src={episode.thumbnail} alt={episode.title} />
     <p>

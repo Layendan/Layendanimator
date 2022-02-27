@@ -8,19 +8,24 @@
 
   // read queries from link
   let link: string = $page.url.searchParams.get("link");
+
   let name: string = $page.url.searchParams.get("name");
+
   let thumbnail: string =
     $page.url.searchParams.get("thumbnail") != "null"
       ? $page.url.searchParams.get("thumbnail")
       : loadingFailure;
+
   let banner: string = $page.url.searchParams.get("banner");
+
   let description: string =
     $page.url.searchParams.get("description") != "null"
       ? $page.url.searchParams.get("description")
       : "Failed to load description";
+
   let episodes: Array<any>;
 
-  // Have to wait for window to load before asking for cookies
+  // Have to wait for window to load before asking for sessionsStorage
   // Prevents error when reloading page
   onMount(() => {
     episodes = JSON.parse(window.sessionStorage.getItem(name + "-episodes"));

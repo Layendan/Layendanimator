@@ -31,11 +31,17 @@
   }
 </script>
 
+<svelte:head>
+  <!-- Preloads loading failure so that it looks nice when loading page -->
+  <link rel="preload" as="image" href={loadingFailure} />
+</svelte:head>
+
 <main transition:fade>
   <body>
     <a
       href="/player?link={link}&name={name}&thumbnail={thumbnail}&banner={banner}&description={description}"
       class:unselectable={link == null}
+      title={name}
     >
       <span class="holder">
         <img
@@ -145,13 +151,13 @@
     border-color: gray;
     border-style: solid;
     border-width: 2px;
+    background-color: rgb(30, 30, 30);
     z-index: 2;
   }
 
   .info {
     width: 100%;
     height: 100%;
-    background-color: rgb(30, 30, 30);
     border-radius: 0 10px 10px 0;
     padding-top: 10px;
     height: 226px;

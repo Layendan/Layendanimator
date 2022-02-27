@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { Player, Video, DefaultUi } from "@vime/svelte";
-
   export let poster: string = "https://media.vimejs.com/poster.png";
 
   export let videoSrc: string = "https://media.vimejs.com/720p.mp4";
@@ -9,25 +7,29 @@
   export let captionSrc: string = "https://media.vimejs.com/subs/english.vtt";
   export let captionLang: string = "en";
   export let captionLabel: string = "English";
+
+  // These values are bound to properties of the video
+  let time = 0;
+  let duration;
+  let paused = true;
 </script>
 
-<Player autoplay={true} theme="dark" style="--vm-player-theme: #895ef4;">
-  <!-- Provider component is placed here. -->
-  <Video {poster} class="player" autoPiP={true}>
-    <!-- These are passed directly to the underlying HTML5 `<video>` element. -->
-    <!-- Why `data-src`? Lazy loading, you can always use `src` if you prefer.  -->
-    <source data-src={videoSrc} type={videoType} />
-    <track
-      default
-      kind="captions"
-      src={captionSrc}
-      srclang={captionLang}
-      label={captionLabel}
-    />
-  </Video>
-
-  <DefaultUi />
-</Player>
+<video
+  controls
+  allowfullscreen={true}
+  bind:currentTime={time}
+  bind:duration
+  bind:paused
+>
+  <poster src={poster} />
+  <source src={videoSrc} type={videoType} />
+  <track
+    src={captionSrc}
+    kind="captions"
+    srclang={captionLang}
+    label={captionLabel}
+  />
+</video>
 
 <style>
 </style>

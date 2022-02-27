@@ -43,10 +43,11 @@
 
 <section transition:fade>
   {#if banner != "null"}
-    <div class="banner" transition:fade>
+    <div class="banner">
       <img
         src={banner}
         alt={name}
+        transition:fade
         style="transform: scale({y < 345
           ? 0.005 * Math.abs(y) + 1
           : 0.005 * 345 + 1}); filter: blur({y < 345
@@ -55,19 +56,17 @@
       />
     </div>
   {/if}
-  <div in:fade out:fade class="text">
+  <div transition:fade class="text">
     <div class="container">
       <div class="important-info">
-        <div>
-          <img
-            src={thumbnail}
-            transition:fade
-            on:error={() => (thumbnail = loadingFailure)}
-            class:overlap={banner != "null"}
-            class="thumbnail"
-            alt={name}
-          />
-        </div>
+        <img
+          src={thumbnail}
+          transition:fade
+          on:error={() => (thumbnail = loadingFailure)}
+          class:overlap={banner != "null"}
+          class="thumbnail"
+          alt={name}
+        />
         <div>
           <a href={link} class="title">{name}</a>
           <p transition:fade class="description">
@@ -78,9 +77,9 @@
     </div>
   </div>
   <div class="episodes">
-    <p transition:fade>
+    {#if episodes}
       <EpisodeHolder {episodes} />
-    </p>
+    {/if}
   </div>
 </section>
 

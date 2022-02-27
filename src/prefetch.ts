@@ -3,8 +3,12 @@ import animeSearch from "$lib/GraphQL/animeSearch";
 export async function searchAnime(name: string): Promise<Array<any>> {
   console.log("Starting getAnimes function...");
 
-  if (window.localStorage.getItem(name + "-search")) {
-    return JSON.parse(window.localStorage.getItem(name + "-search"));
+  try {
+    if (window.sessionStorage.getItem(name + "-search") != null) {
+      return JSON.parse(window.sessionStorage.getItem(name + "-search"));
+    }
+  } catch (error) {
+    console.error(error);
   }
 
   console.log("Searching for animes with name: " + name);
@@ -13,6 +17,8 @@ export async function searchAnime(name: string): Promise<Array<any>> {
   var variables = {
     search: name,
     page: 1,
+    perPage: 15,
+    isAdult: false,
   };
 
   // Define the config we'll need for our Api request
@@ -33,10 +39,13 @@ export async function searchAnime(name: string): Promise<Array<any>> {
   let animes = await response.json();
   console.log(response);
   console.log(animes);
-
-  window.localStorage.setItem(
-    name + "-search",
-    JSON.stringify(animes.data.Page.media)
-  );
+  try {
+    window.sessionStorage.setItem(
+      name + "-search",
+      JSON.stringify(animes.data.Page.media)
+    );
+  } catch (error) {
+    console.error(error);
+  }
   return animes.data.Page.media;
 }

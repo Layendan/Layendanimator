@@ -5,147 +5,31 @@
   import Anime from "$lib/components/Anime.svelte";
   import { onMount } from "svelte";
 
-  export let isAdult = false;
-
-  async function getAnime(search_term) {
-    console.log();
-
-    // Here we define our query as a multi-line string
-    // Storing it in a separate .graphql/.gql file is also possible
-    var query = `
-  query ($id: Int, $page: Int, $perPage: Int, $search: String) {
-	Page (page: $page, perPage: $perPage) {
-	  pageInfo {
-		total
-		currentPage
-		lastPage
-		hasNextPage
-		perPage
-	  }
-	  media (id: $id, search: $search, type: ANIME, isAdult: ${isAdult}, format_in: [TV, TV_SHORT, MOVIE, ONA, OVA, SPECIAL], sort: [TRENDING_DESC, POPULARITY_DESC, START_DATE_DESC]) {
-		id
-		title {
-		  romaji,
-		  english
-		}
-		coverImage {
-		  large
-		}
-		bannerImage
-		siteUrl
-		description (asHtml: false)
-		streamingEpisodes {
-			title,
-			thumbnail,
-			url,
-			site
-		}
-	  }
-	}
-  }
-  `;
-
-    // Define our query variables and values that will be used in the query request
-    var variables = {
-      search: search_term,
-      page: 1,
-      perPage: 15,
-    };
-
-    // Define the config we'll need for our Api request
-    var url = "https://graphql.anilist.co",
-      options = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          query: query,
-          variables: variables,
-        }),
-      };
-
-    let response = await fetch(url, options);
-    let animes = await response.json();
-    console.log(response);
-    console.log(animes);
-    return animes.data.Page.media;
-  }
+  import { searchAnime } from "../prefetch";
 
   // Create array of tabs that list anime
   const list = [
-    { title: "Fate", data: getAnime("Fate") },
-    { title: "My Hero Academia", data: getAnime("My Hero Academia") },
-    { title: "Darling", data: getAnime("Darling") },
-    { title: "Your Name", data: getAnime("Your Name") },
-    { title: "Hunter X Hunter", data: getAnime("Hunter X Hunter") },
+    { title: "Fate", data: searchAnime("Fate") },
+    {
+      title: "My Hero Academia",
+      data: searchAnime("My Hero Academia"),
+    },
+    { title: "Darling", data: searchAnime("Darling") },
+    { title: "Your Name", data: searchAnime("Your Name") },
+    { title: "Hunter X Hunter", data: searchAnime("Hunter X Hunter") },
   ];
-  //   const promise = getAnime();
+
   console.log(list);
-
-  async function getFeatured() {
-    var query = `
-	  query ($id: Int, $search: String) {
-	Media (id: $id, search: $search, type: ANIME, isAdult: false, format_in: [TV, TV_SHORT, MOVIE, ONA, OVA, SPECIAL], sort: [TRENDING_DESC, POPULARITY_DESC, START_DATE_DESC]) {
-		id
-		title {
-		  romaji
-		  english
-		}
-		coverImage {
-		  large
-		}
-		siteUrl
-		description
-	  trailer {
-		id
-		site
-	  }
-	  }
-	}
-  `;
-
-    // Define our query variables and values that will be used in the query request
-    var variables = {};
-
-    // Define the config we'll need for our Api request
-    var url = "https://graphql.anilist.co",
-      options = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          query: query,
-          variables: variables,
-        }),
-      };
-
-    let response = await fetch(url, options);
-    let animes = await response.json();
-    console.log(response);
-    console.log(animes);
-    return animes.data.Media;
-  }
-  // chech to see if running in windows
-  // console.log(process.platform);
 
   // Have to wait until __Tauri__ gets injected
   // onMount(() => {
   // 	// Sends notification to user
-  // 	// @ts-ignore
   // 	window.__TAURI__.notification.isPermissionGranted().then((value) => {
   // 		if (value === true) {
-  // 			// @ts-ignore
   // 			window.__TAURI__.notification.sendNotification({ title: 'Hello', body: 'Hello World' });
   // 		} else {
-  // 			// @ts-ignore
   // 			window.__TAURI__.notification.requestPermission().then((value) => {
-  // 				// @ts-ignore
   // 				if (value === 'granted') {
-  // 					// @ts-ignore
   // 					window.__TAURI__.notification.sendNotification({ title: 'Hello', body: 'Hello World' });
   // 				}
   // 			});

@@ -47,7 +47,7 @@
         <img
           on:error={() => (thumbnail = loadingFailure)}
           src={thumbnail}
-          in:fade
+          transition:fade
           loading="lazy"
           alt={name}
         />
@@ -60,7 +60,7 @@
                 bind:clientHeight={pHeight}
                 style="-webkit-line-clamp: {linesToClamp};"
               >
-                {@html description.replaceAll("<br>", " ")}
+                {@html description}
               </p>
             </div>
           </div>

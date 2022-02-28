@@ -6,7 +6,9 @@
 </script>
 
 <hr class="solid" />
-<a href="{$page.url.pathname}/video">
+<a
+  href="{$page.url.pathname}/video?url={episode.url}&poster={episode.thumbnail}"
+>
   <span>
     <img src={episode.thumbnail} alt={episode.title} />
     <p>

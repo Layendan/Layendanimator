@@ -1,5 +1,12 @@
 <script lang="ts">
-  export let poster: string = "https://media.vimejs.com/poster.png";
+  import { page } from "$app/stores";
+
+  export let poster: string =
+    $page.url.searchParams.get("poster") != "null"
+      ? $page.url.searchParams.get("poster")
+      : "https://media.vimejs.com/poster.png";
+
+  let url = $page.url.searchParams.get("url");
 
   export let videoSrc: string = "https://media.vimejs.com/720p.mp4";
   export let videoType: string = "video/mp4";

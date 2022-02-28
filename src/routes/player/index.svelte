@@ -58,7 +58,7 @@
   {/if}
   <div transition:fade class="text">
     <div class="container">
-      <div class="important-info">
+      <div class="important-info" class:no-overlap={banner == "null"}>
         <img
           src={thumbnail}
           transition:fade
@@ -134,6 +134,10 @@
 
   .overlap {
     margin-top: -125px;
+  }
+
+  .no-overlap {
+    margin-top: 40px;
   }
 
   .thumbnail {

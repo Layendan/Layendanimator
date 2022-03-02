@@ -17,7 +17,7 @@ fn main() {
   let ctx = tauri::generate_context!();
 
   tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![])
+    .invoke_handler(tauri::generate_handler![my_custom_command, search_anime])
     .menu(
       Menu::new()
         .add_default_app_submenu_if_macos(&ctx.package_info().name)
@@ -32,4 +32,16 @@ fn main() {
     )
     .run(ctx)
     .expect("error while running tauri application");
+}
+
+// API
+
+#[tauri::command]
+fn my_custom_command() {
+  println!("I was invoked from JS!");
+}
+
+#[tauri::command]
+fn search_anime(name: String) {
+  println!("I was invoked from JS! {}", name);
 }

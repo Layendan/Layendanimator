@@ -1,25 +1,34 @@
-<script lang="js">
+<script script lang="ts">
   export const prerender = true;
 
   import { fade } from "svelte/transition";
   import Anime from "$lib/components/Anime.svelte";
   import { onMount } from "svelte";
+  import { Shadow } from "svelte-loading-spinners";
 
-  import { searchAnime } from "../prefetch";
+  import { getAnimes } from "../lib/prefetch";
 
-  // Create array of tabs that list anime
-  const list = [
-    { title: "Fate", data: searchAnime("Fate") },
-    {
-      title: "My Hero Academia",
-      data: searchAnime("My Hero Academia"),
-    },
-    { title: "Darling", data: searchAnime("Darling") },
-    { title: "Your Name", data: searchAnime("Your Name") },
-    { title: "Hunter X Hunter", data: searchAnime("Hunter X Hunter") },
+  const animes = [
+    "Fate",
+    "My Hero Academia",
+    "Darling",
+    "Your Name",
+    "Hunter X Hunter",
   ];
 
-  console.log(list);
+  let list = [];
+  // list = list;
+
+  // Waiting for mounting to inject window
+  // onMount(() => {
+  //   list.forEach((element) => {
+  //     element.data = searchAnime(element.title);
+  //   });
+  // });
+
+  onMount(async () => {
+    list = await getAnimes(animes);
+  });
 
   // Have to wait until __Tauri__ gets injected
   // onMount(() => {
@@ -42,58 +51,54 @@
   <title>Layendanimator</title>
 </svelte:head>
 
-<section transition:fade>
-  <div class="container">
-    {#each list as section}
-      <div
-        id="animelist-{section.title.replaceAll(' ', '-').toLowerCase()}"
-        class="anime-container"
-        transition:fade
-      >
-        <hr class="solid" />
-        <p class="title">{section.title}</p>
-        <!-- change windows-scrollbar to check if running on windows -->
-        <div class="items" class:windows-scrollbar={true} transition:fade>
-          {#await section.data}
-            <Anime />
-            <Anime />
-            <Anime />
-            <Anime />
-            <Anime />
-            <Anime />
-            <Anime />
-          {:then animes}
-            {#each animes as anime}
-              <Anime
-                name={anime.title.english
-                  ? anime.title.english
-                  : anime.title.romaji}
-                thumbnail={anime.coverImage.large}
-                banner={anime.bannerImage}
-                link={anime.siteUrl}
-                description={anime.description}
-                episodes={anime.streamingEpisodes}
-              />
-            {/each}
-          {:catch error}
-            <p>{error.message}</p>
-          {/await}
-        </div>
+<div transition:fade class="container">
+  <!-- {#await list}
+      <div class="center">
+        <Shadow size="60" color="#895ef4" unit="px" duration="1s" />
       </div>
-    {/each}
-  </div>
-</section>
+    {:then list} -->
+  {#each list as section}
+    <div
+      id="animelist-{section.title.replaceAll(' ', '-').toLowerCase()}"
+      class="anime-container"
+      transition:fade
+    >
+      <hr class="solid" />
+      <p class="title">{section.title}</p>
+      <!-- change windows-scrollbar to check if running on windows -->
+      <div class="items windows-scrollbar" transition:fade>
+        {#each section.data as anime}
+          <Anime
+            name={anime.title.english
+              ? anime.title.english
+              : anime.title.romaji}
+            thumbnail={anime.coverImage.large}
+            banner={anime.bannerImage}
+            link={anime.siteUrl}
+            description={anime.description}
+            episodes={anime.streamingEpisodes}
+          />
+        {/each}
+      </div>
+    </div>
+  {:else}
+    <div class="center">
+      <Shadow size="60" color="#895ef4" unit="px" duration="1s" />
+    </div>
+  {/each}
+  <!-- {/await} -->
+</div>
 
 <style>
-  section {
-    padding: 1rem;
-    margin-top: 3rem;
-  }
-
   p {
     color: white;
   }
 
+  .center {
+    display: grid;
+    place-items: center;
+    height: 50vh;
+  }
   .anime-container {
     margin-left: 10px;
     margin-right: 10px;
@@ -173,7 +178,8 @@
   }
 
   .container {
-    padding: 1em;
+    padding: 2rem;
+    margin-top: 3rem;
 
     transition: all 0.2s ease-in-out;
   }

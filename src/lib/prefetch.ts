@@ -1,6 +1,17 @@
 import animeSearch from "$lib/GraphQL/animeSearch";
+// import { invoke } from "@tauri-apps/api/tauri";
 
-export async function searchAnime(name: string): Promise<Array<any>> {
+export async function getAnimes(titles: string[]): Promise<any> {
+  let animes = [];
+  for await (const element of titles) {
+    let anime = await searchAnime(element);
+    animes = [...animes, { title: element, data: anime }];
+  }
+
+  return animes;
+}
+
+async function searchAnime(name: string): Promise<Array<any>> {
   console.log("Starting getAnimes function...");
 
   try {
@@ -47,5 +58,16 @@ export async function searchAnime(name: string): Promise<Array<any>> {
   } catch (error) {
     console.error(error);
   }
+
+  try {
+    const invoke = window.__TAURI__.invoke;
+
+    // invoke("my_custom_command");
+
+    invoke("search_anime", { name: name });
+  } catch (e) {
+    console.log("Window is not injected");
+  }
+
   return animes.data.Page.media;
 }

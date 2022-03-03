@@ -1,11 +1,32 @@
 import animeSearch from "$lib/GraphQL/animeSearch";
-// import { invoke } from "@tauri-apps/api/tauri";
 
-export async function getAnimes(titles: string[]): Promise<any> {
+//  Only for testing purposes
+//  Lets splashcreen up for x seconds
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+
+export function getAnimes(titles: string[]): any {
   let animes = [];
-  for await (const element of titles) {
-    let anime = await searchAnime(element);
+  for (const element of titles) {
+    let anime = searchAnime(element);
     animes = [...animes, { title: element, data: anime }];
+  }
+
+  try {
+    const invoke = window.__TAURI__.invoke;
+
+    sleep(10000);
+
+    invoke("close_splashscreen");
+
+    console.log("Application ready");
+  } catch (error) {
+    console.error(error);
   }
 
   return animes;
@@ -14,6 +35,7 @@ export async function getAnimes(titles: string[]): Promise<any> {
 async function searchAnime(name: string): Promise<Array<any>> {
   console.log("Starting getAnimes function...");
 
+  // Use try-catch in case window is not defined
   try {
     if (window.sessionStorage.getItem(name + "-search") != null) {
       return JSON.parse(window.sessionStorage.getItem(name + "-search"));
@@ -50,6 +72,8 @@ async function searchAnime(name: string): Promise<Array<any>> {
   let animes = await response.json();
   console.log(response);
   console.log(animes);
+
+  // Use try-catch in case window is not defined
   try {
     window.sessionStorage.setItem(
       name + "-search",
@@ -61,8 +85,6 @@ async function searchAnime(name: string): Promise<Array<any>> {
 
   try {
     const invoke = window.__TAURI__.invoke;
-
-    // invoke("my_custom_command");
 
     invoke("search_anime", { name: name });
   } catch (e) {

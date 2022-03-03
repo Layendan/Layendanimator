@@ -1,8 +1,13 @@
-// API
+use tauri::Manager;
 
+// API
 #[tauri::command]
-pub fn my_custom_command() {
-    println!("I was invoked from JS!");
+pub async fn close_splashscreen(window: tauri::Window) {
+    if let Some(splashscreen) = window.get_window("splashscreen") {
+        splashscreen.close().unwrap();
+    }
+    // Show main window
+    window.get_window("main").unwrap().show().unwrap();
 }
 
 #[tauri::command]

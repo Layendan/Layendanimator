@@ -67,18 +67,30 @@
       <p class="title">{section.title}</p>
       <!-- change windows-scrollbar to check if running on windows -->
       <div class="items windows-scrollbar" transition:fade>
-        {#each section.data as anime}
-          <Anime
-            name={anime.title.english
-              ? anime.title.english
-              : anime.title.romaji}
-            thumbnail={anime.coverImage.large}
-            banner={anime.bannerImage}
-            link={anime.siteUrl}
-            description={anime.description}
-            episodes={anime.streamingEpisodes}
-          />
-        {/each}
+        {#await section.data}
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+        {:then parsedAnimes}
+          {#each parsedAnimes as anime}
+            <Anime
+              name={anime.title.english
+                ? anime.title.english
+                : anime.title.romaji}
+              thumbnail={anime.coverImage.large}
+              banner={anime.bannerImage}
+              link={anime.siteUrl}
+              description={anime.description}
+              episodes={anime.streamingEpisodes}
+            />
+          {/each}
+        {/await}
       </div>
     </div>
   {:else}

@@ -18,10 +18,12 @@ fn main() {
   let ctx = tauri::generate_context!();
 
   tauri::Builder::default()
+    // Declare API methods
     .invoke_handler(tauri::generate_handler![
-      api::my_custom_command,
+      api::close_splashscreen,
       api::search_anime
     ])
+    // Add default submenus
     .menu(
       Menu::new()
         .add_default_app_submenu_if_macos(&ctx.package_info().name)

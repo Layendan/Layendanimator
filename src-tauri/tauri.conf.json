@@ -54,14 +54,23 @@
       "all": true
     },
     "windows": [{
-      "title": "NineAnimator",
-      "width": 1200,
-      "height": 800,
-      "resizable": true,
-      "fullscreen": false,
-      "maximized": true,
-      "focus": true
-    }],
+        "title": "NineAnimator",
+        "width": 1200,
+        "height": 800,
+        "resizable": true,
+        "fullscreen": false,
+        "maximized": true,
+        "focus": true,
+        "visible": false
+      },
+      {
+        "width": 400,
+        "height": 200,
+        "decorations": false,
+        "url": "splashscreen.html",
+        "label": "splashscreen"
+      }
+    ],
     "security": {
       "csp": null
     }

@@ -1,15 +1,5 @@
 import animeSearch from "$lib/GraphQL/animeSearch";
 
-//  Only for testing purposes
-//  Lets splashcreen up for x seconds
-function sleep(milliseconds) {
-  const date = Date.now();
-  let currentDate = null;
-  do {
-    currentDate = Date.now();
-  } while (currentDate - date < milliseconds);
-}
-
 export function getAnimes(titles: string[]): any {
   let animes = [];
   for (const element of titles) {
@@ -19,8 +9,6 @@ export function getAnimes(titles: string[]): any {
 
   try {
     const invoke = window.__TAURI__.invoke;
-
-    sleep(10000);
 
     invoke("close_splashscreen");
 

@@ -4,7 +4,6 @@
   import { fade } from "svelte/transition";
   import Anime from "$lib/components/Anime.svelte";
   import { onMount } from "svelte";
-  import { Shadow } from "svelte-loading-spinners";
 
   import { getAnimes } from "../lib/prefetch";
 
@@ -92,10 +91,6 @@
           {/each}
         {/await}
       </div>
-    </div>
-  {:else}
-    <div class="center">
-      <Shadow size="60" color="#895ef4" unit="px" duration="1s" />
     </div>
   {/each}
   <!-- {/await} -->

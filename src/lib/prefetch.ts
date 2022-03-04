@@ -7,9 +7,11 @@ export function getAnimes(titles: string[]): any {
     animes = [...animes, { title: element, data: anime }];
   }
 
+  // Use try-catch in case window is not defined
   try {
     const invoke = window.__TAURI__.invoke;
 
+    // Calls the close splashscreen api function from rust
     invoke("close_splashscreen");
 
     console.log("Application ready");

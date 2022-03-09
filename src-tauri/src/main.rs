@@ -21,7 +21,8 @@ fn main() {
     // Declare API methods
     .invoke_handler(tauri::generate_handler![
       api::close_splashscreen,
-      api::search_anime
+      api::search_anime,
+      api::add_module
     ])
     // Add default submenus
     .menu(

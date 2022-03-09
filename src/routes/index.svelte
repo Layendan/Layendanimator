@@ -51,11 +51,6 @@
 </svelte:head>
 
 <div transition:fade class="container">
-  <!-- {#await list}
-      <div class="center">
-        <Shadow size="60" color="#895ef4" unit="px" duration="1s" />
-      </div>
-    {:then list} -->
   {#each list as section}
     <div
       id="animelist-{section.title.replaceAll(' ', '-').toLowerCase()}"
@@ -93,18 +88,11 @@
       </div>
     </div>
   {/each}
-  <!-- {/await} -->
 </div>
 
 <style>
   p {
     color: white;
-  }
-
-  .center {
-    display: grid;
-    place-items: center;
-    height: 50vh;
   }
   .anime-container {
     margin-left: 10px;

@@ -1,6 +1,6 @@
 import animeSearch from "$lib/GraphQL/animeSearch";
 
-export function getAnimes(titles: string[]): any {
+export async function getAnimes(titles: string[]): Promise<any> {
   let animes = [];
   for (const element of titles) {
     let anime = searchAnime(element);
@@ -13,6 +13,12 @@ export function getAnimes(titles: string[]): any {
 
     // Calls the close splashscreen api function from rust
     invoke("close_splashscreen");
+
+    let data = await invoke("add_module", { link: "https://nhentai.net/api/gallery/177013" });
+    console.log("Data: ", data);
+    console.log("Id: ", data.id);
+
+    // Hentai :)
 
     console.log("Application ready");
   } catch (error) {

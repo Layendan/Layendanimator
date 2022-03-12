@@ -1,3 +1,4 @@
+use serde_json::json;
 use serde_json::value::Value;
 use tauri::api::http::{ClientBuilder, HttpRequestBuilder};
 use tauri::Manager;
@@ -22,14 +23,30 @@ pub fn search_anime(name: String) {
 pub async fn add_module(link: String) -> Value {
     println!("Saving Module with link: {}", link);
 
-    let client = ClientBuilder::new().connect_timeout(10).build().unwrap();     // Create a new client
-    let request = HttpRequestBuilder::new("GET", link).unwrap();                // Build new request
-    let response = client.send(request).await;                                  // Returns Result<Response, Error>
-    // println!("Response: {:?}", response);
-    let result = response.ok().unwrap();                                        // Gets Response
-    let data = result.read().await;                                             // Reads Response
-    // println!("Data: {:?}", data);
-    let response_data = data.ok().unwrap();                                     // Response to Value
+    let client = ClientBuilder::new().connect_timeout(10).build().unwrap(); // Create a new client
+    let request = HttpRequestBuilder::new("GET", link).unwrap();            // Build new request
+    let response = client.send(request).await;                              // Returns Result<Response, Error>
+    let result = match response {
+        Ok(result) => result,
+        Err(e) => {
+            println!("Error: {}", e);
+            return json!({
+                "status": "error",
+                "message": "Error while fetching module"
+            });
+        }
+    };                                                                      // Gets Response
+    let data = result.read().await;                                         // Reads Response, returns Result<ResponseData>
+    let response_data = match data {
+        Ok(data) => data,
+        Err(e) => {
+            println!("Error: {}", e);
+            return json!({
+                "status": "error",
+                "message": "Error while fetching module"
+            });
+        }
+    };                                                                      // Response to Value
 
     return response_data.data;
 }

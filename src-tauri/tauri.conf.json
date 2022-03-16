@@ -50,6 +50,7 @@
     "updater": {
       "active": false
     },
+    "macOSPrivateApi": true,
     "allowlist": {
       "all": true,
       "clipboard": {

@@ -27,8 +27,8 @@
   bind:currentTime={time}
   bind:duration
   bind:paused
+  {poster}
 >
-  <poster src={poster} />
   <source src={videoSrc} type={videoType} />
   <track
     src={captionSrc}

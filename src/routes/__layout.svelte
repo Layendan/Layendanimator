@@ -21,12 +21,9 @@
       NProgress.done();
     }
   }
-
-  // To delete maybe
-  let isHidden = false;
 </script>
 
-<Header {isHidden} />
+<Header />
 
 <main>
   <slot />

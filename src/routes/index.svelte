@@ -13,17 +13,23 @@
     "Darling",
     "Your Name",
     "Hunter X Hunter",
+    "One Piece",
+    "One Punch",
+    "Attack on Titan",
+    "Death Parade",
+    "Fullmetal Alchemist",
+    "Jujutsu Kaisen",
+    "Naruto",
+    "Bleach",
+    "Platinum End",
+    "Vanitas no Carte",
+    "Sword Art Online",
+    "Ping Pong",
+    "Peach Boy",
+    "Star Wars",
   ];
 
   let list = [];
-  // list = list;
-
-  // Waiting for mounting to inject window
-  // onMount(() => {
-  //   list.forEach((element) => {
-  //     element.data = searchAnime(element.title);
-  //   });
-  // });
 
   onMount(async () => {
     list = await getAnimes(animes);
@@ -108,7 +114,9 @@
     /* box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.75); */
   }
 
-  .items::before {
+  /* Removing the shadows because I don't think they're needed, just commented out though in case I want to add it again */
+
+  /* .items::before {
     content: "";
     position: absolute;
     z-index: 1;
@@ -122,9 +130,9 @@
       rgba(51, 51, 51, 1) 0%,
       rgba(51, 51, 51, 0) 2%
     );
-  }
+  } */
 
-  .items::after {
+  /* .items::after {
     content: "";
     position: absolute;
     z-index: 1;
@@ -138,16 +146,11 @@
       rgba(51, 51, 51, 0) 98%,
       rgba(51, 51, 51, 1) 100%
     );
-  }
+  } */
 
   .windows-scrollbar::-webkit-scrollbar {
     height: 0.5em;
   }
-
-  .windows-scrollbar::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  }
-
   .windows-scrollbar::-webkit-scrollbar-thumb {
     background-color: rgba(169, 169, 169, 0.7);
     border-radius: 5px;
@@ -175,7 +178,5 @@
   .container {
     padding: 2rem;
     margin-top: 3rem;
-
-    transition: all 0.2s ease-in-out;
   }
 </style>

@@ -18,35 +18,47 @@ pub fn search_anime(name: String) {
     println!("I was invoked from JS! {}", name);
 }
 
-#[allow(unused_mut)]
 #[tauri::command]
 pub async fn add_module(link: String) -> Value {
     println!("Saving Module with link: {}", link);
 
     let client = ClientBuilder::new().connect_timeout(10).build().unwrap(); // Create a new client
-    let request = HttpRequestBuilder::new("GET", link).unwrap();            // Build new request
-    let response = client.send(request).await;                              // Returns Result<Response, Error>
+    let request = HttpRequestBuilder::new("GET", link).unwrap(); // Build new request
+    let response = client.send(request).await; // Returns Result<Response, Error>
     let result = match response {
         Ok(result) => result,
         Err(e) => {
             println!("Error: {}", e);
             return json!({
                 "status": "error",
-                "message": "Error while fetching module"
+                "message": "Error while fetching module",
+                "status_number": 500,
+                "data": null
             });
         }
-    };                                                                      // Gets Response
-    let data = result.read().await;                                         // Reads Response, returns Result<ResponseData>
+    }; // Gets Response
+    let data = result.read().await; // Reads Response, returns Result<ResponseData>
     let response_data = match data {
         Ok(data) => data,
         Err(e) => {
             println!("Error: {}", e);
             return json!({
                 "status": "error",
-                "message": "Error while fetching module"
+                "message": "Missing data from response",
+                "status_number": 400,
+                "data": null
             });
         }
-    };                                                                      // Response to Value
+    }; // Response to Value
 
-    return response_data.data;
+    let error_code = response_data.status;
+
+    return json!({
+        "status": "success",
+        "message": "Module added successfully",
+        "status_number": error_code,
+        "data": response_data
+    });
+
+    // return response_data.data;
 }

@@ -1,19 +1,28 @@
 <head>
     <style>
         html {
-            background-color: #515151;
+            background-color: #252525;
+        }
+
+        div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
         .splashscreen {
-            position: fixed;
+            /* position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
+            bottom: 0; */
             color: #895ef4;
-            display: flex;
+            accent-color: #895ef4;
+            /* display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: center; */
             pointer-events: none;
         }
 
@@ -25,4 +34,8 @@
     </style>
 </head>
 
-<p class="splashscreen">Loading...</p>
+<div class="splashscreen">
+    <progress>
+    </progress>
+    <p>Loading...</p>
+</div>

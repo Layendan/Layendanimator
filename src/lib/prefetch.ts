@@ -14,23 +14,6 @@ export async function getAnimes(titles: string[]): Promise<any> {
     // Calls the close splashscreen api function from rust
     invoke("close_splashscreen");
 
-    let data = await invoke("add_module", {
-      link: "https://nhentai.net/api/gallery/177013",
-    });
-
-    try {
-      // Checks status of response atm it's just hentai and will only return the status if there's an error, but when actual modules will be downloaded, it will be implemented in both success and error cases.
-      let status = data.status;
-      console.log("Status: ", status);
-    } catch (error2) {
-      console.error(error2);
-    }
-
-    console.log("Data: ", data);
-    console.log("Id: ", data.id);
-
-    // Hentai :)
-
     console.log("Application ready");
   } catch (error) {
     console.error(error);

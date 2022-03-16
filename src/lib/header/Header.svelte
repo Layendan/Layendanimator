@@ -2,8 +2,6 @@
   import { page } from "$app/stores";
   import logo from "./logo.png";
 
-  export let isHidden = false;
-
   let y = 0;
 </script>
 
@@ -11,7 +9,6 @@
 
 <header
   class:bottom-border={y > 40}
-  class:isHidden
   style="background-color: rgba(51, 51, 51, {y < 40
     ? y * 0.01675 + 0.3
     : 0.97});"
@@ -77,10 +74,6 @@
     width: 2em;
     height: 2em;
     object-fit: contain;
-  }
-
-  .isHidden {
-    display: none;
   }
 
   nav {

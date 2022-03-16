@@ -26,9 +26,14 @@
   // 220 is the height of the description + title text
   // 20 is for padding - can be changed
   // From: https://stackoverflow.com/questions/11856136/is-css3-line-clamp-possible-in-javascript
-  $: if (pHeight > 220 - titleHeight - 20 && linesToClamp > 1) {
-    linesToClamp -= 1;
+  function clamp(pHeight) {
+    if (pHeight > 220 - titleHeight - 20 && linesToClamp >= 1) {
+      linesToClamp--;
+    }
   }
+
+  // Making it a function so that it only calls it with pHeight changes
+  $: clamp(pHeight);
 </script>
 
 <svelte:head>
@@ -41,18 +46,16 @@
     <a
       href="/player?link={link}&name={name}&thumbnail={thumbnail}&banner={banner}&description={description}"
       class:unselectable={link == null}
-      title={name}
     >
       <span class="holder">
         <img
           on:error={() => (thumbnail = loadingFailure)}
           src={thumbnail}
-          transition:fade
           loading="lazy"
           alt={name}
         />
         <div class="info">
-          <div class="text" in:fade={{ delay: 200 }}>
+          <div class="text">
             <h1 bind:clientHeight={titleHeight}>{name}</h1>
             <div class="module">
               <p
@@ -160,7 +163,7 @@
     height: 100%;
     border-radius: 0 10px 10px 0;
     padding-top: 10px;
-    height: 226px;
+    height: 222px;
 
     transition: background-color 0.2s ease-in-out;
   }
@@ -168,19 +171,20 @@
   .text {
     transition: transform 0.2s ease-in-out;
     color: white;
-    height: min-content;
+    /* height: min-content; */
     margin-bottom: 1em;
     overflow-y: hidden;
   }
 
   .module {
     overflow-y: hidden;
-    height: min-content;
+    /* height: min-content; */
   }
 
   .line-clamp {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    height: min-content;
+    /* height: min-content; */
+    overflow-y: hidden;
   }
 </style>

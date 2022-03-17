@@ -12,8 +12,13 @@
   export let episodes: Array<any> = null;
 
   // Check if there is data to store before looking at the length or else returns null error
-  if (episodes && episodes.length > 0) {
-    window.sessionStorage.setItem(name + "-episodes", JSON.stringify(episodes));
+  const DATA_NAME = name + "-episodes";
+  if (
+    episodes &&
+    episodes.length > 0 &&
+    !window.sessionStorage.getItem(DATA_NAME)
+  ) {
+    window.sessionStorage.setItem(DATA_NAME, JSON.stringify(episodes));
   }
 
   // Instance variables for line clamping
@@ -41,7 +46,7 @@
   <link rel="preload" as="image" href={loadingFailure} />
 </svelte:head>
 
-<main transition:fade>
+<main>
   <body>
     <a
       href="/player?link={link}&name={name}&thumbnail={thumbnail}&banner={banner}&description={description}"

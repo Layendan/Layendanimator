@@ -31,6 +31,7 @@
 
   let list = [];
 
+  // Have to wait until __Tauri__ gets injected
   onMount(async () => {
     list = await getAnimes(animes);
   });
@@ -56,12 +57,11 @@
   <title>Layendanimator</title>
 </svelte:head>
 
-<div transition:fade class="container">
+<div class="container">
   {#each list as section}
     <div
       id="animelist-{section.title.replaceAll(' ', '-').toLowerCase()}"
       class="anime-container"
-      transition:fade
     >
       <hr class="solid" />
       <p class="title">{section.title}</p>
@@ -93,6 +93,29 @@
         {/await}
       </div>
     </div>
+  {:else}
+    {#each animes as anime}
+      <div
+        id="animelist-{anime.replaceAll(' ', '-').toLowerCase()}"
+        class="anime-container"
+        transition:fade
+      >
+        <hr class="solid" />
+        <p class="title">{anime}</p>
+        <!-- change windows-scrollbar to check if running on windows -->
+        <div class="items windows-scrollbar" transition:fade>
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+        </div>
+      </div>
+    {/each}
   {/each}
 </div>
 

@@ -149,7 +149,8 @@
         "fullscreen": false,
         "maximized": true,
         "focus": true,
-        "visible": false
+        "visible": false,
+        "transparent": true
       },
       {
         "width": 400,
@@ -159,7 +160,8 @@
         "fileDropEnabled": false,
         "url": "splashscreen.html",
         "label": "splashscreen",
-        "center": true
+        "center": true,
+        "transparent": true
       }
     ],
     "security": {

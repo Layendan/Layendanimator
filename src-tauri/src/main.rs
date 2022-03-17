@@ -4,7 +4,9 @@
 )]
 
 use crate::menu::AddDefaultSubmenus;
-use tauri::{CustomMenuItem, Menu, Submenu};
+use tauri::{CustomMenuItem, Manager, Menu, Submenu};
+#[allow(unused_imports)]
+use window_vibrancy::{apply_mica, apply_vibrancy, NSVisualEffectMaterial};
 
 mod api;
 mod menu;
@@ -18,6 +20,18 @@ fn main() {
   let ctx = tauri::generate_context!();
 
   tauri::Builder::default()
+    // Set custom background meterial
+    .setup(|app| {
+      let window = app.get_window("main").unwrap();
+
+      #[cfg(target_os = "macos")]
+      apply_vibrancy(&window, NSVisualEffectMaterial::UnderWindowBackground).unwrap();
+
+      #[cfg(target_os = "windows")]
+      apply_mica(&window).unwrap();
+
+      Ok(())
+    })
     // Declare API methods
     .invoke_handler(tauri::generate_handler![
       api::close_splashscreen,

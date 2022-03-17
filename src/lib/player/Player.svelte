@@ -39,4 +39,12 @@
 </video>
 
 <style>
+  video {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    align-items: center;
+    justify-content: center;
+  }
 </style>

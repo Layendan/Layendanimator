@@ -21,7 +21,7 @@
   let description: string =
     $page.url.searchParams.get("description") != "null"
       ? $page.url.searchParams.get("description")
-      : "Failed to load description";
+      : "";
 
   let episodes: Array<any>;
 

@@ -1,6 +1,5 @@
 <script lang="ts">
   // Import required packages
-  import { fade } from "svelte/transition";
   import loadingFailure from "$lib/components/loading_failure.jpeg";
 
   // Export component definitions
@@ -37,8 +36,9 @@
     }
   }
 
+  // Removing line clamp as it lags page A LOT as it loads
   // Making it a function so that it only calls it with pHeight changes
-  $: clamp(pHeight);
+  // $: clamp(pHeight);
 </script>
 
 <svelte:head>
@@ -61,13 +61,21 @@
         />
         <div class="info">
           <div class="text">
-            <h1 bind:clientHeight={titleHeight}>{name}</h1>
-            <div class="module">
-              <p
+            <!-- <h1
+              class="line-clamp"
+              bind:clientHeight={titleHeight}
+              style="-webkit-line-clamp: 5;"
+            > -->
+            <h1>
+              {name}
+            </h1>
+            <div>
+              <p>
+                <!-- <p
                 class="line-clamp"
                 bind:clientHeight={pHeight}
                 style="-webkit-line-clamp: {linesToClamp};"
-              >
+              > -->
                 {@html description}
               </p>
             </div>
@@ -84,6 +92,9 @@
     vertical-align: top;
     margin-left: 15px;
     margin-right: 15px;
+
+    /* I'm just gonna use overflow-y because line clamping slows down the loading of the page by a few seconds and that's not fun for the user */
+    overflow-y: hidden;
   }
 
   .unselectable {
@@ -99,8 +110,6 @@
     background-position: center;
     background-repeat: no-repeat;
     width: 160px;
-    max-width: 160px;
-    min-width: 160px;
     border-radius: 10px 0 0 10px;
     aspect-ratio: 46/65;
 
@@ -145,8 +154,6 @@
     white-space: normal;
     hyphens: auto;
     font-weight: 100;
-    /* Breaks on safari */
-    /* text-align: justify; */
     padding-right: 1em;
   }
 
@@ -155,12 +162,11 @@
     width: 400px;
     min-width: 160px;
     display: flex;
-    border-radius: 10px;
+    border-radius: 12px;
     border-color: gray;
     border-style: solid;
     border-width: 2px;
     background-color: rgb(30, 30, 30);
-    z-index: 2;
   }
 
   .info {
@@ -176,20 +182,13 @@
   .text {
     transition: transform 0.2s ease-in-out;
     color: white;
-    /* height: min-content; */
     margin-bottom: 1em;
     overflow-y: hidden;
   }
 
-  .module {
-    overflow-y: hidden;
-    /* height: min-content; */
-  }
-
-  .line-clamp {
+  /* .line-clamp {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    /* height: min-content; */
     overflow-y: hidden;
-  }
+  } */
 </style>

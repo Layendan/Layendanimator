@@ -11,11 +11,12 @@
     // Full list: https://github.com/rstacruz/nprogress#configuration
     minimum: 0.16,
     showSpinner: false,
-    trickle: false,
+    trickle: true,
   });
   $: {
     if ($navigating) {
       NProgress.start();
+      NProgress.set(0.2);
     }
     if (!$navigating) {
       NProgress.done();
@@ -43,8 +44,6 @@
     transform: translateY(-3em);
 
     color: white;
-
-    transition: all 0.2s ease-in-out;
   }
 
   footer {

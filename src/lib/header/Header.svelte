@@ -1,8 +1,10 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import logo from "./logo.png";
+  import { goto } from "$app/navigation";
 
   let y = 0;
+  $: query = "";
 </script>
 
 <svelte:window bind:scrollY={y} />
@@ -42,7 +44,28 @@
     </svg>
   </nav>
 
-  <div class="corner" />
+  <div class="corner">
+    <input
+      id="search"
+      autocapitalize="true"
+      autocomplete="off"
+      autocorrect="off"
+      name="search_query"
+      tabindex="0"
+      type="search"
+      spellcheck="false"
+      placeholder="Search"
+      dir="ltr"
+      style="transform: translateX(-13em); margin-top: 0.5em;"
+      bind:value={query}
+      on:keydown={(event) => {
+        if (event.key === "Enter" && query !== "") {
+          event.preventDefault();
+          goto(`${$page.url.origin}/search?search=${query}`);
+        }
+      }}
+    />
+  </div>
 </header>
 
 <style>
@@ -53,6 +76,7 @@
     top: 0px;
     /* padding-bottom: 5px; */
     z-index: 10;
+    overflow-x: hidden;
 
     transition: border 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
   }

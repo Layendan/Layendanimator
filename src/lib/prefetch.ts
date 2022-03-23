@@ -60,8 +60,6 @@ async function searchAnime(name: string): Promise<Array<any>> {
 
   let response = await fetch(url, options);
   let animes = await response.json();
-  console.log(response);
-  console.log(animes);
 
   // Use try-catch in case window is not defined
   try {
@@ -77,7 +75,7 @@ async function searchAnime(name: string): Promise<Array<any>> {
     const invoke = window.__TAURI__.invoke;
 
     invoke("search_anime", { name: name });
-  } catch (e) {
+  } catch (error) {
     console.log("Window is not injected");
   }
 

@@ -2,7 +2,7 @@ export async function addModule(link: string): Promise<any> {
   try {
     const invoke = window.__TAURI__.invoke;
     let data = await invoke("add_module", {
-      link: "https://nhentai.net/api/gallery/177013",
+      link: link,
     });
 
     try {

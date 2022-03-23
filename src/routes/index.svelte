@@ -7,6 +7,7 @@
 
   import { getAnimes } from "../lib/prefetch";
 
+  // 429 Error, too many requests
   const animes = [
     "Fate",
     "My Hero Academia",
@@ -27,13 +28,22 @@
     "Ping Pong",
     "Peach Boy",
     "Star Wars",
+    "Re:CREATORS",
+    "Evangelion",
+    "Sahate No Paladin",
+    "Death Note",
+    "Grand Blue",
+    "Totoro",
+    "Akame Ga Kill",
+    "In Another World With My Smartphone",
+    "Isekai Quartet",
   ];
 
-  let list = [];
+  let list: any = [];
 
   // Have to wait until __Tauri__ gets injected
-  onMount(async () => {
-    list = await getAnimes(animes);
+  onMount(() => {
+    list = getAnimes(animes);
   });
 
   // Have to wait until __Tauri__ gets injected
@@ -58,42 +68,7 @@
 </svelte:head>
 
 <div class="container">
-  {#each list as section}
-    <div
-      id="animelist-{section.title.replaceAll(' ', '-').toLowerCase()}"
-      class="anime-container"
-    >
-      <hr class="solid" />
-      <p class="title">{section.title}</p>
-      <!-- change windows-scrollbar to check if running on windows -->
-      <div class="items windows-scrollbar" transition:fade>
-        {#await section.data}
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-        {:then parsedAnimes}
-          {#each parsedAnimes as anime}
-            <Anime
-              name={anime.title.english
-                ? anime.title.english
-                : anime.title.romaji}
-              thumbnail={anime.coverImage.large}
-              banner={anime.bannerImage}
-              link={anime.siteUrl}
-              description={anime.description}
-              episodes={anime.streamingEpisodes}
-            />
-          {/each}
-        {/await}
-      </div>
-    </div>
-  {:else}
+  {#await list}
     {#each animes as anime}
       <div
         id="animelist-{anime.replaceAll(' ', '-').toLowerCase()}"
@@ -116,7 +91,44 @@
         </div>
       </div>
     {/each}
-  {/each}
+  {:then list}
+    {#each list as section}
+      <div
+        id="animelist-{section.title.replaceAll(' ', '-').toLowerCase()}"
+        class="anime-container"
+      >
+        <hr class="solid" />
+        <p class="title">{section.title}</p>
+        <!-- change windows-scrollbar to check if running on windows -->
+        <div class="items windows-scrollbar" transition:fade>
+          {#await section.data}
+            <Anime />
+            <Anime />
+            <Anime />
+            <Anime />
+            <Anime />
+            <Anime />
+            <Anime />
+            <Anime />
+            <Anime />
+          {:then parsedAnimes}
+            {#each parsedAnimes as anime}
+              <Anime
+                name={anime.title.english
+                  ? anime.title.english
+                  : anime.title.romaji}
+                thumbnail={anime.coverImage.large}
+                banner={anime.bannerImage}
+                link={anime.siteUrl}
+                description={anime.description}
+                episodes={anime.streamingEpisodes}
+              />
+            {/each}
+          {/await}
+        </div>
+      </div>
+    {/each}
+  {/await}
 </div>
 
 <style>

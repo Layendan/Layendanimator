@@ -1,29 +1,23 @@
 <head>
     <style>
         html {
-            background-color: #252525;
+            /* border-style: solid; */
+            border-radius: 10px;
         }
 
-        div {
+        body {
+            background-color: #252525;
+            color: #895ef4;
+            accent-color: #895ef4;
+            overflow: hidden;
+        }
+
+        .splashscreen {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-        }
-
-        .splashscreen {
-            /* position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0; */
-            color: #895ef4;
-            accent-color: #895ef4;
-            /* display: flex;
-            align-items: center;
-            justify-content: center; */
-            pointer-events: none;
+            height: 90vh;
         }
 
         .splashscreen p {
@@ -34,8 +28,10 @@
     </style>
 </head>
 
-<div class="splashscreen">
-    <progress>
-    </progress>
-    <p>Loading...</p>
-</div>
+<body>
+    <div data-tauri-drag-region class="splashscreen">
+        <progress>
+        </progress>
+        <p>Loading...</p>
+    </div>
+</body>

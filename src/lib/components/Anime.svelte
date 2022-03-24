@@ -1,6 +1,7 @@
 <script lang="ts">
   // Import required packages
   import loadingFailure from "$lib/components/loading_failure.jpeg";
+  import { fade } from "svelte/transition";
 
   // Export component definitions
   export let name: string = undefined;
@@ -46,7 +47,7 @@
   <link rel="preload" as="image" href={loadingFailure} />
 </svelte:head>
 
-<main>
+<main transition:fade>
   <body>
     <a
       href="/player?link={link}&name={name}&thumbnail={thumbnail}&banner={banner}&description={description}"

@@ -143,25 +143,29 @@
     },
     "windows": [{
         "title": "NineAnimator",
+        "label": "main",
         "width": 1200,
         "height": 800,
         "resizable": true,
         "fullscreen": false,
         "maximized": true,
-        "focus": true,
         "visible": false,
         "transparent": true
       },
       {
-        "width": 400,
-        "height": 200,
-        "decorations": false,
-        "resizable": false,
-        "fileDropEnabled": false,
+        "title": "NineAnimator",
         "url": "splashscreen.html",
-        "label": "splashscreen",
-        "center": true,
-        "transparent": true
+        "label": "splashcreen",
+        "width": 300,
+        "height": 400,
+        "resizable": false,
+        "fullscreen": false,
+        "maximized": false,
+        "visible": true,
+        "transparent": true,
+        "decorations": false,
+        "fileDropEnabled": false,
+        "focus": true
       }
     ],
     "security": {

@@ -1,5 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import { platform } from "@tauri-apps/api/os";
+  import { onMount } from "svelte";
 
   export let poster: string =
     $page.url.searchParams.get("poster") != "null"
@@ -18,16 +20,34 @@
   // These values are bound to properties of the video
   let time = 0;
   let duration;
-  let paused = true;
+  let paused;
+  let platformType = "";
+
+  onMount(async () => {
+    platformType = await platform();
+  });
 </script>
 
 <video
   controls
   allowfullscreen={true}
+  {poster}
   bind:currentTime={time}
   bind:duration
   bind:paused
-  {poster}
+  on:fullscreenchange={() => {
+    // Not using webkit since it only applies to Safari and we don't care about Macs
+    // If on windows fullscreen application
+    if (platformType === "win32") {
+      if (document.fullscreenElement != null) {
+        // Make window fullscreen
+        console.log("Is fullscreen");
+      } else {
+        // Make window not fullscreen
+        console.log("Is not fullscreen");
+      }
+    }
+  }}
 >
   <source src={videoSrc} type={videoType} />
   <track

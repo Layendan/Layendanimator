@@ -9,10 +9,8 @@ export async function getAnimes(titles: string[]): Promise<any> {
 
   // Use try-catch in case window is not defined
   try {
-    const invoke = window.__TAURI__.invoke;
-
     // Calls the close splashscreen api function from rust
-    invoke("close_splashscreen");
+    window.__TAURI__.invoke("close_splashscreen");
 
     console.log("Application ready");
   } catch (error) {
@@ -72,11 +70,9 @@ async function searchAnime(name: string): Promise<Array<any>> {
   }
 
   try {
-    const invoke = window.__TAURI__.invoke;
-
-    invoke("search_anime", { name: name });
+    window.__TAURI__.invoke("search_anime", { name: name });
   } catch (error) {
-    console.log("Window is not injected");
+    console.log("Tauri not injected in window");
   }
 
   return animes.data.Page.media;

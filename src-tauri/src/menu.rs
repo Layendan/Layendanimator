@@ -1,7 +1,7 @@
 use tauri::{Menu, MenuItem, Submenu};
 
 pub trait AddDefaultSubmenus {
-  fn add_default_app_submenu_if_macos(self, app_name: &str) -> Self;
+  fn add_default_app_submenu_if_macos(self, _app_name: &str) -> Self;
   fn add_default_file_submenu(self) -> Self;
   fn add_default_edit_submenu(self) -> Self;
   fn add_default_view_submenu(self) -> Self;
@@ -9,12 +9,12 @@ pub trait AddDefaultSubmenus {
 }
 
 impl AddDefaultSubmenus for Menu {
-  fn add_default_app_submenu_if_macos(self, app_name: &str) -> Menu {
+  fn add_default_app_submenu_if_macos(self, _app_name: &str) -> Menu {
     #[cfg(target_os = "macos")]
     return self.add_submenu(Submenu::new(
-      app_name.to_string(),
+      _app_name.to_string(),
       Menu::new()
-        .add_native_item(MenuItem::About(app_name.to_string()))
+        .add_native_item(MenuItem::About(_app_name.to_string()))
         .add_native_item(MenuItem::Separator)
         .add_native_item(MenuItem::Services)
         .add_native_item(MenuItem::Separator)

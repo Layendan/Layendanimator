@@ -2,8 +2,8 @@
   import { page } from "$app/stores";
   import { onMount } from "svelte";
 
-  let platform;
-  let getCurrent;
+  let os;
+  let window;
 
   export let poster: string =
     $page.url.searchParams.get("poster") != "null"
@@ -20,50 +20,44 @@
   export let captionLabel: string = "English";
 
   // These values are bound to properties of the video
-  let time = 0;
-  let duration;
-  let paused;
-  let platformType = "";
+  let time: number = 0;
+  let duration: number;
+  let paused: boolean;
+  let platformType: string = "";
 
   // Will cause error on build since the api needs window which will not exist server side
   onMount(async () => {
-    const module = await import("@tauri-apps/api/window");
-    getCurrent = module.default;
+    window = await import("@tauri-apps/api/window");
+    os = await import("@tauri-apps/api/os");
 
-    const module2 = await import("@tauri-apps/api/os");
-    platform = module2.default;
+    platformType = await os.platform();
+    console.log("Platform type: ", platformType);
   });
-
-  // have to create async function because platform() returns a promise
-  async function getPlatformType() {
-    platformType = await platform();
-    console.log(platformType);
-  }
-
-  getPlatformType();
 </script>
 
 <video
   controls
-  allowfullscreen={true}
   {poster}
+  preload="metadata"
   bind:currentTime={time}
   bind:duration
   bind:paused
   on:fullscreenchange={() => {
+    console.log("Fullscreen change");
     // Not using webkit since it only applies to Safari and we don't care about Macs
+    // Apparently only triggers on requestFullscreen and controls button on chromium doesn't call it
     // If on windows fullscreen application
     if (platformType === "win32") {
       if (document.fullscreenElement != null) {
         // Make window fullscreen
-        console.log("Is fullscreen");
+        window.getCurrent().setFullscreen(true);
 
-        getCurrent().setFullscreen(true);
+        console.log("Is fullscreen");
       } else {
         // Make window not fullscreen
-        console.log("Is not fullscreen");
+        window.getCurrent().setFullscreen(false);
 
-        getCurrent().setFullscreen(false);
+        console.log("Is not fullscreen");
       }
     }
   }}

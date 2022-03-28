@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { page } from "$app/stores";
   import logo from "./logo.png";
   import { goto } from "$app/navigation";
 

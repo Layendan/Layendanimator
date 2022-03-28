@@ -1,7 +1,9 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import { platform } from "@tauri-apps/api/os";
-  import { getCurrent } from "@tauri-apps/api/window";
+  import { onMount } from "svelte";
+
+  let platform;
+  let getCurrent;
 
   export let poster: string =
     $page.url.searchParams.get("poster") != "null"
@@ -22,6 +24,15 @@
   let duration;
   let paused;
   let platformType = "";
+
+  // Will cause error on build since the api needs window which will not exist server side
+  onMount(async () => {
+    const module = await import("@tauri-apps/api/window");
+    getCurrent = module.default;
+
+    const module2 = await import("@tauri-apps/api/os");
+    platform = module2.default;
+  });
 
   // have to create async function because platform() returns a promise
   async function getPlatformType() {

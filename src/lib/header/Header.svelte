@@ -33,9 +33,11 @@
       placeholder="Search"
       class="search"
       style="transform: translateX(-13em); margin-top: 0.5em;"
+      autocapitalize="words"
       bind:value={query}
       on:keydown={(event) => {
         if (event.key === "Enter" && query !== "") {
+          event.preventDefault();
           goto(`/search?search=${query}`);
         }
       }}
@@ -53,7 +55,7 @@
     z-index: 10;
     overflow: hidden;
 
-    transition: border 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+    transition: box-shadow 0.2s ease-in-out;
   }
 
   .search {
@@ -92,7 +94,6 @@
   }
 
   .bottom-border {
-    border-bottom: 2px solid rgb(60, 60, 60);
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.5);
   }
 </style>

@@ -159,7 +159,7 @@
   }
 
   .holder {
-    max-width: 400px;
+    max-width: 450px;
     width: 400px;
     min-width: 160px;
     display: flex;

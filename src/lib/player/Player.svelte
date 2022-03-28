@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import { platform } from "@tauri-apps/api/os";
-  import { onMount } from "svelte";
+  import { getCurrent } from "@tauri-apps/api/window";
 
   export let poster: string =
     $page.url.searchParams.get("poster") != "null"
@@ -23,9 +23,13 @@
   let paused;
   let platformType = "";
 
-  onMount(async () => {
+  // have to create async function because platform() returns a promise
+  async function getPlatformType() {
     platformType = await platform();
-  });
+    console.log(platformType);
+  }
+
+  getPlatformType();
 </script>
 
 <video
@@ -42,9 +46,13 @@
       if (document.fullscreenElement != null) {
         // Make window fullscreen
         console.log("Is fullscreen");
+
+        getCurrent().setFullscreen(true);
       } else {
         // Make window not fullscreen
         console.log("Is not fullscreen");
+
+        getCurrent().setFullscreen(false);
       }
     }
   }}

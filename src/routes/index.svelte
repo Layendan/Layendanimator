@@ -30,13 +30,13 @@
     "Star Wars",
     "Re:CREATORS",
     "Evangelion",
-    "Sahate No Paladin",
-    "Death Note",
-    "Grand Blue",
-    "Totoro",
-    "Akame Ga Kill",
-    "In Another World With My Smartphone",
-    "Isekai Quartet",
+    // "Sahate No Paladin",
+    // "Death Note",
+    // "Grand Blue",
+    // "Totoro",
+    // "Akame Ga Kill",
+    // "In Another World With My Smartphone",
+    // "Isekai Quartet",
   ];
 
   let list: any = [];
@@ -142,11 +142,10 @@
 
   .items {
     overflow-x: scroll;
-    overflow-y: visible;
+    overflow-y: hidden;
     width: auto;
     white-space: nowrap;
     padding-bottom: 15px;
-    /* box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.75); */
   }
 
   /* Removing the shadows because I don't think they're needed, just commented out though in case I want to add it again */

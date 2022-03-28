@@ -1,4 +1,5 @@
 import animeSearch from "$lib/GraphQL/animeSearch";
+import { invoke } from "@tauri-apps/api/tauri";
 
 export async function getAnimes(titles: string[]): Promise<any> {
   let animes = [];
@@ -7,22 +8,13 @@ export async function getAnimes(titles: string[]): Promise<any> {
     animes = [...animes, { title: element, data: anime }];
   }
 
-  // Use try-catch in case window is not defined
-  try {
-    // Calls the close splashscreen api function from rust
-    window.__TAURI__.invoke("close_splashscreen");
-
-    console.log("Application ready");
-  } catch (error) {
-    console.error(error);
-  }
+  // Calls the close splashscreen api function from rust
+  invoke("close_splashscreen");
 
   return animes;
 }
 
-async function searchAnime(name: string): Promise<Array<any>> {
-  console.log("Starting getAnimes function...");
-
+export async function searchAnime(name: string): Promise<Array<any>> {
   // Use try-catch in case window is not defined
   try {
     if (window.sessionStorage.getItem(name + "-search") != null) {
@@ -31,8 +23,6 @@ async function searchAnime(name: string): Promise<Array<any>> {
   } catch (error) {
     console.error(error);
   }
-
-  console.log("Searching for animes with name: " + name);
 
   // Define our query variables and values that will be used in the query request
   var variables = {
@@ -57,6 +47,11 @@ async function searchAnime(name: string): Promise<Array<any>> {
     };
 
   let response = await fetch(url, options);
+  if (response.status == 429) {
+    console.error("Too many requests");
+    console.log("Retry after: ", response.headers.get("retry-after"));
+    return [];
+  }
   let animes = await response.json();
 
   // Use try-catch in case window is not defined
@@ -69,11 +64,7 @@ async function searchAnime(name: string): Promise<Array<any>> {
     console.error(error);
   }
 
-  try {
-    window.__TAURI__.invoke("search_anime", { name: name });
-  } catch (error) {
-    console.log("Tauri not injected in window");
-  }
+  invoke("search_anime", { name: name });
 
   return animes.data.Page.media;
 }

@@ -1,8 +1,9 @@
 <script lang="ts">
   import Player from "$lib/player/Player.svelte";
+  import { fade } from "svelte/transition";
 </script>
 
-<section>
+<section transition:fade>
   <Player />
 </section>
 

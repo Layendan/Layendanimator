@@ -2,8 +2,8 @@
   import { page } from "$app/stores";
   import { onMount } from "svelte";
 
-  let os;
-  let window;
+  let os: typeof import("@tauri-apps/api/os");
+  let window: typeof import("@tauri-apps/api/window");
 
   export let poster: string =
     $page.url.searchParams.get("poster") != "null"
@@ -25,10 +25,11 @@
   let paused: boolean;
   let platformType: string = "";
 
+  // https://sapper.svelte.dev/docs/#Server-side_rendering
   // Will cause error on build since the api needs window which will not exist server side
   onMount(async () => {
-    window = await import("@tauri-apps/api/window");
     os = await import("@tauri-apps/api/os");
+    window = await import("@tauri-apps/api/window");
 
     platformType = await os.platform();
     console.log("Platform type: ", platformType);

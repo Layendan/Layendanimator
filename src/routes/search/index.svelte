@@ -24,10 +24,8 @@
 </script>
 
 <main transition:fade>
-  {#await animes}
-    <progress style="accent-color: #895ef4;" />
-  {:then animeData}
-    {#each animeData as anime}
+  {#await animes then animeArray}
+    {#each animeArray as anime}
       <Anime
         name={anime.title.english ? anime.title.english : anime.title.romaji}
         thumbnail={anime.coverImage.large}

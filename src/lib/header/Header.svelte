@@ -15,7 +15,7 @@
     : 0.97});"
 >
   <div class="corner">
-    <a sveltekit:prefetch href="/">
+    <a sveltekit:prefetch href="/" class="noselect">
       <img src={logo} alt="SvelteKit" />
     </a>
   </div>
@@ -23,10 +23,6 @@
   <nav />
 
   <div class="corner">
-    <!-- Tab navigation on safari is locked behind preference, fixed in 
-    https://github.com/tauri-apps/wry/commit/28ebedc41f9017fed3fe1dc3a6d021c69f88ef5d
-    Have to wait until fix goes to tauri
-    3 days off of making it to the release :( -->
     <input
       type="search"
       placeholder="Search"
@@ -94,5 +90,16 @@
 
   .bottom-border {
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  .noselect {
+    /* From https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting */
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
   }
 </style>

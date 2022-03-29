@@ -70,6 +70,15 @@
     justify-content: center;
     width: 100%;
     height: 100%;
+    outline: none;
+  }
+
+  .corner a:focus > img {
+    outline: 2px solid #895ef4;
+  }
+
+  .corner input:focus {
+    outline: 2px solid #895ef4;
   }
 
   .corner img {

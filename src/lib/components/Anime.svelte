@@ -98,6 +98,11 @@
     overflow-y: hidden;
   }
 
+  a:focus > span {
+    outline: 20px solid #895ef4;
+    outline-offset: -4px;
+  }
+
   .unselectable {
     pointer-events: none;
   }

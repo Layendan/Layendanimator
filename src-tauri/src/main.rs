@@ -2,6 +2,9 @@
   all(not(debug_assertions), target_os = "windows"),
   windows_subsystem = "windows"
 )]
+#![allow(unused_variables)]
+#![allow(unused_imports)]
+#![allow(dead_code)]
 
 use crate::menu::AddDefaultSubmenus;
 use tauri::{CustomMenuItem, Manager, Menu, Submenu};
@@ -19,6 +22,18 @@ fn custom_item(name: &str) -> CustomMenuItem {
 fn main() {
   let ctx = tauri::generate_context!();
 
+  #[cfg(target_os = "linux")]
+  tauri::Builder::default()
+    // Declare API methods
+    .invoke_handler(tauri::generate_handler![
+      api::close_splashscreen,
+      api::search_anime,
+      api::add_module
+    ])
+    .run(ctx)
+    .expect("error while running tauri application");
+
+  #[cfg(not(target_os = "linux"))]
   tauri::Builder::default()
     // Set custom background meterial
     .setup(|app| {

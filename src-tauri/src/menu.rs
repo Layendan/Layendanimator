@@ -1,3 +1,4 @@
+#![allow(unreachable_code)]
 use tauri::{AboutMetadata, Menu, MenuItem, Submenu};
 
 pub trait AddDefaultSubmenus {
@@ -9,15 +10,15 @@ pub trait AddDefaultSubmenus {
 }
 
 impl AddDefaultSubmenus for Menu {
-  fn add_default_app_submenu_if_macos(self, _app_name: &str) -> Menu {
-    #[cfg(target_os = "macos")]
+  fn add_default_app_submenu_if_macos(self, app_name: &str) -> Menu {
     let mut authors = Vec::new();
     authors.push("Layendan".to_string());
+    #[cfg(target_os = "macos")]
     return self.add_submenu(Submenu::new(
-      _app_name.to_string(),
+      app_name.to_string(),
       Menu::new()
         .add_native_item(MenuItem::About(
-          _app_name.to_string(),
+          app_name.to_string(),
           AboutMetadata::new()
             .version("0.0.1".to_string())
             .comments("Watch Anime On Cross-Platform".to_string())

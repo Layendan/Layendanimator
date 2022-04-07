@@ -1,1 +1,10 @@
-{"version":"0.0.1","name":"nineanimator","dependencies":{"@fontsource/fira-mono":{"version":"4.5.3"},"@tauri-apps/api":{"version":"1.0.0-rc.1"},"nprogress":{"version":"0.2.0"},"radix-icons-svelte":{"version":"1.2.1"}}}
+{
+  "version": "0.0.1",
+  "name": "nineanimator",
+  "dependencies": {
+    "@fontsource/fira-mono": { "version": "4.5.3" },
+    "@tauri-apps/api": { "version": "1.0.0-rc.1" },
+    "nprogress": { "version": "0.2.0" },
+    "radix-icons-svelte": { "version": "1.2.1" }
+  }
+}

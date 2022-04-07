@@ -141,7 +141,8 @@
         "unminimize": false
       }
     },
-    "windows": [{
+    "windows": [
+      {
         "title": "NineAnimator",
         "label": "main",
         "width": 1200,

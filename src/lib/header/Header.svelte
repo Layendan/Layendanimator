@@ -8,6 +8,11 @@
 
 <svelte:window bind:scrollY={y} />
 
+<!-- This is so that the default focus doesn't start at the link -->
+<!-- svelte-ignore a11y-missing-content -->
+<!-- svelte-ignore a11y-autofocus -->
+<a href="/" style="outline: none;" autofocus={true} />
+
 <header
   class:bottom-border={y > 40}
   style="background-color: rgba(51, 51, 51, {y < 40
@@ -15,7 +20,7 @@
     : 0.97});"
 >
   <div class="corner">
-    <a sveltekit:prefetch href="/" class="noselect">
+    <a sveltekit:prefetch href="/">
       <img src={logo} alt="SvelteKit" />
     </a>
   </div>
@@ -99,16 +104,5 @@
 
   .bottom-border {
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.5);
-  }
-
-  .noselect {
-    /* From https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting */
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Old versions of Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
   }
 </style>

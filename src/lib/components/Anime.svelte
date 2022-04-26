@@ -23,19 +23,19 @@
 
   // Instance variables for line clamping
   // Default 9 lines to clamp, but can be changed to be more or less
-  let pHeight = 0;
-  let titleHeight = 0;
-  let linesToClamp = 9;
+  // let pHeight = 0;
+  // let titleHeight = 0;
+  // let linesToClamp = 9;
 
   // Clamps the lines of the description until it fits within the given height
   // 220 is the height of the description + title text
   // 20 is for padding - can be changed
   // From: https://stackoverflow.com/questions/11856136/is-css3-line-clamp-possible-in-javascript
-  function clamp(pHeight) {
-    if (pHeight > 220 - titleHeight - 20 && linesToClamp >= 1) {
-      linesToClamp--;
-    }
-  }
+  // function clamp(pHeight) {
+  //   if (pHeight > 220 - titleHeight - 20 && linesToClamp >= 1) {
+  //     linesToClamp--;
+  //   }
+  // }
 
   // Removing line clamp as it lags page A LOT as it loads
   // Making it a function so that it only calls it with pHeight changes

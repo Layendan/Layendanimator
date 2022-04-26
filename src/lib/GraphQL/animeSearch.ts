@@ -1,4 +1,4 @@
-export default `query ($id: Int, $page: Int, $perPage: Int, $search: String, $isAdult: Boolean) {
+export default `query ($id: Int, $page: Int, $perPage: Int, $search: String) {
   Page(page: $page, perPage: $perPage) {
     pageInfo {
       total
@@ -11,9 +11,8 @@ export default `query ($id: Int, $page: Int, $perPage: Int, $search: String, $is
       id: $id
       search: $search
       type: ANIME
-      isAdult: $isAdult
       format_in: [TV, TV_SHORT, MOVIE, ONA, OVA, SPECIAL]
-      sort: [TRENDING_DESC, POPULARITY_DESC, START_DATE_DESC]
+      sort: [SEARCH_MATCH, TRENDING_DESC, POPULARITY_DESC, START_DATE_DESC]
     ) {
       id
       title {
@@ -32,6 +31,12 @@ export default `query ($id: Int, $page: Int, $perPage: Int, $search: String, $is
         url
         site
       }
+			averageScore
+			meanScore
+			tags {
+				name
+			}
+      genres
     }
   }
 }

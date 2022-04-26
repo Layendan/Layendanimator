@@ -29,7 +29,6 @@ export async function searchAnime(name: string): Promise<Array<any>> {
     search: name,
     page: 1,
     perPage: 15,
-    isAdult: false,
   };
 
   // Define the config we'll need for our Api request

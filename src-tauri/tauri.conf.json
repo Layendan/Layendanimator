@@ -29,13 +29,11 @@
       "shortDescription": "",
       "longDescription": "",
       "deb": {
-        "depends": [],
-        "useBootstrapper": false
+        "depends": []
       },
       "macOS": {
         "frameworks": [],
         "minimumSystemVersion": "",
-        "useBootstrapper": false,
         "exceptionDomain": "",
         "signingIdentity": null,
         "providerShortName": null,
@@ -141,8 +139,7 @@
         "unminimize": false
       }
     },
-    "windows": [
-      {
+    "windows": [{
         "title": "NineAnimator",
         "label": "main",
         "width": 1200,

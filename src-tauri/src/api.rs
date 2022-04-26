@@ -22,7 +22,10 @@ pub fn search_anime(name: String) {
 pub async fn add_module(link: String) -> Value {
     println!("Saving Module with link: {}", link);
 
-    let client = ClientBuilder::new().connect_timeout(10).build().unwrap(); // Create a new client
+    let client = ClientBuilder::new()
+        .connect_timeout(std::time::Duration::new(10, 0))
+        .build()
+        .unwrap(); // Create a new client
     let request = HttpRequestBuilder::new("GET", link).unwrap(); // Build new request
     let response = client.send(request).await; // Returns Result<Response, Error>
     let result = match response {

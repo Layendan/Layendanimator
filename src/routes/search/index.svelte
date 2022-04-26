@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import Anime from "$lib/components/Anime.svelte";
+  import SearchAnime from "$lib/components/SearchAnime.svelte";
   import { searchAnime } from "$lib/prefetch";
   import { fade } from "svelte/transition";
 
@@ -15,36 +15,53 @@
 
   // Have to listen to changes since the page does not reload
   page.subscribe(() => {
-    query = $page.url.searchParams.get("search")
-      ? $page.url.searchParams.get("search")
-      : "";
-
-    animes = searchAnime(query);
+    if (
+      $page.url.searchParams.get("search") &&
+      query !== $page.url.searchParams.get("search")
+    ) {
+      query = $page.url.searchParams.get("search");
+      animes = searchAnime(query);
+    }
   });
 </script>
 
 <main transition:fade>
   {#await animes then animeArray}
     {#each animeArray as anime}
-      <Anime
-        name={anime.title.english ? anime.title.english : anime.title.romaji}
-        thumbnail={anime.coverImage.large}
-        banner={anime.bannerImage}
+      <hr class="solid" />
+      <SearchAnime
+        title={anime.title.english ? anime.title.english : anime.title.romaji}
         link={anime.siteUrl}
         description={anime.description}
-        episodes={anime.streamingEpisodes}
+        thumbnail={anime.coverImage.large}
+        banner={anime.bannerImage}
+        ratings={anime.averageScore}
+        genres={anime.genres}
       />
+    {:else}
+      <p class="center">No results found</p>
     {/each}
   {/await}
 </main>
 
 <style>
   main {
-    display: grid;
+    display: list-item;
+    list-style: none;
+    vertical-align: top;
     width: 100%;
-    grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
-    row-gap: 1rem;
     margin-top: 1rem;
     transform: translateY(3em);
+  }
+  hr.solid {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-top: 1px solid rgba(66, 66, 66, 0.5);
+    border-color: #555;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  .center {
+    text-align: center;
   }
 </style>

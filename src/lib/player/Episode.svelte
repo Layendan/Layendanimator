@@ -2,7 +2,10 @@
   import { page } from "$app/stores";
 
   export let episode: any;
-  // let url = episode.url;
+  /**
+   *  Need to grab from local storage, 0-100
+   */
+  let timeWatched: number = Math.random() * 100;
 </script>
 
 <div class="episode">
@@ -12,7 +15,7 @@
       .pathname}/video?url={episode.url}&poster={episode.thumbnail}"
   >
     <img class="bg" src={episode.thumbnail} alt="" />
-    <div class="bg progress" style="width: {Math.random() * 100}%;" />
+    <div class="bg progress" style="width: {timeWatched}%;" />
     <span>
       <img class="image" src={episode.thumbnail} alt={episode.title} />
       <p>
@@ -51,7 +54,6 @@
     margin-right: 2em;
     border-radius: 5px;
     opacity: 1;
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
   }
 
   .episode {

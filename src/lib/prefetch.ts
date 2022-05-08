@@ -33,17 +33,34 @@ export async function searchAnime(name: string): Promise<Array<any>> {
 
   // Define the config we'll need for our Api request
   var url = "https://graphql.anilist.co",
-    options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        query: animeSearch,
-        variables: variables,
-      }),
-    };
+    options;
+
+  // if (access_token) {
+  //   options = {
+  //     method: "POST",
+  //     headers: {
+  //       Authorization: "Bearer " + access_token,
+  //       "Content-Type": "application/json",
+  //       Accept: "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       query: animeSearch,
+  //       variables: variables,
+  //     }),
+  //   };
+  // } else {
+  options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      query: animeSearch,
+      variables: variables,
+    }),
+  };
+  // }
 
   let response = await fetch(url, options);
   if (response.status == 429) {

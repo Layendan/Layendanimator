@@ -42,7 +42,7 @@
   .progress {
     background: #895ef4;
     filter: none;
-    transition: width 0.5s ease-in-out, opacity 0.1s ease-in-out;
+    transition: width 0.5s ease-in-out, opacity 0.4s ease-in-out;
   }
 
   .image {
@@ -81,10 +81,6 @@
     opacity: 0.5;
   }
 
-  .episode:hover p {
-    color: white;
-  }
-
   p {
     transition: color 0.2s ease-in-out;
   }
@@ -99,6 +95,6 @@
 
   a {
     text-decoration: none;
-    color: #895ef4;
+    color: white;
   }
 </style>

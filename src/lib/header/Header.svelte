@@ -4,6 +4,7 @@
 
   let y = 0;
   $: query = "";
+  let client_id: string = "4602";
 </script>
 
 <svelte:window bind:scrollY={y} />
@@ -21,11 +22,16 @@
 >
   <div class="corner">
     <a sveltekit:prefetch href="/">
-      <img src={logo} alt="SvelteKit" />
+      <img src={logo} alt="NineAnimator" />
     </a>
   </div>
 
-  <nav />
+  <nav>
+    <a
+      href="https://anilist.co/api/v2/oauth/authorize?client_id={client_id}&response_type=token"
+      >Login with AniList</a
+    >
+  </nav>
 
   <div class="corner">
     <input

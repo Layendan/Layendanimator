@@ -98,9 +98,8 @@
     overflow-y: hidden;
   }
 
-  a:focus > span {
-    outline: 20px solid #895ef4;
-    outline-offset: -4px;
+  a:focus > .holder {
+    border-color: #895ef4;
   }
 
   .unselectable {
@@ -173,6 +172,8 @@
     border-style: solid;
     border-width: 2px;
     background-color: rgb(30, 30, 30);
+
+    transition: border-color 0.2s ease-in-out;
   }
 
   .info {

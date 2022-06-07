@@ -5,6 +5,7 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 #![allow(dead_code)]
+#![allow(unused_imports)]
 
 mod api;
 mod menu;
@@ -12,7 +13,6 @@ mod menu;
 use crate::menu::AddDefaultSubmenus;
 use api::{add_module, close_splashscreen, search_anime};
 use tauri::{CustomMenuItem, Manager, Menu, Submenu};
-#[allow(unused_imports)]
 use window_vibrancy::{apply_mica, apply_vibrancy, NSVisualEffectMaterial};
 
 fn custom_item(name: &str) -> CustomMenuItem {

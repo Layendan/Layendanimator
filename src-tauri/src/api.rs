@@ -1,10 +1,10 @@
 use serde_json::json;
 use serde_json::value::Value;
 use tauri::api::http::{ClientBuilder, HttpRequestBuilder};
-use tauri::Manager;
+use tauri::{command, Manager};
 
 // API
-#[tauri::command]
+#[command]
 pub async fn close_splashscreen(window: tauri::Window) {
     if let Some(splashscreen) = window.get_window("splashscreen") {
         splashscreen.close().unwrap();
@@ -13,12 +13,12 @@ pub async fn close_splashscreen(window: tauri::Window) {
     window.get_window("main").unwrap().show().unwrap();
 }
 
-#[tauri::command]
+#[command]
 pub fn search_anime(name: String) {
     println!("I was invoked from JS! {}", name);
 }
 
-#[tauri::command]
+#[command]
 pub async fn add_module(link: String) -> Value {
     println!("Saving Module with link: {}", link);
 
@@ -64,4 +64,16 @@ pub async fn add_module(link: String) -> Value {
     });
 
     // return response_data.data;
+}
+
+#[command]
+pub fn fullscreen(window: tauri::Window, label: &str) {
+    // Only run the fullscreen command on windows since the actual window does not fullscreen
+    #![cfg(target_os = "windows")]
+    let target: tauri::Window = window
+        .get_window(if label.is_empty() { "main" } else { label })
+        .unwrap();
+
+    let is_fullscreen: bool = target.is_fullscreen().unwrap();
+    target.set_fullscreen(!is_fullscreen).unwrap();
 }

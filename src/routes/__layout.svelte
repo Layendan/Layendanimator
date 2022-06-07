@@ -1,6 +1,6 @@
 <script lang="ts">
   // Import required packages
-  import Header from "$lib/header/Header.svelte";
+  import Header from "$lib/components/header/Header.svelte";
   import "../app.css";
   import NProgress from "nprogress";
   import { navigating } from "$app/stores";
@@ -34,6 +34,7 @@
 
 <style>
   main {
+    color: var(--text-color);
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -42,8 +43,6 @@
     box-sizing: border-box;
 
     transform: translateY(-3em);
-
-    color: white;
   }
 
   footer {
@@ -55,7 +54,7 @@
     padding-left: 40px;
     padding-right: 40px; */
 
-    color: white;
+    color: var(--text-color);
   }
 
   @media (min-width: 480px) {

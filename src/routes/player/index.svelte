@@ -3,7 +3,7 @@
   import { fade } from "svelte/transition";
   import { page } from "$app/stores";
   import loadingFailure from "$lib/components/loading_failure.jpeg";
-  import EpisodeHolder from "$lib/player/EpisodeHolder.svelte";
+  import EpisodeHolder from "$lib/components/player/EpisodeHolder.svelte";
   import { onMount } from "svelte";
 
   // read queries from link
@@ -85,7 +85,8 @@
 
 <style>
   a {
-    color: white;
+    /* color: white; */
+    color: var(--text-color);
   }
 
   a:hover {
@@ -115,10 +116,11 @@
     right: 0;
     bottom: 0;
     left: 0;
+    /* background: linear-gradient(to bottom, rgba(31, 31, 31, 0.2) 50%, rgba(31, 31, 31, 1) 100%); */
     background: linear-gradient(
       to bottom,
-      rgba(31, 31, 31, 0.2) 50%,
-      rgba(31, 31, 31, 1) 100%
+      rgba(var(--secondary-rgb), 0.2) 50%,
+      rgba(var(--secondary-rgb), 1) 100%
     );
   }
 
@@ -128,7 +130,8 @@
     position: relative;
     display: block;
     margin-top: 0;
-    background-color: rgb(31, 31, 31);
+    /* background-color: rgb(31, 31, 31); */
+    background-color: var(--secondary-color);
     padding: 1rem;
   }
 

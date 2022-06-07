@@ -16,9 +16,15 @@
 
 <header
   class:bottom-border={y > 40}
-  style="background-color: rgba(51, 51, 51, {y < 40
-    ? y * 0.01675 + 0.3
-    : 0.97});"
+  style="background-color: rgba(var(--primary-rgb), {y < 40
+    ? y * 0.0125 + 0.3
+    : 0.8});
+    -webkit-backdrop-filter: blur({y < 40 ? y * 0.5 : 20}px) saturate({y < 40
+    ? y * -0.00625 + 1
+    : 0.75});
+		backdrop-filter: blur({y < 40 ? y * 0.5 : 20}px) saturate({y < 40
+    ? y * -0.00625 + 1
+    : 0.75});"
 >
   <div class="corner">
     <a sveltekit:prefetch href="/">
@@ -65,9 +71,9 @@
   }
 
   .search {
-    background-color: rgba(55, 55, 55, 0.5);
-    color: white;
-    accent-color: white;
+    background-color: rgba(var(--primary-rgb), 0.5);
+    color: var(--text-color);
+    accent-color: var(--accent-color);
   }
 
   .corner {
@@ -85,11 +91,11 @@
   }
 
   .corner a:focus > img {
-    outline: 2px solid #895ef4;
+    outline: 2px solid var(--accent-color);
   }
 
   .corner input:focus {
-    outline: 2px solid #895ef4;
+    outline: 2px solid var(--accent-color);
   }
 
   .corner img {
@@ -101,7 +107,7 @@
   nav {
     display: flex;
     justify-content: center;
-    --background: rgba(255, 255, 255, 0.7);
+    /* --background: rgba(var(--primary-rgb), 0.7); */
   }
 
   a:hover {

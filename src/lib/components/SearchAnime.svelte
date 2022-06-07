@@ -9,6 +9,7 @@
   export let ratings: number = 0;
   // export let tags: Array<any> = [];
   export let genres: Array<string> = [];
+  export let isNSFW: boolean = false;
 </script>
 
 <li>
@@ -22,7 +23,12 @@
         alt={title}
       />
       <div class="text">
-        <h1>{title}</h1>
+        <h1>
+          {title}
+          {#if isNSFW}
+            <span class="nsfw">18+</span>
+          {/if}
+        </h1>
         <p class="description">{@html description}</p>
         <p>{ratings ? `${ratings}%` : ""}</p>
         {#if genres.length !== 0}
@@ -58,6 +64,14 @@
     -webkit-box-orient: vertical;
     overflow-y: hidden;
     -webkit-line-clamp: 1;
+  }
+
+  h1 .nsfw {
+    color: var(--danger-color);
+    padding-top: 0.1em;
+    font-weight: bold;
+    font-size: smaller;
+    margin-left: 0.5em;
   }
 
   a {

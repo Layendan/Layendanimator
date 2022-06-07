@@ -37,6 +37,7 @@
         banner={anime.bannerImage}
         ratings={anime.averageScore}
         genres={anime.genres}
+        isNSFW={anime.isAdult}
       />
     {:else}
       <p class="center">No results found</p>

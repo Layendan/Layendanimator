@@ -122,6 +122,7 @@
                 link={anime.siteUrl}
                 description={anime.description}
                 episodes={anime.streamingEpisodes}
+                isNSFW={anime.isAdult}
               />
             {/each}
           {/await}
@@ -133,7 +134,8 @@
 
 <style>
   p {
-    color: white;
+    /* color: white; */
+    color: var(--text-color);
   }
   .anime-container {
     margin-left: 10px;
@@ -186,12 +188,12 @@
     height: 0.5em;
   }
   .windows-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(169, 169, 169, 0.7);
+    background-color: rgba(var(--tertiary-rgb), 0.7);
     border-radius: 5px;
   }
 
   .windows-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(85, 85, 85, 0.7);
+    background-color: rgba(var(--pure-white-rgb), 0.7);
   }
 
   .title {
@@ -204,8 +206,8 @@
 
   hr.solid {
     margin-top: 20px;
-    border-top: 1px solid rgba(66, 66, 66, 0.5);
-    border-color: #555;
+    border-top: 1px solid;
+    border-color: var(--secondary-color);
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
   }
 

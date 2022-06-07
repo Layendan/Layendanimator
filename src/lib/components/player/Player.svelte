@@ -1,8 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import { onMount } from "svelte";
-
-  let os: typeof import("@tauri-apps/api/os");
+  import { invoke } from "@tauri-apps/api/tauri";
   let window: typeof import("@tauri-apps/api/window");
 
   export let poster: string =
@@ -23,16 +22,11 @@
   let time: number = 0;
   let duration: number;
   let paused: boolean;
-  let platformType: string = "";
 
   // https://sapper.svelte.dev/docs/#Server-side_rendering
   // Will cause error on build since the api needs window which will not exist server side
   onMount(async () => {
-    os = await import("@tauri-apps/api/os");
     window = await import("@tauri-apps/api/window");
-
-    platformType = await os.platform();
-    console.log("Platform type: ", platformType);
   });
 </script>
 
@@ -45,22 +39,9 @@
   bind:paused
   on:fullscreenchange={() => {
     console.log("Fullscreen change");
-    // Not using webkit since it only applies to Safari and we don't care about Macs
-    // Apparently only triggers on requestFullscreen and controls button on chromium doesn't call it
-    // If on windows fullscreen application
-    if (platformType === "win32") {
-      if (document.fullscreenElement != null) {
-        // Make window fullscreen
-        window.getCurrent().setFullscreen(true);
 
-        console.log("Is fullscreen");
-      } else {
-        // Make window not fullscreen
-        window.getCurrent().setFullscreen(false);
-
-        console.log("Is not fullscreen");
-      }
-    }
+    // Call rust method for fullscreen
+    invoke(window.appWindow.label);
   }}
 >
   <source src={videoSrc} type={videoType} />

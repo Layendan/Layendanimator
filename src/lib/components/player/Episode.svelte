@@ -40,7 +40,7 @@
   }
 
   .progress {
-    background: #895ef4;
+    background: var(--accent-color);
     filter: none;
     transition: width 0.5s ease-in-out, opacity 0.4s ease-in-out;
   }
@@ -57,7 +57,7 @@
   }
 
   .episode {
-    background-color: #555;
+    background-color: var(--secondary-color);
     border-radius: 5px;
     margin-left: 2em;
     margin-right: 2em;
@@ -70,7 +70,7 @@
   }
 
   .episode:hover {
-    background-color: #444;
+    background-color: var(--tertiary-color);
   }
 
   .episode:hover .bg {
@@ -95,6 +95,6 @@
 
   a {
     text-decoration: none;
-    color: white;
+    color: var(--text-color);
   }
 </style>

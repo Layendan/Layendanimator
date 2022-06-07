@@ -37,6 +37,7 @@ export default `query ($id: Int, $page: Int, $perPage: Int, $search: String) {
 				name
 			}
       genres
+      isAdult
     }
   }
 }

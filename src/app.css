@@ -40,9 +40,19 @@ body {
     Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
+::selection {
+  background: var(--accent-color);
+}
+
+img {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 a {
-  color: rgb(0, 100, 200);
+  color: var(--text-color);
   text-decoration: none;
+  font-weight: bold;
 }
 
 a:hover {
@@ -76,8 +86,8 @@ input:disabled {
 }
 
 button {
-  color: #333;
-  background-color: #f4f4f4;
+  color: var(--tertiary-color);
+  background-color: var(--secondary-color);
   outline: none;
 }
 

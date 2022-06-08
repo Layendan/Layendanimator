@@ -71,9 +71,10 @@
   }
 
   .search {
-    background-color: rgba(var(--primary-rgb), 0.5);
+    background-color: rgba(var(--primary-rgb), 0.5) !important;
     color: var(--text-color);
     accent-color: var(--accent-color);
+    -webkit-appearance: textfield;
   }
 
   .corner {

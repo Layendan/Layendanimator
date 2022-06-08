@@ -95,6 +95,7 @@
 
   a {
     text-decoration: none;
+    font-weight: normal;
     color: var(--text-color);
   }
 </style>

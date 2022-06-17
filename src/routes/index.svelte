@@ -151,8 +151,8 @@
     width: auto;
     white-space: nowrap;
     padding-bottom: 15px;
-	-webkit-user-select: none;
-  	user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   /* Removing the shadows because I don't think they're needed, just commented out though in case I want to add it again */

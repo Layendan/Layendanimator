@@ -15,8 +15,10 @@
   --accent-color: #895ef4;
   --accent-rgb: 137, 94, 244;
   --text-color: #ffffff;
-  --danger-color: #d22630;
-  --danger-rgb: 210, 38, 48;
+  --danger-color: #dd3b3b;
+  --danger-rgb: 221, 59, 59;
+  --active-color: #2ea44f;
+  --active-hover-color: #2c974b;
 }
 
 html,
@@ -43,8 +45,10 @@ body {
 }
 
 img {
-  -webkit-user-select: none;
-  user-select: none;
+  -webkit-user-select: none; /* Chrome all / Safari all */
+  -moz-user-select: none; /* Firefox all */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Likely future */
 }
 
 a {

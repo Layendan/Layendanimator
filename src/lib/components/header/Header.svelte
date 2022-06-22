@@ -37,6 +37,7 @@
       href="https://anilist.co/api/v2/oauth/authorize?client_id={client_id}&response_type=token"
       >Login with AniList</a
     >
+    <a href="/settings">Settings</a>
   </nav>
 
   <div class="corner">
@@ -108,7 +109,8 @@
   nav {
     display: flex;
     justify-content: center;
-    /* --background: rgba(var(--primary-rgb), 0.7); */
+    align-items: center;
+    flex-direction: column;
   }
 
   a:hover {

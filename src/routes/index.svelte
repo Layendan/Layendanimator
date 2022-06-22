@@ -4,8 +4,8 @@
   import { fade } from "svelte/transition";
   import Anime from "$lib/components/Anime.svelte";
   import { onMount } from "svelte";
-
   import { getAnimes } from "../lib/prefetch";
+  import { settings } from "../model/settings";
 
   // 429 Error, too many requests
   const animes = [
@@ -67,7 +67,7 @@
   <title>Layendanimator</title>
 </svelte:head>
 
-<div class="container">
+<div class="container" transition:fade>
   {#await list}
     {#each animes as anime}
       <div
@@ -113,17 +113,19 @@
             <Anime />
           {:then parsedAnimes}
             {#each parsedAnimes as anime}
-              <Anime
-                name={anime.title.english
-                  ? anime.title.english
-                  : anime.title.romaji}
-                thumbnail={anime.coverImage.large}
-                banner={anime.bannerImage}
-                link={anime.siteUrl}
-                description={anime.description}
-                episodes={anime.streamingEpisodes}
-                isNSFW={anime.isAdult}
-              />
+              {#if $settings.allowNSFW || !anime.isAdult}
+                <Anime
+                  name={anime.title.english
+                    ? anime.title.english
+                    : anime.title.romaji}
+                  thumbnail={anime.coverImage.large}
+                  banner={anime.bannerImage}
+                  link={anime.siteUrl}
+                  description={anime.description}
+                  episodes={anime.streamingEpisodes}
+                  isNSFW={anime.isAdult}
+                />
+              {/if}
             {/each}
           {/await}
         </div>
@@ -146,13 +148,16 @@
   }
 
   .items {
+    display: inline-flexbox;
     overflow-x: scroll;
     overflow-y: hidden;
     width: auto;
     white-space: nowrap;
     padding-bottom: 15px;
-    -webkit-user-select: none;
-    user-select: none;
+    -webkit-user-select: none; /* Chrome all / Safari all */
+    -moz-user-select: none; /* Firefox all */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Likely future */
   }
 
   /* Removing the shadows because I don't think they're needed, just commented out though in case I want to add it again */

@@ -1,0 +1,24 @@
+{
+  "name": "layendanimator-base",
+  "tags": ["crunchyroll", "basic", "base"],
+  "description": "The basic layendanimator extention",
+  "sources": [
+    {
+      "id": "crunchyroll",
+      "name": "Crunchyroll",
+      "author": "Layendan",
+      "desc": "Extension that pulls anime from crunchyroll, includes Advanced Search and Updated manga fetching",
+      "website": "https://github.com/Layendan",
+      "contentRating": "MATURE",
+      "version": "0.0.1",
+      "icon": "icon.png",
+      "tags": [
+        {
+          "text": "Notifications",
+          "type": "success"
+        }
+      ],
+      "websiteBaseURL": "https://crunchyroll.com"
+    }
+  ]
+}

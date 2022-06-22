@@ -17,8 +17,8 @@ export async function getAnimes(titles: string[]): Promise<any> {
 export async function searchAnime(name: string): Promise<Array<any>> {
   // Use try-catch in case window is not defined
   try {
-    if (window.sessionStorage.getItem(name + "-search") != null) {
-      return JSON.parse(window.sessionStorage.getItem(name + "-search"));
+    if (window?.sessionStorage.getItem(name + "-search") != null) {
+      return JSON.parse(window?.sessionStorage.getItem(name + "-search"));
     }
   } catch (error) {
     console.error(error);
@@ -72,7 +72,7 @@ export async function searchAnime(name: string): Promise<Array<any>> {
 
   // Use try-catch in case window is not defined
   try {
-    window.sessionStorage.setItem(
+    window?.sessionStorage.setItem(
       name + "-search",
       JSON.stringify(animes.data.Page.media)
     );

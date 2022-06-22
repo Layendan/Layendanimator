@@ -48,50 +48,49 @@
   <link rel="preload" as="image" href={loadingFailure} />
 </svelte:head>
 
-<main transition:fade>
-  <body>
-    <a
-      href="/player?link={link}&name={name}&thumbnail={thumbnail}&banner={banner}&description={description}"
-      class:unselectable={link == null}
-    >
-      <span class="holder">
-        <img
-          on:error={() => (thumbnail = loadingFailure)}
-          src={thumbnail}
-          loading="lazy"
-          alt={name}
-        />
-        <div class="info">
-          <div class="text">
-            <!-- <h1
+<body transition:fade>
+  <a
+    href="/player?link={link}&name={name}&thumbnail={thumbnail}&banner={banner}&description={description}"
+    class:unselectable={link == null}
+  >
+    <span class="holder">
+      <img
+        on:error={() => (thumbnail = loadingFailure)}
+        src={thumbnail}
+        loading="lazy"
+        alt={name}
+      />
+      <div class="info">
+        <div class="text">
+          <!-- <h1
               class="line-clamp"
               bind:clientHeight={titleHeight}
               style="-webkit-line-clamp: 5;"
             > -->
-            <h1>
-              {name}
-              {#if isNSFW}
-                <span class="nsfw">18+</span>
-              {/if}
-            </h1>
-            <p>
-              <!-- <p
+          <h1>
+            {name}
+            {#if isNSFW}
+              <span class="nsfw">18+</span>
+            {/if}
+          </h1>
+          <p>
+            <!-- <p
                 class="line-clamp"
                 bind:clientHeight={pHeight}
                 style="-webkit-line-clamp: {linesToClamp};"
               > -->
-              {@html description}
-            </p>
-          </div>
+            {@html description}
+          </p>
         </div>
-      </span>
-    </a>
-  </body>
-</main>
+      </div>
+    </span>
+  </a>
+</body>
 
 <style>
-  main {
-    display: inline-block;
+  body {
+    width: auto;
+    display: inline-flex;
     vertical-align: top;
     margin-left: 15px;
     margin-right: 15px;
@@ -109,11 +108,11 @@
     pointer-events: none;
   }
 
-  main a {
+  body a {
     text-decoration: none;
   }
 
-  main img {
+  body img {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -124,17 +123,17 @@
     transition: filter 0.2s ease-in-out;
   }
 
-  main a:hover img {
+  body a:hover img {
     filter: brightness(115%);
   }
-  main a:hover .text {
+  body a:hover .text {
     transform: translateY(-1px);
   }
-  main a:hover .info {
+  body a:hover .info {
     background-color: var(--tertiary-color);
   }
 
-  main a:hover .holder {
+  body a:hover .holder {
     border-color: var(--pure-white);
   }
 

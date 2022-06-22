@@ -1,26 +1,21 @@
 <script lang="ts">
   import Episode from "./Episode.svelte";
+  import { settings } from "../../../model/settings";
 
   export let episodes: Array<any> = [];
 </script>
 
-<main>
-  <!-- vertically lists all of the episodes -->
-  <ul class="episode-list">
-    {#each episodes as episode}
-      <li>
-        <Episode {episode} />
-      </li>
-    {/each}
-  </ul>
-</main>
+<!-- vertically lists all of the episodes -->
+<ul>
+  {#each $settings.ordered ? episodes : [...episodes].reverse() as episode}
+    <li>
+      <Episode {episode} />
+    </li>
+  {/each}
+</ul>
 
 <style>
-  main {
-    margin: 0;
-    padding: 0;
-  }
-  .episode-list {
+  ul {
     display: flex;
     flex-direction: column;
     /* https://developer.mozilla.org/en-US/docs/Web/CSS/list-style */

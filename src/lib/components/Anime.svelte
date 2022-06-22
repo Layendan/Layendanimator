@@ -2,6 +2,7 @@
   // Import required packages
   import loadingFailure from "$lib/components/loading_failure.jpeg";
   import { fade } from "svelte/transition";
+  import DOMPurify from "dompurify";
 
   // Export component definitions
   export let name: string = undefined;
@@ -79,7 +80,7 @@
                 bind:clientHeight={pHeight}
                 style="-webkit-line-clamp: {linesToClamp};"
               > -->
-            {@html description}
+            {@html DOMPurify.sanitize(description)}
           </p>
         </div>
       </div>

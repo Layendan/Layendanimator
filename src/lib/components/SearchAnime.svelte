@@ -1,5 +1,6 @@
 <script lang="ts">
   import loadingFailure from "$lib/components/loading_failure.jpeg";
+  import DOMPurify from "dompurify";
 
   export let title: string;
   export let link: string;
@@ -29,7 +30,7 @@
             <span class="nsfw">18+</span>
           {/if}
         </h1>
-        <p class="description">{@html description}</p>
+        <p class="description">{@html DOMPurify.sanitize(description)}</p>
         <p>{ratings ? `${ratings}%` : ""}</p>
         {#if genres.length !== 0}
           <ul class="genres">

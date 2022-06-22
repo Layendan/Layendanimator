@@ -3,7 +3,7 @@
   export let description: string | undefined = undefined;
 </script>
 
-<div class="container" id={title}>
+<div class="container" id={$$props.id ?? ""}>
   <div class="title">
     <h2>{title}</h2>
     {#if description}

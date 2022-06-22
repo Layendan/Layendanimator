@@ -161,17 +161,17 @@
   dependencies:
     tiny-glob "^0.2.9"
 
-"@sveltejs/kit@^1.0.0-next.350":
-  version "1.0.0-next.350"
-  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.0.0-next.350.tgz#b90fc2f337b518837664b47c0fe77a978d00c1ce"
-  integrity sha512-qkZNjp7yIj6t91+wMhmMtGJH0Lb89OaKdVXUDy92CS5/4OHRTKcQPdfOKs4no/upkS3RiFb+rEpOkYqTMcPUXg==
+"@sveltejs/kit@^1.0.0-next.352":
+  version "1.0.0-next.352"
+  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.0.0-next.352.tgz#91dd2d6152033dac1418d77bfb8648723d41d49f"
+  integrity sha512-cYQWGZ2TU1iMsh1cqi44FJm5Aqs3iOkuUOnRpoecthcbmiZaqkD1sPG/uROBIPexXSbfyUfrck/hgr9vdCAmCw==
   dependencies:
-    "@sveltejs/vite-plugin-svelte" "^1.0.0-next.46"
+    "@sveltejs/vite-plugin-svelte" "^1.0.0-next.48"
     chokidar "^3.5.3"
     sade "^1.8.1"
     vite "^2.9.10"
 
-"@sveltejs/vite-plugin-svelte@^1.0.0-next.46":
+"@sveltejs/vite-plugin-svelte@^1.0.0-next.48":
   version "1.0.0-next.49"
   resolved "https://registry.yarnpkg.com/@sveltejs/vite-plugin-svelte/-/vite-plugin-svelte-1.0.0-next.49.tgz#44cc00a19c6c23002516b66c5ab90ee66720df57"
   integrity sha512-AKh0Ka8EDgidnxWUs8Hh2iZLZovkETkefO99XxZ4sW4WGJ7VFeBx5kH/NIIGlaNHLcrIvK3CK0HkZwC3Cici0A==
@@ -760,6 +760,11 @@ doctrine@^3.0.0:
   integrity sha512-yS+Q5i3hBf7GBkd4KG8a7eBNNWNGLTaEwwYWUijIYM7zrlYDM0BFXHjjPWlWZ1Rg7UaddZeIDmi9jF3HmqiQ2w==
   dependencies:
     esutils "^2.0.2"
+
+dompurify@^2.3.8:
+  version "2.3.8"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.3.8.tgz#224fe9ae57d7ebd9a1ae1ac18c1c1ca3f532226f"
+  integrity sha512-eVhaWoVibIzqdGYjwsBWodIQIaXFSB+cKDf4cfxLMsK0xiud6SE+/WCVx/Xw/UwQsa4cS3T2eITcdtmTg2UKcw==
 
 dot-prop@^5.2.0:
   version "5.3.0"
@@ -1933,11 +1938,12 @@ npm-normalize-package-bin@^1.0.1:
   integrity sha512-EPfafl6JL5/rU+ot6P3gRSCpPDW5VmIzX959Ob1+ySFUuuYHWHekXpwdUZcKP5C+DS4GEtdJluwBjnsNDl+fSA==
 
 npm-package-arg@^9.0.0, npm-package-arg@^9.0.1:
-  version "9.0.2"
-  resolved "https://registry.yarnpkg.com/npm-package-arg/-/npm-package-arg-9.0.2.tgz#f3ef7b1b3b02e82564af2d5228b4c36567dcd389"
-  integrity sha512-v/miORuX8cndiOheW8p2moNuPJ7QhcFh9WGlTorruG8hXSA23vMTEp5hTCmDxic0nD8KHhj/NQgFuySD3GYY3g==
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/npm-package-arg/-/npm-package-arg-9.1.0.tgz#a60e9f1e7c03e4e3e4e994ea87fff8b90b522987"
+  integrity sha512-4J0GL+u2Nh6OnhvUKXRr2ZMG4lR8qtLp+kv7UiV00Y+nGiSxtttCyIRHCt5L5BNkXQld/RceYItau3MDOoGiBw==
   dependencies:
     hosted-git-info "^5.0.0"
+    proc-log "^2.0.1"
     semver "^7.3.5"
     validate-npm-package-name "^4.0.0"
 
@@ -2147,7 +2153,7 @@ prettier@^2.7.1:
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.7.1.tgz#e235806850d057f97bb08368a4f7d899f7760c64"
   integrity sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==
 
-proc-log@^2.0.0:
+proc-log@^2.0.0, proc-log@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/proc-log/-/proc-log-2.0.1.tgz#8f3f69a1f608de27878f91f5c688b225391cb685"
   integrity sha512-Kcmo2FhfDTXdcbfDH76N7uBYHINxc/8GW7UAVuVP9I+Va3uHSerrnKV6dLooga/gh7GlgzuCCr/eoldnL1muGw==

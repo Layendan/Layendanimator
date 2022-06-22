@@ -5,6 +5,8 @@
   import loadingFailure from "$lib/components/loading_failure.jpeg";
   import EpisodeHolder from "$lib/components/player/EpisodeHolder.svelte";
   import { onMount } from "svelte";
+  import { settings } from "../../model/settings";
+  import DOMPurify from "dompurify";
 
   // read queries from link
   let link: string = $page.url.searchParams.get("link");
@@ -43,18 +45,26 @@
 
 <section transition:fade>
   {#if banner != "null"}
-    <div class="banner">
-      <img
-        src={banner}
-        alt={name}
-        transition:fade
-        style="transform: scale({y < 345
-          ? 0.005 * Math.abs(y) + 1
-          : 0.005 * 345 + 1}); filter: blur({y < 345
-          ? 0.05 * Math.abs(y)
-          : 0.05 * 345}px) brightness({y < 345 ? -Math.abs(y) / 345 + 1 : 0});"
-      />
-    </div>
+    {#if $settings.reduceMotion}
+      <div class="banner">
+        <img src={banner} alt={name} transition:fade />
+      </div>
+    {:else}
+      <div class="banner">
+        <img
+          src={banner}
+          alt={name}
+          transition:fade
+          style="transform: scale({y < 345
+            ? 0.005 * Math.abs(y) + 1
+            : 0.005 * 345 + 1}); filter: blur({y < 345
+            ? 0.05 * Math.abs(y)
+            : 0.05 * 345}px) brightness({y < 345
+            ? -Math.abs(y) / 345 + 1
+            : 0});"
+        />
+      </div>
+    {/if}
   {/if}
   <div transition:fade class="text">
     <div class="container">
@@ -70,7 +80,7 @@
         <div>
           <a href={link} class="title">{name}</a>
           <p transition:fade class="description">
-            {@html description}
+            {@html DOMPurify.sanitize(description)}
           </p>
         </div>
       </div>

@@ -2,6 +2,7 @@
   import { page } from "$app/stores";
   import SearchAnime from "$lib/components/SearchAnime.svelte";
   import { searchAnime } from "$lib/prefetch";
+  import { onDestroy } from "svelte";
   import { fade } from "svelte/transition";
 
   let query: string = $page.url.searchParams.get("search")
@@ -14,7 +15,7 @@
   console.log(animes);
 
   // Have to listen to changes since the page does not reload
-  page.subscribe(() => {
+  const unsubscribe = page.subscribe(() => {
     if (
       $page.url.searchParams.get("search") &&
       query !== $page.url.searchParams.get("search")
@@ -23,6 +24,8 @@
       animes = searchAnime(query);
     }
   });
+
+  onDestroy(unsubscribe);
 </script>
 
 <main transition:fade>
@@ -42,6 +45,8 @@
     {:else}
       <p class="center">No results found</p>
     {/each}
+  {:catch}
+    <p class="center">Something went wrong, Please try again later</p>
   {/await}
 </main>
 

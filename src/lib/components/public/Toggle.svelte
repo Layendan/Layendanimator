@@ -1,10 +1,11 @@
 <script lang="ts">
   export let checked: boolean = false;
+  export let disabled: boolean = false;
 </script>
 
 <span class="container">
   <label class="switch">
-    <input type="checkbox" bind:checked on:change />
+    <input type="checkbox" bind:checked on:change {disabled} />
     <span class="slider" />
   </label>
   <slot />
@@ -15,6 +16,11 @@
     display: flex;
     align-items: center;
     column-gap: 1rem;
+  }
+
+  input:disabled ~ * {
+    filter: brightness(70%);
+    cursor: default;
   }
 
   /* The switch - the box around the slider */

@@ -5,6 +5,11 @@
   import NProgress from "nprogress";
   import { navigating } from "$app/stores";
   import "$lib/components/nprogress.css";
+  import { settings } from "../model/settings";
+  import { onDestroy, onMount } from "svelte";
+  import type { UnlistenFn } from "@tauri-apps/api/event";
+  let event: typeof import("@tauri-apps/api/event");
+  let unlisten: UnlistenFn = () => {};
 
   // Configure NProgress bar
   NProgress.configure({
@@ -22,15 +27,44 @@
       NProgress.done();
     }
   }
+
+  onMount(async () => {
+    event = await import("@tauri-apps/api/event");
+
+    unlisten = await event.listen<string>("tauri://theme-changed", (event) => {
+      console.log(`Theme changed to ${event.payload}`);
+      if ($settings.theme.syncWithSystem === true) {
+        settings.set({
+          ...$settings,
+          theme: {
+            ...$settings.theme,
+            details: {
+              ...$settings.theme.details,
+              appearance: event.payload as "dark" | "light",
+            },
+          },
+        });
+      }
+    });
+  });
+
+  // removes the listener later
+  onDestroy(async () => {
+    await unlisten();
+  });
 </script>
 
-<Header />
+<body
+  class={$settings.theme.enabled ? $settings.theme.details.appearance : "dark"}
+>
+  <Header />
 
-<main>
-  <slot />
-</main>
+  <main>
+    <slot />
+  </main>
 
-<footer />
+  <footer />
+</body>
 
 <style>
   main {
@@ -50,9 +84,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    /* padding-top: 40px;
-    padding-left: 40px;
-    padding-right: 40px; */
 
     color: var(--text-color);
   }

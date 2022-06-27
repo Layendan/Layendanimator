@@ -35,7 +35,7 @@
 
   .active:not(:disabled):hover {
     background-color: var(--active-hover-color);
-    color: var(--text-color);
+    color: var(--text-hover-color);
   }
 
   .danger {
@@ -45,7 +45,7 @@
 
   .danger:not(:disabled):hover {
     background-color: var(--danger-color);
-    color: var(--text-color);
+    color: var(--text-hover-color);
   }
 
   .active:disabled {
@@ -59,7 +59,7 @@
 
   .default:not(:disabled):hover {
     background-color: var(--accent-color);
-    color: var(--text-color);
+    color: var(--text-hover-color);
   }
 
   .active:disabled {

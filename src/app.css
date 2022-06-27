@@ -6,6 +6,9 @@
   --font-mono: "Fira Mono", monospace;
   --pure-white: #ffffff;
   --pure-white-rgb: 255, 255, 255;
+}
+
+.dark {
   --primary-color: #1f1f1f;
   --primary-rgb: 31, 31, 31;
   --secondary-color: #292929;
@@ -15,10 +18,33 @@
   --accent-color: #895ef4;
   --accent-rgb: 137, 94, 244;
   --text-color: #ffffff;
+  --text-hover-color: #ffffff;
   --danger-color: #dd3b3b;
   --danger-rgb: 221, 59, 59;
   --active-color: #2ea44f;
   --active-hover-color: #2c974b;
+}
+
+.light {
+  --primary-color: #ffffff;
+  --primary-rgb: 255, 255, 255;
+  --secondary-color: #f5f5f5;
+  --secondary-rgb: 245, 245, 245;
+  --tertiary-color: #d9d9d9;
+  --tertiary-rgb: 217, 217, 217;
+  --accent-color: #895ef4;
+  --accent-rgb: 137, 94, 244;
+  --text-color: #000000;
+  --text-hover-color: #ffffff;
+  --danger-color: #dd3b3b;
+  --danger-rgb: 221, 59, 59;
+  --active-color: #2ea44f;
+  --active-hover-color: #2c974b;
+}
+
+* {
+  -webkit-transition: all 0.1s;
+  transition: all 0.1s;
 }
 
 html,
@@ -81,26 +107,4 @@ textarea {
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 2px;
-}
-
-input:disabled {
-  color: #ccc;
-}
-
-button {
-  color: var(--tertiary-color);
-  background-color: var(--secondary-color);
-  outline: none;
-}
-
-button:disabled {
-  color: #999;
-}
-
-button:not(:disabled):active {
-  background-color: #ddd;
-}
-
-button:focus {
-  border-color: #666;
 }

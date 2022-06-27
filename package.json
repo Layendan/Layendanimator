@@ -19,19 +19,19 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^1.0.0-next.34",
-    "@sveltejs/kit": "^1.0.0-next.352",
+    "@sveltejs/kit": "^1.0.0-next.354",
     "@tauri-apps/cli": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
     "eslint": "^8.18.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
-    "npm-check-updates": "^14.0.1",
+    "npm-check-updates": "^14.1.1",
     "prettier": "^2.7.1",
     "prettier-plugin-svelte": "^2.7.0",
     "svelte": "^3.48.0",
-    "svelte-check": "^2.7.2",
-    "svelte-preprocess": "^4.10.7",
+    "svelte-check": "^2.8.0",
+    "svelte-preprocess": "^4.10.5",
     "tslib": "^2.4.0",
     "typescript": "~4.7.4"
   },
@@ -41,6 +41,7 @@
     "@tauri-apps/api": "^1.0.1",
     "dompurify": "^2.3.8",
     "nprogress": "^0.2.0",
-    "radix-icons-svelte": "^1.2.1"
+    "radix-icons-svelte": "^1.2.1",
+    "tauri-settings": "^0.1.2"
   }
 }

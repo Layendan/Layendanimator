@@ -3,7 +3,16 @@
   import ExternalLink from "$lib/components/public/ExternalLink.svelte";
   import Toggle from "$lib/components/public/Toggle.svelte";
   import Group from "$lib/components/settings/Group.svelte";
-  import { settings } from "../../model/settings";
+  import { defaultSettings, settings } from "../../model/settings";
+
+  function clearCache() {
+    window?.sessionStorage.clear();
+  }
+
+  function reset() {
+    clearCache();
+    settings.set(defaultSettings);
+  }
 </script>
 
 <main>
@@ -79,6 +88,47 @@
     >
       Enable Theming
     </Toggle>
+    <Toggle
+      on:change={async () => {
+        settings.set({
+          ...$settings,
+          theme: {
+            ...$settings.theme,
+            syncWithSystem: !$settings.theme.syncWithSystem,
+            details: {
+              ...$settings.theme.details,
+              appearance: $settings.theme.syncWithSystem
+                ? $settings.theme.details.appearance
+                : await window?.__TAURI__?.window.appWindow.theme(),
+            },
+          },
+        });
+      }}
+      checked={$settings.theme.syncWithSystem}
+      disabled={!$settings.theme.enabled}
+    >
+      Sync With System
+    </Toggle>
+    <Toggle
+      on:change={() =>
+        settings.set({
+          ...$settings,
+          theme: {
+            ...$settings.theme,
+            details: {
+              ...$settings.theme.details,
+              appearance:
+                $settings.theme.details.appearance === "light"
+                  ? "dark"
+                  : "light",
+            },
+          },
+        })}
+      checked={$settings.theme.details.appearance !== "light"}
+      disabled={!$settings.theme.enabled || $settings.theme.syncWithSystem}
+    >
+      Dark Mode
+    </Toggle>
     <div class="button-holder">
       <Button class="button" disabled={!$settings.theme.enabled}
         >Import Theme</Button
@@ -100,13 +150,19 @@
     <div class="button-holder">
       <Button class="button">Create Backup</Button>
       <Button class="button">Import Backup</Button>
-      <Button class="button" on:click={() => window?.sessionStorage.clear()}
-        >Clear Cached Data</Button
-      >
+      <Button class="button" on:click={clearCache}>Clear Cached Data</Button>
       <Button class="button">Clear Search History</Button>
       <Button class="button">Clear Browse History</Button>
       <Button class="button">Clear Downloads</Button>
-      <Button class="button" buttonType="danger">Reset</Button>
+      <Button
+        class="button"
+        buttonType="danger"
+        on:click={async () =>
+          (await window?.__TAURI__?.dialog.confirm("(There is no going back)", {
+            title: "Are you sure you want to reset everything?",
+            type: "warning",
+          })) && reset()}>Reset</Button
+      >
     </div>
   </Group>
 </main>

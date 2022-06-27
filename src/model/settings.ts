@@ -2,6 +2,7 @@ import { writable } from "svelte/store";
 
 export interface Theme {
   source: string;
+  appearance?: "dark" | "light";
 }
 
 export interface Settings {
@@ -14,14 +15,26 @@ export interface Settings {
   };
   theme: {
     enabled: boolean;
+    syncWithSystem: boolean;
     details?: Theme;
   };
 }
 
-export const settings = writable<Settings>({
+export const defaultSettings: Settings = {
   allowNSFW: false,
   ordered: true,
   reduceMotion: false,
-  notifications: { enabled: true, grouped: false },
-  theme: { enabled: false, details: { source: "" } },
-});
+  notifications: {
+    enabled: true,
+    grouped: false,
+  },
+  theme: {
+    enabled: false,
+    syncWithSystem: true,
+    details: {
+      source: "dark",
+    },
+  },
+};
+
+export const settings = writable<Settings>(defaultSettings);

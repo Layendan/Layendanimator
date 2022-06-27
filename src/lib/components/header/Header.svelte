@@ -5,6 +5,10 @@
   let y = 0;
   $: query = "";
   let client_id: string = "4602";
+
+  $: opacity = y < 40 ? y * 0.0125 + 0.3 : 0.8;
+  $: blur = `${y < 40 ? y * 0.5 : 20}px`;
+  $: saturation = y < 40 ? y * -0.00625 + 1 : 0.75;
 </script>
 
 <svelte:window bind:scrollY={y} />
@@ -16,15 +20,9 @@
 
 <header
   class:bottom-border={y > 40}
-  style="background-color: rgba(var(--primary-rgb), {y < 40
-    ? y * 0.0125 + 0.3
-    : 0.8});
-    -webkit-backdrop-filter: blur({y < 40 ? y * 0.5 : 20}px) saturate({y < 40
-    ? y * -0.00625 + 1
-    : 0.75});
-		backdrop-filter: blur({y < 40 ? y * 0.5 : 20}px) saturate({y < 40
-    ? y * -0.00625 + 1
-    : 0.75});"
+  style:--header-opacity={opacity}
+  style:--header-blur={blur}
+  style:--header-saturation={saturation}
 >
   <div class="corner">
     <a sveltekit:prefetch href="/">
@@ -45,7 +43,6 @@
       type="search"
       placeholder="Search"
       class="search"
-      style="transform: translateX(-13em); margin-top: 0.5em;"
       autocapitalize="words"
       bind:value={query}
       on:keydown={(event) => {
@@ -69,6 +66,11 @@
     overflow: hidden;
 
     transition: box-shadow 0.2s ease-in-out;
+
+    background-color: rgba(var(--primary-rgb), var(--header-opacity));
+    -webkit-backdrop-filter: blur(var(--header-blur))
+      saturate(var(--header-saturation));
+    backdrop-filter: blur(var(--header-blur)) saturate(var(--header-saturation));
   }
 
   .search {
@@ -76,6 +78,8 @@
     color: var(--text-color);
     accent-color: var(--accent-color);
     -webkit-appearance: textfield;
+    transform: translateX(-13em);
+    margin-top: 0.3rem;
   }
 
   .corner {

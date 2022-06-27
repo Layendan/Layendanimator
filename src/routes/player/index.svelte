@@ -35,6 +35,10 @@
 
   // Page scroll
   let y = 0;
+
+  $: scale = y < 345 ? 0.005 * Math.abs(y) + 1 : 0.005 * 345 + 1;
+  $: blur = `${y < 345 ? 0.05 * Math.abs(y) : 0.05 * 345}px`;
+  $: brightness = y < 345 ? -Math.abs(y) / 345 + 1 : 0;
 </script>
 
 <svelte:window bind:scrollY={y} />
@@ -44,27 +48,18 @@
 </svelte:head>
 
 <section transition:fade>
-  {#if banner != "null"}
-    {#if $settings.reduceMotion}
-      <div class="banner">
-        <img src={banner} alt={name} transition:fade />
-      </div>
-    {:else}
-      <div class="banner">
-        <img
-          src={banner}
-          alt={name}
-          transition:fade
-          style="transform: scale({y < 345
-            ? 0.005 * Math.abs(y) + 1
-            : 0.005 * 345 + 1}); filter: blur({y < 345
-            ? 0.05 * Math.abs(y)
-            : 0.05 * 345}px) brightness({y < 345
-            ? -Math.abs(y) / 345 + 1
-            : 0});"
-        />
-      </div>
-    {/if}
+  {#if banner !== "null"}
+    <div class="banner">
+      <img
+        src={banner}
+        alt={name}
+        transition:fade
+        class:reduce-motion={$settings.reduceMotion}
+        style:--banner-scale={scale}
+        style:--banner-blur={blur}
+        style:--banner-brightness={brightness}
+      />
+    </div>
   {/if}
   <div transition:fade class="text">
     <div class="container">
@@ -117,6 +112,13 @@
     object-fit: cover;
     object-position: center;
     position: relative;
+  }
+
+  .banner img:not(.reduce-motion) {
+    transform: scale(var(--banner-scale));
+    -webkit-filter: blur(var(--banner-blur))
+      brightness(var(--banner-brightness));
+    filter: blur(var(--banner-blur)) brightness(var(--banner-brightness));
   }
 
   .banner::after {

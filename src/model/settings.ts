@@ -32,7 +32,8 @@ export const defaultSettings: Settings = {
     enabled: false,
     syncWithSystem: true,
     details: {
-      source: "dark",
+      source: "",
+      appearance: "dark",
     },
   },
 };

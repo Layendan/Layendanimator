@@ -30,13 +30,7 @@
     "Star Wars",
     "Re:CREATORS",
     "Evangelion",
-    // "Sahate No Paladin",
-    // "Death Note",
-    // "Grand Blue",
-    // "Totoro",
-    // "Akame Ga Kill",
-    // "In Another World With My Smartphone",
-    // "Isekai Quartet",
+    "Sahate No Paladin",
   ];
 
   let list: any = [];

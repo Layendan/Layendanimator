@@ -1,0 +1,11 @@
+# All Svelte Files
+.DS_Store
+node_modules
+.svelte-kit
+package
+dist
+out
+build
+
+# All Tauri Files
+**/target

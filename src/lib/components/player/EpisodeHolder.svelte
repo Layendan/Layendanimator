@@ -1,6 +1,6 @@
 <script lang="ts">
   import Episode from "./Episode.svelte";
-  import { settings } from "../../../model/settings";
+  import { settings } from "$lib/model/settings";
 
   export let episodes: Array<any> = [];
 </script>

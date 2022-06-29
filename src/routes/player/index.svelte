@@ -5,7 +5,7 @@
   import loadingFailure from "$lib/components/loading_failure.jpeg";
   import EpisodeHolder from "$lib/components/player/EpisodeHolder.svelte";
   import { onMount } from "svelte";
-  import { settings } from "../../model/settings";
+  import { settings } from "$lib/model/settings";
   import DOMPurify from "dompurify";
 
   // read queries from link

@@ -3,7 +3,10 @@
   import ExternalLink from "$lib/components/public/ExternalLink.svelte";
   import Toggle from "$lib/components/public/Toggle.svelte";
   import Group from "$lib/components/settings/Group.svelte";
-  import { defaultSettings, settings } from "../../model/settings";
+  import { defaultSettings, settings } from "$lib/model/settings";
+  import anilistIcon from "$lib/components/anilist.png";
+
+  let client_id: string = "4602";
 
   function clearCache() {
     window?.sessionStorage.clear();
@@ -44,6 +47,22 @@
     >
       Reduce Motion
     </Toggle>
+  </Group>
+  <Group
+    title="Third-Party Connections"
+    description="Connect to third-party services"
+  >
+    <Button
+      on:click={() =>
+        window?.__TAURI__?.shell.open(
+          `https://anilist.co/api/v2/oauth/authorize?client_id=${client_id}&response_type=token`
+        )}
+    >
+      <span>
+        Connect to Anilist
+        <img src={anilistIcon} alt="anilist" />
+      </span>
+    </Button>
   </Group>
   <Group title="Notifications" description="Notification Settings">
     <Toggle
@@ -174,6 +193,19 @@
     margin: 2rem;
     margin-top: 5rem;
     row-gap: 1rem;
+  }
+
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 0.5rem;
+  }
+
+  span > img {
+    height: 1.5rem;
+    width: 1.5rem;
+    border-radius: 5px;
   }
 
   .button-holder :global(.button) {

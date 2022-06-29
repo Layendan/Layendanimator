@@ -19,10 +19,10 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^1.0.0-next.34",
-    "@sveltejs/kit": "^1.0.0-next.354",
-    "@tauri-apps/cli": "^1.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.29.0",
-    "@typescript-eslint/parser": "^5.29.0",
+    "@sveltejs/kit": "^1.0.0-next.355",
+    "@tauri-apps/cli": "^1.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "@typescript-eslint/parser": "^5.30.0",
     "eslint": "^8.18.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
@@ -31,7 +31,7 @@
     "prettier-plugin-svelte": "^2.7.0",
     "svelte": "^3.48.0",
     "svelte-check": "^2.8.0",
-    "svelte-preprocess": "^4.10.5",
+    "svelte-preprocess": "^4.10.7",
     "tslib": "^2.4.0",
     "typescript": "~4.7.4"
   },

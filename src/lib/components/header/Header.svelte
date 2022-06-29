@@ -4,7 +4,6 @@
 
   let y = 0;
   $: query = "";
-  let client_id: string = "4602";
 
   $: opacity = y < 40 ? y * 0.0125 + 0.3 : 0.8;
   $: blur = `${y < 40 ? y * 0.5 : 20}px`;
@@ -31,10 +30,6 @@
   </div>
 
   <nav>
-    <a
-      href="https://anilist.co/api/v2/oauth/authorize?client_id={client_id}&response_type=token"
-      >Login with AniList</a
-    >
     <a href="/settings">Settings</a>
   </nav>
 
@@ -115,6 +110,10 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+  }
+
+  a {
+    color: var(--text-color);
   }
 
   a:hover {

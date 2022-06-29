@@ -5,7 +5,7 @@
   import Anime from "$lib/components/Anime.svelte";
   import { onMount } from "svelte";
   import { getAnimes } from "../lib/prefetch";
-  import { settings } from "../model/settings";
+  import { settings } from "$lib/model/settings";
 
   // 429 Error, too many requests
   const animes = [

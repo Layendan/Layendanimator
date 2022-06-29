@@ -5,7 +5,7 @@
   import NProgress from "nprogress";
   import { navigating } from "$app/stores";
   import "$lib/components/nprogress.css";
-  import { settings } from "../model/settings";
+  import { settings } from "$lib/model/settings";
   import { onDestroy, onMount } from "svelte";
   import type { UnlistenFn } from "@tauri-apps/api/event";
   let event: typeof import("@tauri-apps/api/event");
@@ -33,7 +33,7 @@
 
     unlisten = await event.listen<string>("tauri://theme-changed", (event) => {
       console.log(`Theme changed to ${event.payload}`);
-      if ($settings.theme.syncWithSystem === true) {
+      $settings.theme.syncWithSystem &&
         settings.set({
           ...$settings,
           theme: {
@@ -44,7 +44,6 @@
             },
           },
         });
-      }
     });
   });
 

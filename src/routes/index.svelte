@@ -143,7 +143,7 @@
 
   .items {
     display: inline-flexbox;
-    overflow-x: scroll;
+    overflow-x: auto;
     overflow-y: hidden;
     width: auto;
     white-space: nowrap;

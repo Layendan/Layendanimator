@@ -12,9 +12,11 @@
   import anilistIcon from "$lib/components/assets/anilist.png";
   import darkPreview from "$lib/components/assets/dark.png";
   import { onMount } from "svelte";
+  import { capitalize } from "$lib/model/global";
   let open: typeof import("@tauri-apps/api/dialog").open;
   let confirm: typeof import("@tauri-apps/api/dialog").confirm;
   let downloadDir: typeof import("@tauri-apps/api/path").downloadDir;
+  let sep: typeof import("@tauri-apps/api/path").sep;
   let notification: typeof import("@tauri-apps/api/notification");
 
   onMount(async () => {
@@ -22,20 +24,34 @@
     open = dialog.open;
     confirm = dialog.confirm;
     downloadDir = (await import("@tauri-apps/api/path")).downloadDir;
+    sep = (await import("@tauri-apps/api/path")).sep;
     notification = await import("@tauri-apps/api/notification");
   });
 
   let client_id: string = "4602";
 
+  /**
+   * Clears the session storage.
+   */
   function clearCache() {
     window?.sessionStorage.clear();
   }
 
+  /**
+   * Resets the entirety of the application.
+   */
   function reset() {
     clearCache();
     settings.set(defaultSettings);
   }
 
+  /**
+   * Opens a dialog box to choose which theme(s) to import.
+   *
+   * This function removes any duplicate themes.
+   *
+   * @returns A promise that resolves to the chosen theme(s).
+   */
   async function importCustomThemes(): Promise<CustomTheme[]> {
     let items: string[] = [
       ...(await open({
@@ -51,21 +67,21 @@
       })),
     ];
 
-    items.forEach((item) => {
-      console.log(item);
-    });
     let themes: CustomTheme[] = items.map((element) => {
       return {
-        name: element.substring(element.search("([^/]+$)")).replace(".css", ""),
+        name: element
+          .substring(element.lastIndexOf(sep) + 1)
+          .replace(".css", ""),
         source: element,
       };
     });
 
-    return themes;
-  }
+    themes = themes.filter(
+      (item) =>
+        !$settings.customThemes.some((theme) => theme.source === item.source)
+    );
 
-  async function getCustomTheme(): Promise<CustomTheme> {
-    return $settings.customThemes[0] ?? { name: "test", source: "test" };
+    return themes;
   }
 </script>
 
@@ -154,7 +170,6 @@
   <Group title="Customization" description="Personalize the App">
     <div class="theme-holder">
       <ThemePreview
-        title={"Dark Mode"}
         image={darkPreview}
         selected={!$settings.theme.syncWithSystem &&
           $settings.theme.appearance === "dark"}
@@ -166,10 +181,9 @@
               syncWithSystem: false,
               appearance: "dark",
             },
-          })}
-      />
+          })}>Dark Mode</ThemePreview
+      >
       <ThemePreview
-        title={"Light Mode"}
         image={darkPreview}
         selected={!$settings.theme.syncWithSystem &&
           $settings.theme.appearance === "light"}
@@ -181,10 +195,9 @@
               syncWithSystem: false,
               appearance: "light",
             },
-          })}
-      />
+          })}>Light Mode</ThemePreview
+      >
       <ThemePreview
-        title={"Sync With System"}
         image={darkPreview}
         selected={$settings.theme.syncWithSystem}
         on:click={async () =>
@@ -195,25 +208,23 @@
               syncWithSystem: true,
               appearance: await window?.__TAURI__?.window.appWindow.theme(),
             },
-          })}
-      />
-      <ThemePreview
-        title={"Custom Theme"}
-        image={darkPreview}
-        selected={!!$settings.theme.custom}
-        disabled={$settings.customThemes.length === 0}
-        on:click={async () =>
-          settings.set({
-            ...$settings,
-            theme: {
-              custom: {
-                ...(await getCustomTheme()),
+          })}>Sync With System</ThemePreview
+      >
+      {#each $settings.customThemes as theme}
+        <ThemePreview
+          image={darkPreview}
+          selected={$settings.theme.custom?.source === theme.source}
+          on:click={() =>
+            settings.set({
+              ...$settings,
+              theme: {
+                custom: theme,
+                syncWithSystem: false,
+                appearance: undefined,
               },
-              syncWithSystem: false,
-              appearance: undefined,
-            },
-          })}
-      />
+            })}>{capitalize(theme.name)}</ThemePreview
+        >
+      {/each}
     </div>
     <div class="button-holder">
       <Button

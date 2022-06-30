@@ -235,7 +235,7 @@
             customThemes: [
               ...$settings.customThemes,
               ...(await importCustomThemes()),
-            ],
+            ].sort((a, b) => a.name.localeCompare(b.name)),
           })}>Import Theme</Button
       >
       <Button class="button">Export Theme</Button>

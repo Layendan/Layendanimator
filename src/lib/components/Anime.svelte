@@ -1,6 +1,6 @@
 <script lang="ts">
   // Import required packages
-  import loadingFailure from "$lib/components/loading_failure.jpeg";
+  import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
   import { fade } from "svelte/transition";
   import DOMPurify from "dompurify";
 

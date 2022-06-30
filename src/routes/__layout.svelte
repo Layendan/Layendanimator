@@ -8,7 +8,8 @@
   import { settings } from "$lib/model/settings";
   import { onDestroy, onMount } from "svelte";
   import type { UnlistenFn } from "@tauri-apps/api/event";
-  let event: typeof import("@tauri-apps/api/event");
+  let convertFileSrc: typeof import("@tauri-apps/api/tauri").convertFileSrc;
+  let listen: typeof import("@tauri-apps/api/event").listen;
   let unlisten: UnlistenFn = () => {};
 
   // Configure NProgress bar
@@ -29,19 +30,17 @@
   }
 
   onMount(async () => {
-    event = await import("@tauri-apps/api/event");
+    convertFileSrc = (await import("@tauri-apps/api/tauri")).convertFileSrc;
+    listen = (await import("@tauri-apps/api/event")).listen;
 
-    unlisten = await event.listen<string>("tauri://theme-changed", (event) => {
+    unlisten = await listen<string>("tauri://theme-changed", (event) => {
       console.log(`Theme changed to ${event.payload}`);
       $settings.theme.syncWithSystem &&
         settings.set({
           ...$settings,
           theme: {
             ...$settings.theme,
-            details: {
-              ...$settings.theme.details,
-              appearance: event.payload as "dark" | "light",
-            },
+            appearance: event.payload as "dark" | "light",
           },
         });
     });
@@ -53,8 +52,21 @@
   });
 </script>
 
+<svelte:head>
+  {#each $settings.customThemes as theme}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      id={theme.name}
+      href={convertFileSrc(theme.source)}
+    />
+  {/each}
+</svelte:head>
+
 <body
-  class={$settings.theme.enabled ? $settings.theme.details.appearance : "dark"}
+  class={$settings.theme.appearance === undefined
+    ? $settings.theme.custom?.name
+    : $settings.theme.appearance}
 >
   <Header />
 

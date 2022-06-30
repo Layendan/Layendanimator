@@ -1,8 +1,14 @@
 import { writable } from "svelte/store";
 
-export interface Theme {
+export interface CustomTheme {
+  name: string;
   source: string;
-  appearance?: "dark" | "light";
+}
+
+export interface Theme {
+  custom: CustomTheme | undefined;
+  syncWithSystem: boolean;
+  appearance: "dark" | "light" | undefined;
 }
 
 export interface Connection {
@@ -19,11 +25,8 @@ export interface Settings {
     enabled: boolean;
     grouped: boolean;
   };
-  theme: {
-    enabled: boolean;
-    syncWithSystem: boolean;
-    details?: Theme;
-  };
+  theme: Theme;
+  customThemes: CustomTheme[];
 }
 
 export const defaultSettings: Settings = {
@@ -35,14 +38,8 @@ export const defaultSettings: Settings = {
     enabled: true,
     grouped: false,
   },
-  theme: {
-    enabled: false,
-    syncWithSystem: true,
-    details: {
-      source: "",
-      appearance: "dark",
-    },
-  },
+  theme: { custom: undefined, syncWithSystem: true, appearance: "dark" },
+  customThemes: [],
 };
 
 export const settings = writable<Settings>(defaultSettings);

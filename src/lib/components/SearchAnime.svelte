@@ -1,5 +1,5 @@
 <script lang="ts">
-  import loadingFailure from "$lib/components/loading_failure.jpeg";
+  import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
   import DOMPurify from "dompurify";
 
   export let title: string;

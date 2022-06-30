@@ -2,7 +2,7 @@
   // Import required packages
   import { fade } from "svelte/transition";
   import { page } from "$app/stores";
-  import loadingFailure from "$lib/components/loading_failure.jpeg";
+  import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
   import EpisodeHolder from "$lib/components/player/EpisodeHolder.svelte";
   import { onMount } from "svelte";
   import { settings } from "$lib/model/settings";

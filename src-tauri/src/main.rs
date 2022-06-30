@@ -29,7 +29,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             api::close_splashscreen,
             api::search_anime,
-            api::add_module
+            api::add_module,
+            api::get_theme
         ])
         .run(ctx)
         .expect("error while running tauri application");
@@ -48,7 +49,8 @@ fn main() {
             api::close_splashscreen,
             api::search_anime,
             api::add_module,
-            api::fullscreen
+            api::fullscreen,
+            api::get_theme
         ])
         .run(ctx)
         .expect("error while running tauri application");

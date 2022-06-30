@@ -29,15 +29,15 @@
 
 <main>
   {#if access_token}
-  <div>
-    <p>Successfully Linked!</p>
-    <p>You will be redirected to the home page in 5 seconds.</p>
-    <p>
-      If it does not redirect you automatically, please press <a href="/"
-        >this link</a
-      >
-    </p>
-  </div>
+    <div>
+      <p>Successfully Linked!</p>
+      <p>You will be redirected to the home page in 5 seconds.</p>
+      <p>
+        If it does not redirect you automatically, please press <a href="/"
+          >this link</a
+        >
+      </p>
+    </div>
   {:else}
     Failed to Link
   {/if}

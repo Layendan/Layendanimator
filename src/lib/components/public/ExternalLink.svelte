@@ -7,8 +7,7 @@
   export let href;
 </script>
 
-<!-- svelte-ignore a11y-invalid-attribute -->
-<a href="#" on:click|preventDefault={() => shell?.open(href)}>
+<div on:click|preventDefault={() => shell.open(href)}>
   <slot />
   <svg
     width="15"
@@ -23,18 +22,20 @@
       fill="currentColor"
     />
   </svg>
-</a>
+</div>
 
 <style>
-  a {
+  div {
     display: inline-flexbox;
+    width: max-content;
     column-gap: 0.25rem;
     font-size: 14;
     font-weight: 500;
     vertical-align: center;
+    cursor: pointer;
   }
 
-  a:hover svg {
+  div:hover {
     text-decoration: underline;
   }
 </style>

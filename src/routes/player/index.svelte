@@ -24,7 +24,9 @@
       ? $page.url.searchParams.get("description")
       : "";
 
-  let episodes: Array<any> = JSON.parse(window?.sessionStorage.getItem(name + "-episodes")) as Array<any>;
+  let episodes: Array<any> = JSON.parse(
+    window?.sessionStorage.getItem(name + "-episodes")
+  ) as Array<any>;
 
   // Page scroll
   let y = 0;

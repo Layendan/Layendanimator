@@ -69,7 +69,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             api::close_splashscreen,
             api::search_anime,
-            api::add_module
+            api::add_module,
+            api::get_theme
         ])
         // Add default submenus
         .menu(

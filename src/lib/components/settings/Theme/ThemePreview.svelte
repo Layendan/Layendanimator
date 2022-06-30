@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  
+
   export let image: string;
   export let selected: boolean = false;
   export let disabled: boolean = false;

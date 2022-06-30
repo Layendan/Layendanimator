@@ -18,6 +18,9 @@
   let downloadDir: typeof import("@tauri-apps/api/path").downloadDir;
   let sep: typeof import("@tauri-apps/api/path").sep;
   let notification: typeof import("@tauri-apps/api/notification");
+  let appWindow: typeof import("@tauri-apps/api/window").appWindow;
+  let invoke: typeof import("@tauri-apps/api/tauri").invoke;
+  let shellOpen: typeof import("@tauri-apps/api/shell").open;
 
   onMount(async () => {
     const dialog = await import("@tauri-apps/api/dialog");
@@ -26,6 +29,9 @@
     downloadDir = (await import("@tauri-apps/api/path")).downloadDir;
     sep = (await import("@tauri-apps/api/path")).sep;
     notification = await import("@tauri-apps/api/notification");
+    appWindow = (await import("@tauri-apps/api/window")).appWindow;
+    invoke = (await import("@tauri-apps/api/tauri")).invoke;
+    shellOpen = (await import("@tauri-apps/api/shell")).open;
   });
 
   let client_id: string = "4602";
@@ -121,7 +127,7 @@
   >
     <Button
       on:click={() =>
-        window?.__TAURI__?.shell.open(
+        shellOpen(
           `https://anilist.co/api/v2/oauth/authorize?client_id=${client_id}&response_type=token`
         )}
     >
@@ -206,7 +212,8 @@
             theme: {
               custom: undefined,
               syncWithSystem: true,
-              appearance: await window?.__TAURI__?.window.appWindow.theme(),
+              appearance: await invoke("get_theme"),
+              // (await appWindow.theme()) ?? "light",
             },
           })}>Sync With System</ThemePreview
       >

@@ -11,16 +11,11 @@ export interface Theme {
   appearance: "dark" | "light" | undefined;
 }
 
-export interface Connection {
-  name: string;
-  id: string;
-}
-
 export interface Settings {
   allowNSFW: boolean;
   ordered: boolean;
   reduceMotion: boolean;
-  connections: Record<string, Connection>;
+  connections: Record<string, string>;
   notifications: {
     enabled: boolean;
     grouped: boolean;

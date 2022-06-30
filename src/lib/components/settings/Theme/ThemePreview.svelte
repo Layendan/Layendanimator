@@ -1,11 +1,13 @@
 <script lang="ts">
+  import { fade } from "svelte/transition";
+  
   export let image: string;
   export let selected: boolean = false;
   export let disabled: boolean = false;
   export let hover: boolean = true;
 </script>
 
-<div on:click class:selected class:disabled class:hover>
+<div on:click class:selected class:disabled class:hover transition:fade>
   <img src={image} alt="" />
   <p class="header"><slot /></p>
 </div>

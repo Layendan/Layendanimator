@@ -4,7 +4,6 @@
   import { page } from "$app/stores";
   import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
   import EpisodeHolder from "$lib/components/player/EpisodeHolder.svelte";
-  import { onMount } from "svelte";
   import { settings } from "$lib/model/settings";
   import DOMPurify from "dompurify";
 
@@ -25,13 +24,7 @@
       ? $page.url.searchParams.get("description")
       : "";
 
-  let episodes: Array<any>;
-
-  // Have to wait for window to load before asking for sessionsStorage
-  // Prevents error when reloading page
-  onMount(() => {
-    episodes = JSON.parse(window.sessionStorage.getItem(name + "-episodes"));
-  });
+  let episodes: Array<any> = JSON.parse(window?.sessionStorage.getItem(name + "-episodes")) as Array<any>;
 
   // Page scroll
   let y = 0;
@@ -42,10 +35,6 @@
 </script>
 
 <svelte:window bind:scrollY={y} />
-
-<svelte:head>
-  <title>{name}</title>
-</svelte:head>
 
 <section transition:fade>
   {#if banner !== "null"}
@@ -90,7 +79,6 @@
 
 <style>
   a {
-    /* color: white; */
     color: var(--text-color);
   }
 
@@ -99,7 +87,6 @@
   }
   .banner {
     width: 100%;
-    /* height: 348px; */
     z-index: 0;
     display: block;
     overflow: hidden;
@@ -128,7 +115,6 @@
     right: 0;
     bottom: 0;
     left: 0;
-    /* background: linear-gradient(to bottom, rgba(31, 31, 31, 0.2) 50%, rgba(31, 31, 31, 1) 100%); */
     background: linear-gradient(
       to bottom,
       rgba(var(--secondary-rgb), 0.2) 50%,
@@ -142,7 +128,6 @@
     position: relative;
     display: block;
     margin-top: 0;
-    /* background-color: rgb(31, 31, 31); */
     background-color: var(--secondary-color);
     padding: 1rem;
   }
@@ -159,7 +144,6 @@
     z-index: inherit;
     position: relative;
     border-radius: 5px;
-    /* aspect-ratio: initial; */
     height: fit-content;
     max-height: 305px;
   }

@@ -19,7 +19,6 @@
   let sep: typeof import("@tauri-apps/api/path").sep;
   let notification: typeof import("@tauri-apps/api/notification");
   let appWindow: typeof import("@tauri-apps/api/window").appWindow;
-  let invoke: typeof import("@tauri-apps/api/tauri").invoke;
   let shellOpen: typeof import("@tauri-apps/api/shell").open;
 
   onMount(async () => {
@@ -30,7 +29,6 @@
     sep = (await import("@tauri-apps/api/path")).sep;
     notification = await import("@tauri-apps/api/notification");
     appWindow = (await import("@tauri-apps/api/window")).appWindow;
-    invoke = (await import("@tauri-apps/api/tauri")).invoke;
     shellOpen = (await import("@tauri-apps/api/shell")).open;
   });
 
@@ -212,8 +210,7 @@
             theme: {
               custom: undefined,
               syncWithSystem: true,
-              appearance: await invoke("get_theme"),
-              // (await appWindow.theme()) ?? "light",
+              appearance: (await appWindow.theme()) ?? "light",
             },
           })}>Sync With System</ThemePreview
       >

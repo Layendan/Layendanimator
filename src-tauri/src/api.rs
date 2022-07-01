@@ -67,14 +67,6 @@ pub async fn add_module(link: String) -> Value {
 }
 
 #[command]
-pub fn get_theme(window: tauri::Window) -> Result<tauri::Theme, String> {
-    match window.theme() {
-        Ok(theme) => Ok(theme),
-        Err(e) => Err(e.to_string()),
-    }
-}
-
-#[command]
 pub fn fullscreen(window: tauri::Window, label: &str) {
     // Only run the fullscreen command on windows since the actual window does not fullscreen
     #![cfg(target_os = "windows")]

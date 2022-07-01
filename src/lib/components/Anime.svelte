@@ -95,7 +95,6 @@
     vertical-align: top;
     margin-left: 15px;
     margin-right: 15px;
-    scroll-snap-align: start;
 
     /* I'm just gonna use overflow-y because line clamping slows down the loading of the page by a few seconds and that's not fun for the user */
     overflow-y: hidden;

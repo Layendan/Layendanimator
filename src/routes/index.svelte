@@ -148,8 +148,6 @@
     width: auto;
     white-space: nowrap;
     padding-bottom: 15px;
-    scroll-snap-type: x mandatory;
-    scroll-margin: 0;
     -webkit-user-select: none; /* Chrome all / Safari all */
     -moz-user-select: none; /* Firefox all */
     -ms-user-select: none; /* IE 10+ */

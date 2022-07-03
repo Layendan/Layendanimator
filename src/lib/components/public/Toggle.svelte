@@ -18,8 +18,8 @@
     column-gap: 1rem;
   }
 
-  input:disabled ~ * {
-    filter: brightness(70%);
+  input:disabled ~ .slider {
+    opacity: 0.2;
     cursor: default;
   }
 
@@ -60,7 +60,7 @@
     left: 3px;
     bottom: 3px;
     border-radius: 50%;
-    background-color: var(--pure-white);
+    background-color: var(--text-color);
     -webkit-transition: 0.4s;
     transition: 0.4s;
   }

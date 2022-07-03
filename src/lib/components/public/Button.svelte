@@ -20,12 +20,12 @@
   }
 
   button:disabled {
-    filter: brightness(70%);
+    opacity: 0.7;
     cursor: default;
   }
 
   button:not(:disabled):active {
-    filter: brightness(90%);
+    opacity: 0.9;
   }
 
   .active {

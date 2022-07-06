@@ -1,27 +1,33 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import SearchAnime from "$lib/components/SearchAnime.svelte";
+  import type { Anime } from "$lib/model/anime";
+  import { connections } from "$lib/model/connections";
   import { searchAnime } from "$lib/prefetch";
   import { onDestroy } from "svelte";
+  import type { Unsubscriber } from "svelte/store";
   import { fade } from "svelte/transition";
 
   let query: string = $page.url.searchParams.get("search")
     ? $page.url.searchParams.get("search")
     : "";
-  let animes: any = [];
 
-  animes = searchAnime(query);
+  async function getAnimes(): Promise<Anime[]> {
+    return $connections["anilist"]
+      ? searchAnime(query, $connections["anilist"])
+      : searchAnime(query);
+  }
 
-  console.log(animes);
+  let animes: Promise<Anime[]> = getAnimes();
 
   // Have to listen to changes since the page does not reload
-  const unsubscribe = page.subscribe(() => {
+  const unsubscribe: Unsubscriber = page.subscribe(() => {
     if (
       $page.url.searchParams.get("search") &&
       query !== $page.url.searchParams.get("search")
     ) {
       query = $page.url.searchParams.get("search");
-      animes = searchAnime(query);
+      animes = getAnimes();
     }
   });
 
@@ -33,7 +39,7 @@
     {#each animeArray as anime}
       <hr class="solid" />
       <SearchAnime
-        title={anime.title.english ? anime.title.english : anime.title.romaji}
+        title={anime.title.english ? anime.title.english : anime.title.romanji}
         link={anime.siteUrl}
         description={anime.description}
         thumbnail={anime.coverImage.large}

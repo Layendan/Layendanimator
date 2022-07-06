@@ -6,6 +6,7 @@
   import EpisodeHolder from "$lib/components/player/EpisodeHolder.svelte";
   import { settings } from "$lib/model/settings";
   import DOMPurify from "dompurify";
+  import type { Episode } from "$lib/model/anime";
 
   // read queries from link
   let link: string = $page.url.searchParams.get("link");
@@ -24,9 +25,9 @@
       ? $page.url.searchParams.get("description")
       : "";
 
-  let episodes: Array<any> = JSON.parse(
+  let episodes: Episode[] = JSON.parse(
     window?.sessionStorage.getItem(name + "-episodes")
-  ) as Array<any>;
+  ) as Episode[];
 
   // Page scroll
   let y = 0;

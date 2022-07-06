@@ -1,10 +1,15 @@
 import animeSearch from "$lib/GraphQL/animeSearch";
 import { invoke } from "@tauri-apps/api/tauri";
+import type { Anime } from "./model/anime";
+import { connections } from "./model/connections";
 
-export async function getAnimes(titles: string[]): Promise<any> {
+export function getAnimes(
+  titles: string[],
+  token?: string
+): { title: string; data: Promise<Anime[]> }[] {
   let animes = [];
   for (const element of titles) {
-    let anime = searchAnime(element);
+    let anime = searchAnime(element, token);
     animes = [...animes, { title: element, data: anime }];
   }
 
@@ -14,14 +19,12 @@ export async function getAnimes(titles: string[]): Promise<any> {
   return animes;
 }
 
-export async function searchAnime(name: string): Promise<Array<any>> {
-  // Use try-catch in case window is not defined
-  try {
-    if (window?.sessionStorage.getItem(name + "-search") != null) {
-      return JSON.parse(window?.sessionStorage.getItem(name + "-search"));
-    }
-  } catch (error) {
-    console.error(error);
+export async function searchAnime(
+  name: string,
+  token?: string
+): Promise<Anime[]> {
+  if (window?.sessionStorage.getItem(name + "-search") != null) {
+    return JSON.parse(window?.sessionStorage.getItem(name + "-search"));
   }
 
   // Define our query variables and values that will be used in the query request
@@ -35,32 +38,34 @@ export async function searchAnime(name: string): Promise<Array<any>> {
   var url = "https://graphql.anilist.co",
     options;
 
-  // if (access_token) {
-  //   options = {
-  //     method: "POST",
-  //     headers: {
-  //       Authorization: "Bearer " + access_token,
-  //       "Content-Type": "application/json",
-  //       Accept: "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       query: animeSearch,
-  //       variables: variables,
-  //     }),
-  //   };
-  // } else {
-  options = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify({
-      query: animeSearch,
-      variables: variables,
-    }),
-  };
-  // }
+  console.log(connections);
+
+  if (token) {
+    options = {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        query: animeSearch,
+        variables: variables,
+      }),
+    };
+  } else {
+    options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        query: animeSearch,
+        variables: variables,
+      }),
+    };
+  }
 
   let response = await fetch(url, options);
   if (response.status == 429) {

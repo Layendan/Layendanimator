@@ -1,6 +1,7 @@
 <script lang="ts">
   import logo from "./logo.png";
   import { goto } from "$app/navigation";
+  import { history } from "$lib/model/history";
 
   let y = 0;
   $: query = "";
@@ -34,6 +35,7 @@
   </nav>
 
   <div class="corner">
+    <!-- Need to grab autocomplete from history.search -->
     <input
       type="search"
       placeholder="Search"
@@ -43,6 +45,7 @@
       on:keydown={(event) => {
         if (event.key === "Enter" && query !== "") {
           event.preventDefault();
+          history.set({ ...$history, search: [...$history.search, query] });
           goto(`/search?search=${query}`);
         }
       }}

@@ -15,7 +15,6 @@ export interface Settings {
   allowNSFW: boolean;
   ordered: boolean;
   reduceMotion: boolean;
-  connections: Record<string, string>;
   notifications: {
     enabled: boolean;
     grouped: boolean;
@@ -28,7 +27,6 @@ export const defaultSettings: Settings = {
   allowNSFW: false,
   ordered: true,
   reduceMotion: false,
-  connections: {},
   notifications: {
     enabled: true,
     grouped: false,

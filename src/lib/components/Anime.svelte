@@ -3,6 +3,7 @@
   import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
   import { fade } from "svelte/transition";
   import DOMPurify from "dompurify";
+  import type { Episode } from "$lib/model/anime";
 
   // Export component definitions
   export let name: string = undefined;
@@ -10,7 +11,7 @@
   export let thumbnail: string = loadingFailure;
   export let banner: string = loadingFailure;
   export let description: string = "unavailable";
-  export let episodes: Array<any> = null;
+  export let episodes: Episode[] | null = null;
   export let isNSFW: boolean = false;
 
   // Check if there is data to store before looking at the length or else returns null error
@@ -22,37 +23,13 @@
   ) {
     window.sessionStorage.setItem(DATA_NAME, JSON.stringify(episodes));
   }
-
-  // Instance variables for line clamping
-  // Default 9 lines to clamp, but can be changed to be more or less
-  // let pHeight = 0;
-  // let titleHeight = 0;
-  // let linesToClamp = 9;
-
-  // Clamps the lines of the description until it fits within the given height
-  // 220 is the height of the description + title text
-  // 20 is for padding - can be changed
-  // From: https://stackoverflow.com/questions/11856136/is-css3-line-clamp-possible-in-javascript
-  // function clamp(pHeight) {
-  //   if (pHeight > 220 - titleHeight - 20 && linesToClamp >= 1) {
-  //     linesToClamp--;
-  //   }
-  // }
-
-  // Removing line clamp as it lags page A LOT as it loads
-  // Making it a function so that it only calls it with pHeight changes
-  // $: clamp(pHeight);
 </script>
-
-<svelte:head>
-  <!-- Preloads loading failure so that it looks nice when loading page -->
-  <link rel="preload" as="image" href={loadingFailure} />
-</svelte:head>
 
 <body transition:fade>
   <a
     href="/player?link={link}&name={name}&thumbnail={thumbnail}&banner={banner}&description={description}"
     class:unselectable={link == null}
+    on:click
   >
     <span class="holder">
       <img
@@ -63,11 +40,6 @@
       />
       <div class="info">
         <div class="text">
-          <!-- <h1
-              class="line-clamp"
-              bind:clientHeight={titleHeight}
-              style="-webkit-line-clamp: 5;"
-            > -->
           <h1>
             {name}
             {#if isNSFW}
@@ -75,11 +47,6 @@
             {/if}
           </h1>
           <p>
-            <!-- <p
-                class="line-clamp"
-                bind:clientHeight={pHeight}
-                style="-webkit-line-clamp: {linesToClamp};"
-              > -->
             {@html DOMPurify.sanitize(description)}
           </p>
         </div>
@@ -200,7 +167,6 @@
     padding-top: 10px;
     padding-bottom: 20px;
     height: 222px;
-    /* overflow-y: scroll; */
 
     transition: background-color 0.2s ease-in-out;
   }
@@ -209,12 +175,5 @@
     transition: transform 0.2s ease-in-out;
     color: var(--text-color);
     margin-bottom: 1em;
-    /* overflow-y: scroll; */
   }
-
-  /* .line-clamp {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    overflow-y: hidden;
-  } */
 </style>

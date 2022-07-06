@@ -1,8 +1,9 @@
 <script lang="ts">
   import Episode from "./Episode.svelte";
   import { settings } from "$lib/model/settings";
+  import type { Episode as EpisodeType } from "$lib/model/anime";
 
-  export let episodes: Array<any> = [];
+  export let episodes: EpisodeType[] = [];
 </script>
 
 <!-- vertically lists all of the episodes -->

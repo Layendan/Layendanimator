@@ -8,7 +8,7 @@
   export let thumbnail: string = loadingFailure;
   export let banner: string = loadingFailure;
   export let ratings: number = 0;
-  // export let tags: Array<any> = [];
+  // export let tags: { name: string }[] = [];
   export let genres: Array<string> = [];
   export let isNSFW: boolean = false;
 </script>

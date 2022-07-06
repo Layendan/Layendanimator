@@ -10,7 +10,7 @@
   import type { UnlistenFn } from "@tauri-apps/api/event";
   let convertFileSrc: typeof import("@tauri-apps/api/tauri").convertFileSrc;
   let listen: typeof import("@tauri-apps/api/event").listen;
-  let unlisten: UnlistenFn = () => {};
+  let unlisten: UnlistenFn;
 
   // Configure NProgress bar
   NProgress.configure({
@@ -48,7 +48,7 @@
 
   // removes the listener later
   onDestroy(async () => {
-    await unlisten();
+    await unlisten?.();
   });
 </script>
 

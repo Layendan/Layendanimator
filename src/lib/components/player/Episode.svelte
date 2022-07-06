@@ -1,7 +1,8 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import type { Episode } from "$lib/model/anime";
 
-  export let episode: any;
+  export let episode: Episode;
   /**
    *  Need to grab from local storage, 0-100
    */

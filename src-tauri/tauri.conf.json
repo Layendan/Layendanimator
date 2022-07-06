@@ -6,8 +6,8 @@
   "build": {
     "distDir": "../build",
     "devPath": "http://localhost:3000",
-    "beforeDevCommand": "svelte-kit dev",
-    "beforeBuildCommand": "svelte-kit build",
+    "beforeDevCommand": "vite dev",
+    "beforeBuildCommand": "vite build",
     "withGlobalTauri": true
   },
   "tauri": {

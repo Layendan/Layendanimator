@@ -1,7 +1,7 @@
 <script>
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
-  import { settings } from "$lib/model/settings";
+  import { connections } from "$lib/model/connections";
 
   const parsedHash = new URLSearchParams(
     $page.url.hash.substring(1) // skip the first char (#)
@@ -10,21 +10,13 @@
   const access_token = parsedHash.get("access_token");
   const source = $page.url.searchParams.get("source");
 
-  if (!$settings.connections[source]) {
-    settings.set({
-      ...$settings,
-      connections: {
-        ...$settings.connections,
-        [source]: access_token,
-      },
-    });
+  if (!$connections[source]) {
+    connections.set({ ...$connections, [source]: access_token });
   }
 
   setTimeout(() => {
     goto("/", { replaceState: true });
   }, 5000);
-
-  console.log($settings.connections[source]);
 </script>
 
 <main>

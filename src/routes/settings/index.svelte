@@ -13,6 +13,8 @@
   import darkPreview from "$lib/components/assets/dark.png";
   import { onMount } from "svelte";
   import { capitalize } from "$lib/model/global";
+  import { history, defaultHistory } from "$lib/model/history";
+  import { defaultLibrary, library } from "$lib/model/library";
   let open: typeof import("@tauri-apps/api/dialog").open;
   let confirm: typeof import("@tauri-apps/api/dialog").confirm;
   let downloadDir: typeof import("@tauri-apps/api/path").downloadDir;
@@ -42,10 +44,29 @@
   }
 
   /**
+   * Clears the search history.
+   */
+  function clearSearchHistory() {
+    history.set({ ...$history, search: defaultHistory.search });
+  }
+
+  function clearBrowseHistory() {
+    history.set({ ...$history, browse: defaultHistory.browse });
+  }
+
+  function clearDownloads() {
+    // TODO: remove downloads from disk
+    library.set({ ...$library, downloads: defaultLibrary.downloads });
+  }
+
+  /**
    * Resets the entirety of the application.
    */
   function reset() {
     clearCache();
+    clearSearchHistory();
+    clearBrowseHistory();
+    clearDownloads();
     settings.set(defaultSettings);
   }
 
@@ -258,9 +279,13 @@
       <Button class="button">Create Backup</Button>
       <Button class="button">Import Backup</Button>
       <Button class="button" on:click={clearCache}>Clear Cached Data</Button>
-      <Button class="button">Clear Search History</Button>
-      <Button class="button">Clear Browse History</Button>
-      <Button class="button">Clear Downloads</Button>
+      <Button class="button" on:click={clearSearchHistory}
+        >Clear Search History</Button
+      >
+      <Button class="button" on:click={clearBrowseHistory}
+        >Clear Browse History</Button
+      >
+      <Button class="button" on:click={clearDownloads}>Clear Downloads</Button>
       <Button
         class="button"
         buttonType="danger"

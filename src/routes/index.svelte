@@ -6,6 +6,9 @@
   import { onMount } from "svelte";
   import { getAnimes } from "../lib/prefetch";
   import { settings } from "$lib/model/settings";
+  import type { Anime as AnimeType } from "$lib/model/anime";
+  import { connections } from "$lib/model/connections";
+  import { history } from "$lib/model/history";
 
   // 429 Error, too many requests
   const animes = [
@@ -33,28 +36,14 @@
     "Sahate No Paladin",
   ];
 
-  let list: any = [];
+  let list: { title: string; data: Promise<AnimeType[]> }[] = [];
 
   // Have to wait until __Tauri__ gets injected
   onMount(() => {
-    list = getAnimes(animes);
+    list = $connections["anilist"]
+      ? getAnimes(animes, $connections["anilist"])
+      : getAnimes(animes);
   });
-
-  // Have to wait until __Tauri__ gets injected
-  // onMount(() => {
-  // 	// Sends notification to user
-  // 	window.__TAURI__.notification.isPermissionGranted().then((value) => {
-  // 		if (value === true) {
-  // 			window.__TAURI__.notification.sendNotification({ title: 'Hello', body: 'Hello World' });
-  // 		} else {
-  // 			window.__TAURI__.notification.requestPermission().then((value) => {
-  // 				if (value === 'granted') {
-  // 					window.__TAURI__.notification.sendNotification({ title: 'Hello', body: 'Hello World' });
-  // 				}
-  // 			});
-  // 		}
-  // 	});
-  // });
 </script>
 
 <svelte:head>
@@ -111,16 +100,24 @@
                 <Anime
                   name={anime.title.english
                     ? anime.title.english
-                    : anime.title.romaji}
+                    : anime.title.romanji}
                   thumbnail={anime.coverImage.large}
                   banner={anime.bannerImage}
                   link={anime.siteUrl}
                   description={anime.description}
                   episodes={anime.streamingEpisodes}
                   isNSFW={anime.isAdult}
+                  on:click={() => {
+                    history.set({
+                      ...$history,
+                      browse: [...$history.browse, anime],
+                    });
+                  }}
                 />
               {/if}
             {/each}
+          {:catch}
+            <p style="margin-left: 1rem;">Error Fetching Episodes</p>
           {/await}
         </div>
       </div>

@@ -35,7 +35,7 @@
   }
 
   div.disabled {
-    filter: brightness(70%);
+    opacity: 0.7;
     cursor: default;
     pointer-events: none;
   }

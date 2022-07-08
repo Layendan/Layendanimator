@@ -9,6 +9,7 @@
   import type { Anime as AnimeType } from "$lib/model/anime";
   import { connections } from "$lib/model/connections";
   import { history } from "$lib/model/history";
+  import { animes as animesStore } from "$lib/model/anime";
 
   // 429 Error, too many requests
   const animes = [
@@ -38,11 +39,14 @@
 
   let list: { title: string; data: Promise<AnimeType[]> }[] = [];
 
-  // Have to wait until __Tauri__ gets injected
   onMount(() => {
-    list = $connections["anilist"]
-      ? getAnimes(animes, $connections["anilist"])
-      : getAnimes(animes);
+    list = getAnimes(animes, $connections["anilist"]);
+
+    list.forEach(async (data) =>
+      (await data.data).forEach((anime) => {
+        if (!$animesStore.has(anime.id)) animesStore.addAnime(anime);
+      })
+    );
   });
 </script>
 
@@ -96,23 +100,16 @@
             <Anime />
           {:then parsedAnimes}
             {#each parsedAnimes as anime}
-              {#if $settings.allowNSFW || !anime.isAdult}
+              {#if !anime.isAdult || $settings.allowNSFW}
                 <Anime
-                  name={anime.title.english
-                    ? anime.title.english
-                    : anime.title.romanji}
+                  id={anime.id}
+                  name={anime.title.english ?? anime.title.romaji}
                   thumbnail={anime.coverImage.large}
-                  banner={anime.bannerImage}
-                  link={anime.siteUrl}
                   description={anime.description}
                   episodes={anime.streamingEpisodes}
                   isNSFW={anime.isAdult}
-                  on:click={() => {
-                    history.set({
-                      ...$history,
-                      browse: [...$history.browse, anime],
-                    });
-                  }}
+                  on:click={() =>
+                    ($history.browse = [...$history.browse, anime])}
                 />
               {/if}
             {/each}

@@ -7,10 +7,8 @@ export interface Library {
   downloads: { anime: Anime; location?: string }[];
 }
 
-export const defaultLibrary: Library = {
+export const library = writable<Library>({
   recent: [],
   subscribed: [],
   downloads: [],
-};
-
-export const library = writable<Library>(defaultLibrary);
+});

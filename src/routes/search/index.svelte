@@ -1,8 +1,9 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import SearchAnime from "$lib/components/SearchAnime.svelte";
-  import type { Anime } from "$lib/model/anime";
+  import { animes as animesStore, type Anime } from "$lib/model/anime";
   import { connections } from "$lib/model/connections";
+  import { settings } from "$lib/model/settings";
   import { searchAnime } from "$lib/prefetch";
   import { onDestroy } from "svelte";
   import type { Unsubscriber } from "svelte/store";
@@ -13,9 +14,14 @@
     : "";
 
   async function getAnimes(): Promise<Anime[]> {
-    return $connections["anilist"]
-      ? searchAnime(query, $connections["anilist"])
-      : searchAnime(query);
+    let anime = searchAnime(query, $connections["anilist"]);
+    // Using .then as to not block function
+    anime.then((tempAnime) =>
+      tempAnime.forEach((item) => {
+        if (!$animesStore.has(item.id)) animesStore.addAnime(item);
+      })
+    );
+    return anime;
   }
 
   let animes: Promise<Anime[]> = getAnimes();
@@ -37,17 +43,18 @@
 <main transition:fade>
   {#await animes then animeArray}
     {#each animeArray as anime}
-      <hr class="solid" />
-      <SearchAnime
-        title={anime.title.english ? anime.title.english : anime.title.romanji}
-        link={anime.siteUrl}
-        description={anime.description}
-        thumbnail={anime.coverImage.large}
-        banner={anime.bannerImage}
-        ratings={anime.averageScore}
-        genres={anime.genres}
-        isNSFW={anime.isAdult}
-      />
+      {#if !anime.isAdult || $settings.allowNSFW}
+        <hr class="solid" />
+        <SearchAnime
+          id={anime.id}
+          title={anime.title.english ?? anime.title.romaji}
+          description={anime.description}
+          thumbnail={anime.coverImage.large}
+          ratings={anime.averageScore}
+          genres={anime.genres}
+          isNSFW={anime.isAdult}
+        />
+      {/if}
     {:else}
       <p class="center">No results found</p>
     {/each}

@@ -23,16 +23,36 @@ export interface Settings {
   customThemes: CustomTheme[];
 }
 
-export const defaultSettings: Settings = {
-  allowNSFW: false,
-  ordered: true,
-  reduceMotion: false,
-  notifications: {
-    enabled: true,
-    grouped: false,
-  },
-  theme: { custom: undefined, syncWithSystem: true, appearance: "dark" },
-  customThemes: [],
-};
+function createSettings() {
+  const { subscribe, set, update } = writable<Settings>({
+    allowNSFW: false,
+    ordered: true,
+    reduceMotion: false,
+    notifications: {
+      enabled: true,
+      grouped: false,
+    },
+    theme: { custom: undefined, syncWithSystem: true, appearance: "dark" },
+    customThemes: [],
+  });
 
-export const settings = writable<Settings>(defaultSettings);
+  return {
+    subscribe,
+    set,
+    update,
+    reset: () =>
+      set({
+        allowNSFW: false,
+        ordered: true,
+        reduceMotion: false,
+        notifications: {
+          enabled: true,
+          grouped: false,
+        },
+        theme: { custom: undefined, syncWithSystem: true, appearance: "dark" },
+        customThemes: [],
+      }),
+  };
+}
+
+export const settings = createSettings();

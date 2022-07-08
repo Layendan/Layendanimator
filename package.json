@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "tauri dev",
-    "build": "tauri build",
+    "build": "yarn && tauri build",
     "compile": "tsc",
     "package": "svelte-kit package",
     "preview": "svelte-kit preview",
@@ -19,17 +19,17 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^1.0.0-next.34",
-    "@sveltejs/kit": "^1.0.0-next.360",
+    "@sveltejs/kit": "^1.0.0-next.361",
     "@tauri-apps/cli": "^1.0.3",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
     "@typescript-eslint/parser": "^5.30.5",
     "eslint": "^8.19.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
-    "npm-check-updates": "^15.2.0",
+    "npm-check-updates": "^15.2.1",
     "prettier": "^2.7.1",
     "prettier-plugin-svelte": "^2.7.0",
-    "svelte": "^3.48.0",
+    "svelte": "^3.49.0",
     "svelte-check": "^2.8.0",
     "svelte-preprocess": "^4.10.7",
     "tslib": "^2.4.0",
@@ -43,6 +43,6 @@
     "nprogress": "^0.2.0",
     "radix-icons-svelte": "^1.2.1",
     "tauri-settings": "^0.1.2",
-    "vite": "^2.9.13"
+    "vite": "^2.9.14"
   }
 }

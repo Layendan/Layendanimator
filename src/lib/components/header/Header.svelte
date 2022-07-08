@@ -2,6 +2,7 @@
   import logo from "./logo.png";
   import { goto } from "$app/navigation";
   import { history } from "$lib/model/history";
+  import Anime from "../Anime.svelte";
 
   let y = 0;
   $: query = "";
@@ -41,15 +42,22 @@
       placeholder="Search"
       class="search"
       autocapitalize="words"
+      list="searchRec"
       bind:value={query}
       on:keydown={(event) => {
         if (event.key === "Enter" && query !== "") {
           event.preventDefault();
-          history.set({ ...$history, search: [...$history.search, query] });
+          if (!$history.search.includes(query))
+            $history.search = [...$history.search, query];
           goto(`/search?search=${query}`);
         }
       }}
     />
+    <datalist id="searchRec">
+      {#each $history.search as option}
+        <option value={option}>{option}</option>
+      {/each}
+    </datalist>
   </div>
 </header>
 

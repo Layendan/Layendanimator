@@ -36,13 +36,7 @@
     unlisten = await listen<string>("tauri://theme-changed", (event) => {
       console.log(`Theme changed to ${event.payload}`);
       $settings.theme.syncWithSystem &&
-        settings.set({
-          ...$settings,
-          theme: {
-            ...$settings.theme,
-            appearance: event.payload as "dark" | "light",
-          },
-        });
+        ($settings.theme.appearance = event.payload as "dark" | "light");
     });
   });
 

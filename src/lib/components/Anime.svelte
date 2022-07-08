@@ -6,11 +6,10 @@
   import type { Episode } from "$lib/model/anime";
 
   // Export component definitions
-  export let name: string = undefined;
-  export let link: string = null;
+  export let id: number | undefined = undefined;
+  export let name: string = "Loading";
   export let thumbnail: string = loadingFailure;
-  export let banner: string = loadingFailure;
-  export let description: string = "unavailable";
+  export let description: string = "...";
   export let episodes: Episode[] | null = null;
   export let isNSFW: boolean = false;
 
@@ -26,11 +25,7 @@
 </script>
 
 <body transition:fade>
-  <a
-    href="/player?link={link}&name={name}&thumbnail={thumbnail}&banner={banner}&description={description}"
-    class:unselectable={link == null}
-    on:click
-  >
+  <a href="/{id}" class:unselectable={id == undefined} on:click>
     <span class="holder">
       <img
         on:error={() => (thumbnail = loadingFailure)}
@@ -41,13 +36,15 @@
       <div class="info">
         <div class="text">
           <h1>
-            {name}
+            {name ?? "Loading"}
             {#if isNSFW}
               <span class="nsfw">18+</span>
             {/if}
           </h1>
           <p>
-            {@html DOMPurify.sanitize(description)}
+            {@html DOMPurify.sanitize(description, {
+              USE_PROFILES: { html: true },
+            })}
           </p>
         </div>
       </div>

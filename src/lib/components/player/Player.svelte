@@ -1,15 +1,10 @@
 <script lang="ts">
-  import { page } from "$app/stores";
   import { onMount } from "svelte";
-  import { invoke } from "@tauri-apps/api/tauri";
+  import { animes, type Episode } from "$lib/model/anime";
+  import { page } from "$app/stores";
   let window: typeof import("@tauri-apps/api/window");
 
-  export let poster: string =
-    $page.url.searchParams.get("poster") != "null"
-      ? $page.url.searchParams.get("poster")
-      : "https://media.vimejs.com/poster.png";
-
-  let url = $page.url.searchParams.get("url");
+  export let episode: Episode;
 
   export let videoSrc: string = "https://media.vimejs.com/720p.mp4";
   export let videoType: string = "video/mp4";
@@ -27,21 +22,43 @@
   // Will cause error on build since the api needs window which will not exist server side
   onMount(async () => {
     window = await import("@tauri-apps/api/window");
+    let anime = $animes.get(Number.parseInt($page.params.id));
+    time =
+      (anime.streamingEpisodes.find((e) => e.url === episode.url)
+        .percentWatched *
+        duration) /
+      100;
   });
+
+  function updateTimeWatched() {
+    if (time !== NaN && duration !== NaN)
+      $animes
+        .get(Number.parseInt($page.params.id))
+        .streamingEpisodes.find((e) => e.url === episode.url).percentWatched =
+        (time / duration) * 100;
+  }
+
+  setInterval(updateTimeWatched, 15000);
 </script>
 
 <video
   controls
-  {poster}
+  poster={episode.thumbnail}
   preload="metadata"
   bind:currentTime={time}
   bind:duration
   bind:paused
+  on:ended={() => {
+    updateTimeWatched();
+    // DO SOMETHING MAYBE?
+  }}
+  on:pause={updateTimeWatched}
+  on:play={updateTimeWatched}
+  on:seeked={updateTimeWatched}
   on:fullscreenchange={() => {
     console.log("Fullscreen change");
 
-    // Call rust method for fullscreen
-    invoke(window.appWindow.label);
+    window?.appWindow.toggleMaximize();
   }}
 >
   <source src={videoSrc} type={videoType} />

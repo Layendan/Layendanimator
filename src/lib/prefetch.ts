@@ -1,11 +1,10 @@
 import animeSearch from "$lib/GraphQL/animeSearch";
 import { invoke } from "@tauri-apps/api/tauri";
 import type { Anime } from "./model/anime";
-import { connections } from "./model/connections";
 
 export function getAnimes(
   titles: string[],
-  token?: string
+  token: string | undefined
 ): { title: string; data: Promise<Anime[]> }[] {
   let animes = [];
   for (const element of titles) {
@@ -21,7 +20,7 @@ export function getAnimes(
 
 export async function searchAnime(
   name: string,
-  token?: string
+  token: string | undefined
 ): Promise<Anime[]> {
   if (window?.sessionStorage.getItem(name + "-search") != null) {
     return JSON.parse(window?.sessionStorage.getItem(name + "-search"));
@@ -38,34 +37,23 @@ export async function searchAnime(
   var url = "https://graphql.anilist.co",
     options;
 
-  console.log(connections);
-
-  if (token) {
-    options = {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + token,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        query: animeSearch,
-        variables: variables,
-      }),
-    };
-  } else {
-    options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        query: animeSearch,
-        variables: variables,
-      }),
-    };
-  }
+  options = {
+    method: "POST",
+    headers: token
+      ? {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        }
+      : {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+    body: JSON.stringify({
+      query: animeSearch,
+      variables: variables,
+    }),
+  };
 
   let response = await fetch(url, options);
   if (response.status == 429) {

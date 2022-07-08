@@ -6,28 +6,9 @@
   import EpisodeHolder from "$lib/components/player/EpisodeHolder.svelte";
   import { settings } from "$lib/model/settings";
   import DOMPurify from "dompurify";
-  import type { Episode } from "$lib/model/anime";
+  import { animes, type Anime } from "$lib/model/anime";
 
-  // read queries from link
-  let link: string = $page.url.searchParams.get("link");
-
-  let name: string = $page.url.searchParams.get("name");
-
-  let thumbnail: string =
-    $page.url.searchParams.get("thumbnail") != "null"
-      ? $page.url.searchParams.get("thumbnail")
-      : loadingFailure;
-
-  let banner: string = $page.url.searchParams.get("banner");
-
-  let description: string =
-    $page.url.searchParams.get("description") != "null"
-      ? $page.url.searchParams.get("description")
-      : "";
-
-  let episodes: Episode[] = JSON.parse(
-    window?.sessionStorage.getItem(name + "-episodes")
-  ) as Episode[];
+  let anime: Anime = $animes.get(Number.parseInt($page.params.id));
 
   // Page scroll
   let y = 0;
@@ -39,55 +20,48 @@
 
 <svelte:window bind:scrollY={y} />
 
-<section transition:fade>
-  {#if banner !== "null"}
-    <div class="banner">
-      <img
-        src={banner}
-        alt={name}
-        transition:fade
-        class:reduce-motion={$settings.reduceMotion}
-        style:--banner-scale={scale}
-        style:--banner-blur={blur}
-        style:--banner-brightness={brightness}
-      />
-    </div>
-  {/if}
-  <div transition:fade class="text">
-    <div class="container">
-      <div class="important-info" class:no-overlap={banner == "null"}>
+{#if anime}
+  <section transition:fade>
+    {#if !!anime.bannerImage}
+      <div class="banner">
         <img
-          src={thumbnail}
+          src={anime.bannerImage}
+          alt={anime.title.english ?? anime.title.romaji}
           transition:fade
-          on:error={() => (thumbnail = loadingFailure)}
-          class:overlap={banner != "null"}
-          class="thumbnail"
-          alt={name}
+          class:reduce-motion={$settings.reduceMotion}
+          style:--banner-scale={scale}
+          style:--banner-blur={blur}
+          style:--banner-brightness={brightness}
         />
-        <div>
-          <a href={link} class="title">{name}</a>
-          <p transition:fade class="description">
-            {@html DOMPurify.sanitize(description)}
-          </p>
+      </div>
+    {/if}
+    <div transition:fade class="text">
+      <div class="container">
+        <div class="important-info" class:no-overlap={!anime.bannerImage}>
+          <img
+            src={anime.coverImage.large}
+            transition:fade
+            on:error={() => (anime.coverImage.large = loadingFailure)}
+            class:overlap={!!anime.bannerImage}
+            class="thumbnail"
+            alt={anime.title.english ?? anime.title.romaji}
+          />
+          <div>
+            <p class="title">{anime.title.english ?? anime.title.romaji}</p>
+            <p transition:fade class="description">
+              {@html DOMPurify.sanitize(anime.description, {
+                USE_PROFILES: { html: true },
+              })}
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="episodes">
-    {#if episodes}
-      <EpisodeHolder {episodes} />
-    {/if}
-  </div>
-</section>
+    <EpisodeHolder episodes={anime.streamingEpisodes} />
+  </section>
+{/if}
 
 <style>
-  a {
-    color: var(--text-color);
-  }
-
-  a:hover {
-    text-decoration: none;
-  }
   .banner {
     width: 100%;
     z-index: 0;

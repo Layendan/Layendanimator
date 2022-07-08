@@ -2,11 +2,10 @@
   import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
   import DOMPurify from "dompurify";
 
+  export let id: number;
   export let title: string;
-  export let link: string;
   export let description: string = "";
   export let thumbnail: string = loadingFailure;
-  export let banner: string = loadingFailure;
   export let ratings: number = 0;
   // export let tags: { name: string }[] = [];
   export let genres: Array<string> = [];
@@ -14,9 +13,7 @@
 </script>
 
 <li>
-  <a
-    href="/player?link={link}&name={title}&thumbnail={thumbnail}&banner={banner}&description={description}"
-  >
+  <a href="/{id}">
     <div class="container">
       <img
         on:error={() => (thumbnail = loadingFailure)}
@@ -30,7 +27,11 @@
             <span class="nsfw">18+</span>
           {/if}
         </h1>
-        <p class="description">{@html DOMPurify.sanitize(description)}</p>
+        <p class="description">
+          {@html DOMPurify.sanitize(description, {
+            USE_PROFILES: { html: true },
+          })}
+        </p>
         <p>{ratings ? `${ratings}%` : ""}</p>
         {#if genres.length !== 0}
           <ul class="genres">

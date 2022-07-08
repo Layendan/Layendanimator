@@ -1,22 +1,17 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import type { Episode } from "$lib/model/anime";
+  import type { animes, Episode } from "$lib/model/anime";
 
   export let episode: Episode;
-  /**
-   *  Need to grab from local storage, 0-100
-   */
-  let timeWatched: number = Math.random() * 100;
 </script>
 
 <div class="episode">
   <a
     class="link"
-    href="{$page.url
-      .pathname}/video?url={episode.url}&poster={episode.thumbnail}"
+    href="{$page.url.pathname}/video?episode={JSON.stringify(episode)}"
   >
     <img class="bg" src={episode.thumbnail} alt="" />
-    <div class="bg progress" style="width: {timeWatched}%;" />
+    <div class="bg progress" style="width: {episode.percentWatched ?? 0}%;" />
     <span>
       <img class="image" src={episode.thumbnail} alt={episode.title} />
       <p>

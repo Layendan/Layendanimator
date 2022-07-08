@@ -3,18 +3,14 @@
   import ExternalLink from "$lib/components/public/ExternalLink.svelte";
   import Toggle from "$lib/components/public/Toggle.svelte";
   import Group from "$lib/components/settings/Group.svelte";
-  import {
-    defaultSettings,
-    settings,
-    type CustomTheme,
-  } from "$lib/model/settings";
+  import { settings, type CustomTheme } from "$lib/model/settings";
   import ThemePreview from "$lib/components/settings/Theme/ThemePreview.svelte";
   import anilistIcon from "$lib/components/assets/anilist.png";
   import darkPreview from "$lib/components/assets/dark.png";
   import { onMount } from "svelte";
   import { capitalize } from "$lib/model/global";
-  import { history, defaultHistory } from "$lib/model/history";
-  import { defaultLibrary, library } from "$lib/model/library";
+  import { history } from "$lib/model/history";
+  import { library } from "$lib/model/library";
   let open: typeof import("@tauri-apps/api/dialog").open;
   let confirm: typeof import("@tauri-apps/api/dialog").confirm;
   let downloadDir: typeof import("@tauri-apps/api/path").downloadDir;
@@ -47,16 +43,16 @@
    * Clears the search history.
    */
   function clearSearchHistory() {
-    history.set({ ...$history, search: defaultHistory.search });
+    $history.search = [];
   }
 
   function clearBrowseHistory() {
-    history.set({ ...$history, browse: defaultHistory.browse });
+    $history.browse = [];
   }
 
   function clearDownloads() {
     // TODO: remove downloads from disk
-    library.set({ ...$library, downloads: defaultLibrary.downloads });
+    $library.downloads = [];
   }
 
   /**
@@ -67,7 +63,7 @@
     clearSearchHistory();
     clearBrowseHistory();
     clearDownloads();
-    settings.set(defaultSettings);
+    settings.reset();
   }
 
   /**
@@ -113,28 +109,19 @@
 <main>
   <Group title="Settings" description="General Settings">
     <Toggle
-      on:change={() =>
-        settings.set({ ...$settings, allowNSFW: !$settings.allowNSFW })}
+      on:change={() => ($settings.allowNSFW = !$settings.allowNSFW)}
       checked={$settings.allowNSFW}
     >
       Display NSFW Animes
     </Toggle>
     <Toggle
-      on:change={() =>
-        settings.set({
-          ...$settings,
-          ordered: !$settings.ordered,
-        })}
+      on:change={() => ($settings.ordered = !$settings.ordered)}
       checked={!$settings.ordered}
     >
       Reverse Episode Order
     </Toggle>
     <Toggle
-      on:change={() =>
-        settings.set({
-          ...$settings,
-          reduceMotion: !$settings.reduceMotion,
-        })}
+      on:change={() => ($settings.reduceMotion = !$settings.reduceMotion)}
       checked={$settings.reduceMotion}
     >
       Reduce Motion
@@ -159,26 +146,14 @@
   <Group title="Notifications" description="Notification Settings">
     <Toggle
       on:change={() =>
-        settings.set({
-          ...$settings,
-          notifications: {
-            ...$settings.notifications,
-            enabled: !$settings.notifications.enabled,
-          },
-        })}
+        ($settings.notifications.enabled = !$settings.notifications.enabled)}
       checked={$settings.notifications.enabled}
     >
       Enable Notifications
     </Toggle>
     <Toggle
       on:change={() =>
-        settings.set({
-          ...$settings,
-          notifications: {
-            ...$settings.notifications,
-            grouped: !$settings.notifications.grouped,
-          },
-        })}
+        ($settings.notifications.grouped = !$settings.notifications.grouped)}
       checked={$settings.notifications.grouped}
       disabled={!$settings.notifications.enabled}
     >
@@ -199,13 +174,10 @@
         selected={!$settings.theme.syncWithSystem &&
           $settings.theme.appearance === "dark"}
         on:click={() =>
-          settings.set({
-            ...$settings,
-            theme: {
-              custom: undefined,
-              syncWithSystem: false,
-              appearance: "dark",
-            },
+          ($settings.theme = {
+            custom: undefined,
+            syncWithSystem: false,
+            appearance: "dark",
           })}>Dark Mode</ThemePreview
       >
       <ThemePreview
@@ -213,26 +185,20 @@
         selected={!$settings.theme.syncWithSystem &&
           $settings.theme.appearance === "light"}
         on:click={() =>
-          settings.set({
-            ...$settings,
-            theme: {
-              custom: undefined,
-              syncWithSystem: false,
-              appearance: "light",
-            },
+          ($settings.theme = {
+            custom: undefined,
+            syncWithSystem: false,
+            appearance: "light",
           })}>Light Mode</ThemePreview
       >
       <ThemePreview
         image={darkPreview}
         selected={$settings.theme.syncWithSystem}
         on:click={async () =>
-          settings.set({
-            ...$settings,
-            theme: {
-              custom: undefined,
-              syncWithSystem: true,
-              appearance: (await appWindow.theme()) ?? "light",
-            },
+          ($settings.theme = {
+            custom: undefined,
+            syncWithSystem: true,
+            appearance: (await appWindow.theme()) ?? "light",
           })}>Sync With System</ThemePreview
       >
       {#each $settings.customThemes as theme}
@@ -240,13 +206,10 @@
           image={darkPreview}
           selected={$settings.theme.custom?.source === theme.source}
           on:click={() =>
-            settings.set({
-              ...$settings,
-              theme: {
-                custom: theme,
-                syncWithSystem: false,
-                appearance: undefined,
-              },
+            ($settings.theme = {
+              custom: theme,
+              syncWithSystem: false,
+              appearance: undefined,
             })}>{capitalize(theme.name)}</ThemePreview
         >
       {/each}
@@ -255,13 +218,10 @@
       <Button
         class="button"
         on:click={async () =>
-          settings.set({
-            ...$settings,
-            customThemes: [
-              ...$settings.customThemes,
-              ...(await importCustomThemes()),
-            ].sort((a, b) => a.name.localeCompare(b.name)),
-          })}>Import Theme</Button
+          ($settings.customThemes = [
+            ...$settings.customThemes,
+            ...(await importCustomThemes()),
+          ].sort((a, b) => a.name.localeCompare(b.name)))}>Import Theme</Button
       >
       <Button class="button">Export Theme</Button>
     </div>

@@ -6,9 +6,4 @@ export interface History {
   browse: Anime[];
 }
 
-export const defaultHistory: History = {
-  search: [],
-  browse: [],
-};
-
-export const history = writable<History>(defaultHistory);
+export const history = writable<History>({ search: [], browse: [] });

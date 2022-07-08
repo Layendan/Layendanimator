@@ -170,17 +170,17 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-4.6.0.tgz#3c7c9c46e678feefe7a2e5bb609d3dbd665ffb3f"
   integrity sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==
 
-"@sveltejs/adapter-static@^1.0.0-next.34":
-  version "1.0.0-next.34"
-  resolved "https://registry.yarnpkg.com/@sveltejs/adapter-static/-/adapter-static-1.0.0-next.34.tgz#f17e967e43f73e57feed6d81d8151de1e09d9836"
-  integrity sha512-XjuMhemme5z0L/B2nTZpA6k+RJjF+b6L96ts6gIQ6ixiCzJQSbBqJhrrBYBCaeLAKvdUMoGEmX8m862JhKjRFg==
+"@sveltejs/adapter-static@^1.0.0-next.35":
+  version "1.0.0-next.35"
+  resolved "https://registry.yarnpkg.com/@sveltejs/adapter-static/-/adapter-static-1.0.0-next.35.tgz#4cad9e9d670926e8d89361ded499c761dffa26e2"
+  integrity sha512-iIg5nCMJF2/s/Y7zmy9pzp+U3YDBL6OQKmwfJm2H3Afde/XlhOuNlSO6K//hxmLmvrd7Oh6Kb0MLhwVKp0cuUA==
   dependencies:
     tiny-glob "^0.2.9"
 
-"@sveltejs/kit@^1.0.0-next.361":
-  version "1.0.0-next.361"
-  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.0.0-next.361.tgz#187c92d926a8a2ac95b9ae9a694ef156aa69e850"
-  integrity sha512-F5hvtNIakMqRpVg4kXQWNRnGTpud+N5HsY/Z6SWXndZUEwc2jDYDGq7ytzJp3Ep4+ZbA6yS5YbHiLdZcTMBgWQ==
+"@sveltejs/kit@^1.0.0-next.366":
+  version "1.0.0-next.366"
+  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.0.0-next.366.tgz#e03c120e19b64681d78db18d1cf64aac1359e996"
+  integrity sha512-TzHIb0D5cTUb/9g+hGuQU0Ja7VneJkQOBeKKHzXjq7RBO6EHOQ64YJXC9LR2jxveWGwZAaqw4PNT5LfySzLs/w==
   dependencies:
     "@sveltejs/vite-plugin-svelte" "^1.0.0-next.48"
     chokidar "^3.5.3"

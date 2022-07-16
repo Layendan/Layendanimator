@@ -6,12 +6,14 @@
   import type { Episode } from "$lib/model/anime";
 
   // Export component definitions
-  export let id: number | undefined = undefined;
+  export let id: number | null = null;
   export let name: string = "Loading";
   export let thumbnail: string = loadingFailure;
-  export let description: string = "...";
+  export let description: string = "";
   export let episodes: Episode[] | null = null;
   export let isNSFW: boolean = false;
+
+  let loading: boolean = true;
 
   // Check if there is data to store before looking at the length or else returns null error
   const DATA_NAME = name + "-episodes";
@@ -25,14 +27,22 @@
 </script>
 
 <body transition:fade>
-  <a href="/{id}" class:unselectable={id == undefined} on:click>
+  <a href="/{id}" class:unselectable={id === null} on:click>
     <span class="holder">
-      <img
-        on:error={() => (thumbnail = loadingFailure)}
-        src={thumbnail}
-        loading="lazy"
-        alt={name}
-      />
+      {#key loading}
+        <img
+          src={thumbnail}
+          loading="lazy"
+          alt={name}
+          class:hide={loading}
+          on:error={() => (thumbnail = loadingFailure)}
+          on:load={() => (loading = false)}
+          transition:fade
+        />
+      {/key}
+      {#if loading}
+        <img src={loadingFailure} alt={name} in:fade />
+      {/if}
       <div class="info">
         <div class="text">
           <h1>
@@ -81,9 +91,10 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    width: 160px;
+    width: 178px;
+    height: 252px;
     border-radius: 10px 0 0 10px;
-    aspect-ratio: 46/65;
+    border-right: 2px var(--tertiary-color) solid;
 
     transition: filter 0.2s ease-in-out;
   }
@@ -172,5 +183,9 @@
     transition: transform 0.2s ease-in-out;
     color: var(--text-color);
     margin-bottom: 1em;
+  }
+
+  .hide {
+    display: none;
   }
 </style>

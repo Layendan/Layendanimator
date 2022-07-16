@@ -1,19 +1,28 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import type { animes, Episode } from "$lib/model/anime";
+  import type { Episode } from "$lib/model/anime";
 
   export let episode: Episode;
+  let thumbnail: string | null = episode.thumbnail;
 </script>
 
 <div class="episode">
   <a
     class="link"
-    href="{$page.url.pathname}/video?episode={JSON.stringify(episode)}"
+    href="{$page.url.pathname}/watch?episode={JSON.stringify(episode)}"
   >
     <img class="bg" src={episode.thumbnail} alt="" />
-    <div class="bg progress" style="width: {episode.percentWatched ?? 0}%;" />
+    <div class="bg progress" style="width: {episode.percentWatched ?? '0'}%;" />
     <span>
-      <img class="image" src={episode.thumbnail} alt={episode.title} />
+      {#if !!thumbnail}
+        <img
+          class="image"
+          src={thumbnail}
+          alt={episode.title}
+          loading="lazy"
+          on:error={() => (thumbnail = null)}
+        />
+      {/if}
       <p>
         {episode.title} on <i>{episode.site}</i>
       </p>

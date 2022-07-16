@@ -1,12 +1,14 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { animes, type Episode } from "$lib/model/anime";
   import { page } from "$app/stores";
+  import test_video from "$lib/components/assets/test_video.mp4";
   let window: typeof import("@tauri-apps/api/window");
 
   export let episode: Episode;
+  let episodeStore: Episode;
 
-  export let videoSrc: string = "https://media.vimejs.com/720p.mp4";
+  export let videoSrc: string = test_video;
   export let videoType: string = "video/mp4";
 
   export let captionSrc: string = "https://media.vimejs.com/subs/english.vtt";
@@ -14,7 +16,7 @@
   export let captionLabel: string = "English";
 
   // These values are bound to properties of the video
-  let time: number = 0;
+  let time: number;
   let duration: number;
   let paused: boolean;
 
@@ -22,23 +24,18 @@
   // Will cause error on build since the api needs window which will not exist server side
   onMount(async () => {
     window = await import("@tauri-apps/api/window");
-    let anime = $animes.get(Number.parseInt($page.params.id));
-    time =
-      (anime.streamingEpisodes.find((e) => e.url === episode.url)
-        .percentWatched *
-        duration) /
-      100;
+    episodeStore = $animes
+      .get(Number.parseInt($page.params.id))
+      .streamingEpisodes.find((e) => e.url === episode.url);
+    time = (episodeStore.percentWatched * duration) / 100;
   });
 
-  function updateTimeWatched() {
-    if (time !== NaN && duration !== NaN)
-      $animes
-        .get(Number.parseInt($page.params.id))
-        .streamingEpisodes.find((e) => e.url === episode.url).percentWatched =
-        (time / duration) * 100;
-  }
+  onDestroy(updateTimeWatched);
 
-  setInterval(updateTimeWatched, 15000);
+  function updateTimeWatched() {
+    if (!!time && !!duration && time !== NaN && duration !== NaN)
+      episodeStore.percentWatched = (time / duration) * 100;
+  }
 </script>
 
 <video
@@ -51,14 +48,18 @@
   on:ended={() => {
     updateTimeWatched();
     // DO SOMETHING MAYBE?
+    history?.back();
   }}
   on:pause={updateTimeWatched}
-  on:play={updateTimeWatched}
+  on:play={() => {
+    time = (episodeStore.percentWatched * duration) / 100;
+    updateTimeWatched();
+  }}
   on:seeked={updateTimeWatched}
   on:fullscreenchange={() => {
     console.log("Fullscreen change");
 
-    window?.appWindow.toggleMaximize();
+    window?.getCurrent().toggleMaximize();
   }}
 >
   <source src={videoSrc} type={videoType} />

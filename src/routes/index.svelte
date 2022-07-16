@@ -5,6 +5,7 @@
   import Anime from "$lib/components/Anime.svelte";
   import { onMount } from "svelte";
   import { getAnimes } from "../lib/prefetch";
+  import { getSrcDoc } from "$lib/model/global";
   import { settings } from "$lib/model/settings";
   import type { Anime as AnimeType } from "$lib/model/anime";
   import { connections } from "$lib/model/connections";
@@ -39,6 +40,11 @@
 
   let list: { title: string; data: Promise<AnimeType[]> }[] = [];
 
+  let source: HTMLIFrameElement;
+
+  const script: string = `function testFunction() {return "Hello World";}`;
+  const csp: string = `default-src 'self' ${""};`;
+
   onMount(() => {
     list = getAnimes(animes, $connections["anilist"]);
 
@@ -53,6 +59,17 @@
 <svelte:head>
   <title>Layendanimator</title>
 </svelte:head>
+
+<iframe
+  on:load={() => {
+    // @ts-ignore
+    console.log(source.contentWindow.testFunction?.());
+  }}
+  bind:this={source}
+  srcdoc={getSrcDoc(script, csp)}
+  title="source-frame"
+  name="source"
+/>
 
 <div class="container" transition:fade>
   {#await list}
@@ -103,13 +120,18 @@
               {#if !anime.isAdult || $settings.allowNSFW}
                 <Anime
                   id={anime.id}
-                  name={anime.title.english ?? anime.title.romaji}
+                  name={$settings.animeLanguage === "english"
+                    ? anime.title.english ?? anime.title.romaji
+                    : anime.title.native ?? anime.title.romaji}
                   thumbnail={anime.coverImage.large}
                   description={anime.description}
                   episodes={anime.streamingEpisodes}
                   isNSFW={anime.isAdult}
                   on:click={() =>
-                    ($history.browse = [...$history.browse, anime])}
+                    ($history.browse = [
+                      anime,
+                      ...$history.browse.filter((item) => item.id !== anime.id),
+                    ])}
                 />
               {/if}
             {/each}
@@ -126,10 +148,16 @@
   * {
     scrollbar-width: thin;
   }
+
   p {
     /* color: white; */
     color: var(--text-color);
   }
+
+  iframe {
+    display: none;
+  }
+
   .anime-container {
     margin-left: 10px;
     margin-right: 10px;
@@ -147,40 +175,6 @@
     -ms-user-select: none; /* IE 10+ */
     user-select: none; /* Likely future */
   }
-
-  /* Removing the shadows because I don't think they're needed, just commented out though in case I want to add it again */
-
-  /* .items::before {
-    content: "";
-    position: absolute;
-    z-index: 1;
-    top: 0;
-    left: 2rem;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    background: linear-gradient(
-      to right,
-      rgba(51, 51, 51, 1) 0%,
-      rgba(51, 51, 51, 0) 2%
-    );
-  } */
-
-  /* .items::after {
-    content: "";
-    position: absolute;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    right: 2rem;
-    bottom: 0;
-    pointer-events: none;
-    background: linear-gradient(
-      to right,
-      rgba(51, 51, 51, 0) 98%,
-      rgba(51, 51, 51, 1) 100%
-    );
-  } */
 
   .windows-scrollbar {
     scrollbar-width: thin;

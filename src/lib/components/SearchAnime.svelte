@@ -13,7 +13,7 @@
 </script>
 
 <li>
-  <a href="/{id}">
+  <a href="/{id}" on:click>
     <div class="container">
       <img
         on:error={() => (thumbnail = loadingFailure)}

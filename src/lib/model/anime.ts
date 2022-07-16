@@ -14,6 +14,7 @@ export type Episode = {
 export type Anime = {
   id: number;
   title: {
+    native: string;
     romaji: string;
     english: string;
   };

@@ -12,6 +12,10 @@
 
   // Page scroll
   let y = 0;
+  let bannerLoading: boolean = true;
+  let coverLoading: boolean = true;
+  let bannerError: boolean = false;
+  let coverError: boolean = false;
 
   $: scale = y < 345 ? 0.005 * Math.abs(y) + 1 : 0.005 * 345 + 1;
   $: blur = `${y < 345 ? 0.05 * Math.abs(y) : 0.05 * 345}px`;
@@ -22,32 +26,60 @@
 
 {#if anime}
   <section transition:fade>
-    {#if !!anime.bannerImage}
+    {#if anime.bannerImage && !bannerError}
       <div class="banner">
-        <img
-          src={anime.bannerImage}
-          alt={anime.title.english ?? anime.title.romaji}
-          transition:fade
-          class:reduce-motion={$settings.reduceMotion}
-          style:--banner-scale={scale}
-          style:--banner-blur={blur}
-          style:--banner-brightness={brightness}
-        />
+        {#key bannerLoading}
+          <img
+            src={anime.bannerImage}
+            alt={anime.title.romaji}
+            on:error={() => (bannerError = true)}
+            on:load={() => (bannerLoading = false)}
+            transition:fade
+            class:reduce-motion={$settings.reduceMotion}
+            class:hide={bannerLoading}
+            style:--banner-scale={scale}
+            style:--banner-blur={blur}
+            style:--banner-brightness={brightness}
+          />
+        {/key}
+        {#if bannerLoading}
+          <img src={loadingFailure} alt={anime.title.romaji} in:fade />
+        {/if}
       </div>
     {/if}
     <div transition:fade class="text">
       <div class="container">
-        <div class="important-info" class:no-overlap={!anime.bannerImage}>
-          <img
-            src={anime.coverImage.large}
-            transition:fade
-            on:error={() => (anime.coverImage.large = loadingFailure)}
-            class:overlap={!!anime.bannerImage}
-            class="thumbnail"
-            alt={anime.title.english ?? anime.title.romaji}
-          />
+        <div
+          class="important-info"
+          class:no-overlap={!anime.bannerImage || bannerError}
+        >
+          {#key coverLoading}
+            <img
+              src={coverError ? loadingFailure : anime.coverImage.large}
+              alt={anime.title.english ?? anime.title.romaji}
+              on:error={() => (coverError = true)}
+              on:load={() => (coverLoading = false)}
+              transition:fade
+              class:hide={coverLoading}
+              class:overlap={!!anime.bannerImage && !bannerError}
+              class="thumbnail"
+            />
+          {/key}
+          {#if coverLoading}
+            <img
+              src={loadingFailure}
+              alt={anime.title.english ?? anime.title.romaji}
+              class:overlap={!!anime.bannerImage && !bannerError}
+              class="thumbnail"
+              in:fade
+            />
+          {/if}
           <div>
-            <p class="title">{anime.title.english ?? anime.title.romaji}</p>
+            <h1 class="title">
+              {$settings.animeLanguage === "english"
+                ? anime.title.english ?? anime.title.romaji
+                : anime.title.native ?? anime.title.romaji}
+            </h1>
             <p transition:fade class="description">
               {@html DOMPurify.sanitize(anime.description, {
                 USE_PROFILES: { html: true },
@@ -147,5 +179,9 @@
     font-weight: 300;
     line-height: 1.5;
     height: min-content;
+  }
+
+  .hide {
+    display: none;
   }
 </style>

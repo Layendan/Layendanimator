@@ -77,3 +77,18 @@ pub fn fullscreen(window: tauri::Window, label: &str) {
     let is_fullscreen: bool = target.is_fullscreen().unwrap();
     target.set_fullscreen(!is_fullscreen).unwrap();
 }
+
+#[tauri::command]
+pub async fn online() -> bool {
+    let client = ClientBuilder::new()
+        .connect_timeout(std::time::Duration::new(60, 0))
+        .build()
+        .unwrap();
+    let request =
+        HttpRequestBuilder::new("GET", "https://clients3.google.com/generate_204").unwrap();
+    let response = client.send(request).await;
+    match response {
+        Ok(data) => return true,
+        Err(e) => return false,
+    }
+}

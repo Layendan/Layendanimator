@@ -2,9 +2,10 @@
   import logo from "./logo.png";
   import { goto } from "$app/navigation";
   import { history } from "$lib/model/history";
-  import Anime from "../Anime.svelte";
+  import { getName } from "@tauri-apps/api/app";
+  import { fade } from "svelte/transition";
 
-  let y = 0;
+  let y: number = 0;
   $: query = "";
 
   $: opacity = y < 40 ? y * 0.0125 + 0.3 : 0.8;
@@ -25,14 +26,20 @@
   style:--header-blur={blur}
   style:--header-saturation={saturation}
 >
-  <div class="corner">
+  <div class="logo" in:fade>
     <a sveltekit:prefetch href="/">
       <img src={logo} alt="NineAnimator" />
+      {#await getName()}
+        NineAnimator
+      {:then name}
+        {name}
+      {/await}
     </a>
   </div>
 
   <nav>
-    <a href="/settings">Settings</a>
+    <a href="/library/downloads">Downloads</a>
+    <a href="/library/history">History</a>
   </nav>
 
   <div class="corner">
@@ -59,12 +66,18 @@
       {/each}
     </datalist>
   </div>
+
+  <nav>
+    <a href="/settings">Settings</a>
+  </nav>
 </header>
 
 <style>
   header {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
+    gap: 5rem;
+    width: 100%;
     position: sticky;
     top: 0px;
     /* padding-bottom: 5px; */
@@ -79,48 +92,55 @@
     backdrop-filter: blur(var(--header-blur)) saturate(var(--header-saturation));
   }
 
+  img {
+    width: 2em;
+    height: 2em;
+    object-fit: contain;
+  }
+
   .search {
     background-color: transparent;
+    width: 100%;
     color: var(--text-color);
     accent-color: var(--accent-color);
     -webkit-appearance: textfield;
-    transform: translateX(-13em);
+    margin-right: 1rem;
     margin-top: 0.3rem;
   }
 
   .corner {
-    width: 3em;
-    height: 3em;
-  }
-
-  .corner a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 100%;
-    height: 100%;
-    outline: none;
-  }
-
-  .corner a:focus > img {
-    outline: 2px solid var(--accent-color);
+    height: 3em;
+    margin-right: 1rem;
   }
 
   .corner input:focus {
     outline: 2px solid var(--accent-color);
   }
 
-  .corner img {
-    width: 2em;
-    height: 2em;
-    object-fit: contain;
+  .logo {
+    height: 3em;
+    margin-left: 1rem;
+  }
+
+  .logo a {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    outline: none;
   }
 
   nav {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    flex-direction: row;
+    gap: 1rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
   }
 
   a {

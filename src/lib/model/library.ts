@@ -4,7 +4,7 @@ import type { Anime } from "./anime";
 export interface Library {
   recent: Anime[];
   subscribed: Anime[];
-  downloads: { anime: Anime; location?: string }[];
+  downloads: { anime: Anime; path: string }[];
 }
 
 export const library = writable<Library>({

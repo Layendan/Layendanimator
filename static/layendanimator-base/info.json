@@ -1,6 +1,8 @@
 {
   "name": "layendanimator-base",
-  "tags": ["crunchyroll", "basic", "base"],
+  "display-name": "Base Source",
+  "id": "layendan",
+  "tags": ["anilist", "crunchyroll", "basic", "base"],
   "description": "The basic layendanimator extention",
   "sources": [
     {

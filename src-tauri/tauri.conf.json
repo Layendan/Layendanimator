@@ -73,7 +73,7 @@
         "removeDir": false,
         "removeFile": false,
         "renameFile": false,
-        "scope": [],
+        "scope": ["$APP/*"],
         "writeFile": false
       },
       "globalShortcut": {
@@ -82,7 +82,7 @@
       "http": {
         "all": false,
         "request": false,
-        "scope": []
+        "scope": ["https://graphql.anilist.co/*"]
       },
       "notification": {
         "all": false
@@ -101,8 +101,8 @@
       },
       "protocol": {
         "all": false,
-        "asset": false,
-        "assetScope": []
+        "asset": true,
+        "assetScope": ["$APP/**/*.mp4", "$APP/*"]
       },
       "shell": {
         "all": false,

@@ -4,6 +4,7 @@
   import { animes as animesStore, type Anime } from "$lib/model/anime";
   import { connections } from "$lib/model/connections";
   import { settings } from "$lib/model/settings";
+  import { history } from "$lib/model/history";
   import { searchAnime } from "$lib/prefetch";
   import { onDestroy } from "svelte";
   import type { Unsubscriber } from "svelte/store";
@@ -47,12 +48,19 @@
         <hr class="solid" />
         <SearchAnime
           id={anime.id}
-          title={anime.title.english ?? anime.title.romaji}
+          title={$settings.animeLanguage === "english"
+            ? anime.title.english ?? anime.title.romaji
+            : anime.title.native ?? anime.title.romaji}
           description={anime.description}
           thumbnail={anime.coverImage.large}
           ratings={anime.averageScore}
           genres={anime.genres}
           isNSFW={anime.isAdult}
+          on:click={() =>
+            ($history.browse = [
+              anime,
+              ...$history.browse.filter((item) => item.id !== anime.id),
+            ])}
         />
       {/if}
     {:else}

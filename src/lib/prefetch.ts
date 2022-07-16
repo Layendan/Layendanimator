@@ -1,6 +1,7 @@
 import animeSearch from "$lib/GraphQL/animeSearch";
 import { invoke } from "@tauri-apps/api/tauri";
 import type { Anime } from "./model/anime";
+import { Body, fetch, type HttpOptions } from "@tauri-apps/api/http";
 
 export function getAnimes(
   titles: string[],
@@ -34,10 +35,11 @@ export async function searchAnime(
   };
 
   // Define the config we'll need for our Api request
-  var url = "https://graphql.anilist.co",
-    options;
+  var url: string = "https://graphql.anilist.co",
+    options: HttpOptions;
 
   options = {
+    url: url,
     method: "POST",
     headers: token
       ? {
@@ -49,29 +51,37 @@ export async function searchAnime(
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-    body: JSON.stringify({
+    body: Body.json({
       query: animeSearch,
       variables: variables,
     }),
   };
 
-  let response = await fetch(url, options);
+  let response = await fetch<{
+    data: {
+      Page: {
+        media: Anime[];
+        pageInfo: {
+          total: number;
+          currentPage: number;
+          lastPage: number;
+          hasNextPage: boolean;
+          perPage: number;
+        };
+      };
+    };
+  }>(url, options);
   if (response.status == 429) {
     console.error("Too many requests");
-    console.log("Retry after: ", response.headers.get("retry-after"));
-    return [];
+    console.log("Retry after: ", response.headers["retry-after"]);
+    throw new Error("Too many requests");
   }
-  let animes = await response.json();
+  let animes = await response.data;
 
-  // Use try-catch in case window is not defined
-  try {
-    window?.sessionStorage.setItem(
-      name + "-search",
-      JSON.stringify(animes.data.Page.media)
-    );
-  } catch (error) {
-    console.error(error);
-  }
+  window?.sessionStorage.setItem(
+    name + "-search",
+    JSON.stringify(animes.data.Page.media)
+  );
 
   invoke("search_anime", { name: name });
 

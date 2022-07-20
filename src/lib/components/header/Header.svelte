@@ -36,8 +36,14 @@
   </nav>
 
   <nav>
-    <a href="/library/downloads" class:selected={$page.routeId === "library/downloads"}>Downloads</a>
-    <a href="/library/history" class:selected={$page.routeId === "library/history"}>History</a>
+    <a
+      href="/library/downloads"
+      class:selected={$page.routeId === "library/downloads"}>Downloads</a
+    >
+    <a
+      href="/library/history"
+      class:selected={$page.routeId === "library/history"}>History</a
+    >
   </nav>
 
   <div class="corner">

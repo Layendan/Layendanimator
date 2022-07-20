@@ -2,8 +2,8 @@
   import logo from "./logo.png";
   import { goto } from "$app/navigation";
   import { history } from "$lib/model/history";
-  import { getName } from "@tauri-apps/api/app";
   import { fade } from "svelte/transition";
+  import { page } from "$app/stores";
 
   let y: number = 0;
   $: query = "";
@@ -11,6 +11,8 @@
   $: opacity = y < 40 ? y * 0.0125 + 0.3 : 0.8;
   $: blur = `${y < 40 ? y * 0.5 : 20}px`;
   $: saturation = y < 40 ? y * -0.00625 + 1 : 0.75;
+
+  console.log($page);
 </script>
 
 <svelte:window bind:scrollY={y} />
@@ -26,20 +28,16 @@
   style:--header-blur={blur}
   style:--header-saturation={saturation}
 >
-  <div class="logo" in:fade>
-    <a sveltekit:prefetch href="/">
+  <nav class="logo" in:fade>
+    <a sveltekit:prefetch href="/" class:selected={$page.routeId === ""}>
       <img src={logo} alt="NineAnimator" />
-      {#await getName()}
-        NineAnimator
-      {:then name}
-        {name}
-      {/await}
+      NineAnimator
     </a>
-  </div>
+  </nav>
 
   <nav>
-    <a href="/library/downloads">Downloads</a>
-    <a href="/library/history">History</a>
+    <a href="/library/downloads" class:selected={$page.routeId === "library/downloads"}>Downloads</a>
+    <a href="/library/history" class:selected={$page.routeId === "library/history"}>History</a>
   </nav>
 
   <div class="corner">
@@ -67,8 +65,10 @@
     </datalist>
   </div>
 
-  <nav>
-    <a href="/settings">Settings</a>
+  <nav class="settings">
+    <a href="/settings" class:selected={$page.routeId === "settings"}
+      >Settings</a
+    >
   </nav>
 </header>
 
@@ -111,7 +111,8 @@
   .corner {
     width: 100%;
     height: 3em;
-    margin-right: 1rem;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .corner input:focus {
@@ -131,6 +132,7 @@
     justify-content: center;
     gap: 0.5rem;
     outline: none;
+    margin-right: auto;
   }
 
   nav {
@@ -139,8 +141,12 @@
     align-items: center;
     flex-direction: row;
     gap: 1rem;
-    margin-left: 2rem;
-    margin-right: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  nav a {
+    border-bottom: 2px none var(--accent-color);
   }
 
   a {
@@ -153,5 +159,13 @@
 
   .bottom-border {
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  .settings {
+    margin-right: 2rem;
+  }
+
+  .selected {
+    border-bottom: 2px solid var(--accent-color);
   }
 </style>

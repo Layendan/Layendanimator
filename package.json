@@ -19,12 +19,12 @@
   },
   "devDependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
-    "@sveltejs/adapter-static": "^1.0.0-next.36",
-    "@sveltejs/kit": "^1.0.0-next.377",
+    "@sveltejs/adapter-static": "^1.0.0-next.38",
+    "@sveltejs/kit": "^1.0.0-next.385",
     "@tauri-apps/cli": "^1.0.4",
-    "@typescript-eslint/eslint-plugin": "^5.30.6",
-    "@typescript-eslint/parser": "^5.30.6",
-    "eslint": "^8.19.0",
+    "@typescript-eslint/eslint-plugin": "^5.30.7",
+    "@typescript-eslint/parser": "^5.30.7",
+    "eslint": "^8.20.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
     "npm-check-updates": "^15.3.4",
@@ -40,10 +40,10 @@
   "dependencies": {
     "@fontsource/fira-mono": "^4.5.8",
     "@tauri-apps/api": "^1.0.2",
-    "dompurify": "^2.3.9",
+    "dompurify": "^2.3.10",
     "nprogress": "^0.2.0",
     "radix-icons-svelte": "^1.2.1",
     "tauri-settings": "^0.1.2",
-    "vite": "^3.0.0"
+    "vite": "^3.0.2"
   }
 }

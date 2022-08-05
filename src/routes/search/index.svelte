@@ -41,7 +41,7 @@
   onDestroy(unsubscribe);
 </script>
 
-<main transition:fade>
+<main in:fade>
   {#await animes then animeArray}
     {#each animeArray as anime}
       {#if !anime.isAdult || $settings.allowNSFW}
@@ -66,8 +66,8 @@
     {:else}
       <p class="center">No results found</p>
     {/each}
-  {:catch}
-    <p class="center">Something went wrong, Please try again later</p>
+  {:catch e}
+    <p class="center">{e}</p>
   {/await}
 </main>
 

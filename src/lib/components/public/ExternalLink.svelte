@@ -1,13 +1,8 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  let shell: typeof import("@tauri-apps/api/shell");
-
-  onMount(async () => (shell = await import("@tauri-apps/api/shell")));
-
-  export let href;
+  export let href: string;
 </script>
 
-<div on:click|preventDefault={() => shell.open(href)}>
+<a target="_blank" {href}>
   <slot />
   <svg
     width="15"
@@ -22,10 +17,10 @@
       fill="currentColor"
     />
   </svg>
-</div>
+</a>
 
 <style>
-  div {
+  a {
     display: inline-flexbox;
     width: max-content;
     column-gap: 0.25rem;
@@ -33,9 +28,5 @@
     font-weight: 500;
     vertical-align: center;
     cursor: pointer;
-  }
-
-  div:hover {
-    text-decoration: underline;
   }
 </style>

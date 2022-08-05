@@ -1,9 +1,10 @@
 <script lang="ts">
   import Anime from "$lib/components/Anime.svelte";
   import { library } from "$lib/model/library";
+  import { fade } from "svelte/transition";
 </script>
 
-<main>
+<main in:fade>
   <h1>Downloads</h1>
   <span>
     {#each $library.downloads as { anime }}

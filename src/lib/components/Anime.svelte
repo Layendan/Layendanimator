@@ -10,8 +10,13 @@
   export let name: string = "Loading";
   export let thumbnail: string = loadingFailure;
   export let description: string = "";
+  export let episode: number = null;
+  export let airingAt: number = null;
   export let episodes: Episode[] | null = null;
   export let isNSFW: boolean = false;
+
+  let airingTime: Date = new Date((airingAt ?? 0) * 1000);
+  const today = new Date();
 
   let loading: boolean = true;
 
@@ -26,7 +31,7 @@
   }
 </script>
 
-<body transition:fade>
+<body in:fade>
   <a href="/{id}" class:unselectable={id === null} on:click>
     <span class="holder">
       {#key loading}
@@ -34,14 +39,18 @@
           src={thumbnail}
           loading="lazy"
           alt={name}
+          class="thumbnail"
           class:hide={loading}
           on:error={() => (thumbnail = loadingFailure)}
           on:load={() => (loading = false)}
-          transition:fade
+          in:fade
         />
       {/key}
       {#if loading}
-        <img src={loadingFailure} alt={name} in:fade />
+        <img src={loadingFailure} alt={name} class="thumbnail" in:fade />
+      {/if}
+      {#if episode}
+        <p class="episode">Episode {episode}</p>
       {/if}
       <div class="info">
         <div class="text">
@@ -51,7 +60,28 @@
               <span class="nsfw">18+</span>
             {/if}
           </h1>
-          <p>
+          {#if airingAt}
+            <p class="time">
+              <!-- Inverse so that -1 % 7 = 6 instead of -1 -->
+              {#if airingTime.getDay() === (today.getDay() + 6) % 7}
+                Yesterday
+              {:else if airingTime.getDay() === today.getDay()}
+                Today
+              {:else if airingTime.getDay() === (today.getDay() + 1) % 7}
+                Tomorrow
+              {:else}
+                {airingTime.toLocaleString("en-US", {
+                  weekday: "long",
+                })}
+              {/if}
+              at {airingTime.toLocaleString("en-US", {
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true,
+              })}
+            </p>
+          {/if}
+          <p class="description">
             {@html DOMPurify.sanitize(description, {
               USE_PROFILES: { html: true },
             })}
@@ -91,8 +121,13 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    /* Might be too much but just to make sure that it works in every case */
+    min-width: 178px;
+    min-height: 252px;
     width: 178px;
     height: 252px;
+    max-width: 178px;
+    max-height: 252px;
     border-radius: 10px 0 0 10px;
     border-right: 2px var(--tertiary-color) solid;
 
@@ -111,6 +146,10 @@
 
   body a:hover .holder {
     border-color: var(--pure-white);
+  }
+
+  body a:hover .episode {
+    background-color: rgba(var(--primary-rgb), 0.2);
   }
 
   a {
@@ -187,5 +226,38 @@
 
   .hide {
     display: none;
+  }
+
+  .thumbnail {
+    position: relative;
+  }
+
+  .episode {
+    margin: 0;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    /* Width, left, and bottom are shit to work with idk how to do it another way */
+    width: 134px;
+    left: 0.5rem; /* play around with this */
+    position: absolute;
+    bottom: 0.5rem; /* and play around with this */
+    background-color: rgba(var(--primary-rgb), 0.6);
+    border-radius: 8px;
+    font-size: smaller;
+    font-weight: bold;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .description {
+    opacity: 0.7;
+  }
+
+  .time {
+    font-style: italic;
+    font-weight: 300;
+    opacity: 0.8;
   }
 </style>

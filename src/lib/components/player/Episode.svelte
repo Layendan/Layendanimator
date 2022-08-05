@@ -86,6 +86,19 @@
     opacity: 0.5;
   }
 
+  .episode:focus-within {
+    outline: 1px solid var(--accent-color);
+    background-color: var(--tertiary-color);
+  }
+
+  .episode:focus-within .bg {
+    opacity: 0.2;
+  }
+
+  .episode:focus-within .progress {
+    opacity: 0.5;
+  }
+
   p {
     transition: color 0.2s ease-in-out;
   }

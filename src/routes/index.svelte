@@ -3,57 +3,52 @@
 
   import { fade } from "svelte/transition";
   import Anime from "$lib/components/Anime.svelte";
-  import { onMount } from "svelte";
-  import { getAnimes } from "../lib/prefetch";
-  import { getSrcDoc } from "$lib/model/global";
+  import Section from "$lib/components/Section.svelte";
+  import { frontpageFetch } from "../lib/prefetch";
   import { settings } from "$lib/model/settings";
-  import type { Anime as AnimeType } from "$lib/model/anime";
   import { connections } from "$lib/model/connections";
   import { history } from "$lib/model/history";
-  import { animes as animesStore } from "$lib/model/anime";
-
-  // 429 Error, too many requests
-  const animes = [
-    "Fate",
-    "My Hero Academia",
-    "Darling",
-    "Your Name",
-    "Hunter X Hunter",
-    "One Piece",
-    "One Punch",
-    "Attack on Titan",
-    "Death Parade",
-    "Fullmetal Alchemist",
-    "Jujutsu Kaisen",
-    "Naruto",
-    "Bleach",
-    "Platinum End",
-    "Vanitas no Carte",
-    "Sword Art Online",
-    "Ping Pong",
-    "Peach Boy",
-    "Star Wars",
-    "Re:CREATORS",
-    "Evangelion",
-    "Sahate No Paladin",
-  ];
-
-  let list: { title: string; data: Promise<AnimeType[]> }[] = [];
+  import { library } from "$lib/model/library";
+  import { goto } from "$app/navigation";
 
   let source: HTMLIFrameElement;
+  const date: Date = new Date();
 
   const script: string = `function testFunction() {return "Hello World";}`;
   const csp: string = `default-src 'self' ${""};`;
+  let season: "WINTER" | "SPRING" | "SUMMER" | "FALL";
+  switch (new Date().getMonth()) {
+    case 0:
+    case 1:
+    case 2:
+      season = "WINTER";
+      break;
+    case 3:
+    case 4:
+    case 5:
+      season = "SPRING";
+      break;
+    case 6:
+    case 7:
+    case 8:
+      season = "SUMMER";
+      break;
+    case 9:
+    case 10:
+    case 11:
+      season = "FALL";
+      break;
+  }
 
-  onMount(() => {
-    list = getAnimes(animes, $connections["anilist"]);
-
-    list.forEach(async (data) =>
-      (await data.data).forEach((anime) => {
-        if (!$animesStore.has(anime.id)) animesStore.addAnime(anime);
-      })
-    );
-  });
+  /**
+   * This function returns an HTML string to be used withing the srcdoc of an iframe.
+   * @param csp The CSP to use.
+   * @param script The script to inject.
+   * @returns A formatted HTML string.
+   */
+  function getSrcDoc(script: string, csp: string): string {
+    return `<meta https-equiv="Content-Security-Policy" content="${csp}" /><script>${script}<\/script>`;
+  }
 </script>
 
 <svelte:head>
@@ -71,76 +66,191 @@
   name="source"
 />
 
-<div class="container" transition:fade>
-  {#await list}
-    {#each animes as anime}
-      <div
-        id="animelist-{anime.replaceAll(' ', '-').toLowerCase()}"
-        class="anime-container"
-        transition:fade
-      >
-        <hr class="solid" />
-        <p class="title">{anime}</p>
-        <!-- change windows-scrollbar to check if running on windows -->
-        <div class="items windows-scrollbar" transition:fade>
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-        </div>
-      </div>
-    {/each}
+<div class="container" in:fade>
+  {#await frontpageFetch(season, date.getFullYear(), $connections["anilist"])}
+    <!-- Replace with something cooler -->
+    Loading
   {:then list}
-    {#each list as section}
-      <div
-        id="animelist-{section.title.replaceAll(' ', '-').toLowerCase()}"
-        class="anime-container"
-      >
-        <hr class="solid" />
-        <p class="title">{section.title}</p>
-        <!-- change windows-scrollbar to check if running on windows -->
-        <div class="items windows-scrollbar" transition:fade>
-          {#await section.data}
-            <Anime />
-            <Anime />
-            <Anime />
-            <Anime />
-            <Anime />
-            <Anime />
-            <Anime />
-            <Anime />
-            <Anime />
-          {:then parsedAnimes}
-            {#each parsedAnimes as anime}
-              {#if !anime.isAdult || $settings.allowNSFW}
-                <Anime
-                  id={anime.id}
-                  name={$settings.animeLanguage === "english"
-                    ? anime.title.english ?? anime.title.romaji
-                    : anime.title.native ?? anime.title.romaji}
-                  thumbnail={anime.coverImage.large}
-                  description={anime.description}
-                  episodes={anime.streamingEpisodes}
-                  isNSFW={anime.isAdult}
-                  on:click={() =>
-                    ($history.browse = [
-                      anime,
-                      ...$history.browse.filter((item) => item.id !== anime.id),
-                    ])}
-                />
-              {/if}
-            {/each}
-          {:catch}
-            <p style="margin-left: 1rem;">Error Fetching Episodes</p>
-          {/await}
-        </div>
-      </div>
-    {/each}
+    <Section storageId="{list.airing.title}:scroll">
+      <svelte:fragment slot="title">
+        {list.airing.title}
+      </svelte:fragment>
+      <svelte:fragment slot="animes">
+        {#each list.airing.data as { airingAt, episode, media }}
+          {#if !media.isAdult || $settings.allowNSFW}
+            <Anime
+              id={media.id}
+              name={$settings.animeLanguage === "english"
+                ? media.title.english ?? media.title.romaji
+                : media.title.native ?? media.title.romaji}
+              thumbnail={media.coverImage.large}
+              {episode}
+              {airingAt}
+              description={media.description}
+              episodes={media.streamingEpisodes}
+              isNSFW={media.isAdult}
+              on:click={() =>
+                ($history.browse = [
+                  media,
+                  ...$history.browse.filter((item) => item.id !== media.id),
+                ])}
+            />
+          {/if}
+        {:else}
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+        {/each}
+      </svelte:fragment>
+    </Section>
+    <Section storageId="Subscriptions:scroll">
+      <svelte:fragment slot="title">Subscriptions</svelte:fragment>
+      <svelte:fragment slot="animes">
+        {#each $library.subscriptions as anime}
+          {#if !anime.isAdult || $settings.allowNSFW}
+            <Anime
+              id={anime.id}
+              name={$settings.animeLanguage === "english"
+                ? anime.title.english ?? anime.title.romaji
+                : anime.title.native ?? anime.title.romaji}
+              thumbnail={anime.coverImage.large}
+              description={anime.description}
+              episodes={anime.streamingEpisodes}
+              isNSFW={anime.isAdult}
+              on:click={() =>
+                ($history.browse = [
+                  anime,
+                  ...$history.browse.filter((item) => item.id !== anime.id),
+                ])}
+            />
+          {/if}
+        {:else}
+          <p class="sub-placeholder">Subscribed animes will show up here</p>
+        {/each}
+      </svelte:fragment>
+    </Section>
+    <Section storageId="{list.recommended.title}:scroll">
+      <svelte:fragment slot="title">
+        {list.recommended.title}
+      </svelte:fragment>
+      <svelte:fragment slot="animes">
+        {#each list.recommended.data as anime}
+          {#if !anime.isAdult || $settings.allowNSFW}
+            <Anime
+              id={anime.id}
+              name={$settings.animeLanguage === "english"
+                ? anime.title.english ?? anime.title.romaji
+                : anime.title.native ?? anime.title.romaji}
+              thumbnail={anime.coverImage.large}
+              description={anime.description}
+              episodes={anime.streamingEpisodes}
+              isNSFW={anime.isAdult}
+              on:click={() =>
+                ($history.browse = [
+                  anime,
+                  ...$history.browse.filter((item) => item.id !== anime.id),
+                ])}
+            />
+          {/if}
+        {:else}
+          <p class="sub-placeholder">No Recommendations</p>
+        {/each}
+      </svelte:fragment>
+    </Section>
+    <Section storageId="{list.season.title}:scroll">
+      <svelte:fragment slot="title">
+        {list.season.title}
+        <br />
+        <h3>
+          {date.getFullYear()}
+          {season}
+        </h3>
+      </svelte:fragment>
+      <svelte:fragment slot="animes">
+        {#each list.season.data as anime}
+          {#if !anime.isAdult || $settings.allowNSFW}
+            <Anime
+              id={anime.id}
+              name={$settings.animeLanguage === "english"
+                ? anime.title.english ?? anime.title.romaji
+                : anime.title.native ?? anime.title.romaji}
+              thumbnail={anime.coverImage.large}
+              description={anime.description}
+              episodes={anime.streamingEpisodes}
+              isNSFW={anime.isAdult}
+              on:click={() =>
+                ($history.browse = [
+                  anime,
+                  ...$history.browse.filter((item) => item.id !== anime.id),
+                ])}
+            />
+          {/if}
+        {:else}
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+        {/each}
+      </svelte:fragment>
+    </Section>
+    <Section storageId="{list.trending.title}:scroll">
+      <svelte:fragment slot="title">
+        {list.trending.title}
+        <br />
+        <h3>
+          {date.toLocaleString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </h3>
+      </svelte:fragment>
+      <svelte:fragment slot="animes">
+        {#each list.trending.data as anime}
+          {#if !anime.isAdult || $settings.allowNSFW}
+            <Anime
+              id={anime.id}
+              name={$settings.animeLanguage === "english"
+                ? anime.title.english ?? anime.title.romaji
+                : anime.title.native ?? anime.title.romaji}
+              thumbnail={anime.coverImage.large}
+              description={anime.description}
+              episodes={anime.streamingEpisodes}
+              isNSFW={anime.isAdult}
+              on:click={() =>
+                ($history.browse = [
+                  anime,
+                  ...$history.browse.filter((item) => item.id !== anime.id),
+                ])}
+            />
+          {/if}
+        {:else}
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+          <Anime />
+        {/each}
+      </svelte:fragment>
+    </Section>
+  {:catch}
+    {goto("/library/downloads", { replaceState: true })}
   {/await}
 </div>
 
@@ -150,7 +260,6 @@
   }
 
   p {
-    /* color: white; */
     color: var(--text-color);
   }
 
@@ -158,69 +267,19 @@
     display: none;
   }
 
-  .anime-container {
-    margin-left: 10px;
-    margin-right: 10px;
+  h3 {
+    color: var(--text-color);
+    opacity: 0.6;
+    font-size: small;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
   }
 
-  .items {
-    display: inline-flexbox;
-    overflow-x: auto;
-    overflow-y: hidden;
-    width: auto;
-    white-space: nowrap;
-    padding-bottom: 15px;
-    -webkit-user-select: none; /* Chrome all / Safari all */
-    -moz-user-select: none; /* Firefox all */
-    -ms-user-select: none; /* IE 10+ */
-    user-select: none; /* Likely future */
-  }
-
-  .windows-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: var(--text-color) var(--tertiary-color);
-  }
-
-  .windows-scrollbar::-webkit-scrollbar {
-    height: 7px;
-    border-radius: 100px;
-  }
-  .windows-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(var(--pure-white-rgb), 0.7);
-    background-clip: padding-box;
-    border-radius: 100px;
-    border: 2px, solid, transparent;
-  }
-
-  .windows-scrollbar::-webkit-scrollbar-track {
-    background-color: rgba(var(--tertiary-rgb), 0.7);
-  }
-
-  .windows-scrollbar::-webkit-scrollbar-thumb:active {
-    background: rgba(
-      var(--pure-white-rgb),
-      0.61
-    ); /* Some darker color when you click it */
-    border-radius: 100px;
-  }
-
-  .windows-scrollbar::-webkit-scrollbar-track:hover {
-    background-color: rgba(var(--secondary-rgb), 0.7);
-  }
-
-  .title {
-    font-size: 1.5em;
-    font-weight: bold;
-    margin-bottom: 12px;
-    z-index: 3;
-    position: relative;
-  }
-
-  hr.solid {
-    margin-top: 20px;
-    border-top: 1px solid;
-    border-color: var(--secondary-color);
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+  .sub-placeholder {
+    margin-left: 1rem;
+    font-style: italic;
+    font-size: large;
+    font-weight: lighter;
   }
 
   .container {

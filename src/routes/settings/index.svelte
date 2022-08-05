@@ -5,53 +5,47 @@
   import Group from "$lib/components/settings/Group.svelte";
   import {
     settings,
-    isSettings,
+    schema,
     type CustomTheme,
-    type Settings,
+    type Schema,
   } from "$lib/model/settings";
   import ThemePreview from "$lib/components/settings/Theme/ThemePreview.svelte";
   import path from "path";
   import anilistIcon from "$lib/components/assets/anilist.png";
-  import darkPreview from "$lib/components/assets/dark.png";
-  import { onMount } from "svelte";
   import { capitalize } from "$lib/model/global";
-  import { history, type History } from "$lib/model/history";
+  import { history } from "$lib/model/history";
   import { library } from "$lib/model/library";
   import { BaseDirectory, type FsOptions } from "@tauri-apps/api/fs";
   import { connections } from "$lib/model/connections";
-  let open: typeof import("@tauri-apps/api/dialog").open;
-  let save: typeof import("@tauri-apps/api/dialog").save;
-  let confirm: typeof import("@tauri-apps/api/dialog").confirm;
-  let downloadDir: typeof import("@tauri-apps/api/path").downloadDir;
-  let appDir: typeof import("@tauri-apps/api/path").appDir;
-  let sendNotification: typeof import("@tauri-apps/api/notification").sendNotification;
-  let getCurrent: typeof import("@tauri-apps/api/window").getCurrent;
-  let shellOpen: typeof import("@tauri-apps/api/shell").open;
-  let writeTextFile: typeof import("@tauri-apps/api/fs").writeTextFile;
-  let readTextFile: typeof import("@tauri-apps/api/fs").readTextFile;
-  let removeFile: typeof import("@tauri-apps/api/fs").removeFile;
-  let copyFile: typeof import("@tauri-apps/api/fs").copyFile;
-
-  onMount(async () => {
-    const dialog = await import("@tauri-apps/api/dialog");
-    open = dialog.open;
-    save = dialog.save;
-    confirm = dialog.confirm;
-    const path = await import("@tauri-apps/api/path");
-    downloadDir = path.downloadDir;
-    appDir = path.appDir;
-    sendNotification = (await import("@tauri-apps/api/notification"))
-      .sendNotification;
-    getCurrent = (await import("@tauri-apps/api/window")).getCurrent;
-    shellOpen = (await import("@tauri-apps/api/shell")).open;
-    const fs = await import("@tauri-apps/api/fs");
-    writeTextFile = fs.writeTextFile;
-    readTextFile = fs.readTextFile;
-    removeFile = fs.removeFile;
-    copyFile = fs.copyFile;
-  });
+  import type { ActiveSource } from "$lib/model/sources";
+  import { animes } from "$lib/model/anime";
+  import { goto } from "$app/navigation";
+  import { fade } from "svelte/transition";
+  import { getVersion } from "@tauri-apps/api/app";
+  import { open, save, confirm } from "@tauri-apps/api/dialog";
+  import { downloadDir, appDir } from "@tauri-apps/api/path";
+  import { sendNotification } from "@tauri-apps/api/notification";
+  import { getCurrent } from "@tauri-apps/api/window";
+  import { open as shellOpen } from "@tauri-apps/api/shell";
+  import {
+    writeTextFile,
+    readTextFile,
+    removeFile,
+    copyFile,
+  } from "@tauri-apps/api/fs";
 
   const client_id: string = "4602";
+  let systemTheme: "light" | "dark" = "light";
+
+  getCurrent().onThemeChanged(
+    (theme) => (systemTheme = theme.payload as "dark" | "light")
+  );
+
+  async function getSystemTheme(): Promise<"dark" | "light"> {
+    const theme = await getCurrent().theme();
+    systemTheme = theme;
+    return theme;
+  }
 
   /**
    * Clears the session storage.
@@ -92,10 +86,9 @@
    * Clears and deletes custom themes.
    */
   function clearThemes() {
-    $settings.customThemes.forEach((theme) => {
-      removeFile(theme.source).catch(() =>
-        console.error(`Failed to remove ${theme.name} at path: ${theme.source}`)
-      );
+    $settings.customThemes.forEach(async (theme) => {
+      console.log("removed: ", theme.source);
+      await removeFile(theme.source);
     });
 
     if (!!$settings.theme.custom)
@@ -181,6 +174,9 @@
     return writeTextFile(
       path,
       JSON.stringify({
+        schemaVersion: schema.schemaVersion,
+        date: Date.now(),
+        version: await getVersion(),
         settings: $settings,
         history: $history,
         customThemes: await Promise.all(
@@ -201,19 +197,20 @@
    *
    * @param newSettings Object to set the settings to.
    */
-  export async function readSettings(newSettings: {
-    settings: Settings;
-    history: History;
-    customThemes: { name: string; content: string }[];
-  }): Promise<void> {
+  export async function readSettings(newSettings: Schema): Promise<void> {
     newSettings.customThemes.forEach(async (theme) => {
       const themes: string = path.join("themes", theme.name + ".css");
       await writeTextFile(themes, theme.content, { dir: BaseDirectory.App });
     });
-    if (isSettings(newSettings.settings)) {
-      settings.set(newSettings.settings);
-    }
+    const schemaVersion: number = newSettings.schemaVersion;
+    const date: number = newSettings.date;
+    const version: string = newSettings.version;
+    const sourceRepos: { name: string; url: string }[] =
+      newSettings.sourceRepos;
+    const activeSources: ActiveSource[] = newSettings.activeSources;
+    settings.add(newSettings.settings);
     history.set(newSettings.history);
+    newSettings.history.browse.forEach((item) => animes.addAnime(item));
   }
 
   /**
@@ -246,7 +243,7 @@
   }
 </script>
 
-<main>
+<main in:fade>
   <Group title="Settings" description="General Settings">
     <Toggle
       on:change={() => ($settings.allowNSFW = !$settings.allowNSFW)}
@@ -293,6 +290,18 @@
         <img src={anilistIcon} alt="anilist" />
       </span>
     </Button>
+    <Button
+      on:click={() =>
+        goto(
+          `https://anilist.co/api/v2/oauth/authorize?client_id=${client_id}&response_type=token`
+        )}
+      disabled={!!$connections["anilist"]}
+    >
+      <span>
+        {!$connections["anilist"] ? "Connect" : "Connected"} to Anilist
+        <img src={anilistIcon} alt="anilist" />
+      </span>
+    </Button>
   </Group>
   <Group title="Notifications" description="Notification Settings">
     <Toggle
@@ -321,7 +330,7 @@
   <Group title="Customization" description="Personalize the App">
     <div class="theme-holder">
       <ThemePreview
-        image={darkPreview}
+        theme="dark"
         selected={!$settings.theme.syncWithSystem &&
           $settings.theme.appearance === "dark"}
         on:click={() =>
@@ -332,7 +341,7 @@
           })}>Dark Mode</ThemePreview
       >
       <ThemePreview
-        image={darkPreview}
+        theme="light"
         selected={!$settings.theme.syncWithSystem &&
           $settings.theme.appearance === "light"}
         on:click={() =>
@@ -342,25 +351,27 @@
             appearance: "light",
           })}>Light Mode</ThemePreview
       >
-      <ThemePreview
-        image={darkPreview}
-        selected={$settings.theme.syncWithSystem}
-        on:click={async () =>
-          ($settings.theme = {
-            custom: undefined,
-            syncWithSystem: true,
-            appearance: (await getCurrent().theme()) ?? "light",
-          })}>Sync With System</ThemePreview
-      >
+      {#await getSystemTheme() then}
+        <ThemePreview
+          theme={systemTheme ?? "light"}
+          selected={$settings.theme.syncWithSystem}
+          on:click={() =>
+            ($settings.theme = {
+              custom: undefined,
+              syncWithSystem: true,
+              appearance: systemTheme ?? "light",
+            })}>Sync With System</ThemePreview
+        >
+      {/await}
       {#each $settings.customThemes as theme}
         <ThemePreview
-          image={darkPreview}
+          theme={theme.name}
           selected={$settings.theme.custom?.source === theme.source}
           on:click={() =>
             ($settings.theme = {
               custom: theme,
               syncWithSystem: false,
-              appearance: undefined,
+              appearance: "custom",
             })}>{capitalize(theme.name)}</ThemePreview
         >
       {/each}

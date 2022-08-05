@@ -54,7 +54,7 @@
 
   .default {
     background-color: var(--tertiary-color);
-    color: var(--accent-color);
+    color: var(--text-color);
   }
 
   .default:not(:disabled):hover {

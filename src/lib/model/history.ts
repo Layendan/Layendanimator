@@ -6,4 +6,7 @@ export interface History {
   browse: Anime[];
 }
 
+/**
+ * History store for what animes have been searched and browsed.
+ */
 export const history = writable<History>({ search: [], browse: [] });

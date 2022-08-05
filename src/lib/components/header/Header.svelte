@@ -11,16 +11,9 @@
   $: opacity = y < 40 ? y * 0.0125 + 0.3 : 0.8;
   $: blur = `${y < 40 ? y * 0.5 : 20}px`;
   $: saturation = y < 40 ? y * -0.00625 + 1 : 0.75;
-
-  console.log($page);
 </script>
 
 <svelte:window bind:scrollY={y} />
-
-<!-- This is so that the default focus doesn't start at the link -->
-<!-- svelte-ignore a11y-missing-content -->
-<!-- svelte-ignore a11y-autofocus -->
-<a href="/" style="outline: none;" autofocus={true} />
 
 <header
   class:bottom-border={y > 40}
@@ -37,10 +30,12 @@
 
   <nav>
     <a
+      sveltekit:prefetch
       href="/library/downloads"
       class:selected={$page.routeId === "library/downloads"}>Downloads</a
     >
     <a
+      sveltekit:prefetch
       href="/library/history"
       class:selected={$page.routeId === "library/history"}>History</a
     >
@@ -72,8 +67,10 @@
   </div>
 
   <nav class="settings">
-    <a href="/settings" class:selected={$page.routeId === "settings"}
-      >Settings</a
+    <a
+      sveltekit:prefetch
+      href="/settings"
+      class:selected={$page.routeId === "settings"}>Settings</a
     >
   </nav>
 </header>
@@ -81,21 +78,18 @@
 <style>
   header {
     display: flex;
-    /* justify-content: space-between; */
     gap: 5rem;
     width: 100%;
     position: sticky;
     top: 0px;
-    /* padding-bottom: 5px; */
     z-index: 10;
     overflow: hidden;
-
-    transition: box-shadow 0.2s ease-in-out;
-
     background-color: rgba(var(--primary-rgb), var(--header-opacity));
     -webkit-backdrop-filter: blur(var(--header-blur))
       saturate(var(--header-saturation));
     backdrop-filter: blur(var(--header-blur)) saturate(var(--header-saturation));
+
+    transition: box-shadow 0.2s ease-in-out;
   }
 
   img {
@@ -159,7 +153,7 @@
     color: var(--text-color);
   }
 
-  a:hover {
+  a:not(.selected):hover {
     color: var(--accent-color);
   }
 
@@ -173,5 +167,6 @@
 
   .selected {
     border-bottom: 2px solid var(--accent-color);
+    text-decoration: none;
   }
 </style>

@@ -7,8 +7,13 @@
   import { settings } from "$lib/model/settings";
   import DOMPurify from "dompurify";
   import { animes, type Anime } from "$lib/model/anime";
+  import { getAnimeById } from "$lib/prefetch";
 
-  let anime: Anime = $animes.get(Number.parseInt($page.params.id));
+  async function getAnime(id: number): Promise<Anime> {
+    return $animes.get(id) ?? (await getAnimeById(id, undefined));
+  }
+
+  const id: number = Number.parseInt($page.params.id);
 
   // Page scroll
   let y = 0;
@@ -24,8 +29,8 @@
 
 <svelte:window bind:scrollY={y} />
 
-{#if anime}
-  <section transition:fade>
+{#await getAnime(id) then anime}
+  <section in:fade>
     {#if anime.bannerImage && !bannerError}
       <div class="banner">
         {#key bannerLoading}
@@ -34,7 +39,7 @@
             alt={anime.title.romaji}
             on:error={() => (bannerError = true)}
             on:load={() => (bannerLoading = false)}
-            transition:fade
+            in:fade
             class:reduce-motion={$settings.reduceMotion}
             class:hide={bannerLoading}
             style:--banner-scale={scale}
@@ -47,7 +52,7 @@
         {/if}
       </div>
     {/if}
-    <div transition:fade class="text">
+    <div in:fade class="text">
       <div class="container">
         <div
           class="important-info"
@@ -59,7 +64,7 @@
               alt={anime.title.english ?? anime.title.romaji}
               on:error={() => (coverError = true)}
               on:load={() => (coverLoading = false)}
-              transition:fade
+              in:fade
               class:hide={coverLoading}
               class:overlap={!!anime.bannerImage && !bannerError}
               class="thumbnail"
@@ -80,7 +85,7 @@
                 ? anime.title.english ?? anime.title.romaji
                 : anime.title.native ?? anime.title.romaji}
             </h1>
-            <p transition:fade class="description">
+            <p in:fade class="description">
               {@html DOMPurify.sanitize(anime.description, {
                 USE_PROFILES: { html: true },
               })}
@@ -91,7 +96,9 @@
     </div>
     <EpisodeHolder episodes={anime.streamingEpisodes} />
   </section>
-{/if}
+{:catch e}
+  <p class="error">{e}</p>
+{/await}
 
 <style>
   .banner {
@@ -183,5 +190,11 @@
 
   .hide {
     display: none;
+  }
+
+  .error {
+    margin: 5rem;
+    margin-top: 50px;
+    text-align: center;
   }
 </style>

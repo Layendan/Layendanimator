@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
+  import { onDestroy } from "svelte";
   import { animes, type Episode } from "$lib/model/anime";
   import { page } from "$app/stores";
   import test_video from "$lib/components/assets/test_video.mp4";
-  let window: typeof import("@tauri-apps/api/window");
+  import { getCurrent } from "@tauri-apps/api/window";
 
   export let episode: Episode;
   let episodeStore: Episode;
@@ -20,15 +20,10 @@
   let duration: number;
   let paused: boolean;
 
-  // https://sapper.svelte.dev/docs/#Server-side_rendering
-  // Will cause error on build since the api needs window which will not exist server side
-  onMount(async () => {
-    window = await import("@tauri-apps/api/window");
-    episodeStore = $animes
-      .get(Number.parseInt($page.params.id))
-      .streamingEpisodes.find((e) => e.url === episode.url);
-    time = (episodeStore.percentWatched * duration) / 100;
-  });
+  episodeStore = $animes
+    .get(Number.parseInt($page.params.id))
+    .streamingEpisodes.find((e) => e.url === episode.url);
+  time = (episodeStore.percentWatched * duration) / 100;
 
   onDestroy(updateTimeWatched);
 
@@ -59,7 +54,7 @@
   on:fullscreenchange={() => {
     console.log("Fullscreen change");
 
-    window?.getCurrent().toggleMaximize();
+    getCurrent().toggleMaximize();
   }}
 >
   <source src={videoSrc} type={videoType} />

@@ -1,29 +1,43 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
+
   import { page } from "$app/stores";
   import { connections } from "$lib/model/connections";
+  import { getUserId } from "$lib/prefetch";
+  import { onDestroy } from "svelte";
 
   const parsedHash = new URLSearchParams(
     $page.url.hash.substring(1) // skip the first char (#)
   );
 
-  const access_token = parsedHash.get("access_token");
+  const accessToken = parsedHash.get("access_token");
   const source = $page.url.searchParams.get("source");
-
-  $connections[source] = access_token;
+  $connections[source] = accessToken;
 
   let time: number = 5;
+  let interval: NodeJS.Timer;
 
-  setInterval(() => {
-    time--;
-    if (time <= 0) {
-      goto("/", { replaceState: true });
+  onDestroy(() => clearInterval(interval));
+
+  async function setConnection() {
+    $connections[`${source}-userId`] = (
+      await getUserId(accessToken)
+    ).toString();
+    console.log($connections[`${source}-userId`]);
+
+    if ($page.url.pathname === "/callback") {
+      interval = setInterval(() => {
+        time -= 1;
+        if (time <= 0) {
+          goto("/", { replaceState: true });
+        }
+      }, 1000);
     }
-  }, 1000);
+  }
 </script>
 
 <main>
-  {#if access_token}
+  {#await setConnection() then}
     <div>
       <p>Successfully Linked!</p>
       <p>You will be redirected to the home page in {time} seconds.</p>
@@ -33,9 +47,9 @@
         >
       </p>
     </div>
-  {:else}
-    Failed to Link
-  {/if}
+  {:catch e}
+    {e} <a href="/">Go Back</a>
+  {/await}
 </main>
 
 <style>

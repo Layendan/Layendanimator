@@ -8,7 +8,7 @@
     "devPath": "http://localhost:3000",
     "beforeDevCommand": "vite dev",
     "beforeBuildCommand": "vite build",
-    "withGlobalTauri": true
+    "withGlobalTauri": false
   },
   "tauri": {
     "bundle": {
@@ -73,7 +73,7 @@
         "removeDir": false,
         "removeFile": false,
         "renameFile": false,
-        "scope": ["$APP/*"],
+        "scope": ["$APP/**/*"],
         "writeFile": false
       },
       "globalShortcut": {

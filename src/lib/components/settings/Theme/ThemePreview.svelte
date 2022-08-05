@@ -1,19 +1,26 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
 
-  export let image: string;
+  export let theme: string;
   export let selected: boolean = false;
   export let disabled: boolean = false;
   export let hover: boolean = true;
 </script>
 
-<div on:click class:selected class:disabled class:hover transition:fade>
-  <img src={image} alt="" />
+<button on:click class:selected class:disabled class:hover in:fade>
+  <div class="preview {theme}">
+    <p style="color: var(--secondary-color)">&#x25cf;</p>
+    <p style="color: var(--tertiary-color)">&#x25cf;</p>
+    <p style="color: var(--text-color)">&#x25cf;</p>
+    <p style="color: var(--accent-color)">&#x25cf;</p>
+    <p style="color: var(--danger-color)">&#x25cf;</p>
+    <p style="color: var(--active-color)">&#x25cf;</p>
+  </div>
   <p class="header"><slot /></p>
-</div>
+</button>
 
 <style>
-  div {
+  button {
     display: flex;
     flex-direction: column;
     max-width: 220px;
@@ -30,37 +37,47 @@
     transition: 0.2s;
   }
 
-  div.selected {
+  button.selected {
     border-color: var(--accent-color);
   }
 
-  div.disabled {
+  button.disabled {
     opacity: 0.7;
     cursor: default;
     pointer-events: none;
   }
 
-  div.hover:not(.selected):hover {
+  button.hover:not(.selected):hover {
     background-color: var(--accent-color);
     border-color: var(--accent-color);
   }
 
-  div.hover:not(.selected):hover .header {
+  button.hover:not(.selected):hover .header {
     color: var(--text-color);
   }
 
-  img {
-    width: 200px;
-    height: 100%;
-    aspect-ratio: 3/2;
-    object-fit: cover;
+  .preview {
+    width: 180px;
+    height: 110px;
+    display: inline-flex;
+    gap: 0.2rem;
     border-radius: 5px;
+    background-color: var(--primary-color);
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  p {
+    margin: 0;
+    padding: 0;
   }
 
   .header {
     padding: 0;
     margin: 0;
-    color: var(--accent-color);
+    color: var(--text-color);
     border-color: var(--accent-color);
   }
 </style>

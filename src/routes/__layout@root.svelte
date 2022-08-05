@@ -32,8 +32,4 @@
 
     color: var(--text-color);
   }
-
-  footer {
-    padding: 40px 0;
-  }
 </style>

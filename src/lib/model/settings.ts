@@ -1,4 +1,6 @@
 import { writable } from "svelte/store";
+import type { ActiveSource } from "./sources";
+import type { History } from "./history";
 
 export interface CustomTheme {
   name: string;
@@ -8,7 +10,7 @@ export interface CustomTheme {
 export interface Theme {
   custom: CustomTheme | undefined;
   syncWithSystem: boolean;
-  appearance: "dark" | "light" | undefined;
+  appearance: "dark" | "light" | "custom";
 }
 
 export interface Settings {
@@ -22,24 +24,6 @@ export interface Settings {
   };
   theme: Theme;
   customThemes: CustomTheme[];
-}
-
-export function isSettings(settings: any): settings is Settings {
-  return (
-    settings &&
-    typeof settings.allowNSFW === "boolean" &&
-    typeof settings.ordered === "boolean" &&
-    typeof settings.reduceMotion === "boolean" &&
-    typeof settings.animeLanguage === "string" &&
-    typeof settings.notifications === "object" &&
-    typeof settings.notifications.enabled === "boolean" &&
-    typeof settings.notifications.grouped === "boolean" &&
-    typeof settings.theme === "object" &&
-    typeof settings.theme.custom === "object" &&
-    typeof settings.theme.syncWithSystem === "boolean" &&
-    typeof settings.theme.appearance === "string" &&
-    typeof settings.customThemes === "object"
-  );
 }
 
 function createSettings() {
@@ -60,6 +44,39 @@ function createSettings() {
     subscribe,
     set,
     update,
+    /**
+     * Safely add new settings to the already existing one.
+     * @param settings The Settings to add.
+     */
+    add: (settings: Settings) =>
+      update((oldSettings) => {
+        return {
+          allowNSFW: settings?.allowNSFW ?? oldSettings.allowNSFW,
+          ordered: settings?.ordered ?? oldSettings.ordered,
+          reduceMotion: settings?.reduceMotion ?? oldSettings.reduceMotion,
+          animeLanguage: settings?.animeLanguage ?? oldSettings.animeLanguage,
+          notifications: {
+            enabled:
+              settings?.notifications?.enabled ??
+              oldSettings.notifications.enabled,
+            grouped:
+              settings?.notifications?.grouped ??
+              oldSettings.notifications.grouped,
+          },
+          theme: {
+            custom: settings?.theme?.custom ?? oldSettings.theme.custom,
+            syncWithSystem:
+              settings?.theme?.syncWithSystem ??
+              oldSettings.theme.syncWithSystem,
+            appearance:
+              settings?.theme?.appearance ?? oldSettings.theme.appearance,
+          },
+          customThemes: [...settings?.customThemes],
+        };
+      }),
+    /**
+     * Resets the settings to their original state.
+     */
     reset: () =>
       set({
         allowNSFW: false,
@@ -77,3 +94,21 @@ function createSettings() {
 }
 
 export const settings = createSettings();
+
+export interface Schema {
+  schemaVersion: number;
+  date: number;
+  version: string;
+  sourceRepos: { name: string; url: string }[];
+  activeSources: ActiveSource[];
+  settings: Settings;
+  history: History;
+  customThemes: { name: string; content: string }[];
+}
+
+/**
+ * Data about the schema, might be removed later
+ */
+export const schema = {
+  schemaVersion: 0.1,
+};

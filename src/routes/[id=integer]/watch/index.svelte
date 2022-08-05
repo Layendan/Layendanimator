@@ -7,7 +7,7 @@
   let episode: Episode = JSON.parse($page.url.searchParams.get("episode"));
 </script>
 
-<section transition:fade>
+<section in:fade>
   <Player {episode} />
 </section>
 

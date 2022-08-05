@@ -29,8 +29,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             api::close_splashscreen,
             api::search_anime,
-            api::add_module,
-            api::online
+            api::add_module
         ])
         .run(ctx)
         .expect("error while running tauri application");
@@ -49,8 +48,7 @@ fn main() {
             api::close_splashscreen,
             api::search_anime,
             api::add_module,
-            api::fullscreen,
-            api::online
+            api::fullscreen
         ])
         .run(ctx)
         .expect("error while running tauri application");
@@ -71,8 +69,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             api::close_splashscreen,
             api::search_anime,
-            api::add_module,
-            api::online
+            api::add_module
         ])
         // Add default submenus
         .menu(

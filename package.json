@@ -18,8 +18,8 @@
     "test": "playwright test"
   },
   "devDependencies": {
-    "@sveltejs/adapter-static": "^1.0.0-next.38",
-    "@sveltejs/kit": "1.0.0-next.397",
+    "@sveltejs/adapter-static": "^1.0.0-next.39",
+    "@sveltejs/kit": "1.0.0-next.405",
     "@tauri-apps/cli": "^1.0.5",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.32.0",
@@ -41,7 +41,6 @@
     "@tauri-apps/api": "^1.0.2",
     "dompurify": "^2.3.10",
     "nprogress": "^0.2.0",
-    "path-browserify": "^1.0.1",
     "radix-icons-svelte": "^1.2.1",
     "tauri-settings": "^0.1.2",
     "vite": "^3.0.4"

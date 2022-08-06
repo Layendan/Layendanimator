@@ -6,11 +6,6 @@ const config: UserConfig = {
     port: 3000,
   },
   plugins: [sveltekit()],
-  resolve: {
-    alias: {
-      path: "path-browserify",
-    },
-  },
 };
 
 export default config;

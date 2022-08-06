@@ -28,7 +28,7 @@
 <style>
   * {
     scrollbar-width: thin;
-    overscroll-behavior: contain;
+    overscroll-behavior-x: contain;
   }
 
   p {

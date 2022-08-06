@@ -10,7 +10,6 @@
     type Schema,
   } from "$lib/model/settings";
   import ThemePreview from "$lib/components/settings/Theme/ThemePreview.svelte";
-  import path from "path";
   import anilistIcon from "$lib/components/assets/anilist.png";
   import { capitalize } from "$lib/model/global";
   import { history } from "$lib/model/history";
@@ -23,7 +22,7 @@
   import { fade } from "svelte/transition";
   import { getVersion } from "@tauri-apps/api/app";
   import { open, save, confirm } from "@tauri-apps/api/dialog";
-  import { downloadDir, appDir } from "@tauri-apps/api/path";
+  import { downloadDir, appDir, join, basename } from "@tauri-apps/api/path";
   import { sendNotification } from "@tauri-apps/api/notification";
   import { getCurrent } from "@tauri-apps/api/window";
   import { open as shellOpen } from "@tauri-apps/api/shell";
@@ -139,8 +138,8 @@
 
     let themes: CustomTheme[] = await Promise.all(
       items.map(async (element) => {
-        const title: string = path.basename(element, ".css");
-        const newPath: string = path.join(
+        const title: string = await basename(element, ".css");
+        const newPath: string = await join(
           appDirectory,
           "themes",
           title + ".css"
@@ -199,7 +198,7 @@
    */
   export async function readSettings(newSettings: Schema): Promise<void> {
     newSettings.customThemes.forEach(async (theme) => {
-      const themes: string = path.join("themes", theme.name + ".css");
+      const themes: string = await join("themes", theme.name + ".css");
       await writeTextFile(themes, theme.content, { dir: BaseDirectory.App });
     });
     const schemaVersion: number = newSettings.schemaVersion;

@@ -1,9 +1,16 @@
 <script lang="ts">
-  export let buttonType: "active" | "danger" | "default" = "default";
+  export let type: "active" | "danger" | "default" = "default";
+  export let size:
+    | "small"
+    | "medium"
+    | "large"
+    | "minContent"
+    | "maxContent"
+    | "fitContent" = "fitContent";
   export let disabled: boolean = false;
 </script>
 
-<button on:click class={`${buttonType} ${$$props.class ?? ""}`} {disabled}>
+<button on:click class="{type} {size}" {disabled}>
   <slot />
 </button>
 
@@ -15,7 +22,6 @@
     padding: 0.4rem 0.8rem;
     font-size: 14px;
     font-weight: 500;
-    width: fit-content;
     transition: 0.2s;
   }
 
@@ -26,6 +32,30 @@
 
   button:not(:disabled):active {
     opacity: 0.9;
+  }
+
+  .small {
+    width: 100px;
+  }
+
+  .medium {
+    width: 200px;
+  }
+
+  .large {
+    width: 300px;
+  }
+
+  .minContent {
+    width: min-content;
+  }
+
+  .maxContent {
+    width: max-content;
+  }
+
+  .fitContent {
+    width: fit-content;
   }
 
   .active {

@@ -375,17 +375,17 @@
         >
       {/each}
     </div>
-    <div class="button-holder">
+    <block>
       <Button
-        class="button"
+        size="medium"
         on:click={async () =>
           ($settings.customThemes = [
             ...$settings.customThemes,
             ...(await importCustomThemes()),
           ].sort((a, b) => a.name.localeCompare(b.name)))}>Import Theme</Button
       >
-      <Button class="button">Export Theme</Button>
-    </div>
+      <Button size="medium">Export Theme</Button>
+    </block>
   </Group>
   <Group title="About" description="About Layendanimator">
     <ExternalLink href="https://github.com/Layendan/NineAnimator-Tauri"
@@ -396,28 +396,28 @@
     </ExternalLink>
   </Group>
   <Group title="Data & Privacy" description="Manage your Data and Privacy">
-    <div class="button-holder">
-      <Button class="button" on:click={exportSettings}>Create Backup</Button>
-      <Button class="button" on:click={importSettings}>Import Backup</Button>
-      <Button class="button" on:click={clearCache}>Clear Cached Data</Button>
-      <Button class="button" on:click={clearSearchHistory}
+    <block>
+      <Button size="medium" on:click={exportSettings}>Create Backup</Button>
+      <Button size="medium" on:click={importSettings}>Import Backup</Button>
+      <Button size="medium" on:click={clearCache}>Clear Cached Data</Button>
+      <Button size="medium" on:click={clearSearchHistory}
         >Clear Search History</Button
       >
-      <Button class="button" on:click={clearBrowseHistory}
+      <Button size="medium" on:click={clearBrowseHistory}
         >Clear Browse History</Button
       >
-      <Button class="button" on:click={clearDownloads}>Clear Downloads</Button>
-      <Button class="button" on:click={clearThemes}>Clear Themes</Button>
+      <Button size="medium" on:click={clearDownloads}>Clear Downloads</Button>
+      <Button size="medium" on:click={clearThemes}>Clear Themes</Button>
       <Button
-        class="button"
-        buttonType="danger"
+        size="medium"
+        type="danger"
         on:click={async () =>
           (await confirm("(There is no going back)", {
             title: "Are you sure you want to reset everything?",
             type: "warning",
           })) && reset()}>Reset</Button
       >
-    </div>
+    </block>
   </Group>
 </main>
 
@@ -443,6 +443,11 @@
     border-radius: 5px;
   }
 
+  block {
+    display: flex;
+    flex-direction: column;
+  }
+
   .theme-holder {
     display: flex;
     flex-direction: row;
@@ -450,10 +455,5 @@
     align-content: center;
     justify-content: left;
     gap: 1rem;
-  }
-
-  .button-holder :global(.button) {
-    display: block;
-    width: 200px;
   }
 </style>

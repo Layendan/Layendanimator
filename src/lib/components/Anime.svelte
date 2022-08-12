@@ -35,9 +35,9 @@
   <a href="/{id}" class:unselectable={id === null} on:click>
     <span class="holder">
       {#key loading}
+        <!-- Removing lazy loading because it prevents images from loading in ms edge, might change display: none to width+height: 0 -->
         <img
           src={thumbnail}
-          loading="lazy"
           alt={name}
           class="thumbnail"
           class:hide={loading}

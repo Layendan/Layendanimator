@@ -6,7 +6,8 @@
     | "large"
     | "minContent"
     | "maxContent"
-    | "fitContent" = "fitContent";
+    | "fitContent"
+    | "all" = "fitContent";
   export let disabled: boolean = false;
 </script>
 
@@ -56,6 +57,10 @@
 
   .fitContent {
     width: fit-content;
+  }
+
+  .all {
+    width: 100%;
   }
 
   .active {

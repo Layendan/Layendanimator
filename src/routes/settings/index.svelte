@@ -82,6 +82,13 @@
   }
 
   /**
+   * Clears and deletes subscriptions.
+   */
+  function clearSubscriptions() {
+    $library.subscriptions = [];
+  }
+
+  /**
    * Clears and deletes custom themes.
    */
   function clearThemes() {
@@ -407,6 +414,9 @@
         >Clear Browse History</Button
       >
       <Button size="medium" on:click={clearDownloads}>Clear Downloads</Button>
+      <Button size="medium" on:click={clearSubscriptions}
+        >Clear Subscriptions</Button
+      >
       <Button size="medium" on:click={clearThemes}>Clear Themes</Button>
       <Button
         size="medium"

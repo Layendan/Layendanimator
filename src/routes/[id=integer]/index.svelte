@@ -5,9 +5,11 @@
   import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
   import EpisodeHolder from "$lib/components/player/EpisodeHolder.svelte";
   import { settings } from "$lib/model/settings";
+  import { library } from "$lib/model/library";
   import DOMPurify from "dompurify";
   import { animes, type Anime } from "$lib/model/anime";
   import { getAnimeById } from "$lib/prefetch";
+  import Button from "$lib/components/public/Button.svelte";
 
   async function getAnime(id: number): Promise<Anime> {
     return $animes.get(id) ?? (await getAnimeById(id, undefined));
@@ -58,27 +60,52 @@
           class="important-info"
           class:no-overlap={!anime.bannerImage || bannerError}
         >
-          {#key coverLoading}
-            <img
-              src={coverError ? loadingFailure : anime.coverImage.large}
-              alt={anime.title.english ?? anime.title.romaji}
-              on:error={() => (coverError = true)}
-              on:load={() => (coverLoading = false)}
-              in:fade
-              class:hide={coverLoading}
-              class:overlap={!!anime.bannerImage && !bannerError}
-              class="thumbnail"
-            />
-          {/key}
-          {#if coverLoading}
-            <img
-              src={loadingFailure}
-              alt={anime.title.english ?? anime.title.romaji}
-              class:overlap={!!anime.bannerImage && !bannerError}
-              class="thumbnail"
-              in:fade
-            />
-          {/if}
+          <div
+            class="image-and-choices"
+            class:overlap={!!anime.bannerImage && !bannerError}
+          >
+            {#key coverLoading}
+              <img
+                src={coverError ? loadingFailure : anime.coverImage.large}
+                alt={anime.title.english ?? anime.title.romaji}
+                on:error={() => (coverError = true)}
+                on:load={() => (coverLoading = false)}
+                in:fade
+                class:hide={coverLoading}
+                class="thumbnail"
+              />
+            {/key}
+            {#if coverLoading}
+              <img
+                src={loadingFailure}
+                alt={anime.title.english ?? anime.title.romaji}
+                class="thumbnail"
+                in:fade
+              />
+            {/if}
+            <Button
+              size="all"
+              type={$library.subscriptions.some((item) => item.id === id)
+                ? "danger"
+                : "default"}
+              on:click={() => {
+                $library.subscriptions.some((item) => item.id === id)
+                  ? ($library.subscriptions = [
+                      ...$library.subscriptions.filter(
+                        (item) => item.id !== id
+                      ),
+                    ])
+                  : ($library.subscriptions = [
+                      ...$library.subscriptions,
+                      anime,
+                    ]);
+              }}
+            >
+              {$library.subscriptions.some((item) => item.id === id)
+                ? "Unsubscribe"
+                : "Subscribe"}
+            </Button>
+          </div>
           <div>
             <h1 class="title">
               {$settings.animeLanguage === "english"
@@ -136,6 +163,15 @@
       rgba(var(--secondary-rgb), 0.2) 50%,
       rgba(var(--secondary-rgb), 1) 100%
     );
+  }
+
+  .image-and-choices {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+    gap: 1rem;
   }
 
   .text {

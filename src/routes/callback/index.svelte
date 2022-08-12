@@ -25,7 +25,7 @@
     ).toString();
     console.log($connections[`${source}-userId`]);
 
-    if ($page.url.pathname === "/callback") {
+    if ($page.routeId === "callback") {
       interval = setInterval(() => {
         time -= 1;
         if (time <= 0) {
@@ -33,6 +33,9 @@
         }
       }, 1000);
     }
+
+    // TODO: Change this to only remove recommended anime, need to change how animes are stored
+    window.sessionStorage.removeItem("frontPage");
   }
 </script>
 

@@ -19,11 +19,16 @@
   let time: number;
   let duration: number;
   let paused: boolean;
+  let muted: boolean;
+  let video: HTMLVideoElement;
 
   episodeStore = $animes
     .get(Number.parseInt($page.params.id))
     .streamingEpisodes.find((e) => e.url === episode.url);
-  time = (episodeStore.percentWatched * duration) / 100;
+  time =
+    episodeStore.percentWatched === 100
+      ? 0
+      : (episodeStore.percentWatched * duration) / 1000;
 
   onDestroy(updateTimeWatched);
 
@@ -40,6 +45,8 @@
   bind:currentTime={time}
   bind:duration
   bind:paused
+  bind:muted
+  bind:this={video}
   on:ended={() => {
     updateTimeWatched();
     // DO SOMETHING MAYBE?
@@ -47,8 +54,34 @@
   }}
   on:pause={updateTimeWatched}
   on:play={() => {
-    time = (episodeStore.percentWatched * duration) / 100;
+    time =
+      episodeStore.percentWatched === 100
+        ? 0
+        : (episodeStore.percentWatched * duration) / 100;
     updateTimeWatched();
+    video.focus();
+  }}
+  on:keydown={(e) => {
+    console.log(e.key);
+    switch (e.key) {
+      case " ":
+        paused = !paused;
+        updateTimeWatched();
+        break;
+      case "ArrowLeft":
+        time -= 5;
+        updateTimeWatched();
+        break;
+      case "ArrowRight":
+        time += 5;
+        updateTimeWatched();
+        break;
+      case "m":
+        muted = !muted;
+        break;
+      default:
+        break;
+    }
   }}
   on:seeked={updateTimeWatched}
   on:fullscreenchange={() => {

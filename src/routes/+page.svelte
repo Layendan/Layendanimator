@@ -1,44 +1,17 @@
 <script script lang="ts">
-  export const prerender = true;
-
   import { fade } from "svelte/transition";
   import Anime from "$lib/components/Anime.svelte";
   import Section from "$lib/components/Section.svelte";
-  import { frontpageFetch } from "../lib/prefetch";
   import { settings } from "$lib/model/settings";
-  import { connections } from "$lib/model/connections";
   import { history } from "$lib/model/history";
   import { library } from "$lib/model/library";
-  import { goto } from "$app/navigation";
+  import type { PageData } from ".svelte-kit/types/src/routes/$types";
+
+  export let data: PageData;
 
   let source: HTMLIFrameElement;
-  const date: Date = new Date();
-
   const script: string = `function testFunction() {return "Hello World";}`;
   const csp: string = `default-src 'self' ${""};`;
-  let season: "WINTER" | "SPRING" | "SUMMER" | "FALL";
-  switch (new Date().getMonth()) {
-    case 0:
-    case 1:
-    case 2:
-      season = "WINTER";
-      break;
-    case 3:
-    case 4:
-    case 5:
-      season = "SPRING";
-      break;
-    case 6:
-    case 7:
-    case 8:
-      season = "SUMMER";
-      break;
-    case 9:
-    case 10:
-    case 11:
-      season = "FALL";
-      break;
-  }
 
   /**
    * This function returns an HTML string to be used withing the srcdoc of an iframe.
@@ -67,16 +40,16 @@
 />
 
 <div class="container" in:fade>
-  {#await frontpageFetch(season, date.getFullYear(), $connections["anilist"])}
+  {#await data.list}
     <!-- Replace with something cooler -->
-    Loading
-  {:then list}
-    <Section storageId="{list.airing.title}:scroll">
+    Loading...
+  {:then { airing, recommended, season, trending }}
+    <Section storageId="{airing.title}:scroll">
       <svelte:fragment slot="title">
-        {list.airing.title}
+        {airing.title}
       </svelte:fragment>
       <svelte:fragment slot="animes">
-        {#each list.airing.data as { airingAt, episode, media }}
+        {#each airing.data as { airingAt, episode, media }}
           {#if !media.isAdult || $settings.allowNSFW}
             <Anime
               id={media.id}
@@ -135,12 +108,12 @@
         {/each}
       </svelte:fragment>
     </Section>
-    <Section storageId="{list.recommended.title}:scroll">
+    <Section storageId="{recommended.title}:scroll">
       <svelte:fragment slot="title">
-        {list.recommended.title}
+        {recommended.title}
       </svelte:fragment>
       <svelte:fragment slot="animes">
-        {#each list.recommended.data as anime}
+        {#each recommended.data as anime}
           {#if !anime.isAdult || $settings.allowNSFW}
             <Anime
               id={anime.id}
@@ -163,17 +136,17 @@
         {/each}
       </svelte:fragment>
     </Section>
-    <Section storageId="{list.season.title}:scroll">
+    <Section storageId="{season.title}:scroll">
       <svelte:fragment slot="title">
-        {list.season.title}
+        {season.title}
         <br />
         <h3>
-          {date.getFullYear()}
-          {season}
+          {data.date.getFullYear()}
+          {data.season}
         </h3>
       </svelte:fragment>
       <svelte:fragment slot="animes">
-        {#each list.season.data as anime}
+        {#each season.data as anime}
           {#if !anime.isAdult || $settings.allowNSFW}
             <Anime
               id={anime.id}
@@ -204,12 +177,12 @@
         {/each}
       </svelte:fragment>
     </Section>
-    <Section storageId="{list.trending.title}:scroll">
+    <Section storageId="{trending.title}:scroll">
       <svelte:fragment slot="title">
-        {list.trending.title}
+        {trending.title}
         <br />
         <h3>
-          {date.toLocaleString("en-US", {
+          {data.date.toLocaleString("en-US", {
             weekday: "long",
             year: "numeric",
             month: "long",
@@ -218,7 +191,7 @@
         </h3>
       </svelte:fragment>
       <svelte:fragment slot="animes">
-        {#each list.trending.data as anime}
+        {#each trending.data as anime}
           {#if !anime.isAdult || $settings.allowNSFW}
             <Anime
               id={anime.id}
@@ -249,8 +222,8 @@
         {/each}
       </svelte:fragment>
     </Section>
-  {:catch}
-    {goto("/library/downloads", { replaceState: true })}
+  {:catch e}
+    {e}
   {/await}
 </div>
 

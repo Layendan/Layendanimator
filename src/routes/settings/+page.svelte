@@ -14,7 +14,6 @@
   import { capitalize } from "$lib/model/global";
   import { history } from "$lib/model/history";
   import { library } from "$lib/model/library";
-  import { BaseDirectory, type FsOptions } from "@tauri-apps/api/fs";
   import { connections } from "$lib/model/connections";
   import type { ActiveSource } from "$lib/model/sources";
   import { animes } from "$lib/model/anime";
@@ -31,6 +30,8 @@
     readTextFile,
     removeFile,
     copyFile,
+    BaseDirectory,
+    type FsOptions,
   } from "@tauri-apps/api/fs";
 
   const client_id: string = "4602";
@@ -41,7 +42,7 @@
   );
 
   async function getSystemTheme(): Promise<"dark" | "light"> {
-    const theme = await getCurrent().theme();
+    const theme = await getCurrent().theme() ?? "light";
     systemTheme = theme;
     return theme;
   }
@@ -92,9 +93,9 @@
    * Clears and deletes custom themes.
    */
   function clearThemes() {
-    $settings.customThemes.forEach(async (theme) => {
-      console.log("removed: ", theme.source);
-      await removeFile(theme.source);
+    $settings.customThemes.forEach((theme) => {
+      console.log("Removed: ", theme.source);
+      removeFile(theme.source);
     });
 
     if (!!$settings.theme.custom)
@@ -107,6 +108,10 @@
     $settings.customThemes = [];
   }
 
+  function clearConnections() {
+    $connections = {};
+  }
+
   /**
    * Resets the entirety of the application.
    */
@@ -116,6 +121,8 @@
     clearBrowseHistory();
     clearDownloads();
     clearThemes();
+    clearSubscriptions();
+    clearConnections();
     settings.reset();
   }
 
@@ -161,7 +168,7 @@
 
     themes = themes.filter(
       (item) =>
-        !$settings.customThemes.some((theme) => theme.source === item.source)
+        !$settings.customThemes.some((theme) => theme.name === item.name)
     );
 
     return themes;
@@ -173,7 +180,7 @@
    * @param path The path to write the settings to.
    * @param options Options to give to tauri fs.writeTextFile.
    */
-  export async function writeSettings(
+  async function writeSettings(
     path: string,
     options?: FsOptions
   ): Promise<void> {
@@ -203,7 +210,7 @@
    *
    * @param newSettings Object to set the settings to.
    */
-  export async function readSettings(newSettings: Schema): Promise<void> {
+  async function readSettings(newSettings: Schema): Promise<void> {
     newSettings.customThemes.forEach(async (theme) => {
       const themes: string = await join("themes", theme.name + ".css");
       await writeTextFile(themes, theme.content, { dir: BaseDirectory.App });
@@ -284,12 +291,13 @@
   >
     <!-- TODO: Read from plugins and each loop -->
     <!-- { name: anilist, link: https://anilist.co/api/v2/oauth/authorize?client_id=${client_id}&response_type=token, callback?: voidfunction } -->
+    <!-- Remove the disabled when Tauri comes out with deep linking -->
     <Button
       on:click={() =>
         shellOpen(
           `https://anilist.co/api/v2/oauth/authorize?client_id=${client_id}&response_type=token`
         )}
-      disabled={!!$connections["anilist"]}
+      disabled={!!$connections["anilist"] || true}
     >
       <span>
         {!$connections["anilist"] ? "Connect" : "Connected"} to Anilist
@@ -418,6 +426,9 @@
         >Clear Subscriptions</Button
       >
       <Button size="medium" on:click={clearThemes}>Clear Themes</Button>
+      <Button size="medium" on:click={clearConnections}
+        >Clear Connections</Button
+      >
       <Button
         size="medium"
         type="danger"

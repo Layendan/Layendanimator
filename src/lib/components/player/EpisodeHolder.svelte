@@ -4,13 +4,14 @@
   import type { Episode as EpisodeType } from "$lib/model/anime";
 
   export let episodes: EpisodeType[] = [];
+  export let hoverAll: boolean = false;
 </script>
 
 <!-- vertically lists all of the episodes -->
 <ul>
   {#each $settings.ordered ? episodes : [...episodes].reverse() as episode}
     <li>
-      <Episode {episode} />
+      <Episode {episode} hover={hoverAll} />
     </li>
   {/each}
 </ul>

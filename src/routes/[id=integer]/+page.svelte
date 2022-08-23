@@ -121,7 +121,10 @@
         </div>
       </div>
     </div>
-    <EpisodeHolder episodes={anime.streamingEpisodes} />
+    <EpisodeHolder
+      episodes={anime.streamingEpisodes}
+      hoverAll={$settings.showProgress}
+    />
   </section>
 {:catch e}
   <p class="error">{e}</p>

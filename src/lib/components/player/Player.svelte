@@ -1,19 +1,20 @@
 <script lang="ts">
   import { onDestroy } from "svelte";
-  import { animes, type Episode } from "$lib/model/anime";
-  import { page } from "$app/stores";
+  import type { Episode } from "$lib/model/anime";
   import test_video from "$lib/components/assets/test_video.mp4";
   import { getCurrent } from "@tauri-apps/api/window";
 
+  // Combine this with episodeStore
   export let episode: Episode;
-  let episodeStore: Episode;
+  export let episodeStore: Episode;
+  export let percentWatched: number = 0;
 
-  export let videoSrc: string = test_video;
-  export let videoType: string = "video/mp4";
+  let videoSrc: string = test_video;
+  let videoType: string = "video/mp4";
 
-  export let captionSrc: string = "https://media.vimejs.com/subs/english.vtt";
-  export let captionLang: string = "en";
-  export let captionLabel: string = "English";
+  let captionSrc: string = "https://media.vimejs.com/subs/english.vtt";
+  let captionLang: string = "en";
+  let captionLabel: string = "English";
 
   // These values are bound to properties of the video
   let time: number;
@@ -22,18 +23,12 @@
   let muted: boolean;
   let video: HTMLVideoElement;
 
-  episodeStore = $animes
-    .get(Number.parseInt($page.params.id))
-    .streamingEpisodes.find((e) => e.url === episode.url);
-  time =
-    episodeStore.percentWatched === 100
-      ? 0
-      : (episodeStore.percentWatched * duration) / 1000;
+  time = percentWatched === 100 ? 0 : (percentWatched * duration) / 1000;
 
   onDestroy(updateTimeWatched);
 
   function updateTimeWatched() {
-    if (!!time && !!duration && time !== NaN && duration !== NaN)
+    if (!!time && !!duration && !Number.isNaN(time) && !Number.isNaN(duration))
       episodeStore.percentWatched = (time / duration) * 100;
   }
 </script>
@@ -62,22 +57,58 @@
     video.focus();
   }}
   on:keydown={(e) => {
-    console.log(e.key);
+    if (e.ctrlKey || e.metaKey) return;
+
     switch (e.key) {
       case " ":
-        paused = !paused;
+        // Checks if fullscreen since spacebar pauses automatically
+        if (
+          // @ts-ignore
+          !document.webkitCurrentFullScreenElement
+        ) {
+          paused = !paused;
+          e.preventDefault();
+        }
         updateTimeWatched();
         break;
       case "ArrowLeft":
         time -= 5;
+        e.preventDefault();
         updateTimeWatched();
         break;
       case "ArrowRight":
         time += 5;
+        e.preventDefault();
         updateTimeWatched();
         break;
       case "m":
         muted = !muted;
+        updateTimeWatched();
+        e.preventDefault();
+        break;
+      case "f":
+        // I hate safari. Why can't they follow standards?
+        if (
+          document.fullscreenElement ||
+          // @ts-ignore
+          document.webkitCurrentFullScreenElement
+        ) {
+          if (document.exitFullscreen) document.exitFullscreen();
+          // @ts-ignore
+          else if (document.webkitExitFullscreen) {
+            // @ts-ignore
+            document.webkitExitFullscreen();
+          }
+        } else {
+          if (video.requestFullscreen) video.requestFullscreen();
+          // @ts-ignore
+          else if (video.webkitRequestFullscreen) {
+            // @ts-ignore
+            video.webkitRequestFullscreen();
+          }
+        }
+        e.preventDefault();
+        updateTimeWatched();
         break;
       default:
         break;
@@ -103,9 +134,18 @@
   video {
     display: flex;
     width: 100%;
-    height: 100%;
     object-fit: cover;
     align-items: center;
     justify-content: center;
+    border-radius: 5px;
+
+    -webkit-user-select: none; /* Chrome all / Safari all */
+    -moz-user-select: none; /* Firefox all */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Likely future */
+  }
+
+  video:focus {
+    outline: none;
   }
 </style>

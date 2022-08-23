@@ -5,7 +5,7 @@
   import { settings } from "$lib/model/settings";
   import { history } from "$lib/model/history";
   import { library } from "$lib/model/library";
-  import type { PageData } from ".svelte-kit/types/src/routes/$types";
+  import type { PageData } from "./$types";
 
   export let data: PageData;
 

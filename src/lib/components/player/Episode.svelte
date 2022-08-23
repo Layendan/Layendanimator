@@ -3,13 +3,14 @@
   import type { Episode } from "$lib/model/anime";
 
   export let episode: Episode;
+  export let hover: boolean = false;
   let thumbnail: string | null = episode.thumbnail;
 </script>
 
-<div class="episode">
+<div class="episode {hover ? 'hover' : ''}">
   <a
     class="link"
-    href="{$page.url.pathname}/watch?episode={JSON.stringify(episode)}"
+    href="/{$page.params.id}/watch?episode={JSON.stringify(episode)}"
   >
     <img class="bg" src={episode.thumbnail} alt="" />
     <div class="bg progress" style="width: {episode.percentWatched ?? '0'}%;" />
@@ -46,6 +47,7 @@
 
   .progress {
     background: var(--accent-color);
+    height: 100%;
     filter: none;
     transition: width 0.5s ease-in-out, opacity 0.4s ease-in-out;
   }
@@ -54,7 +56,6 @@
     position: relative;
     display: block;
     width: 100px;
-    height: auto;
     aspect-ratio: 16/9;
     margin-right: 2em;
     border-radius: 5px;
@@ -86,6 +87,10 @@
     opacity: 0.5;
   }
 
+  .hover .progress {
+    opacity: 0.5;
+  }
+
   .episode:focus-within {
     outline: 1px solid var(--accent-color);
     background-color: var(--tertiary-color);
@@ -100,6 +105,11 @@
   }
 
   p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow-y: hidden;
+    -webkit-line-clamp: 1;
+    height: max-content;
     transition: color 0.2s ease-in-out;
   }
 

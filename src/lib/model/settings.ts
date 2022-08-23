@@ -17,6 +17,7 @@ export interface Settings {
   allowNSFW: boolean;
   ordered: boolean;
   reduceMotion: boolean;
+  showProgress: boolean;
   animeLanguage: "english" | "native";
   notifications: {
     enabled: boolean;
@@ -31,6 +32,7 @@ function createSettings() {
     allowNSFW: false,
     ordered: true,
     reduceMotion: false,
+    showProgress: false,
     animeLanguage: "english",
     notifications: {
       enabled: true,
@@ -54,6 +56,7 @@ function createSettings() {
           allowNSFW: settings?.allowNSFW ?? oldSettings.allowNSFW,
           ordered: settings?.ordered ?? oldSettings.ordered,
           reduceMotion: settings?.reduceMotion ?? oldSettings.reduceMotion,
+          showProgress: settings?.showProgress ?? oldSettings.showProgress,
           animeLanguage: settings?.animeLanguage ?? oldSettings.animeLanguage,
           notifications: {
             enabled:
@@ -82,6 +85,7 @@ function createSettings() {
         allowNSFW: false,
         ordered: true,
         reduceMotion: false,
+        showProgress: false,
         animeLanguage: "english",
         notifications: {
           enabled: true,

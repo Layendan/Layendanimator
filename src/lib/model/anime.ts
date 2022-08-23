@@ -8,6 +8,7 @@ export type Episode = {
   thumbnail: string;
   url: string;
   site: string;
+  description: string;
   /**
    * Number between 0-100, used for percentage of completion.
    */

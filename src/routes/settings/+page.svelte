@@ -42,7 +42,7 @@
   );
 
   async function getSystemTheme(): Promise<"dark" | "light"> {
-    const theme = await getCurrent().theme() ?? "light";
+    const theme = (await getCurrent().theme()) ?? "light";
     systemTheme = theme;
     return theme;
   }
@@ -98,7 +98,10 @@
       removeFile(theme.source);
     });
 
-    if (!!$settings.theme.custom)
+    console.log($settings.theme);
+    console.log($settings.customThemes);
+
+    if ($settings.theme.custom)
       $settings.theme = {
         custom: undefined,
         syncWithSystem: true,
@@ -106,6 +109,9 @@
       };
 
     $settings.customThemes = [];
+
+    console.log($settings.theme);
+    console.log($settings.customThemes);
   }
 
   function clearConnections() {
@@ -275,6 +281,12 @@
       checked={$settings.reduceMotion}
     >
       Reduce Motion
+    </Toggle>
+    <Toggle
+      on:change={() => ($settings.showProgress = !$settings.showProgress)}
+      checked={$settings.showProgress}
+    >
+      Show Episode Progress
     </Toggle>
     <Toggle
       on:change={() =>

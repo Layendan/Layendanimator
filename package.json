@@ -19,10 +19,10 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^1.0.0-next.39",
-    "@sveltejs/kit": "1.0.0-next.431",
+    "@sveltejs/kit": "1.0.0-next.436",
     "@tauri-apps/cli": "^1.0.5",
-    "@typescript-eslint/eslint-plugin": "^5.34.0",
-    "@typescript-eslint/parser": "^5.34.0",
+    "@typescript-eslint/eslint-plugin": "^5.35.1",
+    "@typescript-eslint/parser": "^5.35.1",
     "eslint": "^8.22.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
@@ -39,7 +39,7 @@
   "dependencies": {
     "@fontsource/fira-mono": "^4.5.9",
     "@tauri-apps/api": "^1.0.2",
-    "dompurify": "^2.3.12",
+    "dompurify": "^2.4.0",
     "nprogress": "^0.2.0",
     "radix-icons-svelte": "^1.2.1",
     "tauri-settings": "^0.1.2",

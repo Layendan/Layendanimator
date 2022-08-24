@@ -42,28 +42,27 @@
   </nav>
 
   <div class="corner">
-    <!-- Need to grab autocomplete from history.search -->
-    <input
-      type="search"
-      placeholder="Search"
-      class="search"
-      autocapitalize="words"
-      list="searchRec"
-      bind:value={query}
-      on:keydown={(event) => {
-        if (event.key === "Enter" && query !== "") {
-          event.preventDefault();
-          if (!$history.search.includes(query))
-            $history.search = [...$history.search, query];
-          goto(`/search?search=${query}`);
-        }
+    <form
+      on:submit|preventDefault={() => {
+        if (!$history.search.includes(query))
+          $history.search = [...$history.search, query];
+        goto(`/search?search=${query}`);
       }}
-    />
-    <datalist id="searchRec">
-      {#each $history.search as option}
-        <option value={option}>{option}</option>
-      {/each}
-    </datalist>
+    >
+      <input
+        type="search"
+        placeholder="Search"
+        class="search"
+        autocapitalize="words"
+        list="searchRec"
+        bind:value={query}
+      />
+      <datalist id="searchRec">
+        {#each $history.search as option}
+          <option value={option}>{option}</option>
+        {/each}
+      </datalist>
+    </form>
   </div>
 
   <nav class="settings">

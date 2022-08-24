@@ -6,6 +6,7 @@
   import { getCurrent } from "@tauri-apps/api/window";
   import type { Anime } from "$lib/model/anime";
   import { history } from "$lib/model/history";
+  import Header from "$lib/components/header/Header.svelte";
 
   let online: boolean;
 
@@ -76,11 +77,43 @@
     ? $settings.theme.custom?.name ?? "dark"
     : $settings.theme.appearance}
 >
-  <slot />
+  <script lang="ts">
+    // Import required packages
+    import Header from "$lib/components/header/Header.svelte";
+  </script>
+
+  <Header />
+
+  <main>
+    <slot />
+  </main>
+
+  <footer />
 </body>
 
 <style>
   body {
     min-height: 100vh;
+  }
+
+  main {
+    color: var(--text-color);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+
+    transform: translateY(-3em);
+  }
+
+  footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    color: var(--text-color);
   }
 </style>

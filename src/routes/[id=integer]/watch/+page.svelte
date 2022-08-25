@@ -14,11 +14,15 @@
     <div class="player">
       <Player
         episode={data.episode}
-        episodeStore={streamingEpisodes.find((e) => e.url === data.episode.url)}
+        episodeStore={streamingEpisodes.find((e) => e.title === data.episode.title)}
         percentWatched={data.episode.percentWatched ?? 0}
       />
       <div class="info">
         <h1>{data.episode.title}</h1>
+        <!-- TODO: Add mirrors here -->
+        {#each data.episode.mirrors ?? [] as mirror}
+          {mirror}
+        {/each}
         <h2>
           {@html DOMPurify.sanitize(data.episode.description, {
             USE_PROFILES: { html: true },
@@ -30,6 +34,7 @@
       <EpisodeHolder
         episodes={streamingEpisodes}
         hoverAll={$settings.showProgress}
+        selectedEpisode={data.episode}
       />
     </div>
   </section>

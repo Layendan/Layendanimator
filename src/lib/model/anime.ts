@@ -6,7 +6,11 @@ import { writable, readable } from "svelte/store";
 export type Episode = {
   title: string;
   thumbnail: string;
-  url: string;
+  mirrors: {
+    url: string;
+    name: string;
+    quality?: string;
+  }[],
   site: string;
   description: string;
   /**

@@ -4,10 +4,12 @@
 
   export let episode: Episode;
   export let hover: boolean = false;
+  export let selected: boolean = false;
   let thumbnail: string | null = episode.thumbnail;
 </script>
 
-<div class="episode {hover ? 'hover' : ''}">
+<div class="episode"
+  class:hover class:selected >
   <a
     class="link"
     href="/{$page.params.id}/watch?episode={JSON.stringify(episode)}"
@@ -89,6 +91,11 @@
 
   .hover .progress {
     opacity: 0.5;
+  }
+
+  .selected {
+    border-left: solid 2px var(--accent-color);
+    border-right: solid 2px var(--accent-color);
   }
 
   .episode:focus-within {

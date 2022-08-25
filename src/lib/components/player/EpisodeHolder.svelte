@@ -5,13 +5,14 @@
 
   export let episodes: EpisodeType[] = [];
   export let hoverAll: boolean = false;
+  export let selectedEpisode: EpisodeType | null = null;
 </script>
 
 <!-- vertically lists all of the episodes -->
 <ul>
   {#each $settings.ordered ? episodes : [...episodes].reverse() as episode}
     <li>
-      <Episode {episode} hover={hoverAll} />
+      <Episode {episode} hover={hoverAll} selected={episode.title === selectedEpisode?.title} />
     </li>
   {/each}
 </ul>

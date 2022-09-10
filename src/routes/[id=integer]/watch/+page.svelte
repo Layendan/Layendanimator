@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Player from "$lib/components/player/Player.svelte";
   import EpisodeHolder from "$lib/components/player/EpisodeHolder.svelte";
   import { fade } from "svelte/transition";
   import type { PageData } from "./$types";
@@ -12,11 +11,6 @@
 {#await data.anime then { streamingEpisodes }}
   <section in:fade>
     <div class="player">
-      <Player
-        episode={data.episode}
-        episodeStore={streamingEpisodes.find((e) => e.title === data.episode.title)}
-        percentWatched={data.episode.percentWatched ?? 0}
-      />
       <div class="info">
         <h1>{data.episode.title}</h1>
         <!-- TODO: Add mirrors here -->

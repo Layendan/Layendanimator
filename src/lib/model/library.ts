@@ -1,11 +1,12 @@
 import { writable } from "svelte/store";
 import type { Anime } from "./anime";
+import type { ActiveSource } from "./sources";
 
 export interface Library {
   /**
    * Subscribed animes, occasionally check if there are updates.
    */
-  subscriptions: Anime[];
+  subscriptions: { media: Anime; source?: ActiveSource }[];
   /**
    * Downloaded animes.
    * Note: Might change Anime to SourceAnime or something like that.

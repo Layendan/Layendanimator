@@ -1,16 +1,22 @@
 import { writable, readable } from "svelte/store";
 
+export type Mirror = {
+  url: string;
+  name: string;
+  quality?: string;
+  type: "M3U8" | "MP4";
+};
+
 /**
  * Represents an Episode of an anime.
  */
 export type Episode = {
   title: string;
+  id: string;
+  number: number;
   thumbnail: string;
-  mirrors: {
-    url: string;
-    name: string;
-    quality?: string;
-  }[],
+  mirrors: Mirror[];
+  subOrDub: "sub" | "dub";
   site: string;
   description: string;
   /**
@@ -24,7 +30,7 @@ export type Episode = {
  * Note: Might be used later for actual anime
  */
 export type Anime = {
-  id: number;
+  id: string;
   title: {
     native: string;
     romaji: string;
@@ -47,8 +53,8 @@ export type Anime = {
 };
 
 function createAnimes() {
-  const { subscribe, set, update } = writable<Map<number, Anime>>(
-    new Map<number, Anime>()
+  const { subscribe, set, update } = writable<Map<string, Anime>>(
+    new Map<string, Anime>()
   );
 
   return {
@@ -67,13 +73,13 @@ function createAnimes() {
      * Removes an Anime from the animes store.
      * @param id Id of the Anime to remove.
      */
-    removeAnime: (id: number) => {
+    removeAnime: (id: string) => {
       update((animes) => {
         animes.delete(id);
         return animes;
       });
     },
-    reset: () => set(new Map<number, Anime>()),
+    reset: () => set(new Map<string, Anime>()),
   };
 }
 
@@ -83,11 +89,11 @@ export const animes = createAnimes();
  * Represents the default Anime.
  */
 export const defaultAnime = readable<Anime>({
-  id: undefined,
+  id: "",
   title: { english: "", native: "", romaji: "" },
-  coverImage: { large: undefined },
-  bannerImage: undefined,
-  siteUrl: undefined,
+  coverImage: { large: "" },
+  bannerImage: "",
+  siteUrl: "",
   description: "",
   streamingEpisodes: [],
   averageScore: 0,

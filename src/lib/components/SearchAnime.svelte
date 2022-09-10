@@ -1,8 +1,9 @@
 <script lang="ts">
   import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
+  import type { ActiveSource } from "$lib/model/sources";
   import DOMPurify from "dompurify";
 
-  export let id: number;
+  export let id: string;
   export let title: string;
   export let description: string = "";
   export let thumbnail: string = loadingFailure;
@@ -10,10 +11,11 @@
   // export let tags: { name: string }[] = [];
   export let genres: Array<string> = [];
   export let isNSFW: boolean = false;
+  export let source: ActiveSource | null = null;
 </script>
 
 <li>
-  <a href="/{id}" on:click>
+  <a href={source ? `/${source.id}/${id}` : `/${id}`} on:click>
     <div class="container">
       <img
         on:error={() => (thumbnail = loadingFailure)}

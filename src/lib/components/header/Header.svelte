@@ -1,12 +1,9 @@
 <script lang="ts">
-  import logo from "./logo.png";
-  import { goto } from "$app/navigation";
-  import { history } from "$lib/model/history";
   import { fade } from "svelte/transition";
+  import { activeSources } from "$lib/model/sources";
   import { page } from "$app/stores";
 
   let y: number = 0;
-  $: query = "";
 
   $: opacity = y < 40 ? y * 0.0125 + 0.3 : 0.8;
   $: blur = `${y < 40 ? y * 0.5 : 20}px`;
@@ -15,14 +12,16 @@
 
 <svelte:window bind:scrollY={y} />
 
-<header
-  class:bottom-border={y > 40}
-  style:--header-opacity={opacity}
-  style:--header-blur={blur}
-  style:--header-saturation={saturation}
->
-  <nav class="logo" in:fade>
-    <a sveltekit:prefetch href="/" class:selected={$page.routeId === ""}>
+{#if $activeSources}
+  <header
+    transition:fade
+    class:bottom-border={y > 40}
+    style:--header-opacity={opacity}
+    style:--header-blur={blur}
+    style:--header-saturation={saturation}
+  >
+    <!-- <nav class="logo" in:fade>
+    <a href="/" class:selected={$page.routeId === ""}>
       <img src={logo} alt="NineAnimator" />
       NineAnimator
     </a>
@@ -30,12 +29,10 @@
 
   <nav>
     <a
-      sveltekit:prefetch
       href="/library/downloads"
       class:selected={$page.routeId === "library/downloads"}>Downloads</a
     >
     <a
-      sveltekit:prefetch
       href="/library/history"
       class:selected={$page.routeId === "library/history"}>History</a
     >
@@ -66,13 +63,18 @@
   </div>
 
   <nav class="settings">
-    <a
-      sveltekit:prefetch
-      href="/settings"
-      class:selected={$page.routeId === "settings"}>Settings</a
+    <a href="/settings" class:selected={$page.routeId === "settings"}
+      >Settings</a
     >
-  </nav>
-</header>
+  </nav> -->
+
+    {#each $activeSources as source}
+      <a href="/{source.id}" class:selected={$page.routeId === source.id}>
+        {source.name}
+      </a>
+    {/each}
+  </header>
+{/if}
 
 <style>
   header {
@@ -91,7 +93,7 @@
     transition: box-shadow 0.2s ease-in-out;
   }
 
-  img {
+  /* img {
     width: 2em;
     height: 2em;
     object-fit: contain;
@@ -147,6 +149,7 @@
   nav a {
     border-bottom: 2px none var(--accent-color);
   }
+  */
 
   a {
     color: var(--text-color);
@@ -160,9 +163,9 @@
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.5);
   }
 
-  .settings {
+  /* .settings {
     margin-right: 2rem;
-  }
+  } */
 
   .selected {
     border-bottom: 2px solid var(--accent-color);

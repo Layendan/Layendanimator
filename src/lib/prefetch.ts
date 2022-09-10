@@ -14,7 +14,7 @@ export function getAnimes(
   titles: string[],
   token: string | undefined
 ): { title: string; data: Promise<Anime[]> }[] {
-  let animes = [];
+  let animes: { title: string; data: Promise<Anime[]> }[] = [];
   for (const element of titles) {
     let anime = searchAnime(element, token);
     animes = [...animes, { title: element, data: anime }];
@@ -31,7 +31,9 @@ export async function searchAnime(
   token: string | undefined
 ): Promise<Anime[]> {
   if (window?.sessionStorage.getItem(name + "-search") !== null) {
-    return JSON.parse(window?.sessionStorage.getItem(name + "-search"));
+    return JSON.parse(
+      window?.sessionStorage.getItem(name + "-search") ?? "null"
+    );
   }
 
   // Define our query variables and values that will be used in the query request
@@ -205,7 +207,9 @@ export async function frontpageFetch(
   token?: string
 ): Promise<frontPageType> {
   if (window?.sessionStorage.getItem("frontPage") !== null) {
-    const response = JSON.parse(window?.sessionStorage.getItem("frontPage"));
+    const response = JSON.parse(
+      window?.sessionStorage.getItem("frontPage") ?? "null"
+    );
     // Checks to see if data is expired or if offline
     if (
       new Date(response.expires).valueOf() >= Date.now() ||
@@ -255,7 +259,11 @@ export async function frontpageFetch(
     },
     recommended: {
       title: "Recommended",
-      data: anime.data.recommended.recommendations.map((item) => {
+      data: (
+        anime.data.recommended.recommendations as {
+          mediaRecommendation: Anime;
+        }[]
+      ).map((item) => {
         return item.mediaRecommendation;
       }) as Anime[],
     },
@@ -266,16 +274,18 @@ export async function frontpageFetch(
     trending: { title: "Trending", data: anime.data.trending.media as Anime[] },
   };
 
-  anime.data.airing.airingSchedules.forEach((item) => {
+  (anime.data.airing.airingSchedules as { media: Anime }[]).forEach((item) => {
     return animesStore.addAnime(item.media);
   });
-  anime.data.recommended.recommendations.forEach((item) => {
+  (
+    anime.data.recommended.recommendations as { mediaRecommendation: Anime }[]
+  ).forEach((item) => {
     return animesStore.addAnime(item.mediaRecommendation);
   });
-  anime.data.seasonal.media.forEach((item) => {
+  (anime.data.seasonal.media as Anime[]).forEach((item) => {
     return animesStore.addAnime(item);
   });
-  anime.data.trending.media.forEach((item) => {
+  (anime.data.trending.media as Anime[]).forEach((item) => {
     return animesStore.addAnime(item);
   });
 

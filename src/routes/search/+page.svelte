@@ -10,9 +10,7 @@
   import type { Unsubscriber } from "svelte/store";
   import { fade } from "svelte/transition";
 
-  let query: string = $page.url.searchParams.get("search")
-    ? $page.url.searchParams.get("search")
-    : "";
+  let query: string = $page.url.searchParams.get("search") ?? "null";
 
   async function getAnimes(): Promise<Anime[]> {
     let anime = searchAnime(query, $connections["anilist"]);
@@ -33,7 +31,7 @@
       $page.url.searchParams.get("search") &&
       query !== $page.url.searchParams.get("search")
     ) {
-      query = $page.url.searchParams.get("search");
+      query = $page.url.searchParams.get("search") ?? "null";
       animes = getAnimes();
     }
   });

@@ -36,7 +36,7 @@ fn main() {
 
     #[cfg(target_os = "windows")]
     tauri::Builder::default()
-        // Set custom background meterial
+        // Set custom background material
         .setup(|app| {
             let window = app.get_window("main").unwrap();
             apply_mica(&window).unwrap();
@@ -55,7 +55,7 @@ fn main() {
 
     #[cfg(not(any(target_os = "windows", target_os = "linux")))]
     tauri::Builder::default()
-        // Set custom background meterial
+        // Set custom background material
         .setup(|app| {
             #[cfg(target_os = "macos")]
             {
@@ -71,19 +71,6 @@ fn main() {
             api::search_anime,
             api::add_module
         ])
-        // Add default submenus
-        .menu(
-            Menu::new()
-                .add_default_app_submenu_if_macos(&ctx.package_info().name)
-                .add_default_file_submenu()
-                .add_default_edit_submenu()
-                .add_default_view_submenu()
-                .add_default_window_submenu()
-                .add_submenu(Submenu::new(
-                    "Help",
-                    Menu::new().add_item(custom_item("Learn More")),
-                )),
-        )
         .run(ctx)
         .expect("error while running tauri application");
 }

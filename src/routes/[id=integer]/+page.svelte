@@ -11,11 +11,11 @@
   import { getAnimeById } from "$lib/prefetch";
   import Button from "$lib/components/public/Button.svelte";
 
-  async function getAnime(id: number): Promise<Anime> {
-    return $animes.get(id) ?? (await getAnimeById(id, undefined));
+  async function getAnime(id: string): Promise<Anime> {
+    return $animes.get(id) ?? (await getAnimeById(parseInt(id), undefined));
   }
 
-  const id: number = Number.parseInt($page.params.id);
+  const id: string = $page.params.id;
 
   // Page scroll
   let y = 0;
@@ -85,23 +85,23 @@
             {/if}
             <Button
               size="all"
-              type={$library.subscriptions.some((item) => item.id === id)
+              type={$library.subscriptions.some(({ media }) => media.id === id)
                 ? "danger"
                 : "default"}
               on:click={() => {
-                $library.subscriptions.some((item) => item.id === id)
+                $library.subscriptions.some(({ media }) => media.id === id)
                   ? ($library.subscriptions = [
                       ...$library.subscriptions.filter(
-                        (item) => item.id !== id
+                        ({ media }) => media.id !== id
                       ),
                     ])
                   : ($library.subscriptions = [
                       ...$library.subscriptions,
-                      anime,
+                      { media: anime },
                     ]);
               }}
             >
-              {$library.subscriptions.some((item) => item.id === id)
+              {$library.subscriptions.some(({ media }) => media.id === id)
                 ? "Unsubscribe"
                 : "Subscribe"}
             </Button>

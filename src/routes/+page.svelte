@@ -5,41 +5,40 @@
   import { settings } from "$lib/model/settings";
   import { history } from "$lib/model/history";
   import { library } from "$lib/model/library";
+  import { goto } from "$app/navigation";
   import type { PageData } from "./$types";
 
   export let data: PageData;
 
-  let source: HTMLIFrameElement;
-  const script: string = `function testFunction() {return "Hello World";}`;
-  const csp: string = `default-src 'self' ${""};`;
-
-  /**
-   * This function returns an HTML string to be used withing the srcdoc of an iframe.
-   * @param csp The CSP to use.
-   * @param script The script to inject.
-   * @returns A formatted HTML string.
-   */
-  function getSrcDoc(script: string, csp: string): string {
-    return `<meta https-equiv="Content-Security-Policy" content="${csp}" /><script>${script}<\/script>`;
-  }
+  $: query = "";
 </script>
 
 <svelte:head>
   <title>Layendanimator</title>
 </svelte:head>
 
-<iframe
-  on:load={() => {
-    // @ts-ignore
-    console.log(source.contentWindow.testFunction?.());
-  }}
-  bind:this={source}
-  srcdoc={getSrcDoc(script, csp)}
-  title="source-frame"
-  name="source"
-/>
-
 <div class="container" in:fade>
+  <form
+    on:submit|preventDefault={() => {
+      if (!$history.search.includes(query))
+        $history.search = [...$history.search, query];
+      goto(`/search?search=${query}`);
+    }}
+  >
+    <input
+      type="search"
+      placeholder="Search"
+      class="search"
+      autocapitalize="words"
+      list="searchRec"
+      bind:value={query}
+    />
+    <datalist id="searchRec">
+      {#each $history.search as option}
+        <option value={option}>{option}</option>
+      {/each}
+    </datalist>
+  </form>
   {#await data.list}
     <!-- Replace with something cooler -->
     Loading...
@@ -52,16 +51,9 @@
         {#each airing.data as { airingAt, episode, media }}
           {#if !media.isAdult || $settings.allowNSFW}
             <Anime
-              id={media.id}
-              name={$settings.animeLanguage === "english"
-                ? media.title.english ?? media.title.romaji
-                : media.title.native ?? media.title.romaji}
-              thumbnail={media.coverImage.large}
+              {media}
               {episode}
               {airingAt}
-              description={media.description}
-              episodes={media.streamingEpisodes}
-              isNSFW={media.isAdult}
               on:click={() =>
                 ($history.browse = [
                   media,
@@ -85,21 +77,24 @@
     <Section storageId="Subscriptions:scroll">
       <svelte:fragment slot="title">Subscriptions</svelte:fragment>
       <svelte:fragment slot="animes">
-        {#each $library.subscriptions as anime}
-          {#if !anime.isAdult || $settings.allowNSFW}
+        {#each $library.subscriptions as { media, source }}
+          {#if source}
             <Anime
-              id={anime.id}
-              name={$settings.animeLanguage === "english"
-                ? anime.title.english ?? anime.title.romaji
-                : anime.title.native ?? anime.title.romaji}
-              thumbnail={anime.coverImage.large}
-              description={anime.description}
-              episodes={anime.streamingEpisodes}
-              isNSFW={anime.isAdult}
+              {media}
+              source={source.id}
               on:click={() =>
                 ($history.browse = [
-                  anime,
-                  ...$history.browse.filter((item) => item.id !== anime.id),
+                  media,
+                  ...$history.browse.filter((item) => item.id !== media.id),
+                ])}
+            />
+          {:else}
+            <Anime
+              {media}
+              on:click={() =>
+                ($history.browse = [
+                  media,
+                  ...$history.browse.filter((item) => item.id !== media.id),
                 ])}
             />
           {/if}
@@ -116,14 +111,7 @@
         {#each recommended.data as anime}
           {#if !anime.isAdult || $settings.allowNSFW}
             <Anime
-              id={anime.id}
-              name={$settings.animeLanguage === "english"
-                ? anime.title.english ?? anime.title.romaji
-                : anime.title.native ?? anime.title.romaji}
-              thumbnail={anime.coverImage.large}
-              description={anime.description}
-              episodes={anime.streamingEpisodes}
-              isNSFW={anime.isAdult}
+              media={anime}
               on:click={() =>
                 ($history.browse = [
                   anime,
@@ -149,14 +137,7 @@
         {#each season.data as anime}
           {#if !anime.isAdult || $settings.allowNSFW}
             <Anime
-              id={anime.id}
-              name={$settings.animeLanguage === "english"
-                ? anime.title.english ?? anime.title.romaji
-                : anime.title.native ?? anime.title.romaji}
-              thumbnail={anime.coverImage.large}
-              description={anime.description}
-              episodes={anime.streamingEpisodes}
-              isNSFW={anime.isAdult}
+              media={anime}
               on:click={() =>
                 ($history.browse = [
                   anime,
@@ -194,14 +175,7 @@
         {#each trending.data as anime}
           {#if !anime.isAdult || $settings.allowNSFW}
             <Anime
-              id={anime.id}
-              name={$settings.animeLanguage === "english"
-                ? anime.title.english ?? anime.title.romaji
-                : anime.title.native ?? anime.title.romaji}
-              thumbnail={anime.coverImage.large}
-              description={anime.description}
-              episodes={anime.streamingEpisodes}
-              isNSFW={anime.isAdult}
+              media={anime}
               on:click={() =>
                 ($history.browse = [
                   anime,
@@ -236,10 +210,6 @@
     color: var(--text-color);
   }
 
-  iframe {
-    display: none;
-  }
-
   h3 {
     color: var(--text-color);
     opacity: 0.6;
@@ -258,5 +228,25 @@
   .container {
     padding: 2rem;
     margin-top: 3rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+
+  .search {
+    background-color: transparent;
+    width: 90%;
+    color: var(--text-color);
+    accent-color: var(--accent-color);
+    -webkit-appearance: textfield;
+  }
+
+  input:focus {
+    outline: 2px solid var(--accent-color);
   }
 </style>

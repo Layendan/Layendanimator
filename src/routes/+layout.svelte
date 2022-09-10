@@ -6,29 +6,39 @@
   import { getCurrent } from "@tauri-apps/api/window";
   import type { Anime } from "$lib/model/anime";
   import { history } from "$lib/model/history";
-  import Header from "$lib/components/header/Header.svelte";
+  import Footer from "$lib/components/footer/Footer.svelte";
+  import type { ActiveSource } from "$lib/model/sources";
+
+  export const ssr = false;
 
   let online: boolean;
 
   $library = {
     downloads:
-      (JSON.parse(window.localStorage.getItem("library/downloads")) as {
+      (JSON.parse(
+        window.localStorage.getItem("library/downloads") ?? "null"
+      ) as {
         anime: Anime;
         path: string;
       }[]) ?? [],
     subscriptions:
       (JSON.parse(
-        window.localStorage.getItem("library/subscriptions")
-      ) as Anime[]) ?? [],
+        window.localStorage.getItem("library/subscriptions") ?? "null"
+      ) as {
+        media: Anime;
+        source?: ActiveSource;
+      }[]) ?? [],
   };
 
   $history = {
     search:
-      (JSON.parse(window.localStorage.getItem("history/search")) as string[]) ??
-      [],
+      (JSON.parse(
+        window.localStorage.getItem("history/search") ?? "null"
+      ) as string[]) ?? [],
     browse:
-      (JSON.parse(window.localStorage.getItem("history/browse")) as Anime[]) ??
-      [],
+      (JSON.parse(
+        window.localStorage.getItem("history/browse") ?? "null"
+      ) as Anime[]) ?? [],
   };
 
   getCurrent().onThemeChanged((event) => {
@@ -77,18 +87,11 @@
     ? $settings.theme.custom?.name ?? "dark"
     : $settings.theme.appearance}
 >
-  <script lang="ts">
-    // Import required packages
-    import Header from "$lib/components/header/Header.svelte";
-  </script>
-
-  <Header />
-
   <main>
     <slot />
   </main>
 
-  <footer />
+  <Footer />
 </body>
 
 <style>
@@ -103,17 +106,9 @@
     flex-direction: column;
     width: 100%;
     margin: 0 auto;
+    padding-bottom: 3rem;
     box-sizing: border-box;
 
     transform: translateY(-3em);
-  }
-
-  footer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    color: var(--text-color);
   }
 </style>

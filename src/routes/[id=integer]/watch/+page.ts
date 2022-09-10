@@ -1,22 +1,24 @@
 import { get } from "svelte/store";
 import { animes, type Anime, type Episode } from "$lib/model/anime";
 import { getAnimeById } from "$lib/prefetch";
-import type { PageLoad } from "./$types";
 import { error } from "@sveltejs/kit";
+import type { PageLoad } from "./$types";
 
-async function getAnime(id: number): Promise<Anime> {
-  return get(animes).get(id) ?? (await getAnimeById(id, undefined));
+export const ssr = false;
+
+async function getAnime(id: string): Promise<Anime> {
+  return get(animes).get(id) ?? (await getAnimeById(parseInt(id), undefined));
 }
 
-export const load: PageLoad = (url) => {
-  const id = Number(url.params.id);
+export const load: PageLoad = ({ url, params }) => {
+  const id = params.id;
   let episode: Episode;
 
-  try {
-    episode = JSON.parse(url.url.searchParams.get("episode"));
-  } catch (e) {
-    throw error(400, e);
+  const param = url.searchParams.get("episode");
+  if (!param) {
+    throw error(400, "Missing episode parameter");
   }
+  episode = JSON.parse(param);
 
   if (!episode || Number.isNaN(id)) throw error(400, "Invalid parameters");
 

@@ -12,7 +12,11 @@
 <ul>
   {#each $settings.ordered ? episodes : [...episodes].reverse() as episode}
     <li>
-      <Episode {episode} hover={hoverAll} selected={episode.title === selectedEpisode?.title} />
+      <Episode
+        {episode}
+        hover={hoverAll}
+        selected={episode === selectedEpisode}
+      />
     </li>
   {/each}
 </ul>

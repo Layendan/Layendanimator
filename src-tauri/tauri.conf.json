@@ -82,7 +82,7 @@
       "http": {
         "all": false,
         "request": false,
-        "scope": ["https://graphql.anilist.co/*"]
+        "scope": ["https://*", "http://*"]
       },
       "notification": {
         "all": false

@@ -3,19 +3,21 @@
   import ExternalLink from "$lib/components/public/ExternalLink.svelte";
   import Toggle from "$lib/components/public/Toggle.svelte";
   import Group from "$lib/components/settings/Group.svelte";
+  import ThemePreview from "$lib/components/settings/Theme/ThemePreview.svelte";
+  import SourcesDragDropList from "$lib/components/settings/sources/SourcesDragDropList.svelte";
+  import SourceInput from "$lib/components/settings/sources/SourceInput.svelte";
+  import anilistIcon from "$lib/components/assets/anilist.png";
+  import { capitalize } from "$lib/model/global";
   import {
     settings,
     schema,
     type CustomTheme,
     type Schema,
   } from "$lib/model/settings";
-  import ThemePreview from "$lib/components/settings/Theme/ThemePreview.svelte";
-  import anilistIcon from "$lib/components/assets/anilist.png";
-  import { capitalize } from "$lib/model/global";
   import { history } from "$lib/model/history";
   import { library } from "$lib/model/library";
   import { connections } from "$lib/model/connections";
-  import type { ActiveSource } from "$lib/model/sources";
+  import { type ActiveSource, activeSources } from "$lib/model/sources";
   import { animes } from "$lib/model/anime";
   import { goto } from "$app/navigation";
   import { fade } from "svelte/transition";
@@ -141,7 +143,7 @@
    */
   async function importCustomThemes(): Promise<CustomTheme[]> {
     const items: string[] = [
-      ...(await open({
+      ...((await open({
         title: "Import Custom Theme(s)",
         multiple: true,
         defaultPath: await downloadDir(),
@@ -151,7 +153,7 @@
             extensions: ["css"],
           },
         ],
-      })),
+      })) ?? []),
     ];
 
     const appDirectory: string = await appDir();
@@ -296,6 +298,15 @@
     >
       Change Anime Language - {capitalize($settings.animeLanguage)}
     </Toggle>
+  </Group>
+  <Group
+    title="Sources"
+    description="Edit sources to use for searching and browsing"
+  >
+    <SourceInput />
+    {#if $activeSources.length > 0}
+      <SourcesDragDropList bind:data={$activeSources} />
+    {/if}
   </Group>
   <Group
     title="Third-Party Connections"

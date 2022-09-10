@@ -1,11 +1,18 @@
 import { frontpageFetch } from "$lib/prefetch";
 import { get } from "svelte/store";
 import { connections } from "$lib/model/connections";
+import { activeSources } from "$lib/model/sources";
+import { redirect } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 
+export const ssr = false;
+
 export const load: PageLoad = () => {
+  if (get(activeSources).length > 0)
+    throw redirect(307, `/${get(activeSources)[0].id}`);
+
   const date: Date = new Date();
-  let season: "WINTER" | "SPRING" | "SUMMER" | "FALL";
+  let season: "WINTER" | "SPRING" | "SUMMER" | "FALL" = "WINTER";
   switch (date.getMonth()) {
     case 0:
     case 1:

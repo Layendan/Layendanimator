@@ -12,7 +12,7 @@
 
   const accessToken = parsedHash.get("access_token");
   const source = $page.url.searchParams.get("source");
-  $connections[source] = accessToken;
+  if (accessToken && source) $connections[source] = accessToken;
 
   let time: number = 5;
   let interval: NodeJS.Timer;
@@ -20,10 +20,12 @@
   onDestroy(() => clearInterval(interval));
 
   async function setConnection() {
-    $connections[`${source}-userId`] = (
-      await getUserId(accessToken)
-    ).toString();
-    console.log($connections[`${source}-userId`]);
+    if (accessToken && source) {
+      $connections[`${source}-userId`] = (
+        await getUserId(accessToken)
+      ).toString();
+      console.log($connections[`${source}-userId`]);
+    }
 
     if ($page.routeId === "callback") {
       interval = setInterval(() => {
@@ -35,7 +37,7 @@
     }
 
     // TODO: Change this to only remove recommended anime, need to change how animes are stored
-    window.sessionStorage.removeItem("frontPage");
+    window?.sessionStorage.removeItem("frontPage");
   }
 </script>
 

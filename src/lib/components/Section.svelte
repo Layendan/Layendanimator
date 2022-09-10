@@ -3,7 +3,7 @@
   import { fade } from "svelte/transition";
   export let storageId: string;
   let sleft: number = Number.parseInt(
-    window?.sessionStorage.getItem(storageId)
+    window?.sessionStorage.getItem(storageId) ?? "0"
   );
   let items: HTMLDivElement;
 

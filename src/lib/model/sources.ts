@@ -5,6 +5,7 @@ export interface ActiveSource {
   name: string;
   version: string;
   baseUrl: string;
+  srcPath: string;
   contentRating: "EVERYONE" | "MATURE" | "ADULT";
   desc: string;
   tags: { type: "success" | "danger" | "warning"; text: string }[];
@@ -12,6 +13,10 @@ export interface ActiveSource {
   author: string;
   repo: string;
   website: string;
+  mainPage: {
+    topAiring: boolean;
+    recentEpisodes: boolean;
+  };
 }
 
 export interface Repository {

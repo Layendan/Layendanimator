@@ -1,38 +1,84 @@
 <script lang="ts">
   import { onDestroy } from "svelte";
-  import type { Episode } from "$lib/model/anime";
-  import test_video from "$lib/components/assets/test_video.mp4";
+  import type { Episode, Mirror } from "$lib/model/anime";
   import { getCurrent } from "@tauri-apps/api/window";
 
   // Combine this with episodeStore
   export let episode: Episode;
-  export let episodeStore: Episode;
-  export let percentWatched: number = 0;
-
-  let videoSrc: string = test_video;
-  let videoType: string = "video/mp4";
-
-  let captionSrc: string = "https://media.vimejs.com/subs/english.vtt";
-  let captionLang: string = "en";
-  let captionLabel: string = "English";
+  export let mirror: Mirror;
+  export let captions: { src: string; lang: string }[] = [];
 
   // These values are bound to properties of the video
   let time: number;
-  let duration: number;
+  let duration: number = 0;
   let paused: boolean;
   let muted: boolean;
   let video: HTMLVideoElement;
+  let volume: number = 1;
 
-  time = percentWatched === 100 ? 0 : (percentWatched * duration) / 1000;
+  function reload() {
+    video?.pause();
+    video?.load();
+    video?.play();
+  }
+
+  $: if (mirror) reload();
+
+  time =
+    episode.percentWatched === 100
+      ? 0
+      : ((episode.percentWatched ?? 0) * duration) / 1000;
 
   onDestroy(updateTimeWatched);
 
   function updateTimeWatched() {
     if (!!time && !!duration && !Number.isNaN(time) && !Number.isNaN(duration))
-      episodeStore.percentWatched = (time / duration) * 100;
+      episode.percentWatched = (time / duration) * 100;
+  }
+
+  function toggleFullscreen() {
+    // I hate safari. Why can't they follow standards?
+    if (
+      document.fullscreenElement ||
+      // @ts-ignore
+      document.webkitCurrentFullScreenElement
+    ) {
+      if (document.exitFullscreen) {
+        getCurrent().setFullscreen(false);
+        document.exitFullscreen();
+      }
+      // @ts-ignore
+      else if (document.webkitExitFullscreen) {
+        // @ts-ignore
+        document.webkitExitFullscreen();
+      }
+    } else {
+      if (video.requestFullscreen) {
+        getCurrent().setFullscreen(true);
+        video.requestFullscreen();
+      }
+      // @ts-ignore
+      else if (video.webkitRequestFullscreen) {
+        // @ts-ignore
+        video.webkitRequestFullscreen();
+      }
+    }
   }
 </script>
 
+<svelte:window
+  on:keydown={(e) => {
+    if (e.ctrlKey || e.metaKey) return;
+
+    if (e.key === "f") {
+      e.preventDefault();
+      toggleFullscreen();
+      updateTimeWatched();
+    }
+  }}
+/>
+
+<!-- svelte-ignore a11y-media-has-caption -->
 <video
   controls
   poster={episode.thumbnail}
@@ -40,19 +86,16 @@
   bind:currentTime={time}
   bind:duration
   bind:paused
+  bind:volume
   bind:muted
   bind:this={video}
-  on:ended={() => {
-    updateTimeWatched();
-    // DO SOMETHING MAYBE?
-    history?.back();
-  }}
+  on:ended
   on:pause={updateTimeWatched}
   on:play={() => {
     time =
-      episodeStore.percentWatched === 100
+      episode.percentWatched === 100
         ? 0
-        : (episodeStore.percentWatched * duration) / 100;
+        : ((episode.percentWatched ?? 0) * duration) / 100;
     updateTimeWatched();
     video.focus();
   }}
@@ -81,34 +124,68 @@
         e.preventDefault();
         updateTimeWatched();
         break;
+      case "ArrowUp":
+        volume + 0.1 > 1 ? (volume = 1) : (volume += 0.1);
+        e.preventDefault();
+        break;
+      case "ArrowDown":
+        volume - 0.1 < 0 ? (volume = 0) : (volume -= 0.1);
+        e.preventDefault();
+        break;
+      case "0":
+        time = 0;
+        updateTimeWatched();
+        e.preventDefault();
+        break;
+      case "1":
+        time = duration * 0.1;
+        updateTimeWatched();
+        e.preventDefault();
+        break;
+      case "2":
+        time = duration * 0.2;
+        updateTimeWatched();
+        e.preventDefault();
+        break;
+      case "3":
+        time = duration * 0.3;
+        updateTimeWatched();
+        e.preventDefault();
+        break;
+      case "4":
+        time = duration * 0.4;
+        updateTimeWatched();
+        e.preventDefault();
+        break;
+      case "5":
+        time = duration * 0.5;
+        updateTimeWatched();
+        e.preventDefault();
+        break;
+      case "6":
+        time = duration * 0.6;
+        updateTimeWatched();
+        e.preventDefault();
+        break;
+      case "7":
+        time = duration * 0.7;
+        updateTimeWatched();
+        e.preventDefault();
+        break;
+      case "8":
+        time = duration * 0.8;
+        updateTimeWatched();
+        e.preventDefault();
+        break;
+      case "9":
+        time = duration * 0.9;
+        updateTimeWatched();
+        e.preventDefault();
+        break;
       case "m":
         muted = !muted;
         updateTimeWatched();
         e.preventDefault();
-        break;
-      case "f":
-        // I hate safari. Why can't they follow standards?
-        if (
-          document.fullscreenElement ||
-          // @ts-ignore
-          document.webkitCurrentFullScreenElement
-        ) {
-          if (document.exitFullscreen) document.exitFullscreen();
-          // @ts-ignore
-          else if (document.webkitExitFullscreen) {
-            // @ts-ignore
-            document.webkitExitFullscreen();
-          }
-        } else {
-          if (video.requestFullscreen) video.requestFullscreen();
-          // @ts-ignore
-          else if (video.webkitRequestFullscreen) {
-            // @ts-ignore
-            video.webkitRequestFullscreen();
-          }
-        }
-        e.preventDefault();
-        updateTimeWatched();
         break;
       default:
         break;
@@ -121,28 +198,40 @@
     getCurrent().toggleMaximize();
   }}
 >
-  <source src={videoSrc} type={videoType} />
-  <track
-    src={captionSrc}
-    kind="captions"
-    srclang={captionLang}
-    label={captionLabel}
-  />
+  <source src={mirror.url} />
+  {#each captions as caption}
+    <track
+      src={caption.src}
+      kind="captions"
+      label={caption.lang}
+      srclang={caption.lang}
+    />
+  {/each}
 </video>
 
 <style>
   video {
     display: flex;
     width: 100%;
-    object-fit: cover;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
     align-items: center;
     justify-content: center;
     border-radius: 5px;
+    background-color: #000;
 
     -webkit-user-select: none; /* Chrome all / Safari all */
     -moz-user-select: none; /* Firefox all */
     -ms-user-select: none; /* IE 10+ */
     user-select: none; /* Likely future */
+  }
+
+  video:not(:fullscreen) {
+    max-height: 78vh;
+  }
+
+  video:not(:-webkit-full-screen) {
+    max-height: 78vh;
   }
 
   video:focus {

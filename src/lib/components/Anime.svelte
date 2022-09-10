@@ -3,45 +3,54 @@
   import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
   import { fade } from "svelte/transition";
   import DOMPurify from "dompurify";
-  import type { Episode } from "$lib/model/anime";
+  import { settings } from "$lib/model/settings";
+  import type { Anime } from "$lib/model/anime";
 
-  // Export component definitions
-  export let id: number | null = null;
-  export let name: string = "Loading";
-  export let thumbnail: string = loadingFailure;
-  export let description: string = "";
-  export let episode: number = null;
-  export let airingAt: number = null;
-  export let episodes: Episode[] | null = null;
-  export let isNSFW: boolean = false;
+  export let media: Anime | null = null;
+  export let source: string | null = null;
 
+  export let episode: number | null = null;
+  export let airingAt: number | null = null;
+
+  let name: string =
+    ($settings.animeLanguage === "english"
+      ? media?.title.english ?? media?.title.romaji
+      : media?.title.romaji ?? media?.title.english) ?? "Loading";
   let airingTime: Date = new Date((airingAt ?? 0) * 1000);
   const today = new Date();
 
   let loading: boolean = true;
+  let loadingFailureBool: boolean = false;
 
   // Check if there is data to store before looking at the length or else returns null error
   const DATA_NAME = name + "-episodes";
   if (
-    episodes &&
-    episodes.length > 0 &&
-    !window.sessionStorage.getItem(DATA_NAME)
+    media?.streamingEpisodes &&
+    media?.streamingEpisodes.length > 0 &&
+    !window?.sessionStorage.getItem(DATA_NAME)
   ) {
-    window.sessionStorage.setItem(DATA_NAME, JSON.stringify(episodes));
+    window?.sessionStorage.setItem(
+      DATA_NAME,
+      JSON.stringify(media?.streamingEpisodes)
+    );
   }
 </script>
 
 <body in:fade>
-  <a href="/{id}" class:unselectable={id === null} on:click>
+  <a
+    href={source ? `/${source}/${media?.id}` : `/${media?.id}`}
+    class:unselectable={!media || !media?.id}
+    on:click
+  >
     <span class="holder">
       {#key loading}
         <!-- Removing lazy loading because it prevents images from loading in ms edge, might change display: none to width+height: 0 -->
         <img
-          src={thumbnail}
+          src={loadingFailureBool ? loadingFailure : media?.coverImage.large}
           alt={name}
           class="thumbnail"
           class:hide={loading}
-          on:error={() => (thumbnail = loadingFailure)}
+          on:error={() => (loadingFailureBool = true)}
           on:load={() => (loading = false)}
           in:fade
         />
@@ -56,7 +65,7 @@
         <div class="text">
           <h1>
             {name ?? "Loading"}
-            {#if isNSFW}
+            {#if media?.isAdult}
               <span class="nsfw">18+</span>
             {/if}
           </h1>
@@ -82,7 +91,7 @@
             </p>
           {/if}
           <p class="description">
-            {@html DOMPurify.sanitize(description, {
+            {@html DOMPurify.sanitize(media?.description ?? "", {
               USE_PROFILES: { html: true },
             })}
           </p>

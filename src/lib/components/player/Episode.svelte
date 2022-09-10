@@ -8,11 +8,11 @@
   let thumbnail: string | null = episode.thumbnail;
 </script>
 
-<div class="episode"
-  class:hover class:selected >
+<div class="episode" class:hover class:selected>
   <a
-    class="link"
-    href="/{$page.params.id}/watch?episode={JSON.stringify(episode)}"
+    href={$page.params.source
+      ? `/${$page.params.source}/${$page.params.id}/watch?episode=${episode.number}`
+      : `/${$page.params.id}/watch?episode=${JSON.stringify(episode)}`}
   >
     <img class="bg" src={episode.thumbnail} alt="" />
     <div class="bg progress" style="width: {episode.percentWatched ?? '0'}%;" />
@@ -27,7 +27,17 @@
         />
       {/if}
       <p>
-        {episode.title} on <i>{episode.site}</i>
+        {#if episode.title}
+          {episode.title}
+        {:else}
+          Episode {episode.number}
+        {/if}
+        {#if episode.site}
+          on {episode.site}
+        {/if}
+        {#if episode.subOrDub}
+          - {episode.subOrDub.toLocaleUpperCase()}
+        {/if}
       </p>
     </span>
   </a>

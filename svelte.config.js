@@ -14,6 +14,9 @@ const config = {
       // Tauri expects index.html, not app.html
       fallback: "index.html",
     }),
+    prerender: {
+      entries: [],
+    },
   },
 };
 

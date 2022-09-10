@@ -9,14 +9,7 @@
   <span>
     {#each $history.browse as anime}
       <div>
-        <Anime
-          id={anime.id}
-          name={anime.title.english ?? anime.title.romaji}
-          thumbnail={anime.coverImage.large}
-          description={anime.description}
-          episodes={anime.streamingEpisodes}
-          isNSFW={anime.isAdult}
-        />
+        <Anime media={anime} />
       </div>
     {:else}
       <p>No previously watched anime</p>

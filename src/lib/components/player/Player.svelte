@@ -2,6 +2,7 @@
   import { onDestroy } from "svelte";
   import type { Episode, Mirror } from "$lib/model/anime";
   import { getCurrent } from "@tauri-apps/api/window";
+  import Hls from "hls.js";
 
   // Combine this with episodeStore
   export let episode: Episode;
@@ -22,14 +23,29 @@
     video?.play();
   }
 
+  function setHls() {
+    if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      console.log("Using native HLS");
+      video.src = mirror.url;
+      //
+      // If no native HLS support, check if HLS.js is supported
+      //
+    } else if (Hls.isSupported()) {
+      console.log("Using HLS.js");
+      const hls = new Hls();
+      hls.loadSource(mirror.url);
+      hls.attachMedia(video);
+    }
+  }
+
   $: if (mirror) reload();
+
+  $: if (video) setHls();
 
   time =
     episode.percentWatched === 100
       ? 0
       : ((episode.percentWatched ?? 0) * duration) / 1000;
-
-  onDestroy(updateTimeWatched);
 
   function updateTimeWatched() {
     if (!!time && !!duration && !Number.isNaN(time) && !Number.isNaN(duration))
@@ -44,7 +60,6 @@
       document.webkitCurrentFullScreenElement
     ) {
       if (document.exitFullscreen) {
-        getCurrent().setFullscreen(false);
         document.exitFullscreen();
       }
       // @ts-ignore
@@ -54,7 +69,6 @@
       }
     } else {
       if (video.requestFullscreen) {
-        getCurrent().setFullscreen(true);
         video.requestFullscreen();
       }
       // @ts-ignore
@@ -105,12 +119,14 @@
     switch (e.key) {
       case " ":
         // Checks if fullscreen since spacebar pauses automatically
+        // Checks to see if using edge since spacebar pauses automatically
         if (
           // @ts-ignore
-          !document.webkitCurrentFullScreenElement
+          !document.webkitCurrentFullScreenElement &&
+          !document.exitFullscreen
         ) {
-          paused = !paused;
           e.preventDefault();
+          paused = !paused;
         }
         updateTimeWatched();
         break;
@@ -193,12 +209,13 @@
   }}
   on:seeked={updateTimeWatched}
   on:fullscreenchange={() => {
-    console.log("Fullscreen change");
-
-    getCurrent().toggleMaximize();
+    if (document.fullscreenElement) {
+      getCurrent().setFullscreen(true);
+    } else {
+      getCurrent().setFullscreen(false);
+    }
   }}
 >
-  <source src={mirror.url} />
   {#each captions as caption}
     <track
       src={caption.src}

@@ -1,5 +1,9 @@
+<svelte:options immutable />
+
 <script lang="ts">
-  import { onDestroy } from "svelte";
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
+  import { onDestroy, onMount } from "svelte";
   import type { Episode, Mirror } from "$lib/model/anime";
   import { getCurrent } from "@tauri-apps/api/window";
   import Hls from "hls.js";
@@ -7,7 +11,10 @@
   // Combine this with episodeStore
   export let episode: Episode;
   export let mirror: Mirror;
+  export let title: string = episode.title ?? `Episode - ${episode.number}`;
   export let captions: { src: string; lang: string }[] = [];
+  export let nextEpisode: Episode | undefined;
+  export let autoplay: boolean;
 
   // These values are bound to properties of the video
   let time: number;
@@ -19,37 +26,77 @@
 
   function reload() {
     video?.pause();
+    updateTimeWatched();
+    setHls();
     video?.load();
     video?.play();
   }
 
+  function playNext() {
+    if (nextEpisode) {
+      goto(
+        `/${$page.params.source}/${$page.params.id}/watch?episode=${nextEpisode.number}&autoplay=true`
+      );
+    } else {
+      goto(`/${$page.params.source}/${$page.params.id}`);
+    }
+  }
+
   function setHls() {
-    if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      console.log("Using native HLS");
-      video.src = mirror.url;
-      //
-      // If no native HLS support, check if HLS.js is supported
-      //
-    } else if (Hls.isSupported()) {
+    if (video?.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = `${mirror.url}#t=${
+        episode.percentWatched === 100
+          ? 0
+          : ((episode.percentWatched ?? 0) * duration) / 100
+      }`;
+    } else {
       console.log("Using HLS.js");
       const hls = new Hls();
-      hls.loadSource(mirror.url);
+      hls.loadSource(
+        `${mirror.url}#t=${
+          episode.percentWatched === 100
+            ? 0
+            : ((episode.percentWatched ?? 0) * duration) / 100
+        }`
+      );
       hls.attachMedia(video);
     }
+    video?.load();
   }
 
   $: if (mirror) reload();
 
-  $: if (video) setHls();
-
-  time =
-    episode.percentWatched === 100
-      ? 0
-      : ((episode.percentWatched ?? 0) * duration) / 1000;
-
   function updateTimeWatched() {
     if (!!time && !!duration && !Number.isNaN(time) && !Number.isNaN(duration))
       episode.percentWatched = (time / duration) * 100;
+  }
+
+  onMount(setHls);
+
+  onDestroy(() => {
+    updateTimeWatched();
+  });
+
+  function enterFullscreen() {
+    if (video.requestFullscreen) {
+      video.requestFullscreen();
+    }
+    // @ts-ignore
+    else if (video.webkitRequestFullscreen) {
+      // @ts-ignore
+      video.webkitRequestFullscreen();
+    }
+  }
+
+  function exitFullscreen() {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+    // @ts-ignore
+    else if (document.webkitExitFullscreen) {
+      // @ts-ignore
+      document.webkitExitFullscreen();
+    }
   }
 
   function toggleFullscreen() {
@@ -59,35 +106,28 @@
       // @ts-ignore
       document.webkitCurrentFullScreenElement
     ) {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-      // @ts-ignore
-      else if (document.webkitExitFullscreen) {
-        // @ts-ignore
-        document.webkitExitFullscreen();
-      }
+      exitFullscreen();
     } else {
-      if (video.requestFullscreen) {
-        video.requestFullscreen();
-      }
-      // @ts-ignore
-      else if (video.webkitRequestFullscreen) {
-        // @ts-ignore
-        video.webkitRequestFullscreen();
-      }
+      enterFullscreen();
     }
   }
 </script>
+
+<svelte:head>
+  <title>{title}</title>
+</svelte:head>
 
 <svelte:window
   on:keydown={(e) => {
     if (e.ctrlKey || e.metaKey) return;
 
     if (e.key === "f") {
-      e.preventDefault();
       toggleFullscreen();
-      updateTimeWatched();
+      video.focus();
+      e.preventDefault();
+    } else if (e.key === "N" && nextEpisode) {
+      playNext();
+      e.preventDefault();
     }
   }}
 />
@@ -97,22 +137,16 @@
   controls
   poster={episode.thumbnail}
   preload="metadata"
+  {autoplay}
   bind:currentTime={time}
   bind:duration
   bind:paused
   bind:volume
   bind:muted
   bind:this={video}
-  on:ended
-  on:pause={updateTimeWatched}
-  on:play={() => {
-    time =
-      episode.percentWatched === 100
-        ? 0
-        : ((episode.percentWatched ?? 0) * duration) / 100;
-    updateTimeWatched();
-    video.focus();
-  }}
+  on:ended={playNext}
+  on:click={() => video.focus()}
+  on:play={() => video.focus()}
   on:keydown={(e) => {
     if (e.ctrlKey || e.metaKey) return;
 
@@ -125,20 +159,17 @@
           !document.webkitCurrentFullScreenElement &&
           !document.exitFullscreen
         ) {
-          e.preventDefault();
           paused = !paused;
+          e.preventDefault();
         }
-        updateTimeWatched();
         break;
       case "ArrowLeft":
-        time -= 5;
+        time -= e.shiftKey ? 10 : 5;
         e.preventDefault();
-        updateTimeWatched();
         break;
       case "ArrowRight":
-        time += 5;
+        time += e.shiftKey ? 10 : 5;
         e.preventDefault();
-        updateTimeWatched();
         break;
       case "ArrowUp":
         volume + 0.1 > 1 ? (volume = 1) : (volume += 0.1);
@@ -150,64 +181,52 @@
         break;
       case "0":
         time = 0;
-        updateTimeWatched();
         e.preventDefault();
         break;
       case "1":
         time = duration * 0.1;
-        updateTimeWatched();
         e.preventDefault();
         break;
       case "2":
         time = duration * 0.2;
-        updateTimeWatched();
         e.preventDefault();
         break;
       case "3":
         time = duration * 0.3;
-        updateTimeWatched();
         e.preventDefault();
         break;
       case "4":
         time = duration * 0.4;
-        updateTimeWatched();
         e.preventDefault();
         break;
       case "5":
         time = duration * 0.5;
-        updateTimeWatched();
         e.preventDefault();
         break;
       case "6":
         time = duration * 0.6;
-        updateTimeWatched();
         e.preventDefault();
         break;
       case "7":
         time = duration * 0.7;
-        updateTimeWatched();
         e.preventDefault();
         break;
       case "8":
         time = duration * 0.8;
-        updateTimeWatched();
         e.preventDefault();
         break;
       case "9":
         time = duration * 0.9;
-        updateTimeWatched();
         e.preventDefault();
         break;
       case "m":
         muted = !muted;
-        updateTimeWatched();
         e.preventDefault();
         break;
       default:
         break;
     }
   }}
-  on:seeked={updateTimeWatched}
   on:fullscreenchange={() => {
     if (document.fullscreenElement) {
       getCurrent().setFullscreen(true);

@@ -5,25 +5,12 @@
   import EpisodeHolder from "$lib/components/player/EpisodeHolder.svelte";
   import { settings } from "$lib/model/settings";
   import { library } from "$lib/model/library";
-  import { animes, type Anime } from "$lib/model/anime";
   import DOMPurify from "dompurify";
   import Button from "$lib/components/public/Button.svelte";
   import type { PageData } from "./$types";
-  import JsSandbox, { getAnime } from "$lib/components/JsSandbox.svelte";
   import Loading from "$lib/components/public/Loading.svelte";
 
   export let data: PageData;
-
-  let isSandboxLoaded: boolean = false;
-
-  async function animePreload(id: string): Promise<Anime> {
-    const data = $animes.get(id);
-    if (data) return data;
-
-    const anime: Anime = await getAnime(id);
-    animes.addAnime(anime);
-    return anime;
-  }
 
   // Page scroll
   let y = 0;
@@ -39,124 +26,111 @@
 
 <svelte:window bind:scrollY={y} />
 
-<JsSandbox
-  jsFile={data.source.srcPath}
-  on:load={() => (isSandboxLoaded = true)}
-/>
-
-{#if isSandboxLoaded}
-  {#await animePreload(data.id)}
-    <Loading />
-  {:then anime}
-    <section in:fade>
-      {#if anime.bannerImage && !bannerError}
-        <div class="banner">
-          {#key bannerLoading}
-            <img
-              src={anime.bannerImage}
-              alt={anime.title.romaji}
-              on:error={() => (bannerError = true)}
-              on:load={() => (bannerLoading = false)}
-              in:fade
-              class:reduce-motion={$settings.reduceMotion}
-              class:hide={bannerLoading}
-              style:--banner-scale={scale}
-              style:--banner-blur={blur}
-              style:--banner-brightness={brightness}
-            />
-          {/key}
-          {#if bannerLoading}
-            <img src={loadingFailure} alt={anime.title.romaji} in:fade />
-          {/if}
-        </div>
-      {/if}
-      <div in:fade class="text">
-        <div class="container">
+{#await data.anime}
+  <Loading />
+{:then anime}
+  <section in:fade>
+    {#if anime.bannerImage && !bannerError}
+      <div class="banner">
+        {#key bannerLoading}
+          <img
+            src={anime.bannerImage}
+            alt={anime.title.romaji}
+            on:error={() => (bannerError = true)}
+            on:load={() => (bannerLoading = false)}
+            in:fade
+            class:reduce-motion={$settings.reduceMotion}
+            class:hide={bannerLoading}
+            style:--banner-scale={scale}
+            style:--banner-blur={blur}
+            style:--banner-brightness={brightness}
+          />
+        {/key}
+        {#if bannerLoading}
+          <img src={loadingFailure} alt={anime.title?.romaji} in:fade />
+        {/if}
+      </div>
+    {/if}
+    <div in:fade class="text">
+      <div class="container">
+        <div
+          class="important-info"
+          class:no-overlap={!anime.bannerImage || bannerError}
+        >
           <div
-            class="important-info"
-            class:no-overlap={!anime.bannerImage || bannerError}
+            class="image-and-choices"
+            class:overlap={!!anime.bannerImage && !bannerError}
           >
-            <div
-              class="image-and-choices"
-              class:overlap={!!anime.bannerImage && !bannerError}
+            {#key coverLoading}
+              <img
+                src={coverError ? loadingFailure : anime.coverImage.large}
+                alt={anime.title?.english ?? anime.title?.romaji}
+                on:error={() => (coverError = true)}
+                on:load={() => (coverLoading = false)}
+                in:fade
+                class:hide={coverLoading}
+                class="thumbnail"
+              />
+            {/key}
+            {#if coverLoading}
+              <img
+                src={loadingFailure}
+                alt={anime.title?.english ?? anime.title?.romaji}
+                class="thumbnail"
+                in:fade
+              />
+            {/if}
+            <Button
+              size="all"
+              type={$library.subscriptions.some(
+                ({ media }) => media.id === data.id
+              )
+                ? "danger"
+                : "default"}
+              on:click={() => {
+                $library.subscriptions.some(({ media }) => media.id === data.id)
+                  ? ($library.subscriptions = [
+                      ...$library.subscriptions.filter(
+                        ({ media }) => media.id !== data.id
+                      ),
+                    ])
+                  : ($library.subscriptions = [
+                      ...$library.subscriptions,
+                      {
+                        media: anime,
+                        source: data.source,
+                      },
+                    ]);
+              }}
             >
-              {#key coverLoading}
-                <img
-                  src={coverError ? loadingFailure : anime.coverImage.large}
-                  alt={anime.title.english ?? anime.title.romaji}
-                  on:error={() => (coverError = true)}
-                  on:load={() => (coverLoading = false)}
-                  in:fade
-                  class:hide={coverLoading}
-                  class="thumbnail"
-                />
-              {/key}
-              {#if coverLoading}
-                <img
-                  src={loadingFailure}
-                  alt={anime.title.english ?? anime.title.romaji}
-                  class="thumbnail"
-                  in:fade
-                />
-              {/if}
-              <Button
-                size="all"
-                type={$library.subscriptions.some(
-                  ({ media }) => media.id === data.id
-                )
-                  ? "danger"
-                  : "default"}
-                on:click={() => {
-                  $library.subscriptions.some(
-                    ({ media }) => media.id === data.id
-                  )
-                    ? ($library.subscriptions = [
-                        ...$library.subscriptions.filter(
-                          ({ media }) => media.id !== data.id
-                        ),
-                      ])
-                    : ($library.subscriptions = [
-                        ...$library.subscriptions,
-                        {
-                          media: anime,
-                          source: data.source,
-                        },
-                      ]);
-                }}
-              >
-                {$library.subscriptions.some(
-                  ({ media }) => media.id === data.id
-                )
-                  ? "Unsubscribe"
-                  : "Subscribe"}
-              </Button>
-            </div>
-            <div>
-              <h1 class="title">
-                {$settings.animeLanguage === "english"
-                  ? anime.title.english ?? anime.title.romaji
-                  : anime.title.native ?? anime.title.romaji}
-              </h1>
-              <p in:fade class="description">
-                {@html DOMPurify.sanitize(anime.description, {
-                  USE_PROFILES: { html: true },
-                })}
-              </p>
-            </div>
+              {$library.subscriptions.some(({ media }) => media.id === data.id)
+                ? "Unsubscribe"
+                : "Subscribe"}
+            </Button>
+          </div>
+          <div>
+            <h1 class="title">
+              {$settings.animeLanguage === "english"
+                ? anime.title.english ?? anime.title.romaji
+                : anime.title.native ?? anime.title.romaji}
+            </h1>
+            <p in:fade class="description">
+              {@html DOMPurify.sanitize(anime.description, {
+                USE_PROFILES: { html: true },
+              })}
+            </p>
           </div>
         </div>
       </div>
-      <EpisodeHolder
-        episodes={anime.streamingEpisodes}
-        hoverAll={$settings.showProgress}
-      />
-    </section>
-  {:catch e}
-    <p class="error">{e}</p>
-  {/await}
-{:else}
-  <Loading />
-{/if}
+    </div>
+    <EpisodeHolder
+      episodes={anime.streamingEpisodes}
+      hoverAll={$settings.showProgress}
+    />
+  </section>
+{:catch e}
+  <p class="error">{e}</p>
+{/await}
 
 <style>
   .banner {
@@ -213,6 +187,7 @@
     margin-top: 0;
     background-color: var(--secondary-color);
     padding: 1rem;
+    padding-top: 0;
   }
 
   .overlap {

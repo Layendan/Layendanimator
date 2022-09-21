@@ -227,7 +227,6 @@
 
   .container {
     padding: 2rem;
-    margin-top: 3rem;
   }
 
   form {

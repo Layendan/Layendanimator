@@ -22,5 +22,6 @@ export const load: LayoutLoad = ({ url, params }) => {
     showProgress: get(settings).showProgress,
     episode: episode,
     episodes: anime.streamingEpisodes,
+    title: anime.title,
   };
 };

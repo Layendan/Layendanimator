@@ -6,6 +6,21 @@
   --font-mono: "Fira Mono", monospace;
   --pure-white: #ffffff;
   --pure-white-rgb: 255, 255, 255;
+  --primary-color: #1f1f1f;
+  --primary-rgb: 31, 31, 31;
+  --secondary-color: #292929;
+  --secondary-rgb: 41, 41, 41;
+  --tertiary-color: #454545;
+  --tertiary-rgb: 69, 69, 69;
+  --accent-color: #895ef4;
+  --accent-rgb: 137, 94, 244;
+  --text-color: #ffffff;
+  --text-rgb: 255, 255, 255;
+  --text-hover-color: #ffffff;
+  --danger-color: #dd3b3b;
+  --danger-rgb: 221, 59, 59;
+  --active-color: #2ea44f;
+  --active-hover-color: #2c974b;
 }
 
 .dark {
@@ -18,6 +33,7 @@
   --accent-color: #895ef4;
   --accent-rgb: 137, 94, 244;
   --text-color: #ffffff;
+  --text-rgb: 255, 255, 255;
   --text-hover-color: #ffffff;
   --danger-color: #dd3b3b;
   --danger-rgb: 221, 59, 59;
@@ -35,6 +51,7 @@
   --accent-color: #895ef4;
   --accent-rgb: 137, 94, 244;
   --text-color: #000000;
+  --text-rgb: 0, 0, 0;
   --text-hover-color: #ffffff;
   --danger-color: #dd3b3b;
   --danger-rgb: 221, 59, 59;
@@ -47,13 +64,12 @@
   transition: all 0.1s;
 }
 
-html,
 body {
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: var(--primary-color);
   scroll-behavior: smooth;
+  background-color: var(--primary-color);
   accent-color: var(--accent-color);
 }
 
@@ -85,10 +101,6 @@ a {
 
 a:hover {
   text-decoration: underline;
-}
-
-a:visited {
-  color: rgb(0, 80, 160);
 }
 
 label {

@@ -36,7 +36,6 @@
 
 <style>
   section {
-    margin-top: 3rem;
     display: flex;
     flex-direction: row;
     justify-content: center;

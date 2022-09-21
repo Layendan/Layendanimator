@@ -62,39 +62,56 @@
   }
 
   export let sourceLink: string = "";
-  export let placeholder: string = "Source Link";
+  let input: HTMLInputElement;
 </script>
 
 <form
   on:submit|preventDefault={() => {
     if (sourceLink.length > 0) importSource(sourceLink);
   }}
+  on:click={() => input?.focus()}
   autocomplete="off"
+  title="Please enter a link to a github source"
 >
   <input
-    title="Please enter a link to a github source"
     type="url"
-    {placeholder}
+    placeholder="Source link"
+    autocomplete="off"
     bind:value={sourceLink}
-    autocomplete="false"
+    bind:this={input}
   />
   <Button>Add Source</Button>
 </form>
 
 <style>
+  form {
+    display: flex;
+    flex-direction: row;
+    padding: 0.5rem;
+    padding-bottom: 0.2rem;
+    align-items: center;
+    background-color: var(--primary-color);
+    border-radius: 5px;
+    border: 1px solid transparent;
+    cursor: text;
+    transition: border-color 0.2s ease-in-out;
+  }
   input {
-    width: 100%;
+    width: 92%;
     background-color: transparent;
     color: var(--text-color);
     accent-color: var(--accent-color);
+    outline: none;
+    border: none;
     -webkit-appearance: textfield;
   }
 
-  input:focus {
-    outline: 2px solid var(--accent-color);
+  form:hover,
+  form:focus-within {
+    border-color: var(--tertiary-color);
   }
 
-  input:invalid {
-    outline: 2px solid var(--danger-color);
+  form:invalid {
+    border-color: var(--danger-color);
   }
 </style>

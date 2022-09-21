@@ -2,13 +2,13 @@
   import { onDestroy, onMount } from "svelte";
   import { fade } from "svelte/transition";
   export let storageId: string;
-  let sleft: number = Number.parseInt(
+  let sleft: number = parseInt(
     window?.sessionStorage.getItem(storageId) ?? "0"
   );
   let items: HTMLDivElement;
 
   onMount(() => (items.scrollLeft = sleft));
-  onDestroy(() => window?.sessionStorage.setItem(storageId, sleft.toString()));
+  onDestroy(() => window.sessionStorage.setItem(storageId, sleft.toString()));
 </script>
 
 <div class="anime-container" in:fade>
@@ -28,7 +28,6 @@
 <style>
   * {
     scrollbar-width: thin;
-    overscroll-behavior-x: contain;
   }
 
   p {
@@ -36,17 +35,20 @@
   }
 
   .anime-container {
+    overscroll-behavior-x: contain;
     margin-left: 10px;
     margin-right: 10px;
+    overflow-y: visible;
   }
 
   .items {
     display: inline-flexbox;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow-x: scroll;
+    overflow-y: visible;
     scroll-behavior: smooth;
     width: auto;
     white-space: nowrap;
+    padding-top: 4px;
     padding-bottom: 15px;
     -webkit-user-select: none; /* Chrome all / Safari all */
     -moz-user-select: none; /* Firefox all */

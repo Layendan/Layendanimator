@@ -12,6 +12,8 @@
   export let episode: number | null = null;
   export let airingAt: number | null = null;
 
+  export let delay: number = 0;
+
   let name: string =
     ($settings.animeLanguage === "english"
       ? media?.title.english ?? media?.title.romaji
@@ -36,7 +38,7 @@
   }
 </script>
 
-<body in:fade>
+<body in:fade={{ delay }}>
   <a
     href={source ? `/${source}/${media?.id}` : `/${media?.id}`}
     class:unselectable={!media || !media?.id}
@@ -112,10 +114,9 @@
     /* I'm just gonna use overflow-y because line clamping slows down the loading of the page by a few seconds and that's not fun for the user */
     overflow-y: hidden;
     text-overflow: ellipsis;
-  }
+    border-radius: 12px;
 
-  a:focus > .holder {
-    border-color: var(--accent-color);
+    transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
   }
 
   .unselectable {
@@ -137,28 +138,15 @@
     height: 252px;
     max-width: 178px;
     max-height: 252px;
-    border-radius: 10px 0 0 10px;
-    border-right: 2px var(--tertiary-color) solid;
-
-    transition: filter 0.2s ease-in-out;
   }
 
-  body a:hover img {
-    filter: brightness(115%);
-  }
-  body a:hover .text {
-    transform: translateY(-1px);
-  }
-  body a:hover .info {
-    background-color: var(--tertiary-color);
-  }
-
-  body a:hover .holder {
-    border-color: var(--pure-white);
+  body:is(:hover, :focus-within) {
+    transform: translateY(-2px);
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.8);
   }
 
   body a:hover .episode {
-    background-color: rgba(var(--primary-rgb), 0.2);
+    background-color: rgba(var(--primary-rgb), 0.3);
   }
 
   a {
@@ -175,9 +163,6 @@
     padding-bottom: 0;
     height: auto;
     width: 85%;
-    word-wrap: break-word;
-    white-space: normal;
-    hyphens: auto;
     justify-content: space-between;
   }
 
@@ -195,50 +180,61 @@
     margin-left: 1em;
     margin-top: 1em;
     height: auto;
-    word-wrap: break-word;
-    white-space: normal;
-    hyphens: auto;
     font-weight: 100;
     padding-right: 1em;
   }
 
   .holder {
     max-width: 450px;
-    width: 400px;
+    width: 100%;
     min-width: 160px;
     display: flex;
     border-radius: 12px;
-    border-color: var(--tertiary-color);
-    border-style: solid;
-    border-width: 2px;
     background-color: var(--secondary-color);
-
-    transition: border-color 0.2s ease-in-out;
   }
 
   .info {
-    width: 100%;
+    overflow: hidden;
+    width: 0;
     height: 100%;
-    border-radius: 0 10px 10px 0;
     padding-top: 10px;
     padding-bottom: 20px;
     height: 222px;
+    transition: width 0.5s ease-in-out;
+  }
 
-    transition: background-color 0.2s ease-in-out;
+  body:hover .info {
+    transition: width 0.5s ease-in-out 0.5s;
+    width: 400px;
+  }
+
+  body:focus-within .info {
+    transition: width 0.5s ease-in-out;
+    width: 400px;
   }
 
   .text {
-    transition: transform 0.2s ease-in-out;
     color: var(--text-color);
     margin-bottom: 1em;
+    word-wrap: break-word;
+    white-space: normal;
+    hyphens: auto;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  body:hover .text {
+    transition: opacity 0.3s ease-out 0.8s;
+    opacity: 1;
+  }
+
+  body:focus-within .text {
+    transition: opacity 0.3s ease-out 0.4s;
+    opacity: 1;
   }
 
   .hide {
     display: none;
-  }
-
-  .thumbnail {
-    position: relative;
   }
 
   .episode {
@@ -261,7 +257,7 @@
   }
 
   .description {
-    opacity: 0.7;
+    color: rgba(var(--text-rgb), 0.7);
   }
 
   .time {

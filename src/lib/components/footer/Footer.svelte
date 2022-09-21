@@ -25,7 +25,7 @@
     bottom: 0;
     width: 100%;
     height: 50px;
-    /* box-shadow: 0px -5px 5px rgba(0, 0, 0, 0.5); */
+    z-index: 10;
     border-top: 1px solid var(--tertiary-color);
     background-color: rgba(var(--primary-rgb), 0.8);
     -webkit-backdrop-filter: blur(20px) saturate(0.75);

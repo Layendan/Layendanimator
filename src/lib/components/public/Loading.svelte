@@ -66,7 +66,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vmin;
+    min-height: 100vh;
   }
 
   svg {

@@ -185,6 +185,7 @@
     margin-top: 0;
     background-color: var(--secondary-color);
     padding: 1rem;
+    padding-top: 0;
   }
 
   .overlap {

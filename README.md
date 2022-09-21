@@ -7,7 +7,7 @@ NineAnimataur(i) is a free and open source anime watching app for Desktop, using
 
 ## Table of Contents
 
-- [NineAnimataur(i)](#)
+- [NineAnimataur(i)](/#)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Picture in Picture Playback](#picture-in-picture-playback)

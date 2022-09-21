@@ -3,8 +3,9 @@ import { writable, readable } from "svelte/store";
 export type Mirror = {
   url: string;
   name: string;
+  downloadLink: string;
   quality?: string;
-  type: "M3U8" | "MP4";
+  isM3U8?: boolean;
 };
 
 /**

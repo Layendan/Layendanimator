@@ -100,15 +100,13 @@
   }
 
   main {
+    background-color: var(--primary-color);
     color: var(--text-color);
     flex: 1;
     display: flex;
     flex-direction: column;
     width: 100%;
     margin: 0 auto;
-    padding-bottom: 3rem;
-    box-sizing: border-box;
-
-    transform: translateY(-3em);
+    padding-bottom: 5rem;
   }
 </style>

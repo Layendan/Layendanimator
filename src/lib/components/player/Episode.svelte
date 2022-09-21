@@ -1,14 +1,16 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import type { Episode } from "$lib/model/anime";
+  import { fade } from "svelte/transition";
 
   export let episode: Episode;
   export let hover: boolean = false;
   export let selected: boolean = false;
+  export let delay: number = 0;
   let thumbnail: string | null = episode.thumbnail;
 </script>
 
-<div class="episode" class:hover class:selected>
+<div class="episode" class:hover class:selected in:fade={{ delay }}>
   <a
     href={$page.params.source
       ? `/${$page.params.source}/${$page.params.id}/watch?episode=${episode.number}`

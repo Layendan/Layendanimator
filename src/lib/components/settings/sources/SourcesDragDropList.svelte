@@ -198,7 +198,7 @@
     min-height: 3em;
     margin-bottom: 0.5em;
     background-color: var(--primary-color);
-    border: 1px solid var(--tertiary-color);
+    border: 1px solid transparent;
     border-radius: 5px;
     user-select: none;
 
@@ -206,7 +206,7 @@
   }
 
   .item:hover {
-    border-color: var(--accent-color);
+    border-color: var(--tertiary-color);
   }
 
   .item:last-child {

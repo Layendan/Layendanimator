@@ -31,7 +31,6 @@
 
 <style>
   section {
-    margin-top: 3rem;
     margin-left: 1rem;
     display: flex;
     flex-direction: row;

@@ -19,7 +19,7 @@
   import { connections } from "$lib/model/connections";
   import { type ActiveSource, activeSources } from "$lib/model/sources";
   import { animes } from "$lib/model/anime";
-  import { goto } from "$app/navigation";
+  import { goto, invalidateAll } from "$app/navigation";
   import { fade } from "svelte/transition";
   import { getVersion } from "@tauri-apps/api/app";
   import { open, save, confirm } from "@tauri-apps/api/dialog";
@@ -140,6 +140,7 @@
     clearSubscriptions();
     clearConnections();
     settings.reset();
+    invalidateAll();
   }
 
   /**

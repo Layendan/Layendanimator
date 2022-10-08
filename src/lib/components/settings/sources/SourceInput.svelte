@@ -2,7 +2,7 @@
   import Button from "$lib/components/public/Button.svelte";
   import { fetch, ResponseType, type HttpOptions } from "@tauri-apps/api/http";
   import { activeSources } from "$lib/model/sources";
-  import { invalidate, invalidateAll } from "$app/navigation";
+  import { invalidate } from "$app/navigation";
 
   /**
    * Import a source from a github link.
@@ -59,7 +59,7 @@
       },
       ...$activeSources,
     ];
-    invalidate("/");
+    invalidate("na:/");
   }
 
   export let sourceLink: string = "";

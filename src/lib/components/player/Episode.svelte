@@ -15,6 +15,7 @@
     href={$page.params.source
       ? `/${$page.params.source}/${$page.params.id}/watch?episode=${episode.number}`
       : `/${$page.params.id}/watch?episode=${JSON.stringify(episode)}`}
+    data-sveltekit-prefetch
   >
     <img class="bg" src={episode.thumbnail} alt="" />
     <div class="bg progress" style="width: {episode.percentWatched ?? '0'}%;" />

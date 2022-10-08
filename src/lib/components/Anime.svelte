@@ -43,6 +43,7 @@
   <a
     href={source ? `/${source}/${media?.id}` : `/${media?.id}`}
     class:unselectable={!media || !media?.id}
+    data-sveltekit-prefetch
     on:click
   >
     <span class="holder">

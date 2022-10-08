@@ -6,7 +6,7 @@ import type { PageLoad } from "./$types";
 export const ssr = false;
 
 export const load: PageLoad = ({ depends }) => {
-  depends("/");
+  depends("na:/");
   if (get(activeSources).length > 0)
     throw redirect(307, `/${get(activeSources)[0].id}`);
 };

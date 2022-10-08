@@ -15,7 +15,11 @@
 <section>
   <header>
     {#each $activeSources as source}
-      <a href={source.id} class:selected={source.id === data.source.id}>
+      <a
+        href={source.id}
+        class:selected={source.id === data.source.id}
+        data-sveltekit-prefetch
+      >
         {capitalize(source.name)}
       </a>
     {/each}

@@ -16,7 +16,7 @@ export type Episode = {
   id: string;
   number: number;
   thumbnail: string;
-  mirrors: Mirror[];
+  mirrors: Mirror[] | undefined;
   subOrDub: "sub" | "dub";
   site: string;
   description: string;

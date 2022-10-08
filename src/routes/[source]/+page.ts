@@ -31,21 +31,26 @@ export const load: PageLoad = ({ params }) => {
       iframe.style.display = "none";
       document.body.appendChild(iframe);
       iframe.onload = async () => {
-        const recentEpisodes: { episode: number; media: Anime }[] =
-          // @ts-ignore
-          await iframe?.contentWindow?.getRecentEpisodes?.();
-        iframe.remove();
-        recentEpisodes === undefined
-          ? reject("Could not get Recent Episodes")
-          : resolve(recentEpisodes);
-        const date: Date = new Date();
-        window.sessionStorage.setItem(
-          `${source.id}-recent-episodes`,
-          JSON.stringify({
-            expiration: date.setMinutes(date.getMinutes() + 30).valueOf(),
-            data: recentEpisodes,
-          })
-        );
+        try {
+          const recentEpisodes: { episode: number; media: Anime }[] =
+            // @ts-ignore
+            await iframe?.contentWindow?.getRecentEpisodes?.();
+          iframe.remove();
+          recentEpisodes === undefined
+            ? reject("Could not get Recent Episodes")
+            : resolve(recentEpisodes);
+          const date: Date = new Date();
+          window.sessionStorage.setItem(
+            `${source.id}-recent-episodes`,
+            JSON.stringify({
+              expiration: date.setMinutes(date.getMinutes() + 30).valueOf(),
+              data: recentEpisodes,
+            })
+          );
+        } catch (e) {
+          console.error(e);
+          reject(e);
+        }
       };
     });
 
@@ -65,21 +70,26 @@ export const load: PageLoad = ({ params }) => {
       iframe.style.display = "none";
       document.body.appendChild(iframe);
       iframe.onload = async () => {
-        const topAiring: Anime[] =
-          // @ts-ignore
-          await iframe?.contentWindow?.getTopAiring?.();
-        iframe.remove();
-        topAiring === undefined
-          ? reject("Could not get Recent Episodes")
-          : resolve(topAiring);
-        const date: Date = new Date();
-        window.sessionStorage.setItem(
-          `${source.id}-top-airing`,
-          JSON.stringify({
-            expiring: date.setMinutes(date.getMinutes() + 30).valueOf(),
-            data: topAiring,
-          })
-        );
+        try {
+          const topAiring: Anime[] =
+            // @ts-ignore
+            await iframe?.contentWindow?.getTopAiring?.();
+          iframe.remove();
+          topAiring === undefined
+            ? reject("Could not get Recent Episodes")
+            : resolve(topAiring);
+          const date: Date = new Date();
+          window.sessionStorage.setItem(
+            `${source.id}-top-airing`,
+            JSON.stringify({
+              expiring: date.setMinutes(date.getMinutes() + 30).valueOf(),
+              data: topAiring,
+            })
+          );
+        } catch (e) {
+          console.error(e);
+          reject(e);
+        }
       };
     }
   );
@@ -103,8 +113,14 @@ export const load: PageLoad = ({ params }) => {
 
   return {
     source: source,
-    recentEpisodes: recentEpisodes,
-    topAiring: topAiring,
-    seasonal: seasonal,
+    recentEpisodes: {
+      data: recentEpisodes,
+    },
+    topAiring: {
+      data: topAiring,
+    },
+    seasonal: {
+      data: seasonal,
+    },
   };
 };

@@ -14,7 +14,7 @@
 <main in:fade>
   <SearchBar source={data.source} query={data.query} />
   <h1>Results for - <i>{capitalize(data.query)}</i></h1>
-  {#await data.search}
+  {#await data.search.data}
     <Loading />
   {:then animeArray}
     {#each animeArray as anime}
@@ -52,8 +52,6 @@
     list-style: none;
     vertical-align: top;
     width: 100%;
-    margin-top: 1rem;
-    transform: translateY(3em);
   }
 
   h1 {

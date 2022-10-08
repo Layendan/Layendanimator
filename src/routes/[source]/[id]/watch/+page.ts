@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
-import type { Mirror } from "$lib/model/anime";
+import type { Episode, Mirror } from "$lib/model/anime";
 import { activeSources, type ActiveSource } from "$lib/model/sources";
 
 export const ssr = false;
@@ -40,7 +40,9 @@ export const load: PageLoad = async ({ url, params, parent }) => {
     }
   );
 
-  const nextEpisode = episodes.find((e) => e.number === episode.number + 1);
+  const nextEpisode: Episode | undefined = episodes.find(
+    (e) => e.number === episode.number + 1
+  );
 
   return {
     source: source,
@@ -48,7 +50,9 @@ export const load: PageLoad = async ({ url, params, parent }) => {
     episode: episode,
     nextEpisode: nextEpisode,
     autoplay: autoplay,
-    mirrors: mirrors,
+    mirrors: {
+      data: mirrors,
+    },
     title: title,
   };
 };

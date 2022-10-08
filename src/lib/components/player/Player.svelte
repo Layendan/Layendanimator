@@ -67,7 +67,7 @@
   $: if (mirror) reload();
 
   function updateTimeWatched() {
-    if (!!time && !!duration && !Number.isNaN(time) && !Number.isNaN(duration))
+    if (!Number.isNaN(time) && !Number.isNaN(duration))
       episode.percentWatched = (time / duration) * 100;
   }
 

@@ -1,9 +1,7 @@
 async function getRecentEpisodes() {
   let recentEpisodes = (
     await (
-      await fetch(
-        "https://consumet-api.herokuapp.com/anime/gogoanime/recent-episodes"
-      )
+      await fetch("https://api.consumet.org/anime/gogoanime/recent-episodes")
     ).json()
   ).results;
   recentEpisodes = recentEpisodes.map((item) => {
@@ -29,9 +27,7 @@ async function getRecentEpisodes() {
 async function getTopAiring() {
   let topAiring = (
     await (
-      await fetch(
-        "https://consumet-api.herokuapp.com/anime/gogoanime/top-airing"
-      )
+      await fetch("https://api.consumet.org/anime/gogoanime/top-airing")
     ).json()
   ).results;
   topAiring = topAiring.map((item) => {
@@ -74,7 +70,7 @@ async function getSeasonal() {
 
 async function searchAnime(query) {
   const response = await fetch(
-    `https://consumet-api.herokuapp.com/anime/gogoanime/${query}`
+    `https://api.consumet.org/anime/gogoanime/${query}`
   );
   const data = (await response.json()).results;
   return data.map((item) => {
@@ -94,7 +90,7 @@ async function searchAnime(query) {
 
 async function getAnime(id) {
   const response = await fetch(
-    `https://consumet-api.herokuapp.com/anime/gogoanime/info/${id}`
+    `https://api.consumet.org/anime/gogoanime/info/${id}`
   );
   const data = await response.json();
   return {
@@ -123,7 +119,7 @@ async function getAnime(id) {
 
 async function getStreamingLinks(id) {
   const response = await fetch(
-    `https://consumet-api.herokuapp.com/anime/gogoanime/watch/${id}`
+    `https://api.consumet.org/anime/gogoanime/watch/${id}`
   );
   const data = await response.json();
   const pageData = await fetch(`https://gogoanime.tel/${id}`);
@@ -133,6 +129,7 @@ async function getStreamingLinks(id) {
   return data.sources.map((item) => {
     return {
       url: item.url,
+      quality: item.quality,
       downloadLink: downloadLink || item.url,
     };
   });

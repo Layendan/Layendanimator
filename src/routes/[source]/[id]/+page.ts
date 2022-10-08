@@ -46,6 +46,8 @@ export const load: PageLoad = ({ params }) => {
   return {
     source: source,
     id: params.id,
-    anime: anime,
+    anime: {
+      data: anime,
+    },
   };
 };

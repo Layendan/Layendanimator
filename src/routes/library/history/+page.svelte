@@ -9,7 +9,7 @@
   <span>
     {#each $history.browse as anime}
       <div>
-        <Anime media={anime} />
+        <Anime media={anime} expanded />
       </div>
     {:else}
       <p>No previously watched anime</p>
@@ -28,13 +28,10 @@
   }
 
   span {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(480px, auto));
     justify-content: center;
-    column-gap: 1rem;
-    row-gap: 3rem;
-    margin-left: auto;
-    margin-right: auto;
+    row-gap: 2.5rem;
   }
 
   p {

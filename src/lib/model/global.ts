@@ -10,7 +10,9 @@ export function capitalize(str: string): string {
 export function getIframe(path: string): HTMLIFrameElement {
   const iframe = document.createElement("iframe");
   iframe.sandbox.add("allow-scripts");
-  iframe.srcdoc = `<script type="text/javascript" src="${path}"></script><script>window.addEventListener("message", async (event) => {
+  iframe.srcdoc = `
+  <script type="text/javascript" src="${path}"></script>
+  <script>window.addEventListener("message", async (event) => {
   switch (event.data.command) {
     case "getRecentEpisodes":
       event.source.postMessage(

@@ -170,7 +170,7 @@
       }
     ],
     "security": {
-      "csp": "asset 'https://asset.localhost';"
+      "csp": "asset https://asset.localhost;"
     }
   }
 }

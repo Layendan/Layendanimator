@@ -41,6 +41,8 @@ export const load: PageLoad = ({ params, url }) => {
   return {
     source: source,
     query: query,
-    search: search,
+    search: {
+      data: search,
+    },
   };
 };

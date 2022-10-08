@@ -5,9 +5,12 @@
   import { convertFileSrc } from "@tauri-apps/api/tauri";
   import { getCurrent } from "@tauri-apps/api/window";
   import type { Anime } from "$lib/model/anime";
+  // TODO: combine with top import
+  import { animes } from "$lib/model/anime";
   import { history } from "$lib/model/history";
   import Footer from "$lib/components/footer/Footer.svelte";
   import type { ActiveSource } from "$lib/model/sources";
+  import { onDestroy } from "svelte";
 
   export const ssr = false;
 
@@ -63,6 +66,16 @@
     window.localStorage.setItem(`history/search`, JSON.stringify(item.search));
     window.localStorage.setItem(`history/browse`, JSON.stringify(item.browse));
   });
+
+  // const interval = setInterval(() => {
+  //   $animes.forEach((anime) => {
+  //     anime.streamingEpisodes.forEach((episode) => {
+  //       episode.mirrors = undefined;
+  //     });
+  //   });
+  // }, 30 * 60000);
+
+  // onDestroy(() => clearInterval(interval));
 </script>
 
 <svelte:head>

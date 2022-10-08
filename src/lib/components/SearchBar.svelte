@@ -55,12 +55,14 @@
   .search {
     background-color: var(--secondary-color);
     border-radius: 5px;
-    border: 1px solid var(--primary-color);
+    border: 1px solid var(--secondary-color);
     width: 90%;
     color: var(--text-color);
     accent-color: var(--accent-color);
     -webkit-appearance: textfield;
     outline: none;
+
+    transition: border-color 0.2s ease-in-out;
   }
 
   .search:hover,

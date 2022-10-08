@@ -25,7 +25,7 @@
     <Section storageId="{data.source.id}-new-episodes:scroll">
       <svelte:fragment slot="title">New Episodes</svelte:fragment>
       <svelte:fragment slot="animes">
-        {#await data.recentEpisodes}
+        {#await data.recentEpisodes.data}
           <Anime />
           <Anime />
           <Anime />
@@ -55,6 +55,8 @@
                 ])}
             />
           {/each}
+        {:catch error}
+          <p>{error}</p>
         {/await}
       </svelte:fragment>
     </Section>
@@ -94,7 +96,7 @@
     <Section storageId="{data.source.id}-new-episodes:scroll">
       <svelte:fragment slot="title">Top Airing</svelte:fragment>
       <svelte:fragment slot="animes">
-        {#await data.topAiring}
+        {#await data.topAiring.data}
           <Anime />
           <Anime />
           <Anime />
@@ -123,6 +125,8 @@
                 ])}
             />
           {/each}
+        {:catch error}
+          <p>{error}</p>
         {/await}
       </svelte:fragment>
     </Section>
@@ -130,7 +134,7 @@
   <Section storageId="{data.source.id}-seasonal:scroll">
     <svelte:fragment slot="title">Seasonal</svelte:fragment>
     <svelte:fragment slot="animes">
-      {#await data.seasonal}
+      {#await data.seasonal.data}
         <Anime />
         <Anime />
         <Anime />
@@ -159,6 +163,8 @@
               ])}
           />
         {/each}
+      {:catch error}
+        <p>{error}</p>
       {/await}
     </svelte:fragment>
   </Section>

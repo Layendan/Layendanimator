@@ -20,21 +20,21 @@
   let coverError: boolean = false;
 
   $: scale = y < 345 ? 0.005 * Math.abs(y) + 1 : 0.005 * 345 + 1;
-  $: blur = `${y < 345 ? 0.05 * Math.abs(y) : 0.05 * 345}px`;
-  $: brightness = y < 345 ? -Math.abs(y) / 345 + 1 : 0;
+  $: blur = y < 345 ? 0.05 * Math.abs(y) : 0.05 * 345;
+  $: opacity = y < 345 ? -Math.abs(y) / 345 + 1 : 0;
 </script>
 
 <svelte:window bind:scrollY={y} />
 
-{#await data.anime}
+{#await data.anime.data}
   <Loading />
 {:then anime}
   <section in:fade>
-    {#if anime.bannerImage && !bannerError}
+    {#if anime.bannerImage || (anime.coverImage.large && !bannerError)}
       <div class="banner">
         {#key bannerLoading}
           <img
-            src={anime.bannerImage}
+            src={anime.bannerImage ?? anime.coverImage.large}
             alt={anime.title.romaji}
             on:error={() => (bannerError = true)}
             on:load={() => (bannerLoading = false)}
@@ -42,8 +42,8 @@
             class:reduce-motion={$settings.reduceMotion}
             class:hide={bannerLoading}
             style:--banner-scale={scale}
-            style:--banner-blur={blur}
-            style:--banner-brightness={brightness}
+            style:--banner-blur={`${anime.bannerImage ? blur : blur + 5}px`}
+            style:--banner-opacity={opacity}
           />
         {/key}
         {#if bannerLoading}
@@ -55,11 +55,13 @@
       <div class="container">
         <div
           class="important-info"
-          class:no-overlap={!anime.bannerImage || bannerError}
+          class:no-overlap={!!anime.bannerImage ||
+            (!!anime.coverImage.large && !bannerError)}
         >
           <div
             class="image-and-choices"
-            class:overlap={!!anime.bannerImage && !bannerError}
+            class:overlap={!!anime.bannerImage ||
+              (!!anime.coverImage.large && !bannerError)}
           >
             {#key coverLoading}
               <img
@@ -143,17 +145,17 @@
 
   .banner img {
     width: 100%;
-    height: 348px;
+    max-height: 348px;
     object-fit: cover;
-    object-position: center;
+    object-position: top;
     position: relative;
   }
 
   .banner img:not(.reduce-motion) {
     transform: scale(var(--banner-scale));
-    -webkit-filter: blur(var(--banner-blur))
-      brightness(var(--banner-brightness));
-    filter: blur(var(--banner-blur)) brightness(var(--banner-brightness));
+    -webkit-filter: blur(var(--banner-blur));
+    filter: blur(var(--banner-blur));
+    opacity: var(--banner-opacity);
   }
 
   .banner::after {

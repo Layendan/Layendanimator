@@ -15,7 +15,7 @@
 </script>
 
 <div class="holder">
-  {#await data.mirrors}
+  {#await data.mirrors.data}
     <Loading />
   {:then mirrors}
     <div in:fade class="player">
@@ -31,12 +31,12 @@
         <h1>{data.title.english ?? data.title.romaji}</h1>
         <h2>{data.episode.title ?? `Episode - ${data.episode.number}`}</h2>
         <span class="mirrors">
-          {#each mirrors ?? [] as { name }, i}
+          {#each mirrors ?? [] as { name, quality }, i}
             <Button
               on:click={() => (selectedMirror = i)}
               disabled={selectedMirror === i}
             >
-              {name ?? `Mirror ${i + 1}`}
+              {name ?? quality ?? `Mirror ${i + 1}`}
             </Button>
           {/each}
         </span>

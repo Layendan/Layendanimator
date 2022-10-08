@@ -13,6 +13,7 @@
   export let airingAt: number | null = null;
 
   export let delay: number = 0;
+  export let expanded: boolean = false;
 
   let name: string =
     ($settings.animeLanguage === "english"
@@ -38,7 +39,7 @@
   }
 </script>
 
-<body in:fade={{ delay }}>
+<body in:fade={{ delay }} class:expanded>
   <a
     href={source ? `/${source}/${media?.id}` : `/${media?.id}`}
     class:unselectable={!media || !media?.id}
@@ -206,6 +207,14 @@
   body:hover .info {
     transition: width 0.5s ease-in-out 0.5s;
     width: 400px;
+  }
+
+  body.expanded .info {
+    width: 400px;
+  }
+
+  body.expanded .text {
+    opacity: 1;
   }
 
   body:focus-within .info {

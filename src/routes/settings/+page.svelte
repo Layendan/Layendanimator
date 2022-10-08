@@ -57,6 +57,13 @@
   }
 
   /**
+   * Clears the sources.
+   */
+  function clearSources() {
+    activeSources.set([]);
+  }
+
+  /**
    * Clears the search history.
    */
   function clearSearchHistory() {
@@ -125,6 +132,7 @@
    */
   function reset() {
     clearCache();
+    clearSources();
     clearSearchHistory();
     clearBrowseHistory();
     clearDownloads();
@@ -438,6 +446,7 @@
       <Button size="medium" on:click={exportSettings}>Create Backup</Button>
       <Button size="medium" on:click={importSettings}>Import Backup</Button>
       <Button size="medium" on:click={clearCache}>Clear Cached Data</Button>
+      <Button size="medium" on:click={clearSources}>Clear Sources</Button>
       <Button size="medium" on:click={clearSearchHistory}
         >Clear Search History</Button
       >

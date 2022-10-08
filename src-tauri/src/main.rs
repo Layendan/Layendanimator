@@ -15,17 +15,6 @@ use tauri::Manager;
 fn main() {
     let ctx = tauri::generate_context!();
 
-    #[cfg(target_os = "linux")]
-    tauri::Builder::default()
-        // Declare API methods
-        .invoke_handler(tauri::generate_handler![
-            api::close_splashscreen,
-            api::search_anime,
-            api::add_module
-        ])
-        .run(ctx)
-        .expect("error while running tauri application");
-
     #[cfg(target_os = "windows")]
     tauri::Builder::default()
         // Declare API methods
@@ -38,8 +27,23 @@ fn main() {
         .run(ctx)
         .expect("error while running tauri application");
 
-    #[cfg(not(any(target_os = "windows", target_os = "linux")))]
+    #[cfg(not(target_os = "windows"))]
     tauri::Builder::default()
+        .setup(|app| {
+            let splashscreen_window = app.get_window("splashscreen").unwrap();
+            let main_window = app.get_window("main").unwrap();
+            // we perform the initialization code on a new task so the app doesn't freeze
+            tauri::async_runtime::spawn(async move {
+                // initialize your app here instead of sleeping :)
+                // For some reason app crashes if I don't wait at least 0.2 seconds
+                std::thread::sleep(std::time::Duration::from_secs_f32(0.2));
+
+                // After it's done, close the splashscreen and display the main window
+                splashscreen_window.close().unwrap();
+                main_window.show().unwrap();
+            });
+            Ok(())
+        })
         // Declare API methods
         .invoke_handler(tauri::generate_handler![
             api::close_splashscreen,

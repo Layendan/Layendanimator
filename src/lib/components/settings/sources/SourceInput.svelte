@@ -2,7 +2,7 @@
   import Button from "$lib/components/public/Button.svelte";
   import { fetch, ResponseType, type HttpOptions } from "@tauri-apps/api/http";
   import { activeSources } from "$lib/model/sources";
-  import Anime from "$lib/components/Anime.svelte";
+  import { invalidate, invalidateAll } from "$app/navigation";
 
   /**
    * Import a source from a github link.
@@ -59,6 +59,7 @@
       },
       ...$activeSources,
     ];
+    invalidate("/");
   }
 
   export let sourceLink: string = "";
@@ -86,6 +87,7 @@
 <style>
   form {
     display: flex;
+    width: 100%;
     flex-direction: row;
     padding: 0.5rem;
     padding-bottom: 0.2rem;

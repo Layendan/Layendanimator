@@ -17,6 +17,7 @@
 
 <style>
   .container {
+    width: 100%;
     border: 1px var(--tertiary-color) solid;
     border-radius: 5px;
     position: relative;

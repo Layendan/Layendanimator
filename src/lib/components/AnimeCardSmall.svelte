@@ -106,7 +106,7 @@
     background-color: rgba(var(--primary-rgb), 0.3);
   }
 
-  .card .container:hover {
+  .card:not(:focus) .container:hover {
     transform: scale(1.05);
   }
 

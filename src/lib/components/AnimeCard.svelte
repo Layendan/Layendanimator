@@ -62,8 +62,8 @@
       }}
     />
   </div>
-  <div class="card_overlay" />
   <div class="card_gradient" />
+  <div class="card_overlay" />
   <div class="card__content" style:--text-color="#ffffff">
     <h2 class="card__title">{media.title.romaji ?? media.title.english}</h2>
     {#if (hovering || focused) && media.description}
@@ -128,13 +128,13 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(var(--primary-rgb), 0);
+    background-color: rgba(0, 0, 0, 0);
     border-radius: 12px;
     transition: background-color 500ms ease-in-out;
   }
 
   .card:matches(:hover, :focus) .card_overlay {
-    background-color: rgba(var(--primary-rgb), 0.3);
+    background-color: rgba(0, 0, 0, 0.5);
   }
 
   .card_gradient {
@@ -143,8 +143,8 @@
     height: 100%;
     background: linear-gradient(
       180deg,
-      rgba(var(--color), 0) 45%,
-      rgba(var(--color), 0.5) 50%,
+      rgba(var(--color), 0) 35%,
+      rgba(var(--color), 0.5) 55%,
       rgba(var(--color), 1) 100%
     );
     border-radius: 12px;

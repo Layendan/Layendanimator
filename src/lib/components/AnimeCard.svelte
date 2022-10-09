@@ -9,12 +9,11 @@
   export let delay: number = 0;
 
   let color: string = "0, 0, 0";
-  let isDarkText: boolean;
   let hovering: boolean = false;
   let focused: boolean = false;
 
   function isDark(r: number, g: number, b: number) {
-    var yiq = (r * 299 + g * 587 + b * 114) / 1000;
+    const yiq: number = (r * 299 + g * 587 + b * 114) / 1000;
     return yiq <= 128;
   }
 </script>
@@ -31,7 +30,6 @@
   data-sveltekit-prefetch
   on:click
   style:--color={color}
-  style:--text-color={isDarkText ? "#000000" : "#ffffff"}
 >
   <div class="card__image">
     <img
@@ -42,11 +40,20 @@
         const img = new Image();
 
         img.addEventListener("load", () => {
-          const colors = colorThief.getColor(img);
-          color = `${colors[0]}, ${colors[1]}, ${colors[2]}`;
-          isDark(colors[0], colors[1], colors[2]);
+          const colors = colorThief.getPalette(img, 5);
+          const [r, g, b] = colors[0];
+          let isDarkColor = false;
+          do {
+            const [r, g, b] = colors.shift();
+            isDarkColor = isDark(r, g, b);
+            color = `${r}, ${g}, ${b}`;
+          } while (!isDarkColor && colors.length > 0);
+          // In case none of the colors are dark, use the first one
+          if (!isDarkColor) {
+            color = `${r}, ${g}, ${b}`;
+          }
         });
-        // Have to load image using proxy to avoid CORS issues
+        // TODO: Have to load image using proxy to avoid CORS issues
         let googleProxyURL =
           "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=2592000&url=";
 
@@ -56,8 +63,8 @@
     />
   </div>
   <div class="card_overlay" />
-  <div class="card_gradient" style:--color={color} />
-  <div class="card__content">
+  <div class="card_gradient" />
+  <div class="card__content" style:--text-color="#ffffff">
     <h2 class="card__title">{media.title.romaji ?? media.title.english}</h2>
     {#if (hovering || focused) && media.description}
       <p class="card__description" transition:slide|local={{ duration: 500 }}>
@@ -152,10 +159,13 @@
   }
 
   .card__title {
-    display: inline-block;
     font-size: 1.5rem;
     margin: 0;
     margin-bottom: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
     overflow-wrap: break-word;
     word-wrap: break-word;
     hyphens: auto;

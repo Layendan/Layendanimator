@@ -9,6 +9,7 @@
   import { settings } from "$lib/model/settings";
   import SearchBar from "$lib/components/SearchBar.svelte";
   import AnimeCard from "$lib/components/AnimeCard.svelte";
+  import AnimeCardSmall from "$lib/components/AnimeCardSmall.svelte";
 
   export let data: PageData;
 </script>
@@ -48,7 +49,7 @@
           <Anime />
         {:then recentEpisodes}
           {#each recentEpisodes as { episode, media }, i}
-            <Anime
+            <AnimeCardSmall
               {media}
               {episode}
               source={data.source.id}
@@ -119,7 +120,7 @@
           <Anime />
         {:then topAiring}
           {#each topAiring as media, i}
-            <Anime
+            <AnimeCardSmall
               {media}
               source={data.source.id}
               delay={$settings.reduceMotion ? 0 : i * 100}
@@ -157,7 +158,7 @@
         <Anime />
       {:then seasonal}
         {#each seasonal as media, i}
-          <Anime
+          <AnimeCardSmall
             {media}
             source={data.source.id}
             delay={$settings.reduceMotion ? 0 : i * 100}

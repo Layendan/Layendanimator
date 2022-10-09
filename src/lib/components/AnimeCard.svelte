@@ -73,8 +73,24 @@
     flex-direction: column;
     height: clamp(325px, 50vh, 50vh);
     aspect-ratio: 5/8;
-    overflow: hidden;
+    overflow: visible;
     position: relative;
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    bottom: -8px;
+    left: -8px;
+    right: -8px;
+    border: 4px solid rgba(var(--color), 0);
+    border-radius: 20px;
+    transition: border 0.2s ease-in-out;
+  }
+
+  .card:hover::before {
+    border: 4px solid rgba(var(--color), 1);
   }
 
   .card__image {
@@ -83,6 +99,8 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
+    isolation: isolate;
+    border-radius: 12px;
   }
 
   .card__image img {
@@ -90,6 +108,7 @@
     height: 100%;
     object-fit: cover;
     object-position: center;
+    border-radius: 12px;
   }
 
   .card_overlay {
@@ -99,6 +118,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(var(--primary-rgb), 0);
+    border-radius: 12px;
     transition: background-color 500ms ease-in-out;
   }
 
@@ -116,6 +136,7 @@
       rgba(var(--color), 0.5) 50%,
       rgba(var(--color), 1) 100%
     );
+    border-radius: 12px;
   }
 
   .card__content {

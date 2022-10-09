@@ -8,6 +8,7 @@
   import { capitalize } from "$lib/model/global";
   import { settings } from "$lib/model/settings";
   import SearchBar from "$lib/components/SearchBar.svelte";
+  import AnimeCard from "$lib/components/AnimeCard.svelte";
 
   export let data: PageData;
 </script>
@@ -70,7 +71,7 @@
     <svelte:fragment slot="animes">
       {#each $library.subscriptions as { media, source }, i}
         {#if source}
-          <Anime
+          <AnimeCard
             {media}
             source={source.id}
             delay={$settings.reduceMotion ? 0 : i * 100}
@@ -81,7 +82,7 @@
               ])}
           />
         {:else}
-          <Anime
+          <AnimeCard
             {media}
             delay={$settings.reduceMotion ? 0 : i * 100}
             on:click={() =>

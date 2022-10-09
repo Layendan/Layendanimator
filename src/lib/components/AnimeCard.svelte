@@ -1,0 +1,159 @@
+<script lang="ts">
+  import type { Anime } from "$lib/model/anime";
+  import { fade, slide } from "svelte/transition";
+  // @ts-ignore
+  import ColorThief from "colorthief";
+
+  export let media: Anime;
+  export let source: string | null = null;
+  export let delay: number = 0;
+
+  let color: string = "0, 0, 0";
+  let isDarkText: boolean;
+  let hovering: boolean = false;
+
+  function isDark(r: number, g: number, b: number) {
+    var yiq = (r * 299 + g * 587 + b * 114) / 1000;
+    return yiq <= 128;
+  }
+</script>
+
+<a
+  class="card"
+  on:mouseenter={() => (hovering = true)}
+  on:mouseleave={() => (hovering = false)}
+  in:fade={{ delay }}
+  href={source ? `/${source}/${media?.id}` : `/${media?.id}`}
+  class:unselectable={!media || !media?.id}
+  data-sveltekit-prefetch
+  on:click
+  style:--color={color}
+  style:--text-color={isDarkText ? "#000000" : "#ffffff"}
+>
+  <div class="card__image">
+    <img
+      src={media.coverImage.large}
+      alt={media.title.romaji}
+      on:load={() => {
+        const colorThief = new ColorThief();
+        const img = new Image();
+
+        img.addEventListener("load", () => {
+          const colors = colorThief.getColor(img);
+          color = `${colors[0]}, ${colors[1]}, ${colors[2]}`;
+          isDark(colors[0], colors[1], colors[2]);
+        });
+        // Have to load image using proxy to avoid CORS issues
+        let googleProxyURL =
+          "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=2592000&url=";
+
+        img.crossOrigin = "Anonymous";
+        img.src = googleProxyURL + encodeURIComponent(media.coverImage.large);
+      }}
+    />
+  </div>
+  <div class="card_overlay" />
+  <div class="card_gradient" style:--color={color} />
+  <div class="card__content">
+    <h2 class="card__title">{media.title.romaji ?? media.title.english}</h2>
+    {#if hovering && media.description}
+      <p class="card__description" transition:slide|local={{ duration: 500 }}>
+        {media.description}
+      </p>
+    {/if}
+  </div>
+</a>
+
+<style>
+  .card {
+    background-color: var(--secondary-color);
+    border-radius: 12px;
+    margin: 15px;
+    display: inline-flex;
+    flex-direction: column;
+    height: clamp(325px, 50vh, 50vh);
+    aspect-ratio: 5/8;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .card__image {
+    position: relative;
+    border-radius: 12px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .card_overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(var(--primary-rgb), 0);
+    transition: background-color 500ms ease-in-out;
+  }
+
+  .card:hover .card_overlay {
+    background-color: rgba(var(--primary-rgb), 0.3);
+  }
+
+  .card_gradient {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      180deg,
+      rgba(var(--color), 0) 45%,
+      rgba(var(--color), 0.5) 50%,
+      rgba(var(--color), 1) 100%
+    );
+  }
+
+  .card__content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 1rem;
+    color: var(--text-color);
+  }
+
+  .card__title {
+    display: inline-block;
+    font-size: 1.5rem;
+    margin: 0;
+    margin-bottom: 0.5rem;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+    white-space: normal;
+  }
+
+  .card__description {
+    font-size: 1rem;
+    margin: 0;
+    margin-top: 0.5rem;
+    font-weight: 100;
+    width: 100%;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+    white-space: normal;
+  }
+
+  .unselectable {
+    pointer-events: none;
+  }
+</style>

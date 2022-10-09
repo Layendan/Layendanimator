@@ -152,6 +152,7 @@
   }
 
   .banner img:not(.reduce-motion) {
+    will-change: transform, filter, opacity;
     transform: scale(var(--banner-scale));
     -webkit-filter: blur(var(--banner-blur));
     filter: blur(var(--banner-blur));

@@ -11,6 +11,7 @@
   let color: string = "0, 0, 0";
   let isDarkText: boolean;
   let hovering: boolean = false;
+  let focused: boolean = false;
 
   function isDark(r: number, g: number, b: number) {
     var yiq = (r * 299 + g * 587 + b * 114) / 1000;
@@ -22,6 +23,8 @@
   class="card"
   on:mouseenter={() => (hovering = true)}
   on:mouseleave={() => (hovering = false)}
+  on:focusin={() => (focused = true)}
+  on:focusout={() => (focused = false)}
   in:fade={{ delay }}
   href={source ? `/${source}/${media?.id}` : `/${media?.id}`}
   class:unselectable={!media || !media?.id}
@@ -56,7 +59,7 @@
   <div class="card_gradient" style:--color={color} />
   <div class="card__content">
     <h2 class="card__title">{media.title.romaji ?? media.title.english}</h2>
-    {#if hovering && media.description}
+    {#if (hovering || focused) && media.description}
       <p class="card__description" transition:slide|local={{ duration: 500 }}>
         {media.description}
       </p>
@@ -75,6 +78,7 @@
     aspect-ratio: 5/8;
     overflow: visible;
     position: relative;
+    outline: none;
   }
 
   .card::before {
@@ -89,7 +93,7 @@
     transition: border 0.2s ease-in-out;
   }
 
-  .card:hover::before {
+  .card:matches(:hover, :focus)::before {
     border: 4px solid rgba(var(--color), 1);
   }
 
@@ -122,7 +126,7 @@
     transition: background-color 500ms ease-in-out;
   }
 
-  .card:hover .card_overlay {
+  .card:matches(:hover, :focus) .card_overlay {
     background-color: rgba(var(--primary-rgb), 0.3);
   }
 

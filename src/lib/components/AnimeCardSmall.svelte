@@ -129,6 +129,10 @@
     fill-opacity: 1;
   }
 
+  .card:focus .container .play_button {
+    fill-opacity: 1;
+  }
+
   .card .container img {
     position: absolute;
     top: 0;

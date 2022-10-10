@@ -24,6 +24,16 @@
 >
   <div class="container">
     <img src={media.coverImage.large} alt={name} />
+    <div class="overlay" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="bi bi-play play_button"
+      viewBox="0 0 16 16"
+    >
+      <path
+        d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"
+      />
+    </svg>
     {#if episode}
       <p class="episode">Episode {episode}</p>
     {/if}
@@ -36,15 +46,26 @@
     display: inline-flex;
     position: relative;
     flex-direction: column;
-    max-width: 156.25px;
+    width: 156.25px;
     margin: 1rem;
-    color: var(--text-color);
     text-decoration: none;
     overflow: visible;
     outline: none;
   }
 
-  .card::before {
+  .card .container {
+    width: 156.25px;
+    aspect-ratio: 0.7/1;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1);
+    transition: transform 0.2s ease-in-out;
+    position: relative;
+    margin: 0;
+    overflow: visible;
+  }
+
+  .card .container::before {
     content: "";
     position: absolute;
     top: -8px;
@@ -52,25 +73,66 @@
     left: -8px;
     right: -8px;
     border: 4px solid rgba(var(--accent-rgb), 0);
-    border-radius: 12px;
+    border-radius: 16px;
+    z-index: 0;
     transition: border 0.2s ease-in-out;
   }
 
-  .card:focus::before {
-    border: 4px solid rgba(var(--accent-rgb), 0.5);
+  .card .container:hover::before {
+    border: 4px solid rgba(var(--accent-rgb), 1);
   }
 
-  .card .container {
-    width: 100%;
-    aspect-ratio: 0.7/1;
-    object-fit: cover;
-    object-position: center;
-    transform: scale(1);
-    transition: transform 0.2s ease-in-out;
-    position: relative;
+  .card:focus .container::before {
+    border: 4px solid rgba(var(--accent-rgb), 1);
+  }
+
+  .card .container .overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(var(--primary-rgb), 0);
+    border-radius: 8px;
+    -webkit-backdrop-filter: blur(0px);
+    backdrop-filter: blur(0px);
+    transition: background 0.2s ease-in-out,
+      -webkit-backdrop-filter 0.2s ease-in-out, backdrop-filter 0.2s ease-in-out;
+  }
+
+  .card .container:hover .overlay {
+    background: rgba(var(--primary-rgb), 0.8);
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
+  }
+
+  .card:focus .container .overlay {
+    background: rgba(var(--primary-rgb), 0.8);
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
+  }
+
+  .card .container .play_button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 32px;
+    height: 32px;
+    opacity: 1;
+    fill: var(--text-color);
+    fill-opacity: 0;
+    transition: fill-opacity 0.2s ease-in-out;
+  }
+
+  .card .container:hover .play_button {
+    fill-opacity: 1;
   }
 
   .card .container img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -106,15 +168,12 @@
     background-color: rgba(var(--primary-rgb), 0.3);
   }
 
-  .card:not(:focus) .container:hover {
-    transform: scale(1.05);
-  }
-
   .card h2 {
     width: auto;
     margin: 0;
     padding: 0;
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
+    color: rgba(var(--text-rgb), 1);
     font-size: 0.9rem;
     font-weight: bold;
     display: -webkit-box;
@@ -125,5 +184,10 @@
     word-wrap: break-word;
     hyphens: auto;
     white-space: normal;
+    transition: color 0.2s ease-in-out;
+  }
+
+  .card h2:hover {
+    color: rgba(var(--text-rgb), 0.8);
   }
 </style>

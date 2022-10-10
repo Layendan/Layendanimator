@@ -14,9 +14,8 @@
 <div class="anime-container" in:fade>
   <hr class="solid" />
   <p class="title"><slot name="title" /></p>
-  <!-- change windows-scrollbar to check if running on windows -->
   <div
-    class="items windows-scrollbar"
+    class="items"
     bind:this={items}
     on:scroll={() => (sleft = items.scrollLeft)}
     in:fade
@@ -26,10 +25,6 @@
 </div>
 
 <style>
-  * {
-    scrollbar-width: thin;
-  }
-
   p {
     color: var(--text-color);
   }
@@ -54,39 +49,6 @@
     -moz-user-select: none; /* Firefox all */
     -ms-user-select: none; /* IE 10+ */
     user-select: none; /* Likely future */
-  }
-
-  .windows-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: var(--text-color) var(--tertiary-color);
-  }
-
-  .windows-scrollbar::-webkit-scrollbar {
-    height: 7px;
-    border-radius: 100px;
-  }
-  .windows-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(var(--pure-white-rgb), 0.7);
-    background-clip: padding-box;
-    border-radius: 100px;
-    border: 2px, solid, transparent;
-  }
-
-  .windows-scrollbar::-webkit-scrollbar-track {
-    background-color: rgba(var(--tertiary-rgb), 0.7);
-    border-radius: 100px;
-  }
-
-  .windows-scrollbar::-webkit-scrollbar-thumb:active {
-    background: rgba(
-      var(--pure-white-rgb),
-      0.61
-    ); /* Some darker color when you click it */
-    border-radius: 100px;
-  }
-
-  .windows-scrollbar::-webkit-scrollbar-track:hover {
-    background-color: rgba(var(--secondary-rgb), 0.7);
   }
 
   .title {

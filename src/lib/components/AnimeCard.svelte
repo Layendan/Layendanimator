@@ -81,7 +81,7 @@
     margin: 15px;
     display: inline-flex;
     flex-direction: column;
-    height: clamp(325px, 50vh, 50vh);
+    height: clamp(325px, 50vh, 400px);
     aspect-ratio: 5/8;
     overflow: visible;
     position: relative;

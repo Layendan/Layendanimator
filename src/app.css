@@ -60,8 +60,40 @@
 }
 
 * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-color) var(--tertiary-color);
   -webkit-transition: all 0.1s;
   transition: all 0.1s;
+}
+
+*::-webkit-scrollbar {
+  height: 7px;
+  width: 7px;
+  border-radius: 100px;
+  z-index: 2;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(var(--pure-white-rgb), 0.7);
+  background-clip: padding-box;
+  border-radius: 100px;
+  border: 2px, solid, transparent;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: rgba(var(--tertiary-rgb), 0.7);
+  border-radius: 100px;
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background: rgba(
+    var(--pure-white-rgb),
+    0.61
+  ); /* Some darker color when you click it */
+  border-radius: 100px;
+}
+
+*::-webkit-scrollbar-track:hover {
+  background-color: rgba(var(--secondary-rgb), 0.7);
 }
 
 body {

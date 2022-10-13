@@ -71,38 +71,39 @@
       episode.percentWatched = (time / duration) * 100;
   }
 
-  onMount(setHls);
+  onMount(() => {
+    setHls();
+    video.addEventListener("webkitfullscreenchange", () => {
+      if (document.fullscreenElement) {
+        getCurrent().setFullscreen(true);
+      } else {
+        getCurrent().setFullscreen(false);
+      }
+    });
+  });
 
   onDestroy(() => {
     updateTimeWatched();
   });
 
   function enterFullscreen() {
-    if (video.requestFullscreen) {
-      video.requestFullscreen();
-    }
     // @ts-ignore
-    else if (video.webkitRequestFullscreen) {
+    if (video.webkitRequestFullscreen) {
       // @ts-ignore
       video.webkitRequestFullscreen();
     }
   }
 
   function exitFullscreen() {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    }
     // @ts-ignore
-    else if (document.webkitExitFullscreen) {
+    if (document.webkitExitFullscreen) {
       // @ts-ignore
       document.webkitExitFullscreen();
     }
   }
 
   function toggleFullscreen() {
-    // I hate safari. Why can't they follow standards?
     if (
-      document.fullscreenElement ||
       // @ts-ignore
       document.webkitCurrentFullScreenElement
     ) {
@@ -225,13 +226,6 @@
         break;
       default:
         break;
-    }
-  }}
-  on:fullscreenchange={() => {
-    if (document.fullscreenElement) {
-      getCurrent().setFullscreen(true);
-    } else {
-      getCurrent().setFullscreen(false);
     }
   }}
 >

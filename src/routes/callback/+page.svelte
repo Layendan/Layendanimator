@@ -3,7 +3,7 @@
 
   import { page } from "$app/stores";
   import { connections } from "$lib/model/connections";
-  import { getUserId } from "$lib/prefetch";
+  // import { getUserId } from "$lib/prefetch";
   import { onDestroy } from "svelte";
 
   const parsedHash = new URLSearchParams(
@@ -21,9 +21,9 @@
 
   async function setConnection() {
     if (accessToken && source) {
-      $connections[`${source}-userId`] = (
-        await getUserId(accessToken)
-      ).toString();
+      $connections[`${source}-userId`] = // await getUserId(accessToken)
+      // TODO: get user id
+      "123456789".toString();
       console.log($connections[`${source}-userId`]);
     }
 

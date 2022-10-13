@@ -100,7 +100,11 @@
     transition: border 0.2s ease-in-out;
   }
 
-  .card:matches(:hover, :focus)::before {
+  .card:hover::before {
+    border: 4px solid rgba(var(--color), 1);
+  }
+
+  .card:focus::before {
     border: 4px solid rgba(var(--color), 1);
   }
 
@@ -133,7 +137,11 @@
     transition: background-color 500ms ease-in-out;
   }
 
-  .card:matches(:hover, :focus) .card_overlay {
+  .card:hover .card_overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .card:focus .card_overlay {
     background-color: rgba(0, 0, 0, 0.5);
   }
 

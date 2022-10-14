@@ -148,7 +148,11 @@
   }
 
   /* Using matches so that windows edge does not change scale since it computes it wrong */
-  .card:matches(:focus) .container:matches(:hover) img {
+  .card .container:matches(:hover) img {
+    transform: scale(0.99);
+  }
+
+  .card:matches(:focus) .container img {
     transform: scale(0.99);
   }
 

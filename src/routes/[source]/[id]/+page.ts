@@ -7,11 +7,13 @@ import { getIframe } from "$lib/model/global";
 
 export const ssr = false;
 
-export const load: PageLoad = ({ params }) => {
+export const load: PageLoad = ({ params, depends }) => {
   const source: ActiveSource | undefined = get(activeSources).find(
     (item) => item.id === params.source
   );
   if (!source) throw error(400, "Invalid source");
+
+  depends(source.id, `${source.id}/${params.id}`);
 
   const anime: Promise<Anime> = new Promise<Anime>((resolve, reject) => {
     const store = get(animes).get(params.id);

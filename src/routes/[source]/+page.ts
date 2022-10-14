@@ -6,11 +6,14 @@ import type { Anime } from "$lib/model/anime";
 
 export const ssr = false;
 
-export const load: PageLoad = ({ params }) => {
+export const load: PageLoad = ({ params, depends }) => {
   const source: ActiveSource | undefined = get(activeSources).find(
     (item) => item.id === params.source
   );
   if (!source) throw error(400, "Invalid source");
+
+  // TODO: use fetch instead
+  depends(source.id);
 
   const recentEpisodes: Promise<{ episode: number; media: Anime }[]> =
     new Promise<{ episode: number; media: Anime }[]>((resolve, reject) => {

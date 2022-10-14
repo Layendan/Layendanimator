@@ -19,10 +19,22 @@
   let bannerError: boolean = false;
   let coverError: boolean = false;
 
+  $: title = "";
+
+  (async () => {
+    title = (await data.anime.data).title.english;
+  })();
+
   $: scale = y < 345 ? 0.005 * Math.abs(y) + 1 : 0.005 * 345 + 1;
   $: blur = y < 345 ? 0.05 * Math.abs(y) : 0.05 * 345;
   $: opacity = y < 345 ? -Math.abs(y) / 345 + 1 : 0;
 </script>
+
+<svelte:head>
+  <title>
+    {title}
+  </title>
+</svelte:head>
 
 <svelte:window bind:scrollY={y} />
 

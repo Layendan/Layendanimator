@@ -27,8 +27,8 @@
     <div class="overlay" />
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="bi bi-play play_button"
-      viewBox="0 0 16 16"
+      class="play_button"
+      viewBox="0 0 15 15"
     >
       <path
         d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"
@@ -142,8 +142,18 @@
     object-fit: cover;
     object-position: center;
     border-radius: 8px;
+    background: transparent;
+    transform: scale(1);
+    transition: transform 0.2s ease-in-out;
   }
 
+  .card .container:hover img {
+    transform: scale(0.99);
+  }
+
+  .card:focus .container img {
+    transform: scale(0.99);
+  }
   .card .container .episode {
     position: absolute;
     bottom: 0.1rem;

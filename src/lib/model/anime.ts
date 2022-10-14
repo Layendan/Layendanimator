@@ -24,6 +24,10 @@ export type Episode = {
    * Number between 0-100, used for percentage of completion.
    */
   percentWatched?: number;
+  /**
+   * Duration of episode in seconds.
+   */
+  duration?: number;
 };
 
 /**

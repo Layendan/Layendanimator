@@ -10,9 +10,23 @@
   import SearchBar from "$lib/components/SearchBar.svelte";
   import AnimeCard from "$lib/components/AnimeCard.svelte";
   import AnimeCardSmall from "$lib/components/AnimeCardSmall.svelte";
+  import { invalidate } from "$app/navigation";
 
   export let data: PageData;
 </script>
+
+<svelte:head>
+  <title>{data.source.name}</title>
+</svelte:head>
+
+<svelte:window
+  on:keydown={(event) => {
+    if (event.key === "r" && (event.ctrlKey || event.metaKey)) {
+      invalidate(data.source.id);
+      event.preventDefault();
+    }
+  }}
+/>
 
 <section>
   <header>

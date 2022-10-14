@@ -8,7 +8,6 @@
   import { getCurrent } from "@tauri-apps/api/window";
   import Hls from "hls.js";
 
-  // Combine this with episodeStore
   export let episode: Episode;
   export let mirror: Mirror;
   export let title: string = episode.title ?? `Episode - ${episode.number}`;
@@ -18,11 +17,11 @@
 
   // These values are bound to properties of the video
   let time: number;
-  let duration: number = 0;
+  let duration: number;
   let paused: boolean;
   let muted: boolean;
   let video: HTMLVideoElement;
-  let volume: number = 1;
+  let volume: number;
 
   function reload() {
     video?.pause();
@@ -47,7 +46,9 @@
       video.src = `${mirror.url}#t=${
         episode.percentWatched === 100
           ? 0
-          : ((episode.percentWatched ?? 0) * duration) / 100
+          : ((episode.percentWatched ?? 0) *
+              (episode.duration ?? duration ?? 0)) /
+            100
       }`;
     } else {
       console.log("Using HLS.js");
@@ -56,7 +57,9 @@
         `${mirror.url}#t=${
           episode.percentWatched === 100
             ? 0
-            : ((episode.percentWatched ?? 0) * duration) / 100
+            : ((episode.percentWatched ?? 0) *
+                (episode.duration ?? duration ?? 0)) /
+              100
         }`
       );
       hls.attachMedia(video);
@@ -64,11 +67,11 @@
     video?.load();
   }
 
+  // Reloads when mirror changes
   $: if (mirror) reload();
 
   function updateTimeWatched() {
-    if (!Number.isNaN(time) && !Number.isNaN(duration))
-      episode.percentWatched = (time / duration) * 100;
+    if (!!time && !!duration) episode.percentWatched = (time / duration) * 100;
   }
 
   onMount(() => {
@@ -138,6 +141,7 @@
   controls
   poster={episode.thumbnail}
   preload="metadata"
+  on:loadedmetadata={() => (episode.duration ??= duration)}
   {autoplay}
   bind:currentTime={time}
   bind:duration

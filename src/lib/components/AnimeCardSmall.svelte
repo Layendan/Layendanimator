@@ -147,13 +147,11 @@
     transition: transform 0.2s ease-in-out;
   }
 
-  .card .container:hover img {
+  /* Using matches so that windows edge does not change scale since it computes it wrong */
+  .card:matches(:focus) .container:matches(:hover) img {
     transform: scale(0.99);
   }
 
-  .card:focus .container img {
-    transform: scale(0.99);
-  }
   .card .container .episode {
     position: absolute;
     bottom: 0.1rem;

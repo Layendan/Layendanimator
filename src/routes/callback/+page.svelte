@@ -22,8 +22,8 @@
   async function setConnection() {
     if (accessToken && source) {
       $connections[`${source}-userId`] = // await getUserId(accessToken)
-      // TODO: get user id
-      "123456789".toString();
+        // TODO: get user id
+        "123456789".toString();
       console.log($connections[`${source}-userId`]);
     }
 

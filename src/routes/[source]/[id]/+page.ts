@@ -3,7 +3,6 @@ import { activeSources, type ActiveSource } from "$lib/model/sources";
 import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 import { animes, type Anime } from "$lib/model/anime";
-import { getIframe } from "$lib/model/global";
 
 export const ssr = false;
 
@@ -22,26 +21,25 @@ export const load: PageLoad = ({ params, depends }) => {
       return;
     }
 
-    const iframe = getIframe(source.srcPath);
-    iframe.onload = () => {
-      const callback = (
-        event: MessageEvent<{ response: string; data: Anime }>
-      ) => {
-        if (event.data.response === "getAnime") {
-          animes.addAnime(event.data.data);
-          event.data.data === undefined
-            ? reject("Could not get anime")
-            : resolve(event.data.data);
-        }
+    const iframe = document.createElement("iframe");
+    iframe.sandbox.add("allow-scripts", "allow-same-origin");
+    iframe.srcdoc = `<script type="text/javascript" src="${source.srcPath}"></script>`;
+    iframe.style.display = "none";
+    document.body.appendChild(iframe);
+    iframe.onload = async () => {
+      try {
+        const anime: Anime =
+          // @ts-ignore
+          await iframe?.contentWindow?.getAnime?.(params.id);
         iframe.remove();
-        window.removeEventListener("message", callback);
-      };
-      window.addEventListener("message", callback);
-
-      iframe.contentWindow?.postMessage(
-        { command: "getAnime", id: params.id },
-        "*"
-      );
+        anime === undefined
+          ? reject("Could not get Anime info")
+          : resolve(anime);
+        animes.addAnime(anime);
+      } catch (e) {
+        console.error(e);
+        reject(e);
+      }
     };
   });
 

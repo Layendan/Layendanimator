@@ -168,9 +168,6 @@
         "fileDropEnabled": false,
         "focus": true
       }
-    ],
-    "security": {
-      "csp": "asset https://asset.localhost;"
-    }
+    ]
   }
 }

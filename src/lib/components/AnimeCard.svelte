@@ -54,6 +54,7 @@
           }
         });
         // TODO: Have to load image using proxy to avoid CORS issues
+        // TODO: Create a proxy server to serve images instead of using google's since it does not accept tauri://localhost
         let googleProxyURL =
           "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=2592000&url=";
 

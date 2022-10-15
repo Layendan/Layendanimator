@@ -3,7 +3,6 @@
   import { flip } from "svelte/animate";
   import { fade } from "svelte/transition";
   import { capitalize } from "$lib/model/global";
-  import { goto } from "$app/navigation";
 
   export let data;
   export let removesItems = false;

@@ -2,7 +2,7 @@
   export let href: string;
 </script>
 
-<a target="_blank" {href}>
+<a target="_blank" rel="noreferrer" {href}>
   <slot />
   <svg
     width="15"

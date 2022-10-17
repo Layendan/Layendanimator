@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Anime from "$lib/components/Anime.svelte";
   import Section from "$lib/components/Section.svelte";
   import { history } from "$lib/model/history";
   import { library } from "$lib/model/library";
@@ -46,21 +45,21 @@
       <svelte:fragment slot="title">New Episodes</svelte:fragment>
       <svelte:fragment slot="animes">
         {#await data.recentEpisodes.data}
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
         {:then recentEpisodes}
           {#each recentEpisodes as { episode, media }, i}
             <AnimeCardSmall
@@ -117,21 +116,21 @@
       <svelte:fragment slot="title">Top Airing</svelte:fragment>
       <svelte:fragment slot="animes">
         {#await data.topAiring.data}
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
-          <Anime />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
+          <AnimeCardSmall />
         {:then topAiring}
           {#each topAiring as media, i}
             <AnimeCardSmall
@@ -155,21 +154,21 @@
     <svelte:fragment slot="title">Seasonal</svelte:fragment>
     <svelte:fragment slot="animes">
       {#await data.seasonal.data}
-        <Anime />
-        <Anime />
-        <Anime />
-        <Anime />
-        <Anime />
-        <Anime />
-        <Anime />
-        <Anime />
-        <Anime />
-        <Anime />
-        <Anime />
-        <Anime />
-        <Anime />
-        <Anime />
-        <Anime />
+        <AnimeCardSmall />
+        <AnimeCardSmall />
+        <AnimeCardSmall />
+        <AnimeCardSmall />
+        <AnimeCardSmall />
+        <AnimeCardSmall />
+        <AnimeCardSmall />
+        <AnimeCardSmall />
+        <AnimeCardSmall />
+        <AnimeCardSmall />
+        <AnimeCardSmall />
+        <AnimeCardSmall />
+        <AnimeCardSmall />
+        <AnimeCardSmall />
+        <AnimeCardSmall />
       {:then seasonal}
         {#each seasonal as media, i}
           <AnimeCardSmall

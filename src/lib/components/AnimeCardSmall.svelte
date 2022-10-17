@@ -2,8 +2,9 @@
   import type { Anime } from "$lib/model/anime";
   import { fade } from "svelte/transition";
   import { settings } from "$lib/model/settings";
+  import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
 
-  export let media: Anime;
+  export let media: Anime | undefined = undefined;
   export let episode: number | undefined = undefined;
   export let source: string | null = null;
   export let delay: number = 0;
@@ -23,7 +24,7 @@
   on:click
 >
   <div class="container">
-    <img src={media.coverImage.large} alt={name} />
+    <img src={media?.coverImage.large ?? loadingFailure} alt={name} />
     <div class="overlay" />
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -205,5 +206,9 @@
 
   .card h2:hover {
     color: rgba(var(--text-rgb), 0.8);
+  }
+
+  .unselectable {
+    pointer-events: none;
   }
 </style>

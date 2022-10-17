@@ -116,7 +116,7 @@
     margin-right: auto;
   }
 
-  .corner input:focus {
+  .corner input:focus-visible {
     outline: 2px solid var(--accent-color);
   }
 

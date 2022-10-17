@@ -83,7 +83,7 @@
     border: 4px solid rgba(var(--accent-rgb), 1);
   }
 
-  .card:focus .container::before {
+  .card:focus-visible .container::before {
     border: 4px solid rgba(var(--accent-rgb), 1);
   }
 
@@ -107,7 +107,7 @@
     backdrop-filter: blur(1px);
   }
 
-  .card:focus .container .overlay {
+  .card:focus-visible .container .overlay {
     background: rgba(var(--primary-rgb), 0.8);
     -webkit-backdrop-filter: blur(1px);
     backdrop-filter: blur(1px);
@@ -130,7 +130,7 @@
     fill-opacity: 1;
   }
 
-  .card:focus .container .play_button {
+  .card:focus-visible .container .play_button {
     fill-opacity: 1;
   }
 
@@ -153,7 +153,7 @@
     transform: scale(0.99);
   }
 
-  .card:matches(:focus) .container img {
+  .card:matches(:focus-visible) .container img {
     transform: scale(0.99);
   }
 
@@ -181,7 +181,7 @@
     background-color: rgba(var(--primary-rgb), 0.3);
   }
 
-  .card:focus .container .episode {
+  .card:focus-visible .container .episode {
     background-color: rgba(var(--primary-rgb), 0.3);
   }
 

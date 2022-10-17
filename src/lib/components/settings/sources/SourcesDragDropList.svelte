@@ -238,7 +238,7 @@
     background-color: inherit;
   }
 
-  .buttons button:focus {
+  .buttons button:focus-visible {
     border: 1px solid black;
   }
 

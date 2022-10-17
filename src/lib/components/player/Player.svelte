@@ -268,7 +268,7 @@
     max-height: 78vh;
   }
 
-  video:focus {
+  video:focus-visible {
     outline: none;
   }
 </style>

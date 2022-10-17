@@ -69,7 +69,7 @@
     background-color: var(--accent-color);
   }
 
-  input:focus + .slider {
+  input:focus-visible + .slider {
     box-shadow: 0 0 1px var(--accent-color);
   }
 

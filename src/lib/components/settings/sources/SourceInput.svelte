@@ -66,6 +66,7 @@
   let input: HTMLInputElement;
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <form
   on:submit|preventDefault={() => {
     if (sourceLink.length > 0) importSource(sourceLink);

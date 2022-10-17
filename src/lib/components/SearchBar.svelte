@@ -66,7 +66,7 @@
   }
 
   .search:hover,
-  .search:focus {
+  .search:focus-visible {
     border-color: var(--tertiary-color);
   }
 </style>

@@ -105,7 +105,7 @@
     border: 4px solid rgba(var(--color), 1);
   }
 
-  .card:focus::before {
+  .card:focus-visible::before {
     border: 4px solid rgba(var(--color), 1);
   }
 
@@ -142,7 +142,7 @@
     background-color: rgba(0, 0, 0, 0.5);
   }
 
-  .card:focus .card_overlay {
+  .card:focus-visible .card_overlay {
     background-color: rgba(0, 0, 0, 0.5);
   }
 

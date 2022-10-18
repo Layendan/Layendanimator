@@ -23,5 +23,6 @@ export const load: LayoutLoad = ({ url, params }) => {
     episode: episode,
     episodes: anime.streamingEpisodes,
     title: anime.title,
+    description: anime.description,
   };
 };

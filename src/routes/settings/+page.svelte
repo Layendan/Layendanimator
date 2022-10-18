@@ -35,6 +35,7 @@
     BaseDirectory,
     type FsOptions,
   } from "@tauri-apps/api/fs";
+  import ExternalIcon from "$lib/components/assets/ExternalIcon.svelte";
 
   const client_id: string = "4602";
   let systemTheme: "light" | "dark" = "light";
@@ -435,11 +436,13 @@
     </block>
   </Group>
   <Group title="About" description="About Layendanimator">
-    <ExternalLink href="https://github.com/Layendan/NineAnimator-Tauri"
-      >About</ExternalLink
-    >
+    <ExternalLink href="https://github.com/Layendan/NineAnimator-Tauri">
+      About
+      <ExternalIcon />
+    </ExternalLink>
     <ExternalLink href="https://github.com/Layendan/NineAnimator-Tauri">
       Github Repository
+      <ExternalIcon />
     </ExternalLink>
   </Group>
   <Group title="Data & Privacy" description="Manage your Data and Privacy">

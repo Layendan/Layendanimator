@@ -12,7 +12,7 @@
   let name: string =
     ($settings.animeLanguage === "english"
       ? media?.title.english ?? media?.title.romaji
-      : media?.title.romaji ?? media?.title.english) ?? "Loading";
+      : media?.title.romaji ?? media?.title.english) ?? "";
 </script>
 
 <a

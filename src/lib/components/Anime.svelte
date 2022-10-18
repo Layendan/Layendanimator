@@ -2,7 +2,6 @@
   // Import required packages
   import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
   import { fade } from "svelte/transition";
-  import DOMPurify from "dompurify";
   import { settings } from "$lib/model/settings";
   import type { Anime } from "$lib/model/anime";
 
@@ -95,9 +94,7 @@
             </p>
           {/if}
           <p class="description">
-            {@html DOMPurify.sanitize(media?.description ?? "", {
-              USE_PROFILES: { html: true },
-            })}
+            {media?.description ?? ""}
           </p>
         </div>
       </div>

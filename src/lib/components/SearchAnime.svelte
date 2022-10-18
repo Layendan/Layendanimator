@@ -1,7 +1,6 @@
 <script lang="ts">
   import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
   import type { ActiveSource } from "$lib/model/sources";
-  import DOMPurify from "dompurify";
 
   export let id: string;
   export let title: string;
@@ -30,9 +29,7 @@
           {/if}
         </h1>
         <p class="description">
-          {@html DOMPurify.sanitize(description, {
-            USE_PROFILES: { html: true },
-          })}
+          {description}
         </p>
         <p>{ratings ? `${ratings}%` : ""}</p>
         {#if genres.length !== 0}

@@ -5,10 +5,11 @@
   import EpisodeHolder from "$lib/components/player/EpisodeHolder.svelte";
   import { settings } from "$lib/model/settings";
   import { library } from "$lib/model/library";
-  import DOMPurify from "dompurify";
   import Button from "$lib/components/public/Button.svelte";
   import type { PageData } from "./$types";
   import Loading from "$lib/components/public/Loading.svelte";
+  import ExternalLink from "$lib/components/public/ExternalLink.svelte";
+  import ExternalIcon from "$lib/components/assets/ExternalIcon.svelte";
 
   export let data: PageData;
 
@@ -129,10 +130,14 @@
                 : anime.title.native ?? anime.title.romaji}
             </h1>
             <p in:fade class="description">
-              {@html DOMPurify.sanitize(anime.description, {
-                USE_PROFILES: { html: true },
-              })}
+              {anime.description}
             </p>
+            <ExternalLink href={anime.siteUrl}>
+              <Button>
+                Share
+                <ExternalIcon />
+              </Button>
+            </ExternalLink>
           </div>
         </div>
       </div>

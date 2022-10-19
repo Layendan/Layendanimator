@@ -6,7 +6,6 @@
   import type { PageData } from "./$types";
   import Button from "$lib/components/public/Button.svelte";
   import Loading from "$lib/components/public/Loading.svelte";
-  import { open } from "@tauri-apps/api/shell";
   import ExternalIcon from "$lib/components/assets/ExternalIcon.svelte";
   import ExternalLink from "$lib/components/public/ExternalLink.svelte";
 

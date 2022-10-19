@@ -8,14 +8,7 @@
   <h1>Downloads</h1>
   <span>
     {#each $library.downloads as { anime }}
-      <Anime
-        id={anime.id}
-        name={anime.title.english ?? anime.title.romaji}
-        thumbnail={anime.coverImage.large}
-        description={anime.description}
-        episodes={anime.streamingEpisodes}
-        isNSFW={anime.isAdult}
-      />
+      <Anime media={anime} expanded />
     {:else}
       <p>No Episodes Downloaded</p>
     {/each}

@@ -7,6 +7,7 @@
   export let hoverAll: boolean = false;
   export let selectedEpisode: EpisodeType | null = null;
   export let delay: boolean = true;
+  export let shouldReplaceState: boolean = false;
 </script>
 
 <!-- vertically lists all of the episodes -->
@@ -18,6 +19,7 @@
         hover={hoverAll}
         selected={episode === selectedEpisode}
         delay={!delay || $settings.reduceMotion ? 0 : i * 20}
+        shouldReplace={shouldReplaceState}
       />
     </li>
   {/each}

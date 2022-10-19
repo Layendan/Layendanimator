@@ -298,7 +298,7 @@
       on:change={() => ($settings.showProgress = !$settings.showProgress)}
       checked={$settings.showProgress}
     >
-      Show Episode Progress
+      Always Show Episode Progress
     </Toggle>
     <Toggle
       on:change={() =>

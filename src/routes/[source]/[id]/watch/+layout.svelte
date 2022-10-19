@@ -25,6 +25,7 @@
       episodes={data.episodes}
       hoverAll={data.showProgress}
       selectedEpisode={data.episode}
+      shouldReplaceState
     />
   </div>
 </section>

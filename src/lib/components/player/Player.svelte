@@ -4,8 +4,8 @@
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import { onDestroy, onMount } from "svelte";
-  import type { Episode, Mirror } from "$lib/model/anime";
   import { getCurrent } from "@tauri-apps/api/window";
+  import type { Episode, Mirror } from "$lib/model/anime";
   import Hls from "hls.js";
 
   export let episode: Episode;
@@ -34,10 +34,13 @@
   function playNext() {
     if (nextEpisode) {
       goto(
-        `/${$page.params.source}/${$page.params.id}/watch?episode=${nextEpisode.number}&autoplay=true`
+        `/${$page.params.source}/${$page.params.id}/watch?episode=${nextEpisode.number}&autoplay=true`,
+        { replaceState: true }
       );
     } else {
-      goto(`/${$page.params.source}/${$page.params.id}`);
+      goto(`/${$page.params.source}/${$page.params.id}`, {
+        replaceState: true,
+      });
     }
   }
 

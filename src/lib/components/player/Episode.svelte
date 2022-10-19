@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import type { Episode } from "$lib/model/anime";
   import { fade } from "svelte/transition";
@@ -7,14 +8,18 @@
   export let hover: boolean = false;
   export let selected: boolean = false;
   export let delay: number = 0;
+  export let shouldReplace: boolean = false;
   let thumbnail: string | null = episode.thumbnail;
 </script>
 
 <div class="episode" class:hover class:selected in:fade={{ delay }}>
   <a
-    href={$page.params.source
-      ? `/${$page.params.source}/${$page.params.id}/watch?episode=${episode.number}`
-      : `/${$page.params.id}/watch?episode=${JSON.stringify(episode)}`}
+    on:click|preventDefault={() =>
+      goto(
+        `/${$page.params.source}/${$page.params.id}/watch?episode=${episode.number}`,
+        { replaceState: shouldReplace }
+      )}
+    href={`/${$page.params.source}/${$page.params.id}/watch?episode=${episode.number}`}
     data-sveltekit-prefetch
   >
     <img class="bg" src={episode.thumbnail} alt="" />

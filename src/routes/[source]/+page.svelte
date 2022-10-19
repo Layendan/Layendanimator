@@ -151,7 +151,14 @@
     </Section>
   {/if}
   <Section storageId="{data.source.id}-seasonal:scroll">
-    <svelte:fragment slot="title">Seasonal</svelte:fragment>
+    <svelte:fragment slot="title">
+      Seasonal
+      <br />
+      <h3>
+        {data.year}
+        {data.season}
+      </h3>
+    </svelte:fragment>
     <svelte:fragment slot="animes">
       {#await data.seasonal.data}
         <AnimeCardSmall />
@@ -200,6 +207,14 @@
 
   * {
     scrollbar-width: thin;
+  }
+
+  h3 {
+    color: var(--text-color);
+    opacity: 0.6;
+    font-size: small;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
   }
 
   .selected {

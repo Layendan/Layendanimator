@@ -114,6 +114,31 @@ export const load: PageLoad = ({ params, depends }) => {
     };
   });
 
+  const date: Date = new Date();
+  let season: "WINTER" | "SPRING" | "SUMMER" | "FALL" = "WINTER";
+  switch (date.getMonth()) {
+    case 0:
+    case 1:
+    case 2:
+      season = "WINTER";
+      break;
+    case 3:
+    case 4:
+    case 5:
+      season = "SPRING";
+      break;
+    case 6:
+    case 7:
+    case 8:
+      season = "SUMMER";
+      break;
+    case 9:
+    case 10:
+    case 11:
+      season = "FALL";
+      break;
+  }
+
   return {
     source: source,
     recentEpisodes: {
@@ -125,5 +150,7 @@ export const load: PageLoad = ({ params, depends }) => {
     seasonal: {
       data: seasonal,
     },
+    season: season,
+    year: date.getFullYear(),
   };
 };

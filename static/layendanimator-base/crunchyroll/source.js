@@ -54,15 +54,21 @@ async function getSeasonal() {
   const html = new DOMParser().parseFromString(text, "text/html");
   const items = Array.from(html.querySelectorAll("ul.items li"));
   return items.map((item) => {
+    const id = item
+      .querySelector("a")
+      .title.toLowerCase()
+      .replaceAll(" ", "-")
+      .replaceAll(/[!*:(),\.;?]*/g, "");
     return {
-      id: item.querySelector("a").href.replace("/category/", ""),
+      id: id,
+      // id: item.querySelector("a").href.replace("/category/", ""),
       title: {
         english: item.querySelector("p.name a").title,
       },
       coverImage: {
         large: item.querySelector(".img img").src,
       },
-      siteUrl: item.querySelector("a").href,
+      siteUrl: "https://gogoanime.tel/category/" + id,
       isAdult: false,
     };
   });

@@ -150,7 +150,9 @@ export const load: PageLoad = ({ params, depends }) => {
     seasonal: {
       data: seasonal,
     },
-    season: season,
-    year: date.getFullYear(),
+    date: {
+      season: season,
+      year: date.getFullYear(),
+    },
   };
 };

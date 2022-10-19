@@ -54,6 +54,8 @@ async function getSeasonal() {
   const html = new DOMParser().parseFromString(text, "text/html");
   const items = Array.from(html.querySelectorAll("ul.items li"));
   return items.map((item) => {
+    // TODO: Change back to get href, but it doesn't work on windows for some reason
+    // id: item.querySelector("a").href.replace("/category/", ""),
     const id = item
       .querySelector("a")
       .title.toLowerCase()
@@ -61,7 +63,6 @@ async function getSeasonal() {
       .replaceAll(/[!*:(),\.;?]*/g, "");
     return {
       id: id,
-      // id: item.querySelector("a").href.replace("/category/", ""),
       title: {
         english: item.querySelector("p.name a").title,
       },

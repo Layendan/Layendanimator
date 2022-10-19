@@ -155,8 +155,8 @@
       Seasonal
       <br />
       <h3>
-        {data.year}
-        {data.season}
+        {data.date.year}
+        {data.date.season}
       </h3>
     </svelte:fragment>
     <svelte:fragment slot="animes">

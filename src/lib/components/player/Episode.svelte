@@ -19,7 +19,8 @@
         `/${$page.params.source}/${$page.params.id}/watch?episode=${episode.number}`,
         { replaceState: shouldReplace }
       )}
-    href={`/${$page.params.source}/${$page.params.id}/watch?episode=${episode.number}`}
+    href="/{$page.params.source}/{$page.params
+      .id}/watch?episode={episode.number}"
     data-sveltekit-prefetch
   >
     <img class="bg" src={episode.thumbnail} alt="" />

@@ -25,7 +25,7 @@
   on:focusin={() => (focused = true)}
   on:focusout={() => (focused = false)}
   in:fade={{ delay }}
-  href={source ? `/${source}/${media?.id}` : `/${media?.id}`}
+  href="/{source}/{media?.id}"
   class:unselectable={!media || !media?.id}
   data-sveltekit-prefetch
   on:click

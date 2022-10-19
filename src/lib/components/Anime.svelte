@@ -40,7 +40,7 @@
 
 <body in:fade={{ delay }} class:expanded>
   <a
-    href={source ? `/${source}/${media?.id}` : `/${media?.id}`}
+    href="/{source}/{media?.id}"
     class:unselectable={!media || !media?.id}
     data-sveltekit-prefetch
     on:click

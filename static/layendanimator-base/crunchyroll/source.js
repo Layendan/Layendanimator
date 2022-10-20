@@ -1,7 +1,9 @@
 async function getRecentEpisodes() {
   let recentEpisodes = (
     await (
-      await fetch("https://api.consumet.org/meta/anilist/recent-episodes?perPage=20")
+      await fetch(
+        "https://api.consumet.org/meta/anilist/recent-episodes?perPage=20"
+      )
     ).json()
   ).results;
   recentEpisodes = recentEpisodes.map((item) => {

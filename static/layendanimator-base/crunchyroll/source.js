@@ -1,7 +1,7 @@
 async function getRecentEpisodes() {
   let recentEpisodes = (
     await (
-      await fetch("https://api.consumet.org/anime/gogoanime/recent-episodes")
+      await fetch("https://api.consumet.org/meta/anilist/recent-episodes?perPage=20")
     ).json()
   ).results;
   recentEpisodes = recentEpisodes.map((item) => {
@@ -9,7 +9,9 @@ async function getRecentEpisodes() {
       media: {
         id: item.id,
         title: {
-          english: item.title,
+          native: item.title.native,
+          romaji: item.title.romaji,
+          english: item.title.english,
         },
         coverImage: {
           large: item.image,
@@ -27,18 +29,21 @@ async function getRecentEpisodes() {
 async function getTopAiring() {
   let topAiring = (
     await (
-      await fetch("https://api.consumet.org/anime/gogoanime/top-airing")
+      await fetch("https://api.consumet.org/meta/anilist/trending?perPage=20")
     ).json()
   ).results;
   topAiring = topAiring.map((item) => {
     return {
       id: item.id,
       title: {
-        english: item.title,
+        native: item.title.native,
+        romaji: item.title.romaji,
+        english: item.title.english,
       },
       coverImage: {
         large: item.image,
       },
+      bannerImage: item.cover,
       siteUrl: item.url,
       genres: item.genres,
       isAdult: false,
@@ -77,19 +82,20 @@ async function getSeasonal() {
 
 async function searchAnime(query) {
   const response = await fetch(
-    `https://api.consumet.org/anime/gogoanime/${query}`
+    `https://api.consumet.org/meta/anilist/${query}?perPage=20`
   );
   const data = (await response.json()).results;
   return data.map((item) => {
     return {
       id: item.id,
       title: {
-        english: item.title,
+        native: item.title.native,
+        romaji: item.title.romaji,
+        english: item.title.english,
       },
       coverImage: {
         large: item.image,
       },
-      siteUrl: item.url,
       isAdult: false,
     };
   });
@@ -97,26 +103,30 @@ async function searchAnime(query) {
 
 async function getAnime(id) {
   const response = await fetch(
-    `https://api.consumet.org/anime/gogoanime/info/${id}`
+    `https://api.consumet.org/meta/anilist/info/${id}`
   );
   const data = await response.json();
   return {
     id: data.id,
     title: {
-      english: data.title,
+      native: data.title.native,
+      romaji: data.title.romaji,
+      english: data.title.english,
     },
     coverImage: {
       large: data.image,
     },
-    siteUrl: data.url,
+    bannerImage: data.cover,
     description: data.description,
+    genres: data.genres,
     streamingEpisodes: data.episodes.map((item) => {
       return {
         id: item.id,
+        thumbnail: item.image,
         number: item.number,
         subOrDub: data.subOrDub,
         url: item.url,
-        isM3U8: item.isM3U8,
+        description: item.description,
       };
     }),
     genres: data.genres,
@@ -126,7 +136,7 @@ async function getAnime(id) {
 
 async function getStreamingLinks(id) {
   const response = await fetch(
-    `https://api.consumet.org/anime/gogoanime/watch/${id}`
+    `https://api.consumet.org/meta/anilist/watch/${id}`
   );
   const data = await response.json();
   const pageData = await fetch(`https://gogoanime.tel/${id}`);
@@ -137,6 +147,7 @@ async function getStreamingLinks(id) {
     return {
       url: item.url,
       quality: item.quality,
+      isM3U8: item.isM3U8,
       downloadLink: downloadLink || item.url,
     };
   });

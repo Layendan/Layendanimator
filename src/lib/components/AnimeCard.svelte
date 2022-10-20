@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Anime } from "$lib/model/anime";
+  import { settings } from "$lib/model/settings";
   import { fade, slide } from "svelte/transition";
   // @ts-ignore
   import ColorThief from "colorthief";
@@ -11,6 +12,10 @@
   let color: string = "0, 0, 0";
   let hovering: boolean = false;
   let focused: boolean = false;
+  let name: string =
+    ($settings.animeLanguage === "english"
+      ? media?.title.english ?? media?.title.romaji
+      : media?.title.romaji ?? media?.title.english) ?? "";
 
   function isDark(r: number, g: number, b: number) {
     const yiq: number = (r * 299 + g * 587 + b * 114) / 1000;
@@ -34,7 +39,7 @@
   <div class="card__image">
     <img
       src={media.coverImage.large}
-      alt={media.title.romaji}
+      alt={name}
       on:load={() => {
         const colorThief = new ColorThief();
         const img = new Image();
@@ -66,10 +71,10 @@
   <div class="card_gradient" />
   <div class="card_overlay" />
   <div class="card__content" style:--text-color="#ffffff">
-    <h2 class="card__title">{media.title.romaji ?? media.title.english}</h2>
+    <h2 class="card__title">{name}</h2>
     {#if (hovering || focused) && media.description}
       <p class="card__description" transition:slide|local={{ duration: 500 }}>
-        {media.description}
+        {@html media.description}
       </p>
     {/if}
   </div>

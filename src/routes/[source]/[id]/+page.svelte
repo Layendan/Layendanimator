@@ -130,7 +130,7 @@
                 : anime.title.native ?? anime.title.romaji}
             </h1>
             <p in:fade class="description">
-              {anime.description}
+              {@html anime.description}
             </p>
             <ExternalLink href={anime.siteUrl}>
               <Button>

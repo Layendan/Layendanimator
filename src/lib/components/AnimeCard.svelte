@@ -74,7 +74,7 @@
     <h2 class="card__title">{name}</h2>
     {#if (hovering || focused) && media.description}
       <p class="card__description" transition:slide|local={{ duration: 500 }}>
-        {@html media.description}
+        {@html media.description ?? ""}
       </p>
     {/if}
   </div>

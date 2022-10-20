@@ -49,7 +49,7 @@
           </ExternalLink>
         </div>
         <p>
-          {data.episode.description || data.description}
+          {@html data.episode.description || (data.description ?? "")}
         </p>
       </div>
     </div>

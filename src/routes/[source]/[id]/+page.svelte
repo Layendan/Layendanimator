@@ -130,14 +130,16 @@
                 : anime.title.native ?? anime.title.romaji}
             </h1>
             <p in:fade class="description">
-              {@html anime.description}
+              {@html anime.description ?? ""}
             </p>
-            <ExternalLink href={anime.siteUrl}>
-              <Button>
-                Share
-                <ExternalIcon />
-              </Button>
-            </ExternalLink>
+            {#if anime.siteUrl}
+              <ExternalLink href={anime.siteUrl}>
+                <Button>
+                  Share
+                  <ExternalIcon />
+                </Button>
+              </ExternalLink>
+            {/if}
           </div>
         </div>
       </div>

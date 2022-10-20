@@ -94,7 +94,7 @@
             </p>
           {/if}
           <p class="description">
-            {media?.description ?? ""}
+            {@html media?.description ?? ""}
           </p>
         </div>
       </div>

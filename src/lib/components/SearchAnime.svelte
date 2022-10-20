@@ -29,7 +29,7 @@
           {/if}
         </h1>
         <p class="description">
-          {description}
+          {@html description ?? ""}
         </p>
         <p>{ratings ? `${ratings}%` : ""}</p>
         {#if genres.length !== 0}

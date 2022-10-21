@@ -7,7 +7,7 @@ import { activeSources, type ActiveSource } from "$lib/model/sources";
 export const ssr = false;
 
 export const load: PageLoad = async ({ url, params, parent }) => {
-  const { episode, episodes, title, description } = await parent();
+  const { episode, episodes } = await parent();
 
   const source: ActiveSource | undefined = get(activeSources).find(
     (s) => s.id === params.source
@@ -51,13 +51,10 @@ export const load: PageLoad = async ({ url, params, parent }) => {
   return {
     source: source,
     id: params.id,
-    episode: episode,
     nextEpisode: nextEpisode,
     autoplay: autoplay,
     mirrors: {
       data: mirrors,
     },
-    title: title,
-    description: description,
   };
 };

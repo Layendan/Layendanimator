@@ -10,7 +10,7 @@
 
   export let episode: Episode;
   export let mirror: Mirror;
-  export let title: string = episode.title ?? `Episode - ${episode.number}`;
+  export let title: string = episode.name ?? `Episode - ${episode.number}`;
   export let captions: { src: string; lang: string }[] = [];
   export let nextEpisode: Episode | undefined;
   export let autoplay: boolean;

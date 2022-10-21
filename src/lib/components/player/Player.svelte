@@ -88,9 +88,7 @@
     });
   });
 
-  onDestroy(() => {
-    updateTimeWatched();
-  });
+  onDestroy(updateTimeWatched);
 
   function enterFullscreen() {
     // @ts-ignore

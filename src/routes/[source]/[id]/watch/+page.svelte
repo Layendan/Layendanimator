@@ -29,7 +29,7 @@
         title="{name} ・ {data.episode.name ??
           `Episode - ${data.episode.number}`}"
         mirror={mirrors[selectedMirror]}
-        captions={mirrors[selectedMirror].subtitles}
+        captions={mirrors[selectedMirror]?.subtitles}
         nextEpisode={data.nextEpisode}
         autoplay={data.autoplay}
       />

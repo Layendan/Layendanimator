@@ -68,8 +68,8 @@
       <div class="container">
         <div
           class="important-info"
-          class:no-overlap={!!anime.bannerImage ||
-            (!!anime.coverImage.large && !bannerError)}
+          class:no-overlap={!anime.bannerImage ||
+            (!anime.coverImage.large && bannerError)}
         >
           <div
             class="image-and-choices"

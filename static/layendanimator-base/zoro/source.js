@@ -148,14 +148,12 @@ async function getStreamingLinks(id) {
       lang: item.lang,
     };
   });
-  return {
-    mirrors: data.sources.map((item) => {
-      return {
-        url: item.url,
-        quality: item.quality,
-        isM3U8: item.isM3U8,
-        subtitles: subtitles,
-      };
-    }),
-  };
+  return data.sources.map((item) => {
+    return {
+      url: item.url,
+      quality: item.quality,
+      isM3U8: item.isM3U8,
+      subtitles: subtitles,
+    };
+  });
 }

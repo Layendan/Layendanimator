@@ -236,14 +236,16 @@
     }
   }}
 >
-  {#each captions as caption}
-    <track
-      src={caption.src}
-      kind="captions"
-      label={caption.lang}
-      srclang={caption.lang}
-    />
-  {/each}
+  {#if captions}
+    {#each captions as caption}
+      <track
+        src={caption.src}
+        kind="captions"
+        label={caption.lang}
+        srclang={caption.lang}
+      />
+    {/each}
+  {/if}
 </video>
 
 <style>

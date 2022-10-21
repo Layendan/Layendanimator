@@ -55,6 +55,33 @@ async function getTopAiring() {
   return topAiring;
 }
 
+async function getPopular() {
+  let topAiring = (
+    await (
+      await fetch("https://api.consumet.org/meta/anilist/popular?perPage=20")
+    ).json()
+  ).results;
+  topAiring = topAiring.map((item) => {
+    return {
+      id: item.id,
+      title: {
+        native: item.title.native,
+        romaji: item.title.romaji,
+        english: item.title.english,
+      },
+      coverImage: {
+        large: item.image,
+      },
+      bannerImage: item.cover,
+      siteUrl: item.url,
+      genres: item.genres,
+      isAdult: false,
+    };
+  });
+
+  return topAiring;
+}
+
 async function getSeasonal() {
   const data = await fetch("https://gogoanime.tel/new-season.html");
   const text = await data.text();
@@ -124,6 +151,7 @@ async function getAnime(id) {
     streamingEpisodes: data.episodes.map((item) => {
       return {
         id: item.id,
+        name: item.title,
         thumbnail: item.image,
         number: item.number,
         subOrDub: data.subOrDub,

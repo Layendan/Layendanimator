@@ -55,6 +55,7 @@
    */
   function clearCache() {
     window?.sessionStorage.clear();
+    animes.reset();
   }
 
   /**

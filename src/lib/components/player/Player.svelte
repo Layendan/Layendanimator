@@ -45,15 +45,7 @@
   }
 
   function setHls() {
-    if (video?.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = `${mirror.url}#t=${
-        episode.percentWatched === 100
-          ? 0
-          : ((episode.percentWatched ?? 0) *
-              (episode.duration ?? duration ?? 0)) /
-            100
-      }`;
-    } else {
+    if (mirror?.isM3U8) {
       console.log("Using HLS.js");
       const hls = new Hls();
       hls.loadSource(
@@ -66,6 +58,14 @@
         }`
       );
       hls.attachMedia(video);
+    } else {
+      video.src = `${mirror.url}#t=${
+        episode.percentWatched === 100
+          ? 0
+          : ((episode.percentWatched ?? 0) *
+              (episode.duration ?? duration ?? 0)) /
+            100
+      }`;
     }
     video?.load();
   }

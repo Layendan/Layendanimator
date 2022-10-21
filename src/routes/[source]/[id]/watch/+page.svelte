@@ -1,9 +1,10 @@
 <svelte:options immutable />
 
 <script lang="ts">
-  import Player from "$lib/components/player/Player.svelte";
   import { fade } from "svelte/transition";
   import type { PageData } from "./$types";
+  import { settings } from "$lib/model/settings";
+  import Player from "$lib/components/player/Player.svelte";
   import Button from "$lib/components/public/Button.svelte";
   import Loading from "$lib/components/public/Loading.svelte";
   import ExternalIcon from "$lib/components/assets/ExternalIcon.svelte";
@@ -12,6 +13,10 @@
   export let data: PageData;
 
   let selectedMirror: number = 0;
+  let name: string =
+    ($settings.animeLanguage === "english"
+      ? data?.title.english ?? data?.title.romaji
+      : data?.title.romaji ?? data?.title.english) ?? "";
 </script>
 
 <div class="holder">
@@ -21,15 +26,16 @@
     <div in:fade class="player">
       <Player
         episode={data.episode}
-        title="{data.title.english ?? data.title.romaji} ・ {data.episode
-          .title ?? `Episode - ${data.episode.number}`}"
+        title="{name} ・ {data.episode.name ??
+          `Episode - ${data.episode.number}`}"
         mirror={mirrors[selectedMirror]}
+        captions={mirrors[selectedMirror].subtitles}
         nextEpisode={data.nextEpisode}
         autoplay={data.autoplay}
       />
       <div class="info">
         <h1>{data.title.english ?? data.title.romaji}</h1>
-        <h2>{data.episode.title ?? `Episode - ${data.episode.number}`}</h2>
+        <h2>{data.episode.name ?? `Episode - ${data.episode.number}`}</h2>
         <span class="mirrors">
           {#each mirrors ?? [] as { name, quality }, i}
             <Button
@@ -40,21 +46,23 @@
             </Button>
           {/each}
         </span>
-        <div class="download">
-          <ExternalLink href={mirrors[selectedMirror]?.downloadLink}>
-            <Button>
-              Download
-              <ExternalIcon />
-            </Button>
-          </ExternalLink>
-        </div>
+        {#if mirrors[selectedMirror]?.downloadLink}
+          <div class="download">
+            <ExternalLink href={mirrors[selectedMirror].downloadLink}>
+              <Button>
+                Download
+                <ExternalIcon />
+              </Button>
+            </ExternalLink>
+          </div>
+        {/if}
         <p>
           {@html data.episode.description || (data.description ?? "")}
         </p>
       </div>
     </div>
   {:catch e}
-    <h1>Failed to load episode</h1>
+    <h1>Failed to load episode<br /><br />{e}</h1>
   {/await}
 </div>
 
@@ -81,13 +89,15 @@
   }
 
   .info > h2 {
-    font-size: 1em;
+    font-size: 1.25em;
     margin-bottom: 1rem;
-    font-weight: 300;
+    font-weight: 400;
+    font-style: italic;
   }
 
   .info > p {
     line-height: 1.25rem;
+    font-weight: 300;
   }
 
   .mirrors {

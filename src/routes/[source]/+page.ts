@@ -97,47 +97,43 @@ export const load: PageLoad = ({ params, depends }) => {
     }
   );
 
-  const seasonal: Promise<Anime[]> = new Promise<Anime[]>((resolve, reject) => {
+  const popular: Promise<Anime[]> = new Promise<Anime[]>((resolve, reject) => {
+    const data: { expiration: number; data: Anime[] } = JSON.parse(
+      window.sessionStorage.getItem(`${source.id}-popular`) ?? "null"
+    );
+    if (data && data.expiration > Date.now()) {
+      resolve(data.data);
+      return;
+    }
+
     const iframe = document.createElement("iframe");
     iframe.sandbox.add("allow-scripts", "allow-same-origin");
     iframe.srcdoc = `<script type="text/javascript" src="${source.srcPath}"></script>`;
     iframe.style.display = "none";
     document.body.appendChild(iframe);
     iframe.onload = async () => {
-      const seasonal: Anime[] =
-        // @ts-ignore
-        await iframe?.contentWindow?.getSeasonal?.();
-      iframe.remove();
-      seasonal === undefined
-        ? reject("Could not get Recent Episodes")
-        : resolve(seasonal);
+      try {
+        const topAiring: Anime[] =
+          // @ts-ignore
+          await iframe?.contentWindow?.getPopular?.();
+        iframe.remove();
+        topAiring === undefined
+          ? reject("Could not get Recent Episodes")
+          : resolve(topAiring);
+        const date: Date = new Date();
+        window.sessionStorage.setItem(
+          `${source.id}-popular`,
+          JSON.stringify({
+            expiring: date.setMinutes(date.getMinutes() + 30).valueOf(),
+            data: topAiring,
+          })
+        );
+      } catch (e) {
+        console.error(e);
+        reject(e);
+      }
     };
   });
-
-  const date: Date = new Date();
-  let season: "WINTER" | "SPRING" | "SUMMER" | "FALL" = "WINTER";
-  switch (date.getMonth()) {
-    case 0:
-    case 1:
-    case 2:
-      season = "WINTER";
-      break;
-    case 3:
-    case 4:
-    case 5:
-      season = "SPRING";
-      break;
-    case 6:
-    case 7:
-    case 8:
-      season = "SUMMER";
-      break;
-    case 9:
-    case 10:
-    case 11:
-      season = "FALL";
-      break;
-  }
 
   return {
     source: source,
@@ -147,12 +143,8 @@ export const load: PageLoad = ({ params, depends }) => {
     topAiring: {
       data: topAiring,
     },
-    seasonal: {
-      data: seasonal,
-    },
-    date: {
-      season: season,
-      year: date.getFullYear(),
+    popular: {
+      data: popular,
     },
   };
 };

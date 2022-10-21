@@ -6,13 +6,14 @@ export type Mirror = {
   downloadLink: string;
   quality?: string;
   isM3U8?: boolean;
+  subtitles?: { src: string; lang: string }[];
 };
 
 /**
  * Represents an Episode of an anime.
  */
 export type Episode = {
-  title: string;
+  name: string;
   id: string;
   number: number;
   thumbnail: string;

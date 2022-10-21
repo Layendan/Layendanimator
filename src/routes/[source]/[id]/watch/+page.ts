@@ -29,13 +29,17 @@ export const load: PageLoad = async ({ url, params, parent }) => {
       iframe.style.display = "none";
       document.body.appendChild(iframe);
       iframe.onload = async () => {
-        // @ts-ignore
-        const data: Mirror[] = await iframe?.contentWindow?.getStreamingLinks?.(
-          episode.id
-        );
-        iframe.remove();
-        episode.mirrors = data;
-        data === undefined ? reject("Could not get mirrors") : resolve(data);
+        try {
+          const data: Mirror[] =
+            // @ts-ignore
+            await iframe?.contentWindow?.getStreamingLinks?.(episode.id);
+          episode.mirrors = data;
+          data === undefined ? reject("Could not get mirrors") : resolve(data);
+        } catch (e) {
+          reject(`Could not get mirrors: ${e}`);
+        } finally {
+          iframe.remove();
+        }
       };
     }
   );

@@ -30,14 +30,14 @@
         <img
           class="image"
           src={thumbnail}
-          alt={episode.title}
+          alt={episode.name}
           loading="lazy"
           on:error={() => (thumbnail = null)}
         />
       {/if}
       <p>
-        {#if episode.title}
-          {episode.title}
+        {#if episode.name}
+          {episode.name}
         {:else}
           Episode {episode.number}
         {/if}

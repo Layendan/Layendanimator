@@ -44,7 +44,7 @@
         name: "test",
         version: "0.0.1",
         baseUrl: link,
-        srcPath: "/layendanimator-base/crunchyroll/source.js",
+        srcPath: "/layendanimator-base/gogoanime/source.js",
         contentRating: "EVERYONE",
         desc: "test",
         tags: [],

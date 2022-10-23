@@ -1,7 +1,7 @@
 <svelte:options immutable />
 
 <script lang="ts">
-  import { goto } from "$app/navigation";
+  import { goto, invalidate, prefetch } from "$app/navigation";
   import { page } from "$app/stores";
   import { onDestroy, onMount } from "svelte";
   import { getCurrent } from "@tauri-apps/api/window";
@@ -86,6 +86,10 @@
         getCurrent().setFullscreen(false);
       }
     });
+    if (nextEpisode)
+      prefetch(
+        `/${$page.params.source}/${$page.params.id}/watch?episode=${nextEpisode.number}`
+      );
   });
 
   onDestroy(updateTimeWatched);
@@ -232,6 +236,10 @@
       default:
         break;
     }
+  }}
+  on:error={() => {
+    updateTimeWatched();
+    invalidate(`${episode.id}/mirrors`);
   }}
 >
   {#if captions}

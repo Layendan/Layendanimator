@@ -6,13 +6,17 @@ import { activeSources, type ActiveSource } from "$lib/model/sources";
 
 export const ssr = false;
 
-export const load: PageLoad = async ({ url, params, parent }) => {
+export const load: PageLoad = async ({ url, params, parent, depends }) => {
   const { episode, episodes } = await parent();
 
+  
   const source: ActiveSource | undefined = get(activeSources).find(
     (s) => s.id === params.source
-  );
-  if (!source) throw error(400, "Source not found");
+    );
+    if (!source) throw error(400, "Source not found");
+    
+
+    depends(source.id, `${episode.id}/mirrors`);
 
   const autoplay: boolean = url.searchParams.get("autoplay") === "true";
 

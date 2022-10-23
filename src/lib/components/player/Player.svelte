@@ -271,11 +271,7 @@
     user-select: none; /* Likely future */
   }
 
-  video:not(:fullscreen) {
-    max-height: 78vh;
-  }
-
-  video:not(:-webkit-full-screen) {
+  video:not(:is(:fullscreen, :-webkit-full-screen)) {
     max-height: 78vh;
   }
 

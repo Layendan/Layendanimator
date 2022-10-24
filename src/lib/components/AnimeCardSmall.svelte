@@ -39,7 +39,13 @@
       <p class="episode">Episode {episode}</p>
     {/if}
   </div>
-  <h2>{name}</h2>
+  <h2>
+    {#if name}
+      {name}
+    {:else}
+      <br /><br />
+    {/if}
+  </h2>
 </a>
 
 <style>

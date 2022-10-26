@@ -38,7 +38,6 @@ export const load: PageLoad = ({ params, depends }) => {
           const recentEpisodes: { episode: number; media: Anime }[] =
             // @ts-ignore
             await iframe?.contentWindow?.getRecentEpisodes?.();
-          iframe.remove();
           recentEpisodes === undefined
             ? reject("Could not get Recent Episodes")
             : resolve(recentEpisodes);
@@ -53,6 +52,8 @@ export const load: PageLoad = ({ params, depends }) => {
         } catch (e) {
           console.error(e);
           reject(e);
+        } finally {
+          iframe.remove();
         }
       };
     });
@@ -77,9 +78,8 @@ export const load: PageLoad = ({ params, depends }) => {
           const topAiring: Anime[] =
             // @ts-ignore
             await iframe?.contentWindow?.getTopAiring?.();
-          iframe.remove();
           topAiring === undefined
-            ? reject("Could not get Recent Episodes")
+            ? reject("Could not get Top Airing")
             : resolve(topAiring);
           const date: Date = new Date();
           window.sessionStorage.setItem(
@@ -92,6 +92,8 @@ export const load: PageLoad = ({ params, depends }) => {
         } catch (e) {
           console.error(e);
           reject(e);
+        } finally {
+          iframe.remove();
         }
       };
     }
@@ -113,24 +115,25 @@ export const load: PageLoad = ({ params, depends }) => {
     document.body.appendChild(iframe);
     iframe.onload = async () => {
       try {
-        const topAiring: Anime[] =
+        const popular: Anime[] =
           // @ts-ignore
           await iframe?.contentWindow?.getPopular?.();
-        iframe.remove();
-        topAiring === undefined
-          ? reject("Could not get Recent Episodes")
-          : resolve(topAiring);
+        popular === undefined
+          ? reject("Could not get Popular Animes")
+          : resolve(popular);
         const date: Date = new Date();
         window.sessionStorage.setItem(
           `${source.id}-popular`,
           JSON.stringify({
             expiring: date.setMinutes(date.getMinutes() + 30).valueOf(),
-            data: topAiring,
+            data: popular,
           })
         );
       } catch (e) {
         console.error(e);
         reject(e);
+      } finally {
+        iframe.remove();
       }
     };
   });

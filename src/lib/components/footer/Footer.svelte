@@ -3,7 +3,12 @@
 </script>
 
 <footer>
-  <a href="/" class:selected={$page.routeId === "/" || $page.routeId === "/[source]"}> Main </a>
+  <a
+    href="/"
+    class:selected={$page.routeId === "/" || $page.routeId === "/[source]"}
+  >
+    Main
+  </a>
   <a
     href="/library/downloads"
     class:selected={$page.routeId === "/library/downloads"}>Downloads</a

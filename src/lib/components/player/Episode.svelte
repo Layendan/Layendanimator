@@ -36,10 +36,9 @@
         />
       {/if}
       <p>
+        Episode {episode.number}
         {#if episode.name}
-          {episode.name}
-        {:else}
-          Episode {episode.number}
+          - {episode.name}
         {/if}
         {#if episode.site}
           on {episode.site}

@@ -1,5 +1,3 @@
-<svelte:options immutable />
-
 <script lang="ts">
   import { goto, invalidate, prefetch } from "$app/navigation";
   import { page } from "$app/stores";
@@ -47,16 +45,15 @@
   function setHls() {
     if (mirror?.isM3U8) {
       console.log("Using HLS.js");
-      const hls = new Hls();
-      hls.loadSource(
-        `${mirror.url}#t=${
+      const hls = new Hls({
+        startPosition:
           episode.percentWatched === 100
-            ? 0
+            ? -1
             : ((episode.percentWatched ?? 0) *
                 (episode.duration ?? duration ?? 0)) /
-              100
-        }`
-      );
+              100,
+      });
+      hls.loadSource(mirror.url);
       hls.attachMedia(video);
     } else {
       video.src = `${mirror.url}#t=${

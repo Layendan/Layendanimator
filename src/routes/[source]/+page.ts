@@ -51,7 +51,8 @@ export const load: PageLoad = ({ params, depends }) => {
           );
         } catch (e) {
           console.error(e);
-          reject(e);
+          if (data) resolve(data.data);
+          else reject(e);
         } finally {
           iframe.remove();
         }
@@ -91,7 +92,8 @@ export const load: PageLoad = ({ params, depends }) => {
           );
         } catch (e) {
           console.error(e);
-          reject(e);
+          if (data) resolve(data.data);
+          else reject(e);
         } finally {
           iframe.remove();
         }
@@ -131,7 +133,8 @@ export const load: PageLoad = ({ params, depends }) => {
         );
       } catch (e) {
         console.error(e);
-        reject(e);
+        if (data) resolve(data.data);
+        else reject(e);
       } finally {
         iframe.remove();
       }

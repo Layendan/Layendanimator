@@ -74,7 +74,9 @@ jobs:
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
       - name: debug release.json
-        run: cat "/Users/runner/work/NineAnimator-Tauri/NineAnimator-Tauri/latest.json"
+        run: |
+          echo "$(ls -al "/Users/runner/work/NineAnimator-Tauri/NineAnimator-Tauri/")"
+          echo "/Users/runner/work/NineAnimator-Tauri/NineAnimator-Tauri/latest.json..."
 
   publish-release:
     runs-on: ubuntu-20.04

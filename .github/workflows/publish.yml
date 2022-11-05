@@ -18,7 +18,7 @@ jobs:
           node-version: 18
       - name: get version
         run: |
-          echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")+$(git log --format="%h" -n 1)" >> $GITHUB_ENV
           echo "Version: $(node -p "require('./package.json').version")"
           echo "Commit: $(git log --format="%h" -n 1)"
       - name: create release

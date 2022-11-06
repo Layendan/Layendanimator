@@ -1,6 +1,5 @@
 <script lang="ts">
   // Import required packages
-  import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
   import { fade } from "svelte/transition";
   import { settings } from "$lib/model/settings";
   import type { Anime } from "$lib/model/anime";
@@ -20,9 +19,6 @@
       : media?.title.romaji ?? media?.title.english) ?? "Loading";
   let airingTime: Date = new Date((airingAt ?? 0) * 1000);
   const today = new Date();
-
-  let loading: boolean = true;
-  let loadingFailureBool: boolean = false;
 
   // Check if there is data to store before looking at the length or else returns null error
   const DATA_NAME = name + "-episodes";
@@ -46,21 +42,13 @@
     on:click
   >
     <span class="holder">
-      {#key loading}
-        <!-- Removing lazy loading because it prevents images from loading in ms edge, might change display: none to width+height: 0 -->
-        <img
-          src={loadingFailureBool ? loadingFailure : media?.coverImage.large}
-          alt={name}
-          class="thumbnail"
-          class:hide={loading}
-          on:error={() => (loadingFailureBool = true)}
-          on:load={() => (loading = false)}
-          in:fade
-        />
-      {/key}
-      {#if loading}
-        <img src={loadingFailure} alt={name} class="thumbnail" in:fade />
-      {/if}
+      <img
+        src={media?.coverImage.large}
+        alt={name}
+        class="thumbnail"
+        loading="lazy"
+        in:fade
+      />
       {#if episode}
         <p class="episode">Episode {episode}</p>
       {/if}
@@ -137,6 +125,9 @@
     height: 252px;
     max-width: 178px;
     max-height: 252px;
+    background: url("/assets/loading_failure.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 
   body:is(:hover, :focus-within) {
@@ -238,10 +229,6 @@
   body:focus-within .text {
     transition: opacity 0.3s ease-out 0.4s;
     opacity: 1;
-  }
-
-  .hide {
-    display: none;
   }
 
   .episode {

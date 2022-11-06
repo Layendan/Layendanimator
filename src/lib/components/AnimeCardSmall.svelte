@@ -2,7 +2,6 @@
   import type { Anime } from "$lib/model/anime";
   import { fade } from "svelte/transition";
   import { settings } from "$lib/model/settings";
-  import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
 
   export let media: Anime | undefined = undefined;
   export let episode: number | undefined = undefined;
@@ -24,7 +23,7 @@
   on:click
 >
   <div class="container">
-    <img src={media?.coverImage.large ?? loadingFailure} alt={name} />
+    <img src={media?.coverImage.large} alt={name} loading="lazy" />
     <div class="overlay" />
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -149,7 +148,9 @@
     object-fit: cover;
     object-position: center;
     border-radius: 8px;
-    background: transparent;
+    background: url("/assets/loading_failure.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
     transform: scale(1);
     transition: transform 0.2s ease-in-out;
   }

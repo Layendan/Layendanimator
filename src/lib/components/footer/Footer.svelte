@@ -17,7 +17,8 @@
     href="/library/history"
     class:selected={$page.route.id === "/library/history"}>History</a
   >
-  <a href="/settings" class:selected={$page.route.id === "/settings"}>Settings</a
+  <a href="/settings" class:selected={$page.route.id === "/settings"}
+    >Settings</a
   >
 </footer>
 

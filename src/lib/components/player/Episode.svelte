@@ -26,7 +26,7 @@
     <img class="bg" src={episode.thumbnail} alt="" />
     <div class="bg progress" style="width: {episode.percentWatched ?? '0'}%;" />
     <span>
-      {#if !!thumbnail}
+      {#if thumbnail}
         <img
           class="image"
           src={thumbnail}
@@ -80,6 +80,9 @@
     margin-right: 2em;
     border-radius: 5px;
     opacity: 1;
+    background: url("/assets/loading_failure.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 
   .episode {

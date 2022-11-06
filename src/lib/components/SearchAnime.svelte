@@ -1,11 +1,11 @@
 <script lang="ts">
-  import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
   import type { ActiveSource } from "$lib/model/sources";
+  import { fade } from "svelte/transition";
 
   export let id: string;
   export let title: string;
   export let description: string = "";
-  export let thumbnail: string = loadingFailure;
+  export let thumbnail: string;
   export let ratings: number = 0;
   // export let tags: { name: string }[] = [];
   export let genres: Array<string> = [];
@@ -14,13 +14,9 @@
 </script>
 
 <li>
-  <a href={source ? `/${source.id}/${id}` : `/${id}`} on:click>
+  <a href="/{source?.id}/{id}" on:click>
     <div class="container">
-      <img
-        on:error={() => (thumbnail = loadingFailure)}
-        src={thumbnail}
-        alt={title}
-      />
+      <img src={thumbnail} alt={title} loading="lazy" in:fade />
       <div class="text">
         <h1>
           {title}
@@ -91,5 +87,8 @@
     margin-right: 2rem;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    background: url("/assets/loading_failure.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 </style>

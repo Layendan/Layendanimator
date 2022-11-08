@@ -151,6 +151,7 @@
     background: url("/assets/loading_failure.jpeg");
     background-repeat: no-repeat;
     background-size: cover;
+    background-position: center;
     transform: scale(1);
     transition: transform 0.2s ease-in-out;
   }

@@ -144,6 +144,7 @@
     background: url("/assets/loading_failure.jpeg");
     background-repeat: no-repeat;
     background-size: cover;
+    background-position: center;
   }
 
   .banner img:not(.reduce-motion) {
@@ -205,6 +206,7 @@
     background: url("/assets/loading_failure.jpeg");
     background-repeat: no-repeat;
     background-size: cover;
+    background-position: center;
   }
 
   .important-info {

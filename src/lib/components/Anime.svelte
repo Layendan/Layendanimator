@@ -115,9 +115,6 @@
   }
 
   body img {
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     /* Might be too much but just to make sure that it works in every case */
     min-width: 178px;
     min-height: 252px;
@@ -128,6 +125,7 @@
     background: url("/assets/loading_failure.jpeg");
     background-repeat: no-repeat;
     background-size: cover;
+    background-position: center;
   }
 
   body:is(:hover, :focus-within) {

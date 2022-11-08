@@ -5,19 +5,20 @@
 <footer>
   <a
     href="/"
-    class:selected={$page.routeId === "/" || $page.routeId === "/[source]"}
+    class:selected={$page.route.id === "/" || $page.route.id === "/[source]"}
   >
     Main
   </a>
   <a
     href="/library/downloads"
-    class:selected={$page.routeId === "/library/downloads"}>Downloads</a
+    class:selected={$page.route.id === "/library/downloads"}>Downloads</a
   >
   <a
     href="/library/history"
-    class:selected={$page.routeId === "/library/history"}>History</a
+    class:selected={$page.route.id === "/library/history"}>History</a
   >
-  <a href="/settings" class:selected={$page.routeId === "/settings"}>Settings</a
+  <a href="/settings" class:selected={$page.route.id === "/settings"}
+    >Settings</a
   >
 </footer>
 

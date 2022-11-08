@@ -27,7 +27,7 @@
       console.log($connections[`${source}-userId`]);
     }
 
-    if ($page.routeId === "/callback") {
+    if ($page.route.id === "/callback") {
       interval = setInterval(() => {
         time -= 1;
         if (time <= 0) {

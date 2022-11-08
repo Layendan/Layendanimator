@@ -21,7 +21,7 @@
     style:--header-saturation={saturation}
   >
     <!-- <nav class="logo" in:fade>
-    <a href="/" class:selected={$page.routeId === ""}>
+    <a href="/" class:selected={$page.route.id === ""}>
       <img src={logo} alt="NineAnimator" />
       NineAnimator
     </a>
@@ -30,11 +30,11 @@
   <nav>
     <a
       href="/library/downloads"
-      class:selected={$page.routeId === "library/downloads"}>Downloads</a
+      class:selected={$page.route.id === "library/downloads"}>Downloads</a
     >
     <a
       href="/library/history"
-      class:selected={$page.routeId === "library/history"}>History</a
+      class:selected={$page.route.id === "library/history"}>History</a
     >
   </nav>
 
@@ -63,13 +63,13 @@
   </div>
 
   <nav class="settings">
-    <a href="/settings" class:selected={$page.routeId === "settings"}
+    <a href="/settings" class:selected={$page.route.id === "settings"}
       >Settings</a
     >
   </nav> -->
 
     {#each $activeSources as source}
-      <a href="/{source.id}" class:selected={$page.routeId === source.id}>
+      <a href="/{source.id}" class:selected={$page.route.id === source.id}>
         {source.name}
       </a>
     {/each}

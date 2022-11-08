@@ -1,7 +1,6 @@
 <script lang="ts">
   // Import required packages
   import { fade } from "svelte/transition";
-  import loadingFailure from "$lib/components/assets/loading_failure.jpeg";
   import EpisodeHolder from "$lib/components/player/EpisodeHolder.svelte";
   import { settings } from "$lib/model/settings";
   import { library } from "$lib/model/library";
@@ -15,15 +14,12 @@
 
   // Page scroll
   let y = 0;
-  let bannerLoading: boolean = true;
-  let coverLoading: boolean = true;
-  let bannerError: boolean = false;
-  let coverError: boolean = false;
 
   $: title = "";
 
   (async () => {
-    title = (await data.anime.data).title.english;
+    const mediaTitle = (await data.anime.data).title;
+    title = mediaTitle.english ?? mediaTitle.romaji;
   })();
 
   $: scale = y < 345 ? 0.005 * Math.abs(y) + 1 : 0.005 * 345 + 1;
@@ -43,58 +39,35 @@
   <Loading />
 {:then anime}
   <section in:fade>
-    {#if anime.bannerImage || (anime.coverImage.large && !bannerError)}
+    {#if anime.bannerImage || anime.coverImage?.large}
       <div class="banner">
-        {#key bannerLoading}
-          <img
-            src={anime.bannerImage ?? anime.coverImage.large}
-            alt={anime.title.romaji}
-            on:error={() => (bannerError = true)}
-            on:load={() => (bannerLoading = false)}
-            in:fade
-            class:reduce-motion={$settings.reduceMotion}
-            class:hide={bannerLoading}
-            style:--banner-scale={scale}
-            style:--banner-blur={`${anime.bannerImage ? blur : blur + 5}px`}
-            style:--banner-opacity={opacity}
-          />
-        {/key}
-        {#if bannerLoading}
-          <img src={loadingFailure} alt={anime.title?.romaji} in:fade />
-        {/if}
+        <img
+          src={anime.bannerImage ?? anime.coverImage.large}
+          alt={anime.title.romaji}
+          in:fade
+          class:reduce-motion={$settings.reduceMotion}
+          style:--banner-scale={scale}
+          style:--banner-blur={`${anime.bannerImage ? blur : blur + 5}px`}
+          style:--banner-opacity={opacity}
+        />
       </div>
     {/if}
     <div in:fade class="text">
       <div class="container">
         <div
           class="important-info"
-          class:no-overlap={!anime.bannerImage ||
-            (!anime.coverImage.large && bannerError)}
+          class:no-overlap={!(anime.bannerImage && anime.coverImage?.large)}
         >
           <div
             class="image-and-choices"
-            class:overlap={!!anime.bannerImage ||
-              (!!anime.coverImage.large && !bannerError)}
+            class:overlap={anime.bannerImage || anime.coverImage?.large}
           >
-            {#key coverLoading}
-              <img
-                src={coverError ? loadingFailure : anime.coverImage.large}
-                alt={anime.title?.english ?? anime.title?.romaji}
-                on:error={() => (coverError = true)}
-                on:load={() => (coverLoading = false)}
-                in:fade
-                class:hide={coverLoading}
-                class="thumbnail"
-              />
-            {/key}
-            {#if coverLoading}
-              <img
-                src={loadingFailure}
-                alt={anime.title?.english ?? anime.title?.romaji}
-                class="thumbnail"
-                in:fade
-              />
-            {/if}
+            <img
+              src={anime.coverImage.large}
+              alt={anime.title?.english ?? anime.title?.romaji}
+              in:fade
+              class="thumbnail"
+            />
             <Button
               size="all"
               type={$library.subscriptions.some(
@@ -168,6 +141,10 @@
     object-fit: cover;
     object-position: top;
     position: relative;
+    background: url("/assets/loading_failure.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
   }
 
   .banner img:not(.reduce-motion) {
@@ -226,6 +203,10 @@
     border-radius: 5px;
     height: fit-content;
     max-height: 305px;
+    background: url("/assets/loading_failure.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
   }
 
   .important-info {
@@ -250,10 +231,6 @@
     font-weight: 300;
     line-height: 1.5;
     height: min-content;
-  }
-
-  .hide {
-    display: none;
   }
 
   .error {

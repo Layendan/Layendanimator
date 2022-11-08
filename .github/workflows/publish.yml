@@ -29,7 +29,7 @@ jobs:
             const { data } = await github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              tag_name: `@layendanimator-v${process.env.PACKAGE_VERSION}`,
+              tag_name: `@layendanimator`,
               name: `Layendanimator v${process.env.PACKAGE_VERSION}`,
               body: 'Take a look at the assets to download and install this app.',
               draft: true,

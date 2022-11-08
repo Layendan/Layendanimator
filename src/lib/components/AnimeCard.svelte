@@ -130,6 +130,10 @@
     object-fit: cover;
     object-position: center;
     border-radius: 12px;
+    background: url("/assets/loading_failure.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
   }
 
   .card_overlay {

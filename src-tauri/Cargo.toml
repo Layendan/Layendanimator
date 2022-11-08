@@ -1,13 +1,13 @@
 [package]
-name = "app"
-version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+name = "layendanimator"
+version = "0.0.1"
+description = "Layendanimator"
+authors = ["Layendan"]
 license = ""
 repository = ""
-default-run = "app"
+default-run = "layendanimator"
 edition = "2021"
-rust-version = "1.57"
+rust-version = "1.65"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -17,6 +17,7 @@ tauri-build = { version = "1.0.0", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
+# TODO: remove devtools dependency for safety reasons
 tauri = { version = "1.0.0", features = ["api-all", "devtools", "macos-private-api", "updater"] }
 
 [features]

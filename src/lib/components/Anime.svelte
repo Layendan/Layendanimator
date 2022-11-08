@@ -43,7 +43,7 @@
   >
     <span class="holder">
       <img
-        src={media?.coverImage.large}
+        src={media?.coverImage?.large ?? "/assets/loading_failure.jpeg"}
         alt={name}
         class="thumbnail"
         loading="lazy"

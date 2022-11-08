@@ -23,7 +23,11 @@
   on:click
 >
   <div class="container">
-    <img src={media?.coverImage.large} alt={name} loading="lazy" />
+    <img
+      src={media?.coverImage?.large ?? "/assets/loading_failure.jpeg"}
+      alt={name}
+      loading="lazy"
+    />
     <div class="overlay" />
     <svg
       xmlns="http://www.w3.org/2000/svg"

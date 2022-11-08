@@ -16,7 +16,12 @@
 <li>
   <a href="/{source?.id}/{id}" on:click>
     <div class="container">
-      <img src={thumbnail} alt={title} loading="lazy" in:fade />
+      <img
+        src={thumbnail ?? "/assets/loading_failure.jpeg"}
+        alt={title}
+        loading="lazy"
+        in:fade
+      />
       <div class="text">
         <h1>
           {title}

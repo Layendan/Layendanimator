@@ -38,7 +38,7 @@
 >
   <div class="card__image">
     <img
-      src={media.coverImage.large}
+      src={media?.coverImage?.large ?? "/assets/loading_failure.jpeg"}
       alt={name}
       on:load={() => {
         const colorThief = new ColorThief();

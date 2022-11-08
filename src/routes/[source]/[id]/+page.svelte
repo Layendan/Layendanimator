@@ -63,7 +63,7 @@
             class:overlap={anime.bannerImage || anime.coverImage?.large}
           >
             <img
-              src={anime.coverImage.large}
+              src={anime.coverImage?.large ?? "/assets/loading_failure.jpeg"}
               alt={anime.title?.english ?? anime.title?.romaji}
               in:fade
               class="thumbnail"

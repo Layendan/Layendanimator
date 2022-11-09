@@ -22,7 +22,7 @@
   data-sveltekit-prefetch
   on:click
 >
-  <div class="container">
+  <div class="container" style:--color={media?.color ?? "var(--accent-color)"}>
     <img
       src={media?.coverImage?.large ?? "/assets/loading_failure.jpeg"}
       alt={name}
@@ -82,18 +82,21 @@
     bottom: -8px;
     left: -8px;
     right: -8px;
-    border: 4px solid rgba(var(--accent-rgb), 0);
+    border: 4px solid var(--color);
+    opacity: 0;
     border-radius: 16px;
     z-index: 0;
-    transition: border 0.2s ease-in-out;
+    transition: opacity 0.2s ease-in-out;
   }
 
   .card .container:hover::before {
-    border: 4px solid rgba(var(--accent-rgb), 1);
+    /* border: 4px solid rgba(var(--accent-rgb), 1); */
+    opacity: 1;
   }
 
   .card:focus-visible .container::before {
-    border: 4px solid rgba(var(--accent-rgb), 1);
+    /* border: 4px solid rgba(var(--accent-rgb), 1); */
+    opacity: 1;
   }
 
   .card .container .overlay {

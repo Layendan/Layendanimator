@@ -52,7 +52,7 @@
         />
       </div>
     {/if}
-    <div in:fade class="text">
+    <div in:fade class="text" style:--color={anime.color}>
       <div class="container">
         <div
           class="important-info"
@@ -187,6 +187,7 @@
     background-color: var(--secondary-color);
     padding: 1rem;
     padding-top: 0;
+    border-bottom: var(--color) 2px solid;
   }
 
   .overlap {

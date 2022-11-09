@@ -19,6 +19,7 @@ async function getRecentEpisodes() {
           large: item.image,
         },
         siteUrl: item.url,
+        color: item.color,
         isAdult: false,
       },
       episode: item.episodeNumber,
@@ -48,6 +49,7 @@ async function getTopAiring() {
       bannerImage: item.cover,
       siteUrl: item.url,
       genres: item.genres,
+      color: item.color,
       isAdult: false,
     };
   });
@@ -75,6 +77,7 @@ async function getPopular() {
       bannerImage: item.cover,
       siteUrl: item.url,
       genres: item.genres,
+      color: item.color,
       isAdult: false,
     };
   });
@@ -160,7 +163,8 @@ async function getAnime(id) {
       };
     }),
     genres: data.genres,
-    isAdult: false,
+    color: data.color,
+    isAdult: data.isAdult,
   };
 }
 

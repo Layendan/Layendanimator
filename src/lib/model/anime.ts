@@ -55,6 +55,7 @@ export type Anime = {
     name: string;
   }[];
   genres: string[];
+  color: string;
   isAdult: boolean;
 };
 
@@ -106,6 +107,7 @@ export const defaultAnime = readable<Anime>({
   meanScore: 0,
   tags: [],
   genres: [],
+  color: "#000000",
   isAdult: false,
 });
 

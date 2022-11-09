@@ -42,7 +42,7 @@
       <p class="episode">Episode {episode}</p>
     {/if}
   </div>
-  <h2>
+  <h2 style:--color={media?.color ?? "var(--accent-color)"}>
     {#if name}
       {name}
     {:else}
@@ -83,6 +83,7 @@
     left: -8px;
     right: -8px;
     border: 4px solid var(--color);
+    filter: saturate(0.5) contrast(0.75);
     opacity: 0;
     border-radius: 16px;
     z-index: 0;
@@ -203,7 +204,8 @@
     margin: 0;
     padding: 0;
     margin-top: 0.75rem;
-    color: rgba(var(--text-rgb), 1);
+    color: var(--text-color);
+    filter: saturate(1) contrast(1);
     font-size: 0.9rem;
     font-weight: bold;
     display: -webkit-box;
@@ -214,11 +216,12 @@
     word-wrap: break-word;
     hyphens: auto;
     white-space: normal;
-    transition: color 0.2s ease-in-out;
+    transition: color 0.2s ease-in-out, filter 0.2s ease-in-out;
   }
 
   .card h2:hover {
-    color: rgba(var(--text-rgb), 0.8);
+    color: var(--color);
+    filter: saturate(0.5) contrast(0.75);
   }
 
   .unselectable {

@@ -256,7 +256,8 @@
       defaultPath: await downloadDir(),
       filters: [{ name: "JSON", extensions: ["json"] }],
     });
-    return writeSettings(path);
+    if (path) return writeSettings(path);
+    else return Promise.reject("No path was provided.");
   }
 
   /**

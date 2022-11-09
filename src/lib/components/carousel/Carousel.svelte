@@ -37,6 +37,20 @@
   onDestroy(() => clearInterval(interval));
 </script>
 
+<svelte:window
+  on:keydown={(event) => {
+    if (event.metaKey || event.ctrlKey) return;
+
+    if (event.key === "ArrowLeft") {
+      rotateLeft();
+      event.preventDefault();
+    } else if (event.key === "ArrowRight") {
+      rotateRight();
+      event.preventDefault();
+    }
+  }}
+/>
+
 <div id="carousel-container">
   <div id="carousel-images" class:even={medias.length % 2 === 0}>
     {#each medias as media (media.id)}
@@ -251,7 +265,7 @@
     border-radius: 50%;
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.4);
     padding: 0.5rem;
     width: 1rem;
     height: 1rem;

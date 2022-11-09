@@ -19,11 +19,13 @@
 
 <form
   on:submit|preventDefault={() => {
-    goto(`/${source.id}/search?search=${query}`);
-    $history.search = [
-      query,
-      ...$history.search.filter((item) => item !== query),
-    ];
+    if (query) {
+      goto(`/${source.id}/search?search=${query}`);
+      $history.search = [
+        query,
+        ...$history.search.filter((item) => item !== query),
+      ];
+    }
   }}
 >
   <input

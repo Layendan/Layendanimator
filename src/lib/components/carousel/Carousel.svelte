@@ -32,7 +32,15 @@
     }
   };
 
-  let interval = setInterval(rotateRight, 10000);
+  let actioned: boolean = false;
+  let hovering: boolean = false
+  let interval = setInterval(() => {
+    if (!hovering && !actioned) {
+      rotateRight();
+    } else if (actioned) {
+      actioned = false;
+    }
+  }, 10000);
 
   onDestroy(() => clearInterval(interval));
 </script>
@@ -43,9 +51,11 @@
 
     if (event.key === "ArrowLeft") {
       rotateLeft();
+      actioned = true;
       event.preventDefault();
     } else if (event.key === "ArrowRight") {
       rotateRight();
+      actioned = true;
       event.preventDefault();
     }
   }}
@@ -82,12 +92,9 @@
             on:click={() => goto(`/${source}/${media?.id}`)}
             on:mouseenter={() => {
               prefetch(`/${source}/${media?.id}`);
-              clearInterval(interval);
+              hovering = true;
             }}
-            on:mouseleave={() => {
-              clearInterval(interval);
-              interval = setInterval(rotateRight, 10000);
-            }}><h2>Watch Now</h2></Button
+            on:mouseleave={() => hovering = false}><h2>Watch Now</h2></Button
           >
         </div>
       </div>
@@ -96,11 +103,8 @@
   <button
     class="left"
     on:click={rotateLeft}
-    on:mouseenter={() => clearInterval(interval)}
-    on:mouseleave={() => {
-      clearInterval(interval);
-      interval = setInterval(rotateRight, 10000);
-    }}
+    on:mouseenter={() => hovering = true}
+    on:mouseleave={() => hovering = false}
     ><svg
       version="1.1"
       id="Capa_1"
@@ -122,11 +126,8 @@
   <button
     class="right"
     on:click={rotateRight}
-    on:mouseenter={() => clearInterval(interval)}
-    on:mouseleave={() => {
-      clearInterval(interval);
-      interval = setInterval(rotateRight, 10000);
-    }}
+    on:mouseenter={() => hovering = true}
+    on:mouseleave={() => hovering = false}
     ><svg
       version="1.1"
       id="Capa_1"

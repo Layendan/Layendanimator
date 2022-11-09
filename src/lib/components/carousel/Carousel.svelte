@@ -198,7 +198,7 @@
     padding-right: 5rem;
     width: 100%;
     height: 100%;
-    max-width: 35vw;
+    max-width: max(450px, 35vw);
     display: flex;
     width: auto;
     flex-direction: column;
@@ -218,7 +218,7 @@
     margin: 0;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     overflow: hidden;
   }
 

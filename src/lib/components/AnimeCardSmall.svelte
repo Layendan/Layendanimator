@@ -90,12 +90,10 @@
   }
 
   .card .container:hover::before {
-    /* border: 4px solid rgba(var(--accent-rgb), 1); */
     opacity: 1;
   }
 
   .card:focus-visible .container::before {
-    /* border: 4px solid rgba(var(--accent-rgb), 1); */
     opacity: 1;
   }
 

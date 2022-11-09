@@ -10,6 +10,7 @@
   import AnimeCard from "$lib/components/AnimeCard.svelte";
   import AnimeCardSmall from "$lib/components/AnimeCardSmall.svelte";
   import { invalidate } from "$app/navigation";
+  import Carousel from "$lib/components/carousel/Carousel.svelte";
 
   export let data: PageData;
 </script>
@@ -40,6 +41,11 @@
     {/each}
   </header>
   <SearchBar source={data.source} />
+  {#await data.topAiring.data}
+    <div class="loading"><div class="item" /></div>
+  {:then medias}
+    <Carousel source={data.source.id} {medias} />
+  {/await}
   {#if data.source.mainPage.recentEpisodes}
     <Section storageId="{data.source.id}-new-episodes:scroll">
       <svelte:fragment slot="title">New Episodes</svelte:fragment>
@@ -111,45 +117,6 @@
       {/each}
     </svelte:fragment>
   </Section>
-  {#if data.source.mainPage.topAiring}
-    <Section storageId="{data.source.id}-new-episodes:scroll">
-      <svelte:fragment slot="title">Top Airing</svelte:fragment>
-      <svelte:fragment slot="animes">
-        {#await data.topAiring.data}
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-        {:then topAiring}
-          {#each topAiring as media, i}
-            <AnimeCardSmall
-              {media}
-              source={data.source.id}
-              delay={$settings.reduceMotion ? 0 : i * 100}
-              on:click={() =>
-                ($history.browse = [
-                  media,
-                  ...$history.browse.filter((item) => item.id !== media.id),
-                ])}
-            />
-          {/each}
-        {:catch error}
-          <p>{error}</p>
-        {/await}
-      </svelte:fragment>
-    </Section>
-  {/if}
   <Section storageId="{data.source.id}-seasonal:scroll">
     <svelte:fragment slot="title">Popular</svelte:fragment>
     <svelte:fragment slot="animes">
@@ -205,5 +172,44 @@
   .selected {
     border-bottom: 2px solid var(--accent-color);
     text-decoration: none;
+  }
+
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100%;
+  }
+
+  .loading .item {
+    display: inline-flex;
+    width: 98vw;
+    height: 60vh;
+    background: linear-gradient(
+      135deg,
+      var(--secondary-color) 0%,
+      var(--tertiary-color) 100%
+    );
+    border-radius: 8px;
+    margin: 1rem 1vw;
+    animation: loading 1s infinite both;
+  }
+
+  @keyframes loading {
+    0% {
+      background: linear-gradient(
+        135deg,
+        var(--secondary-color) 0%,
+        var(--tertiary-color) 100%
+      );
+    }
+    100% {
+      background: linear-gradient(
+        135deg,
+        var(--tertiary-color) 0%,
+        var(--secondary-color) 100%
+      );
+    }
   }
 </style>

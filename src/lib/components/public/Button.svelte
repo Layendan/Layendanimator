@@ -11,7 +11,7 @@
   export let disabled: boolean = false;
 </script>
 
-<button on:click class="{type} {size}" {disabled}>
+<button on:click on:mouseenter on:mouseleave class="{type} {size}" {disabled}>
   <slot />
 </button>
 

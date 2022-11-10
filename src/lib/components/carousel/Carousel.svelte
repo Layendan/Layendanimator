@@ -85,7 +85,7 @@
             </b>
           </p>
           {#if media.description}
-            <p>{@html media.description.replaceAll(/(<br>|<\/br>).*/g, "")}</p>
+            <p>{@html media.description.replaceAll(/(<\/?br>).*/g, "")}</p>
           {/if}
           <Button
             size="fitContent"

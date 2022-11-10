@@ -33,7 +33,7 @@
   };
 
   let actioned: boolean = false;
-  let hovering: boolean = false
+  let hovering: boolean = false;
   let interval = setInterval(() => {
     if (!hovering && !actioned) {
       rotateRight();
@@ -94,7 +94,7 @@
               prefetch(`/${source}/${media?.id}`);
               hovering = true;
             }}
-            on:mouseleave={() => hovering = false}><h2>Watch Now</h2></Button
+            on:mouseleave={() => (hovering = false)}><h2>Watch Now</h2></Button
           >
         </div>
       </div>
@@ -103,8 +103,8 @@
   <button
     class="left"
     on:click={rotateLeft}
-    on:mouseenter={() => hovering = true}
-    on:mouseleave={() => hovering = false}
+    on:mouseenter={() => (hovering = true)}
+    on:mouseleave={() => (hovering = false)}
     ><svg
       version="1.1"
       id="Capa_1"
@@ -126,8 +126,8 @@
   <button
     class="right"
     on:click={rotateRight}
-    on:mouseenter={() => hovering = true}
-    on:mouseleave={() => hovering = false}
+    on:mouseenter={() => (hovering = true)}
+    on:mouseleave={() => (hovering = false)}
     ><svg
       version="1.1"
       id="Capa_1"

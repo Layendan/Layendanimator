@@ -19,7 +19,7 @@
   let paused: boolean;
   let muted: boolean;
   let video: HTMLVideoElement;
-  let volume: number;
+  let volume: number = 1;
 
   function reload() {
     video?.pause();

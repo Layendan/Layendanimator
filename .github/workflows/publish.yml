@@ -17,7 +17,10 @@ jobs:
         with:
           node-version: 18
       - name: get version
-        run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+        run: |
+          echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")+$(git log --format="%h" -n 1)" >> $GITHUB_ENV
+          echo "Version: $(node -p "require('./package.json').version")"
+          echo "Commit: $(git log --format="%h" -n 1)"
       - name: create release
         id: create-release
         uses: actions/github-script@v6
@@ -63,7 +66,7 @@ jobs:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         run: yarn build
-      - uses: tauri-apps/tauri-action@dev
+      - uses: tauri-apps/tauri-action@fix/json-upload
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}

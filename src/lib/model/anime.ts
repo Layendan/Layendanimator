@@ -49,12 +49,15 @@ export type Anime = {
   siteUrl: string;
   description: string;
   streamingEpisodes: Episode[];
-  averageScore: number;
-  meanScore: number;
+  rating: number;
+  releaseDate: number;
+  totalEpisodes: number;
+  status: string;
   tags: {
     name: string;
   }[];
   genres: string[];
+  color: string;
   isAdult: boolean;
 };
 
@@ -102,10 +105,13 @@ export const defaultAnime = readable<Anime>({
   siteUrl: "",
   description: "",
   streamingEpisodes: [],
-  averageScore: 0,
-  meanScore: 0,
+  rating: 0,
+  releaseDate: 0,
+  totalEpisodes: 0,
+  status: "",
   tags: [],
   genres: [],
+  color: "#000000",
   isAdult: false,
 });
 

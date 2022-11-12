@@ -30,9 +30,11 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    background-color: var(--tertiary-color);
-    border: 2px var(--tertiary-color) solid;
+    background: rgba(var(--tertiary-rgb), 0.5);
+    border: 2px solid transparent;
     border-radius: 5px;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
 
     transition: 0.2s;
   }
@@ -48,7 +50,7 @@
   }
 
   button.hover:not(.selected):hover {
-    background-color: var(--accent-color);
+    background: var(--accent-color);
     border-color: var(--accent-color);
   }
 
@@ -62,7 +64,7 @@
     display: inline-flex;
     gap: 0.2rem;
     border-radius: 5px;
-    background-color: var(--primary-color);
+    background: var(--primary-color);
     padding: 10px;
     align-items: center;
     justify-content: center;

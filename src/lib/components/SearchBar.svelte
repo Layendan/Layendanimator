@@ -19,11 +19,13 @@
 
 <form
   on:submit|preventDefault={() => {
-    goto(`/${source.id}/search?search=${query}`);
-    $history.search = [
-      query,
-      ...$history.search.filter((item) => item !== query),
-    ];
+    if (query) {
+      goto(`/${source.id}/search?search=${query}`);
+      $history.search = [
+        query,
+        ...$history.search.filter((item) => item !== query),
+      ];
+    }
   }}
 >
   <input
@@ -53,7 +55,9 @@
   }
 
   .search {
-    background-color: var(--secondary-color);
+    background-color: rgba(var(--primary-rgb), 0.6);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
     border-radius: 5px;
     border: 1px solid var(--secondary-color);
     width: 90%;

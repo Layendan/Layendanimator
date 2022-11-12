@@ -15,10 +15,17 @@ async function getRecentEpisodes() {
           romaji: item.title.romaji,
           english: item.title.english,
         },
+        description: item.description,
         coverImage: {
           large: item.image,
         },
         siteUrl: item.url,
+        color: item.color,
+        rating: item.rating,
+        releaseDate: item.releaseDate,
+        totalEpisodes: item.totalEpisodes,
+        status: item.status,
+        genres: item.genres,
         isAdult: false,
       },
       episode: item.episodeNumber,
@@ -42,12 +49,18 @@ async function getTopAiring() {
         romaji: item.title.romaji,
         english: item.title.english,
       },
+      description: item.description,
       coverImage: {
         large: item.image,
       },
       bannerImage: item.cover,
       siteUrl: item.url,
       genres: item.genres,
+      color: item.color,
+      rating: item.rating,
+      releaseDate: item.releaseDate,
+      totalEpisodes: item.totalEpisodes,
+      status: item.status,
       isAdult: false,
     };
   });
@@ -56,12 +69,12 @@ async function getTopAiring() {
 }
 
 async function getPopular() {
-  let topAiring = (
+  let popular = (
     await (
       await fetch("https://api.consumet.org/meta/anilist/popular?perPage=20")
     ).json()
   ).results;
-  topAiring = topAiring.map((item) => {
+  popular = popular.map((item) => {
     return {
       id: item.id,
       title: {
@@ -69,17 +82,23 @@ async function getPopular() {
         romaji: item.title.romaji,
         english: item.title.english,
       },
+      description: item.description,
       coverImage: {
         large: item.image,
       },
       bannerImage: item.cover,
       siteUrl: item.url,
       genres: item.genres,
+      color: item.color,
+      rating: item.rating,
+      releaseDate: item.releaseDate,
+      totalEpisodes: item.totalEpisodes,
+      status: item.status,
       isAdult: false,
     };
   });
 
-  return topAiring;
+  return popular;
 }
 
 async function getSeasonal() {
@@ -147,7 +166,6 @@ async function getAnime(id) {
     },
     bannerImage: data.cover,
     description: data.description,
-    genres: data.genres,
     streamingEpisodes: data.episodes.map((item) => {
       return {
         id: item.id,
@@ -160,7 +178,8 @@ async function getAnime(id) {
       };
     }),
     genres: data.genres,
-    isAdult: false,
+    color: data.color,
+    isAdult: data.isAdult ?? false,
   };
 }
 

@@ -52,7 +52,7 @@
         />
       </div>
     {/if}
-    <div in:fade class="text">
+    <div in:fade class="text" style:--color={anime.color}>
       <div class="container">
         <div
           class="important-info"
@@ -63,7 +63,7 @@
             class:overlap={anime.bannerImage || anime.coverImage?.large}
           >
             <img
-              src={anime.coverImage.large}
+              src={anime.coverImage?.large ?? "/assets/loading_failure.jpeg"}
               alt={anime.title?.english ?? anime.title?.romaji}
               in:fade
               class="thumbnail"
@@ -187,6 +187,7 @@
     background-color: var(--secondary-color);
     padding: 1rem;
     padding-top: 0;
+    border-bottom: var(--color) 2px solid;
   }
 
   .overlap {

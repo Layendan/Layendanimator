@@ -38,7 +38,7 @@
 >
   <div class="card__image">
     <img
-      src={media.coverImage.large}
+      src={media?.coverImage?.large ?? "/assets/loading_failure.jpeg"}
       alt={name}
       on:load={() => {
         const colorThief = new ColorThief();
@@ -143,16 +143,18 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0);
+    -webkit-backdrop-filter: blur(0);
+    backdrop-filter: blur(0);
     border-radius: 12px;
-    transition: background-color 500ms ease-in-out;
+    transition: background-color 500ms ease-in-out,
+      -webkit-backdrop-filter 500ms ease-in-out,
+      backdrop-filter 500ms ease-in-out;
   }
 
-  .card:hover .card_overlay {
+  .card:is(:hover, :focus-visible) .card_overlay {
     background-color: rgba(0, 0, 0, 0.5);
-  }
-
-  .card:focus-visible .card_overlay {
-    background-color: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
   }
 
   .card_gradient {

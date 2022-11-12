@@ -10,6 +10,7 @@
   import AnimeCard from "$lib/components/AnimeCard.svelte";
   import AnimeCardSmall from "$lib/components/AnimeCardSmall.svelte";
   import { invalidate } from "$app/navigation";
+  import Carousel from "$lib/components/carousel/Carousel.svelte";
 
   export let data: PageData;
 </script>
@@ -28,18 +29,28 @@
 />
 
 <section>
+  <!-- TODO: Change this div to header and change header to flex -->
   <header>
-    {#each $activeSources as source}
-      <a
-        href={source.id}
-        class:selected={source.id === data.source.id}
-        data-sveltekit-prefetch
-      >
-        {capitalize(source.name)}
-      </a>
-    {/each}
+    <div class="sources">
+      {#each $activeSources as source}
+        <a
+          href={source.id}
+          class:selected={source.id === data.source.id}
+          data-sveltekit-prefetch
+        >
+          {capitalize(source.name)}
+        </a>
+      {/each}
+    </div>
+    <SearchBar source={data.source} />
   </header>
-  <SearchBar source={data.source} />
+  {#await data.topAiring.data}
+    <div class="loading" />
+  {:then medias}
+    <Carousel source={data.source.id} {medias} />
+  {:catch}
+    <div class="error__padding" />
+  {/await}
   {#if data.source.mainPage.recentEpisodes}
     <Section storageId="{data.source.id}-new-episodes:scroll">
       <svelte:fragment slot="title">New Episodes</svelte:fragment>
@@ -111,45 +122,6 @@
       {/each}
     </svelte:fragment>
   </Section>
-  {#if data.source.mainPage.topAiring}
-    <Section storageId="{data.source.id}-new-episodes:scroll">
-      <svelte:fragment slot="title">Top Airing</svelte:fragment>
-      <svelte:fragment slot="animes">
-        {#await data.topAiring.data}
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-          <AnimeCardSmall />
-        {:then topAiring}
-          {#each topAiring as media, i}
-            <AnimeCardSmall
-              {media}
-              source={data.source.id}
-              delay={$settings.reduceMotion ? 0 : i * 100}
-              on:click={() =>
-                ($history.browse = [
-                  media,
-                  ...$history.browse.filter((item) => item.id !== media.id),
-                ])}
-            />
-          {/each}
-        {:catch error}
-          <p>{error}</p>
-        {/await}
-      </svelte:fragment>
-    </Section>
-  {/if}
   <Section storageId="{data.source.id}-seasonal:scroll">
     <svelte:fragment slot="title">Popular</svelte:fragment>
     <svelte:fragment slot="animes">
@@ -191,6 +163,18 @@
 
 <style>
   header {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 20;
+    background: linear-gradient(
+      to bottom,
+      rgba(var(--primary-rgb), 1) 20%,
+      rgba(var(--primary-rgb), 0) 100%
+    );
+  }
+
+  .sources {
     display: flex;
     flex-direction: row;
     gap: 1rem;
@@ -205,5 +189,38 @@
   .selected {
     border-bottom: 2px solid var(--accent-color);
     text-decoration: none;
+  }
+
+  .loading {
+    height: 70vh;
+    width: 100%;
+    background: linear-gradient(
+        to right,
+        rgba(var(--primary-rgb), 0.8) 0%,
+        rgba(var(--primary-rgb), 0) 2%,
+        rgba(var(--primary-rgb), 0) 98%,
+        rgba(var(--primary-rgb), 0.8) 100%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(var(--primary-rgb), 1) 0%,
+        rgba(var(--primary-rgb), 0) 10%,
+        rgba(var(--primary-rgb), 0) 90%,
+        rgba(var(--primary-rgb), 1) 100%
+      ),
+      radial-gradient(
+        ellipse at 80%,
+        rgba(var(--primary-rgb), 0) 0%,
+        rgba(var(--primary-rgb), 0.7) 50%,
+        rgba(var(--primary-rgb), 1) 95%
+      ),
+      url("/assets/loading_failure.jpeg");
+    background-repeat: none;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .error__padding {
+    height: 7rem;
   }
 </style>

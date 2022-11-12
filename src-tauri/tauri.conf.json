@@ -146,7 +146,7 @@
     },
     "windows": [
       {
-        "title": "NineAnimator",
+        "title": "Layendanimator",
         "label": "main",
         "width": 1200,
         "height": 800,
@@ -159,7 +159,7 @@
         "transparent": true
       },
       {
-        "title": "NineAnimator",
+        "title": "Layendanimator",
         "url": "splashscreen.html",
         "label": "splashscreen",
         "width": 300,

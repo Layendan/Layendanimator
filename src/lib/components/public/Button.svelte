@@ -24,10 +24,12 @@
     font-size: 14px;
     font-weight: 500;
     transition: 0.2s;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
   }
 
   button:disabled {
-    opacity: 0.7;
+    opacity: 0.5;
     cursor: default;
   }
 
@@ -64,22 +66,22 @@
   }
 
   .active {
-    background-color: var(--active-color);
+    background: rgba(var(--active-rgb), 0.5);
     color: var(--text-color);
   }
 
   .active:not(:disabled):hover {
-    background-color: var(--active-hover-color);
+    background: var(--active-hover-color);
     color: var(--text-hover-color);
   }
 
   .danger {
-    background-color: var(--tertiary-color);
+    background: rgba(var(--tertiary-rgb), 0.5);
     color: var(--danger-color);
   }
 
   .danger:not(:disabled):hover {
-    background-color: var(--danger-color);
+    background: var(--danger-color);
     color: var(--text-hover-color);
   }
 
@@ -88,12 +90,12 @@
   }
 
   .default {
-    background-color: var(--tertiary-color);
+    background: rgba(var(--tertiary-rgb), 0.5);
     color: var(--text-color);
   }
 
   .default:not(:disabled):hover {
-    background-color: var(--accent-color);
+    background: var(--accent-color);
     color: var(--text-hover-color);
   }
 

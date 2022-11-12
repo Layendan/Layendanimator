@@ -2,75 +2,121 @@
   import { goto, prefetch } from "$app/navigation";
   import type { Anime } from "$lib/model/anime";
   import { onDestroy } from "svelte";
-  import { flip } from "svelte/animate";
   import { fade } from "svelte/transition";
   import Button from "../public/Button.svelte";
 
   export let source: string;
   export let medias: Anime[];
 
-  const rotateLeft = () => {
-    const transitioningImage = medias[medias.length - 1];
-    const element = document.getElementById(transitioningImage.id);
-    if (element) {
-      element.style.opacity = "0";
-      medias = [
-        medias[medias.length - 1],
-        ...medias.slice(0, medias.length - 1),
-      ];
-      setTimeout(() => (element.style.opacity = "1"), 1000);
-    }
-  };
+  // Start at first item since 0 is the last for looping around
+  let index: number = 1;
+  let innerWidth: number;
+  let duration: number = 0;
+  const transitionTime: number = 0.5;
 
-  const rotateRight = () => {
-    const transitioningImage = medias[0];
-    const element = document.getElementById(transitioningImage.id);
-    if (element) {
-      element.style.opacity = "0";
-      medias = [...medias.slice(1, medias.length), medias[0]];
-      setTimeout(() => (element.style.opacity = "1"), 1000);
-    }
-  };
+  let hovered: boolean = false;
 
-  let actioned: boolean = false;
-  let hovering: boolean = false;
+  function next() {
+    if (index === medias.length) index = 0;
+    setTimeout(() => {
+      duration = transitionTime;
+      index++;
+      setTimeout(() => {
+        duration = 0;
+      }, transitionTime * 1000);
+    }, 1);
+  }
+
+  function prev() {
+    if (index === 0) index = medias.length;
+    setTimeout(() => {
+      duration = transitionTime;
+      index--;
+      setTimeout(() => {
+        duration = 0;
+      }, transitionTime * 1000);
+    }, 1);
+  }
+
   let interval = setInterval(() => {
-    if (!hovering && !actioned) {
-      rotateRight();
-    } else if (actioned) {
-      actioned = false;
-    }
+    if (!hovered) next();
   }, 10000);
-
   onDestroy(() => clearInterval(interval));
 </script>
 
 <svelte:window
-  on:keydown={(event) => {
-    if (event.metaKey || event.ctrlKey) return;
-
-    if (event.key === "ArrowLeft") {
-      rotateLeft();
-      actioned = true;
-      event.preventDefault();
-    } else if (event.key === "ArrowRight") {
-      rotateRight();
-      actioned = true;
-      event.preventDefault();
+  bind:innerWidth
+  on:keydown={(e) => {
+    switch (e.key) {
+      case "ArrowLeft":
+        prev();
+        e.preventDefault();
+        break;
+      case "ArrowRight":
+        next();
+        e.preventDefault();
+        break;
     }
   }}
 />
 
-<div id="carousel-container">
-  <div id="carousel-images" class:even={medias.length % 2 === 0}>
-    {#each medias as media (media.id)}
-      <div
-        class="carousel-image"
-        id={media.id}
-        in:fade
-        animate:flip={{ duration: 1000 }}
-      >
-        <img src={media.bannerImage} alt={media.title.romaji} />
+<div class="carousel__container" in:fade>
+  <div
+    class="slider__container"
+    style="transition-duration: {duration}s; transform: translate3d(-{index *
+      innerWidth}px, 0, 0);"
+  >
+    <!-- Last Item -->
+    <div class="carousel__item" style="width: {innerWidth}px;">
+      <img
+        src={medias[medias.length - 1].bannerImage}
+        alt={medias[medias.length - 1].title.english ??
+          medias[medias.length - 1].title.native}
+      />
+      <div class="overlay" />
+      <div class="text">
+        <h1>
+          {medias[medias.length - 1].title.english ??
+            medias[medias.length - 1].title.romaji}
+        </h1>
+        <p class="secondary">
+          <b>
+            {#if medias[medias.length - 1].rating}
+              Score: [{medias[medias.length - 1].rating}]<br />
+            {/if}
+            {#if medias[medias.length - 1].releaseDate}
+              {medias[medias.length - 1].releaseDate} -
+            {/if}
+            {medias[medias.length - 1].status}
+          </b>
+        </p>
+        {#if medias[medias.length - 1].description}
+          <p>
+            {@html medias[medias.length - 1].description.replaceAll(
+              /(<\/?br>).*/g,
+              ""
+            )}
+          </p>
+        {/if}
+        <Button
+          size="fitContent"
+          on:click={() => goto(`/${source}/${medias[medias.length - 1]?.id}`)}
+          on:mouseenter={() => {
+            prefetch(`/${source}/${medias[medias.length - 1]?.id}`);
+          }}
+        >
+          <h2>Watch Now</h2>
+        </Button>
+      </div>
+    </div>
+
+    {#each medias as media}
+      <div class="carousel__item" style="width: {innerWidth}px;">
+        <img
+          src={media.bannerImage}
+          alt={media.title.english ?? media.title.native}
+        />
+        <div class="overlay" />
         <div class="text">
           <h1>{media.title.english ?? media.title.romaji}</h1>
           <p class="secondary">
@@ -92,95 +138,166 @@
             on:click={() => goto(`/${source}/${media?.id}`)}
             on:mouseenter={() => {
               prefetch(`/${source}/${media?.id}`);
-              hovering = true;
             }}
-            on:mouseleave={() => (hovering = false)}><h2>Watch Now</h2></Button
           >
+            <h2>Watch Now</h2>
+          </Button>
         </div>
       </div>
     {/each}
+
+    <!-- First Item -->
+    <div class="carousel__item" style="width: {innerWidth}px;">
+      <img
+        src={medias[0].bannerImage}
+        alt={medias[0].title.english ?? medias[0].title.native}
+      />
+      <div class="overlay" />
+      <div class="text">
+        <h1>{medias[0].title.english ?? medias[0].title.romaji}</h1>
+        <p class="secondary">
+          <b>
+            {#if medias[0].rating}
+              Score: [{medias[0].rating}]<br />
+            {/if}
+            {#if medias[0].releaseDate}
+              {medias[0].releaseDate} -
+            {/if}
+            {medias[0].status}
+          </b>
+        </p>
+        {#if medias[0].description}
+          <p>{@html medias[0].description.replaceAll(/(<\/?br>).*/g, "")}</p>
+        {/if}
+        <Button
+          size="fitContent"
+          on:click={() => goto(`/${source}/${medias[0]?.id}`)}
+          on:mouseover={() => {
+            prefetch(`/${source}/${medias[0]?.id}`);
+            hovered = true;
+          }}
+          on:mouseleave={() => (hovered = false)}
+        >
+          <h2>Watch Now</h2>
+        </Button>
+      </div>
+    </div>
   </div>
-  <button
-    class="left"
-    on:click={rotateLeft}
-    on:mouseenter={() => (hovering = true)}
-    on:mouseleave={() => (hovering = false)}
-    ><svg
-      version="1.1"
-      id="Capa_1"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-      stroke="#ffffff"
-      fill="#ffffff"
-      viewBox="0 0 25.451 25.451"
-      style="enable-background:new 0 0 25.451 25.451;"
-      ><g id="c185_triangle">
-        <path
-          d="M20.982,0.521v2.006L8.57,12.315c-0.121,0.101-0.195,0.251-0.195,0.41s0.074,0.311,0.195,0.41l12.412,9.79v2.005
-			c0,0.199-0.115,0.383-0.297,0.469c-0.178,0.086-0.395,0.064-0.549-0.061L4.664,13.136c-0.122-0.1-0.194-0.251-0.194-0.41
-			s0.072-0.31,0.194-0.41L20.136,0.113c0.154-0.126,0.371-0.148,0.549-0.061C20.866,0.139,20.982,0.322,20.982,0.521z"
-        />
-      </g></svg
-    ></button
-  >
-  <button
-    class="right"
-    on:click={rotateRight}
-    on:mouseenter={() => (hovering = true)}
-    on:mouseleave={() => (hovering = false)}
-    ><svg
-      version="1.1"
-      id="Capa_1"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-      stroke="#ffffff"
-      fill="#ffffff"
-      viewBox="0 0 25.451 25.451"
-      style="enable-background:new 0 0 25.451 25.451; transform: rotate(180deg);"
-      ><g id="c185_triangle">
-        <path
-          d="M20.982,0.521v2.006L8.57,12.315c-0.121,0.101-0.195,0.251-0.195,0.41s0.074,0.311,0.195,0.41l12.412,9.79v2.005
-			c0,0.199-0.115,0.383-0.297,0.469c-0.178,0.086-0.395,0.064-0.549-0.061L4.664,13.136c-0.122-0.1-0.194-0.251-0.194-0.41
-			s0.072-0.31,0.194-0.41L20.136,0.113c0.154-0.126,0.371-0.148,0.549-0.061C20.866,0.139,20.982,0.322,20.982,0.521z"
-        />
-      </g></svg
-    ></button
-  >
+
+  <!-- Button Container -->
+  <div class="buttons__container">
+    <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+    <button
+      class="button"
+      on:mouseover={() => (hovered = true)}
+      on:mouseout={() => (hovered = false)}
+      on:click={prev}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="feather feather-chevron-left"
+      >
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+    </button>
+    <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+    <button
+      class="button"
+      on:mouseover={() => (hovered = true)}
+      on:mouseout={() => (hovered = false)}
+      on:click={next}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="feather feather-chevron-right"
+      >
+        <polyline points="9 18 15 12 9 6" />
+      </svg>
+    </button>
+  </div>
 </div>
 
 <style>
-  #carousel-container {
-    width: 100vw;
-    height: 100%;
+  .carousel__container {
+    overflow: hidden;
+    z-index: 1;
     position: relative;
+    display: block;
+    height: 70vh;
+    width: 100%;
+  }
+
+  .buttons__container {
+    position: absolute;
+    right: 0;
+    bottom: 0;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
-  }
-  #carousel-images {
-    display: inline-flex;
-    justify-content: center;
-    flex-wrap: nowrap;
+    padding-right: 2rem;
+    padding-bottom: 3rem;
+    z-index: 2;
   }
 
-  .even {
-    transform: translateX(-50%);
+  .buttons__container .button {
+    background: rgba(var(--primary-rgb), 0.1);
+    color: white;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.5rem;
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    transition: 0.2s;
   }
 
-  .carousel-image {
-    display: inline-flex;
+  .buttons__container .button:hover {
+    background: rgba(var(--primary-rgb), 0.5);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  .slider__container {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    right: 0;
+    bottom: 0;
+    transition: transform 0s ease-in-out;
+  }
+
+  .carousel__item {
+    height: 100%;
+    display: block;
     position: relative;
-    width: 98vw;
-    height: 60vh;
-    gap: 1rem;
-    flex-shrink: 0;
-    margin: 1rem 1vw;
-    border-radius: 8px;
     overflow: hidden;
-    position: relative;
+    flex-shrink: 0;
+    transform-style: preserve-3d;
+    transition: width 0s ease;
   }
 
-  .carousel-image img {
+  .carousel__item img {
     position: absolute;
     top: 0;
     left: 0;
@@ -188,33 +305,50 @@
     height: 100%;
     aspect-ratio: 16/9;
     object-fit: cover;
-    border-radius: 8px;
   }
 
-  .text {
+  .carousel__item .overlay {
     position: absolute;
     top: 0;
     left: 0;
-    padding-left: 1rem;
-    padding-right: 5rem;
     width: 100%;
     height: 100%;
-    max-width: max(450px, 35vw);
-    display: flex;
-    width: auto;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.5rem;
     background: linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.9) 35%,
-      rgba(0, 0, 0, 0.5) 80%,
-      rgba(0, 0, 0, 0) 100%
-    );
+        to right,
+        rgba(var(--primary-rgb), 0.8) 0%,
+        rgba(var(--primary-rgb), 0) 2%,
+        rgba(var(--primary-rgb), 0) 98%,
+        rgba(var(--primary-rgb), 0.8) 100%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(var(--primary-rgb), 1) 0%,
+        rgba(var(--primary-rgb), 0) 10%,
+        rgba(var(--primary-rgb), 0) 90%,
+        rgba(var(--primary-rgb), 1) 100%
+      ),
+      radial-gradient(
+        ellipse at 80%,
+        rgba(var(--primary-rgb), 0) 0%,
+        rgba(var(--primary-rgb), 0.7) 50%,
+        rgba(var(--primary-rgb), 1) 95%
+      );
   }
 
-  .text h1 {
+  .carousel__item .text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 45%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    padding-left: 2rem;
+    padding-bottom: 3rem;
+  }
+
+  .carousel__item .text h1 {
     font-size: 3rem;
     margin: 0;
     display: -webkit-box;
@@ -223,52 +357,21 @@
     overflow: hidden;
   }
 
-  .text p {
+  .carousel__item .text p {
     color: var(--secondary-text-color);
-    margin: 0.5rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 4;
     overflow: hidden;
   }
 
-  .text p.secondary {
-    margin: 0 0.5rem;
+  .carousel__item .text p.secondary {
+    margin: 0.5rem 0;
   }
 
-  .text h2 {
+  .carousel__item .text h2 {
     margin: 0.2rem 1rem;
-  }
-
-  button {
-    position: absolute;
-    display: block;
-    bottom: 5%;
-    background: transparent;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-color);
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    z-index: 1;
-  }
-
-  button.left {
-    left: 2rem;
-  }
-
-  button.right {
-    right: 2rem;
-  }
-
-  #Capa_1 {
-    border-radius: 50%;
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    background: rgba(0, 0, 0, 0.4);
-    padding: 0.5rem;
-    width: 1rem;
-    height: 1rem;
   }
 </style>

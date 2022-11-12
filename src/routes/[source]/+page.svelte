@@ -29,22 +29,27 @@
 />
 
 <section>
+  <!-- TODO: Change this div to header and change header to flex -->
   <header>
-    {#each $activeSources as source}
-      <a
-        href={source.id}
-        class:selected={source.id === data.source.id}
-        data-sveltekit-prefetch
-      >
-        {capitalize(source.name)}
-      </a>
-    {/each}
+    <div class="sources">
+      {#each $activeSources as source}
+        <a
+          href={source.id}
+          class:selected={source.id === data.source.id}
+          data-sveltekit-prefetch
+        >
+          {capitalize(source.name)}
+        </a>
+      {/each}
+    </div>
+    <SearchBar source={data.source} />
   </header>
-  <SearchBar source={data.source} />
   {#await data.topAiring.data}
-    <div class="loading"><div class="item" /></div>
+    <div class="loading" />
   {:then medias}
     <Carousel source={data.source.id} {medias} />
+  {:catch}
+    <div class="error__padding" />
   {/await}
   {#if data.source.mainPage.recentEpisodes}
     <Section storageId="{data.source.id}-new-episodes:scroll">
@@ -158,6 +163,18 @@
 
 <style>
   header {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 20;
+    background: linear-gradient(
+      to bottom,
+      rgba(var(--primary-rgb), 1) 20%,
+      rgba(var(--primary-rgb), 0) 100%
+    );
+  }
+
+  .sources {
     display: flex;
     flex-direction: row;
     gap: 1rem;
@@ -175,41 +192,35 @@
   }
 
   .loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100vw;
-    height: 100%;
-  }
-
-  .loading .item {
-    display: inline-flex;
-    width: 98vw;
-    height: 60vh;
+    height: 70vh;
+    width: 100%;
     background: linear-gradient(
-      135deg,
-      var(--secondary-color) 0%,
-      var(--tertiary-color) 100%
-    );
-    border-radius: 8px;
-    margin: 1rem 1vw;
-    animation: loading 1s infinite both;
+        to right,
+        rgba(var(--primary-rgb), 0.8) 0%,
+        rgba(var(--primary-rgb), 0) 2%,
+        rgba(var(--primary-rgb), 0) 98%,
+        rgba(var(--primary-rgb), 0.8) 100%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(var(--primary-rgb), 1) 0%,
+        rgba(var(--primary-rgb), 0) 10%,
+        rgba(var(--primary-rgb), 0) 90%,
+        rgba(var(--primary-rgb), 1) 100%
+      ),
+      radial-gradient(
+        ellipse at 80%,
+        rgba(var(--primary-rgb), 0) 0%,
+        rgba(var(--primary-rgb), 0.7) 50%,
+        rgba(var(--primary-rgb), 1) 95%
+      ),
+      url("/assets/loading_failure.jpeg");
+    background-repeat: none;
+    background-size: cover;
+    background-position: center;
   }
 
-  @keyframes loading {
-    0% {
-      background: linear-gradient(
-        135deg,
-        var(--secondary-color) 0%,
-        var(--tertiary-color) 100%
-      );
-    }
-    100% {
-      background: linear-gradient(
-        135deg,
-        var(--tertiary-color) 0%,
-        var(--secondary-color) 100%
-      );
-    }
+  .error__padding {
+    height: 7rem;
   }
 </style>

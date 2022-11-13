@@ -19,24 +19,28 @@
 
   function next() {
     if (index === medias.length) index = 0;
-    setTimeout(() => {
-      duration = transitionTime;
-      index++;
+    requestAnimationFrame(() => {
       setTimeout(() => {
-        duration = 0;
-      }, transitionTime * 1000);
-    }, 1);
+        duration = transitionTime;
+        index++;
+        setTimeout(() => {
+          duration = 0;
+        }, transitionTime * 1000);
+      }, 0);
+    });
   }
 
   function prev() {
     if (index === 0) index = medias.length;
-    setTimeout(() => {
-      duration = transitionTime;
-      index--;
+    requestAnimationFrame(() => {
       setTimeout(() => {
-        duration = 0;
-      }, transitionTime * 1000);
-    }, 1);
+        duration = transitionTime;
+        index--;
+        setTimeout(() => {
+          duration = 0;
+        }, transitionTime * 1000);
+      }, 0);
+    });
   }
 
   let interval = setInterval(() => {
@@ -66,14 +70,15 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div
   class="carousel__container"
-  style="cursor: {dragStart === null ? "grab" : "grabbing"}"
+  style="cursor: {dragStart === null ? 'grab' : 'grabbing'}"
   draggable="true"
   in:fade
   on:mousedown={(e) => {
     if (e.button !== 0) return;
+    if (index === 0) index = medias.length;
+    else if (index === medias.length + 1) index = 1;
     dragStart = e.x;
     hovered = true;
-    console.log(dragStart);
     e.preventDefault();
   }}
   on:mousemove={(e) => {

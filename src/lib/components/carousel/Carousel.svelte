@@ -15,10 +15,11 @@
   const transitionTime: number = 0.5;
 
   let hovered: boolean = false;
+  let block: boolean = false;
   let dragStart: number | null = null;
 
   function next() {
-    if (index === medias.length) index = 0;
+    if (index >= medias.length) index = 0;
     requestAnimationFrame(() => {
       setTimeout(() => {
         duration = transitionTime;
@@ -28,10 +29,11 @@
         }, transitionTime * 1000);
       }, 0);
     });
+    block = true;
   }
 
   function prev() {
-    if (index === 0) index = medias.length;
+    if (index <= 0) index = medias.length;
     requestAnimationFrame(() => {
       setTimeout(() => {
         duration = transitionTime;
@@ -41,10 +43,12 @@
         }, transitionTime * 1000);
       }, 0);
     });
+    block = true;
   }
 
   let interval = setInterval(() => {
-    if (!hovered) next();
+    if (!hovered && !block) next();
+    block = false;
   }, 10000);
   onDestroy(() => clearInterval(interval));
 </script>

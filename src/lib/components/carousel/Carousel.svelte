@@ -70,6 +70,7 @@
   draggable="true"
   in:fade
   on:mousedown={(e) => {
+    if (e.button !== 0) return;
     dragStart = e.x;
     hovered = true;
     console.log(dragStart);

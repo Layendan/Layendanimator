@@ -31,7 +31,6 @@ export const load: PageLoad = ({ params, depends }) => {
         const anime: Anime =
           // @ts-ignore
           await iframe?.contentWindow?.getAnime?.(params.id);
-        iframe.remove();
         anime === undefined
           ? reject("Could not get Anime info")
           : resolve(anime);
@@ -39,6 +38,8 @@ export const load: PageLoad = ({ params, depends }) => {
       } catch (e) {
         console.error(e);
         reject(e);
+      } finally {
+        iframe.remove();
       }
     };
   });

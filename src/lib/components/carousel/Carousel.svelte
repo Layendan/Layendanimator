@@ -310,7 +310,7 @@
 
   .buttons__container .button {
     background: rgba(var(--primary-rgb), 0.1);
-    color: white;
+    color: var(--text-color);
     border: none;
     outline: none;
     cursor: pointer;

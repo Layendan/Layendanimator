@@ -30,11 +30,17 @@ export const load: PageLoad = ({ params, url }) => {
     iframe.style.display = "none";
     document.body.appendChild(iframe);
     iframe.onload = async () => {
-      // @ts-ignore
-      const data: Anime[] = await iframe?.contentWindow?.searchAnime?.(query);
-      iframe.remove();
-      window?.sessionStorage.setItem(`${query}-search`, JSON.stringify(data));
-      data === undefined ? reject("Could not get mirrors") : resolve(data);
+      try {
+        // @ts-ignore
+        const data: Anime[] = await iframe?.contentWindow?.searchAnime?.(query);
+        window?.sessionStorage.setItem(`${query}-search`, JSON.stringify(data));
+        data === undefined ? reject("Could not get mirrors") : resolve(data);
+      } catch (e) {
+        console.error(e);
+        reject(e);
+      } finally {
+        iframe.remove();
+      }
     };
   });
 

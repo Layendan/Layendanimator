@@ -37,6 +37,8 @@
   --text-color: #ffffff;
   --text-rgb: 255, 255, 255;
   --text-hover-color: #ffffff;
+  --secondary-text-color: #b3b3b3;
+  --secondary-text-rgb: 179, 179, 179;
   --danger-color: #dd3b3b;
   --danger-rgb: 221, 59, 59;
   --active-color: #2ea44f;
@@ -55,6 +57,8 @@
   --text-color: #000000;
   --text-rgb: 0, 0, 0;
   --text-hover-color: #ffffff;
+  --secondary-text-color: #3e3e3e;
+  --secondary-text-rgb: 62, 62, 62;
   --danger-color: #dd3b3b;
   --danger-rgb: 221, 59, 59;
   --active-color: #2ea44f;

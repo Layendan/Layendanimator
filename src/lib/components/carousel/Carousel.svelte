@@ -16,7 +16,7 @@
 
   let hovered: boolean = false;
   let block: boolean = false;
-  let dragStart: number | null = null;
+  let prevGrab: number | null = null;
 
   function next() {
     if (index >= medias.length) index = 0;
@@ -74,28 +74,28 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div
   class="carousel__container"
-  style="cursor: {dragStart === null ? 'grab' : 'grabbing'}"
+  style="cursor: {prevGrab === null ? 'grab' : 'grabbing'}"
   draggable="true"
   in:fade
   on:mousedown={(e) => {
     if (e.button !== 0) return;
     if (index === 0) index = medias.length;
     else if (index === medias.length + 1) index = 1;
-    dragStart = e.x;
+    prevGrab = e.x;
     hovered = true;
     e.preventDefault();
   }}
   on:mousemove={(e) => {
-    if (dragStart === null) return;
-    index = index - (e.x - dragStart) / innerWidth;
-    dragStart = e.x;
+    if (prevGrab === null) return;
+    index = index - (e.x - prevGrab) / innerWidth;
+    prevGrab = e.x;
     e.preventDefault();
   }}
   on:mouseup={(e) => {
-    if (dragStart === null) return;
+    if (prevGrab === null) return;
     duration = transitionTime;
     index = Math.round(index);
-    dragStart = null;
+    prevGrab = null;
     setTimeout(() => {
       duration = 0;
     }, transitionTime * 1000);
@@ -103,10 +103,10 @@
     e.preventDefault();
   }}
   on:mouseleave={(e) => {
-    if (dragStart === null) return;
+    if (prevGrab === null) return;
     duration = transitionTime;
     index = Math.round(index);
-    dragStart = null;
+    prevGrab = null;
     setTimeout(() => {
       duration = 0;
     }, transitionTime * 1000);

@@ -15,6 +15,7 @@
   const transitionTime: number = 0.5;
 
   let hovered: boolean = false;
+  let dragStart: number | null = null;
 
   function next() {
     if (index === medias.length) index = 0;
@@ -62,7 +63,47 @@
   }}
 />
 
-<div class="carousel__container" in:fade>
+<!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<div
+  class="carousel__container"
+  style="cursor: {dragStart === null ? "grab" : "grabbing"}"
+  draggable="true"
+  in:fade
+  on:mousedown={(e) => {
+    dragStart = e.x;
+    hovered = true;
+    console.log(dragStart);
+    e.preventDefault();
+  }}
+  on:mousemove={(e) => {
+    if (dragStart === null) return;
+    index = index - (e.x - dragStart) / innerWidth;
+    dragStart = e.x;
+    e.preventDefault();
+  }}
+  on:mouseup={(e) => {
+    if (dragStart === null) return;
+    duration = transitionTime;
+    index = Math.round(index);
+    dragStart = null;
+    setTimeout(() => {
+      duration = 0;
+    }, transitionTime * 1000);
+    hovered = false;
+    e.preventDefault();
+  }}
+  on:mouseleave={(e) => {
+    if (dragStart === null) return;
+    duration = transitionTime;
+    index = Math.round(index);
+    dragStart = null;
+    setTimeout(() => {
+      duration = 0;
+    }, transitionTime * 1000);
+    hovered = false;
+    e.preventDefault();
+  }}
+>
   <div
     class="slider__container"
     style="transition-duration: {duration}s; transform: translate3d(-{index *
@@ -243,6 +284,7 @@
     display: block;
     height: 70vh;
     width: 100%;
+    user-select: none;
   }
 
   .buttons__container {
@@ -265,6 +307,7 @@
     padding: 0.5rem;
     margin-bottom: 0.5rem;
     border-radius: 0.5rem;
+    z-index: 4;
     -webkit-backdrop-filter: blur(2px);
     backdrop-filter: blur(2px);
     transition: 0.2s;
@@ -348,6 +391,10 @@
     justify-content: end;
     padding-left: 2rem;
     padding-bottom: 3rem;
+  }
+
+  * {
+    user-select: none;
   }
 
   .carousel__item .text h1 {

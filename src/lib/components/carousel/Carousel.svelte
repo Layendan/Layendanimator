@@ -51,6 +51,18 @@
     block = false;
   }, 10000);
   onDestroy(() => clearInterval(interval));
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      clearInterval(interval);
+      interval = setInterval(() => {
+        if (!hovered && !block) next();
+        block = false;
+      }, 10000);
+    } else {
+      clearInterval(interval);
+    }
+  });
 </script>
 
 <svelte:window

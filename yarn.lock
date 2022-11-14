@@ -755,9 +755,9 @@ chownr@^2.0.0:
   integrity sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==
 
 ci-info@^3.2.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-3.5.0.tgz#bfac2a29263de4c829d806b1ab478e35091e171f"
-  integrity sha512-yH4RezKOGlOhxkmhbeNuC4eYZKAUsEaGtBuBzDDP1eFUKiccDWzBABxBfOx31IDwDIXMTxWuwAxUGModvkbuVw==
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-3.6.1.tgz#7594f1c95cb7fdfddee7af95a13af7dbc67afdcf"
+  integrity sha512-up5ggbaDqOqJ4UqLKZ2naVkyqSJQgJi5lwD6b6mM748ysrghDBX0bx/qJTUHzw7zu6Mq4gycviSF5hJnwceD8w==
 
 clean-stack@^2.0.0:
   version "2.2.0"
@@ -2312,10 +2312,10 @@ npm-bundled@^3.0.0:
   dependencies:
     npm-normalize-package-bin "^3.0.0"
 
-npm-check-updates@^16.3.22:
-  version "16.3.22"
-  resolved "https://registry.yarnpkg.com/npm-check-updates/-/npm-check-updates-16.3.22.tgz#119c61ef919ec3cd79cdf3422e1da9042a10b42a"
-  integrity sha512-GDqBHVduJuLInhEsgQ+BDCBr4C5oUnyja3OKNzJc1AX1utEd+tTjYvUnmZNeNE5WDizLCzKoy/3MA8+ionJypA==
+npm-check-updates@^16.3.25:
+  version "16.3.25"
+  resolved "https://registry.yarnpkg.com/npm-check-updates/-/npm-check-updates-16.3.25.tgz#58217d203040191c752cee2a35428aeb54f97a28"
+  integrity sha512-zrjx6P7LGHYS5e3TNuSqkWQc9m1KLjJIxFERGANN+xEY826NQYG08RwucUD9nRxIlRE9PsGCcMsJJTYJu1DHbA==
   dependencies:
     chalk "^5.1.2"
     cli-table "^0.3.11"

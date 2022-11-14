@@ -36,9 +36,8 @@
         { replaceState: true }
       );
     } else {
-      goto(`/${$page.params.source}/${$page.params.id}`, {
-        replaceState: true,
-      });
+      exitFullscreen();
+      history.back();
     }
   }
 

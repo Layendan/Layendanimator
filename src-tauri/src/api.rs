@@ -65,15 +65,3 @@ pub async fn add_module(link: String) -> Value {
 
     // return response_data.data;
 }
-
-#[command]
-pub fn fullscreen(window: tauri::Window, label: &str) {
-    // Only run the fullscreen command on windows since the actual window does not fullscreen
-    #![cfg(target_os = "windows")]
-    let target: tauri::Window = window
-        .get_window(if label.is_empty() { "main" } else { label })
-        .unwrap();
-
-    let is_fullscreen: bool = target.is_fullscreen().unwrap();
-    target.set_fullscreen(!is_fullscreen).unwrap();
-}

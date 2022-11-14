@@ -1,16 +1,10 @@
-import { get } from "svelte/store";
-import { activeSources, type ActiveSource } from "$lib/model/sources";
-import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 import type { Anime } from "$lib/model/anime";
 
 export const ssr = false;
 
-export const load: PageLoad = ({ params, depends }) => {
-  const source: ActiveSource | undefined = get(activeSources).find(
-    (item) => item.id === params.source
-  );
-  if (!source) throw error(400, "Invalid source");
+export const load: PageLoad = async ({ depends, parent }) => {
+  const { source } = await parent();
 
   // TODO: use fetch instead
   depends(source.id);

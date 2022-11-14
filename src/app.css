@@ -102,6 +102,10 @@
   background-color: rgba(var(--secondary-rgb), 0.7);
 }
 
+html {
+  overscroll-behavior: none;
+}
+
 body {
   position: relative;
   width: 100%;

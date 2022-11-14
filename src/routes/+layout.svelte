@@ -8,7 +8,7 @@
   import { history } from "$lib/model/history";
   import Footer from "$lib/components/footer/Footer.svelte";
   import type { ActiveSource } from "$lib/model/sources";
-	import { onMount } from "svelte";
+  import { onMount } from "svelte";
 
   export const ssr = false;
 
@@ -67,7 +67,7 @@
 
   onMount(() => {
     invoke("close_splashscreen");
-  })
+  });
 </script>
 
 <svelte:head>

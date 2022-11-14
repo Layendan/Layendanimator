@@ -20,11 +20,6 @@ export const load: PageLoad = async ({ url, params, parent, depends }) => {
 
   const mirrors: Promise<Mirror[]> = new Promise<Mirror[]>(
     (resolve, reject) => {
-      if (episode.mirrors) {
-        resolve(episode.mirrors);
-        return;
-      }
-
       const iframe = document.createElement("iframe");
       iframe.sandbox.add("allow-scripts", "allow-same-origin");
       iframe.srcdoc = `<script type="text/javascript" src="${source.srcPath}"></script>`;
@@ -35,7 +30,6 @@ export const load: PageLoad = async ({ url, params, parent, depends }) => {
           const data: Mirror[] =
             // @ts-ignore
             await iframe?.contentWindow?.getStreamingLinks?.(episode.id);
-          episode.mirrors = data;
           data === undefined ? reject("Could not get mirrors") : resolve(data);
         } catch (e) {
           reject(`Could not get mirrors: ${e}`);

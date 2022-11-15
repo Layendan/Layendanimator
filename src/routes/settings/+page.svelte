@@ -21,7 +21,7 @@
   import { animes } from "$lib/model/anime";
   import { goto, invalidateAll } from "$app/navigation";
   import { fade } from "svelte/transition";
-  import { getVersion } from "@tauri-apps/api/app";
+  import { getVersion, show } from "@tauri-apps/api/app";
   import { open, save, confirm } from "@tauri-apps/api/dialog";
   import { downloadDir, appDir, join, basename } from "@tauri-apps/api/path";
   import { sendNotification } from "@tauri-apps/api/notification";
@@ -36,9 +36,11 @@
     type FsOptions,
   } from "@tauri-apps/api/fs";
   import ExternalIcon from "$lib/components/assets/ExternalIcon.svelte";
+  import Modal from "$lib/components/public/Modal.svelte";
 
   const client_id: string = "4602";
   let systemTheme: "light" | "dark" = "light";
+  let showModal: boolean = false;
 
   getCurrent().onThemeChanged(
     (theme) => (systemTheme = theme.payload as "dark" | "light")
@@ -276,214 +278,220 @@
   }
 </script>
 
-<main in:fade>
-  <Group title="Settings" description="General Settings">
-    <Toggle
-      on:change={() => ($settings.allowNSFW = !$settings.allowNSFW)}
-      checked={$settings.allowNSFW}
-    >
-      Display NSFW Animes
-    </Toggle>
-    <Toggle
-      on:change={() => ($settings.ordered = !$settings.ordered)}
-      checked={!$settings.ordered}
-    >
-      Reverse Episode Order
-    </Toggle>
-    <Toggle
-      on:change={() => ($settings.reduceMotion = !$settings.reduceMotion)}
-      checked={$settings.reduceMotion}
-    >
-      Reduce Motion
-    </Toggle>
-    <Toggle
-      on:change={() => ($settings.showProgress = !$settings.showProgress)}
-      checked={$settings.showProgress}
-    >
-      Always Show Episode Progress
-    </Toggle>
-    <Toggle
-      on:change={() =>
-        ($settings.animeLanguage =
-          $settings.animeLanguage === "english" ? "native" : "english")}
-      checked={$settings.animeLanguage === "english"}
-    >
-      Change Anime Language - {capitalize($settings.animeLanguage)}
-    </Toggle>
-  </Group>
-  <Group
-    title="Sources"
-    description="Edit sources to use for searching and browsing"
-  >
-    <SourceInput />
-    {#if $activeSources.length > 0}
-      <SourcesDragDropList bind:data={$activeSources} />
-    {/if}
-  </Group>
-  <Group
-    title="Third-Party Connections"
-    description="Connect to third-party services"
-  >
-    <!-- TODO: Read from plugins and each loop -->
-    <!-- { name: anilist, link: https://anilist.co/api/v2/oauth/authorize?client_id=${client_id}&response_type=token, callback?: voidfunction } -->
-    <!-- Remove the disabled when Tauri comes out with deep linking -->
-    <Button
-      on:click={() =>
-        shellOpen(
-          `https://anilist.co/api/v2/oauth/authorize?client_id=${client_id}&response_type=token`
-        )}
-      disabled={!!$connections["anilist"] || true}
-    >
-      <span>
-        {!$connections["anilist"] ? "Connect" : "Connected"} to Anilist
-        <img src={anilistIcon} alt="anilist" />
-      </span>
-    </Button>
-    <Button
-      on:click={() =>
-        goto(
-          `https://anilist.co/api/v2/oauth/authorize?client_id=${client_id}&response_type=token`
-        )}
-      disabled={!!$connections["anilist"]}
-    >
-      <span>
-        {!$connections["anilist"] ? "Connect" : "Connected"} to Anilist
-        <img src={anilistIcon} alt="anilist" />
-      </span>
-    </Button>
-  </Group>
-  <Group title="Notifications" description="Notification Settings">
-    <Toggle
-      on:change={() =>
-        ($settings.notifications.enabled = !$settings.notifications.enabled)}
-      checked={$settings.notifications.enabled}
-    >
-      Enable Notifications
-    </Toggle>
-    <Toggle
-      on:change={() =>
-        ($settings.notifications.grouped = !$settings.notifications.grouped)}
-      checked={$settings.notifications.grouped}
-      disabled={!$settings.notifications.enabled}
-    >
-      Group Notifications
-    </Toggle>
-    <Button
-      on:click={() =>
-        sendNotification({
-          title: "Test Notification",
-          body: "This is a test notification",
-        })}>Test Notification</Button
-    >
-  </Group>
-  <Group title="Customization" description="Personalize the App">
-    <div class="theme-holder">
-      <ThemePreview
-        theme="dark"
-        selected={!$settings.theme.syncWithSystem &&
-          $settings.theme.appearance === "dark"}
-        on:click={() =>
-          ($settings.theme = {
-            custom: undefined,
-            syncWithSystem: false,
-            appearance: "dark",
-          })}>Dark Mode</ThemePreview
+<Modal bind:showModal captureScroll>
+  <main slot="content" in:fade>
+    <Group title="Settings" description="General Settings">
+      <Toggle
+        on:change={() => ($settings.allowNSFW = !$settings.allowNSFW)}
+        checked={$settings.allowNSFW}
       >
-      <ThemePreview
-        theme="light"
-        selected={!$settings.theme.syncWithSystem &&
-          $settings.theme.appearance === "light"}
-        on:click={() =>
-          ($settings.theme = {
-            custom: undefined,
-            syncWithSystem: false,
-            appearance: "light",
-          })}>Light Mode</ThemePreview
+        Display NSFW Animes
+      </Toggle>
+      <Toggle
+        on:change={() => ($settings.ordered = !$settings.ordered)}
+        checked={!$settings.ordered}
       >
-      {#await getSystemTheme() then}
+        Reverse Episode Order
+      </Toggle>
+      <Toggle
+        on:change={() => ($settings.reduceMotion = !$settings.reduceMotion)}
+        checked={$settings.reduceMotion}
+      >
+        Reduce Motion
+      </Toggle>
+      <Toggle
+        on:change={() => ($settings.showProgress = !$settings.showProgress)}
+        checked={$settings.showProgress}
+      >
+        Always Show Episode Progress
+      </Toggle>
+      <Toggle
+        on:change={() =>
+          ($settings.animeLanguage =
+            $settings.animeLanguage === "english" ? "native" : "english")}
+        checked={$settings.animeLanguage === "english"}
+      >
+        Change Anime Language - {capitalize($settings.animeLanguage)}
+      </Toggle>
+    </Group>
+    <Group
+      title="Sources"
+      description="Edit sources to use for searching and browsing"
+    >
+      <SourceInput />
+      {#if $activeSources.length > 0}
+        <SourcesDragDropList bind:data={$activeSources} />
+      {/if}
+    </Group>
+    <Group
+      title="Third-Party Connections"
+      description="Connect to third-party services"
+    >
+      <!-- TODO: Read from plugins and each loop -->
+      <!-- { name: anilist, link: https://anilist.co/api/v2/oauth/authorize?client_id=${client_id}&response_type=token, callback?: voidfunction } -->
+      <!-- Remove the disabled when Tauri comes out with deep linking -->
+      <Button
+        on:click={() =>
+          shellOpen(
+            `https://anilist.co/api/v2/oauth/authorize?client_id=${client_id}&response_type=token`
+          )}
+        disabled={!!$connections["anilist"] || true}
+      >
+        <span>
+          {!$connections["anilist"] ? "Connect" : "Connected"} to Anilist
+          <img src={anilistIcon} alt="anilist" />
+        </span>
+      </Button>
+      <Button
+        on:click={() =>
+          goto(
+            `https://anilist.co/api/v2/oauth/authorize?client_id=${client_id}&response_type=token`
+          )}
+        disabled={!!$connections["anilist"]}
+      >
+        <span>
+          {!$connections["anilist"] ? "Connect" : "Connected"} to Anilist
+          <img src={anilistIcon} alt="anilist" />
+        </span>
+      </Button>
+    </Group>
+    <Group title="Notifications" description="Notification Settings">
+      <Toggle
+        on:change={() =>
+          ($settings.notifications.enabled = !$settings.notifications.enabled)}
+        checked={$settings.notifications.enabled}
+      >
+        Enable Notifications
+      </Toggle>
+      <Toggle
+        on:change={() =>
+          ($settings.notifications.grouped = !$settings.notifications.grouped)}
+        checked={$settings.notifications.grouped}
+        disabled={!$settings.notifications.enabled}
+      >
+        Group Notifications
+      </Toggle>
+      <Button
+        on:click={() =>
+          sendNotification({
+            title: "Test Notification",
+            body: "This is a test notification",
+          })}>Test Notification</Button
+      >
+      <Button on:click={() => (showModal = true)}>Test Modal</Button>
+    </Group>
+    <Group title="Customization" description="Personalize the App">
+      <div class="theme-holder">
         <ThemePreview
-          theme={systemTheme ?? "light"}
-          selected={$settings.theme.syncWithSystem}
+          theme="dark"
+          selected={!$settings.theme.syncWithSystem &&
+            $settings.theme.appearance === "dark"}
           on:click={() =>
             ($settings.theme = {
               custom: undefined,
-              syncWithSystem: true,
-              appearance: systemTheme ?? "light",
-            })}>Sync With System</ThemePreview
+              syncWithSystem: false,
+              appearance: "dark",
+            })}>Dark Mode</ThemePreview
         >
-      {/await}
-      {#each $settings.customThemes as theme}
         <ThemePreview
-          theme={theme.name}
-          selected={$settings.theme.custom?.source === theme.source}
+          theme="light"
+          selected={!$settings.theme.syncWithSystem &&
+            $settings.theme.appearance === "light"}
           on:click={() =>
             ($settings.theme = {
-              custom: theme,
+              custom: undefined,
               syncWithSystem: false,
-              appearance: "custom",
-            })}>{capitalize(theme.name)}</ThemePreview
+              appearance: "light",
+            })}>Light Mode</ThemePreview
         >
-      {/each}
-    </div>
-    <block>
-      <Button
-        size="medium"
-        on:click={async () =>
-          ($settings.customThemes = [
-            ...$settings.customThemes,
-            ...(await importCustomThemes()),
-          ].sort((a, b) => a.name.localeCompare(b.name)))}>Import Theme</Button
-      >
-      <Button size="medium">Export Theme</Button>
-    </block>
-  </Group>
-  <Group title="About" description="About Layendanimator">
-    <ExternalLink href="https://github.com/Layendan/NineAnimator-Tauri">
-      About
-      <ExternalIcon />
-    </ExternalLink>
-    <ExternalLink href="https://github.com/Layendan/NineAnimator-Tauri">
-      Github Repository
-      <ExternalIcon />
-    </ExternalLink>
-  </Group>
-  <Group title="Data & Privacy" description="Manage your Data and Privacy">
-    <block>
-      <Button size="medium" on:click={exportSettings}>Create Backup</Button>
-      <Button size="medium" on:click={importSettings}>Import Backup</Button>
-      <Button size="medium" on:click={clearCache}>Clear Cached Data</Button>
-      <Button size="medium" on:click={clearSources}>Clear Sources</Button>
-      <Button size="medium" on:click={clearSearchHistory}
-        >Clear Search History</Button
-      >
-      <Button size="medium" on:click={clearBrowseHistory}
-        >Clear Browse History</Button
-      >
-      <Button size="medium" on:click={clearDownloads}>Clear Downloads</Button>
-      <Button size="medium" on:click={clearSubscriptions}
-        >Clear Subscriptions</Button
-      >
-      <Button size="medium" on:click={clearThemes}>Clear Themes</Button>
-      <Button size="medium" on:click={clearConnections}
-        >Clear Connections</Button
-      >
-      <Button
-        size="medium"
-        type="danger"
-        on:click={async () =>
-          (await confirm("(There is no going back)", {
-            title: "Are you sure you want to reset everything?",
-            type: "warning",
-          })) && reset()}>Reset</Button
-      >
-    </block>
-  </Group>
-</main>
+        {#await getSystemTheme() then}
+          <ThemePreview
+            theme={systemTheme ?? "light"}
+            selected={$settings.theme.syncWithSystem}
+            on:click={() =>
+              ($settings.theme = {
+                custom: undefined,
+                syncWithSystem: true,
+                appearance: systemTheme ?? "light",
+              })}>Sync With System</ThemePreview
+          >
+        {/await}
+        {#each $settings.customThemes as theme}
+          <ThemePreview
+            theme={theme.name}
+            selected={$settings.theme.custom?.source === theme.source}
+            on:click={() =>
+              ($settings.theme = {
+                custom: theme,
+                syncWithSystem: false,
+                appearance: "custom",
+              })}>{capitalize(theme.name)}</ThemePreview
+          >
+        {/each}
+      </div>
+      <block>
+        <Button
+          size="medium"
+          on:click={async () =>
+            ($settings.customThemes = [
+              ...$settings.customThemes,
+              ...(await importCustomThemes()),
+            ].sort((a, b) => a.name.localeCompare(b.name)))}
+          >Import Theme</Button
+        >
+        <Button size="medium">Export Theme</Button>
+      </block>
+    </Group>
+    <Group title="About" description="About Layendanimator">
+      <ExternalLink href="https://github.com/Layendan/NineAnimator-Tauri">
+        About
+        <ExternalIcon />
+      </ExternalLink>
+      <ExternalLink href="https://github.com/Layendan/NineAnimator-Tauri">
+        Github Repository
+        <ExternalIcon />
+      </ExternalLink>
+    </Group>
+    <Group title="Data & Privacy" description="Manage your Data and Privacy">
+      <block>
+        <Button size="medium" on:click={exportSettings}>Create Backup</Button>
+        <Button size="medium" on:click={importSettings}>Import Backup</Button>
+        <Button size="medium" on:click={clearCache}>Clear Cached Data</Button>
+        <Button size="medium" on:click={clearSources}>Clear Sources</Button>
+        <Button size="medium" on:click={clearSearchHistory}
+          >Clear Search History</Button
+        >
+        <Button size="medium" on:click={clearBrowseHistory}
+          >Clear Browse History</Button
+        >
+        <Button size="medium" on:click={clearDownloads}>Clear Downloads</Button>
+        <Button size="medium" on:click={clearSubscriptions}
+          >Clear Subscriptions</Button
+        >
+        <Button size="medium" on:click={clearThemes}>Clear Themes</Button>
+        <Button size="medium" on:click={clearConnections}
+          >Clear Connections</Button
+        >
+        <Button
+          size="medium"
+          type="danger"
+          on:click={async () =>
+            (await confirm("(There is no going back)", {
+              title: "Are you sure you want to reset everything?",
+              type: "warning",
+            })) && reset()}>Reset</Button
+        >
+      </block>
+    </Group>
+  </main>
+  <p slot="modalContent">Test Modal</p>
+</Modal>
 
 <style>
   main {
-    display: inline-flex;
+    display: flex;
     flex-direction: column;
+    width: auto;
     margin: 2rem;
     margin-top: 5rem;
     row-gap: 1rem;

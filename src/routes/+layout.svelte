@@ -87,24 +87,25 @@
   on:online={() => console.log("window is back online")}
 />
 
-<body
+<main
   class={$settings.theme.appearance === "custom"
     ? $settings.theme.custom?.name ?? "dark"
     : $settings.theme.appearance}
 >
-  <main>
+  <div class="main">
     <slot />
-  </main>
+  </div>
 
   <Footer />
-</body>
+</main>
 
 <style>
-  body {
+  main {
     min-height: 100vh;
+    overflow: hidden;
   }
 
-  main {
+  div.main {
     background: var(--primary-color);
     color: var(--text-color);
     flex: 1;
@@ -113,5 +114,6 @@
     width: 100%;
     margin: 0 auto;
     padding-bottom: 5rem;
+    overflow: auto;
   }
 </style>

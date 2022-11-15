@@ -182,10 +182,6 @@
     margin: 1rem;
   }
 
-  * {
-    scrollbar-width: thin;
-  }
-
   .selected {
     border-bottom: 2px solid var(--accent-color);
     text-decoration: none;

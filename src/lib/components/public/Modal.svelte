@@ -58,15 +58,11 @@
     transform: scale(1) translateY(0);
     -webkit-filter: blur(0);
     filter: blur(0);
-    transition: transform var(--duration) ease-in-out,
-      -webkit-filter var(--duration) ease-in-out,
-      filter var(--duration) ease-in-out;
+    transition: transform var(--duration) ease-in-out;
   }
 
   .content.hidden {
     transform: scale(1.01);
-    -webkit-filter: blur(10px);
-    filter: blur(10px);
   }
 
   .overlay {
@@ -75,7 +71,9 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(var(--primary-rgb), 0.8);
+    background: rgba(var(--primary-rgb), 0.8);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
     cursor: pointer;
     z-index: 100;
   }

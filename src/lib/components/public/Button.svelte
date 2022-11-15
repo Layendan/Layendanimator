@@ -9,9 +9,17 @@
     | "fitContent"
     | "all" = "fitContent";
   export let disabled: boolean = false;
+  export let removeFromTabOrder: boolean = false;
 </script>
 
-<button on:click on:mouseenter on:mouseleave class="{type} {size}" {disabled}>
+<button
+  on:click
+  on:mouseenter
+  on:mouseleave
+  class="{type} {size}"
+  {disabled}
+  tabindex={removeFromTabOrder ? -1 : 0}
+>
   <slot />
 </button>
 

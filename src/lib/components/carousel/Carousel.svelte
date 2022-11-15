@@ -165,6 +165,7 @@
         {/if}
         <Button
           size="fitContent"
+          removeFromTabOrder={true}
           on:click={() => goto(`/${source}/${medias[medias.length - 1]?.id}`)}
           on:mouseenter={() => {
             prefetch(`/${source}/${medias[medias.length - 1]?.id}`);
@@ -200,6 +201,7 @@
           {/if}
           <Button
             size="fitContent"
+            removeFromTabOrder={true}
             on:click={() => goto(`/${source}/${media?.id}`)}
             on:mouseenter={() => {
               prefetch(`/${source}/${media?.id}`);
@@ -236,6 +238,7 @@
         {/if}
         <Button
           size="fitContent"
+          removeFromTabOrder={true}
           on:click={() => goto(`/${source}/${medias[0]?.id}`)}
           on:mouseover={() => {
             prefetch(`/${source}/${medias[0]?.id}`);
@@ -335,7 +338,7 @@
     transition: 0.2s;
   }
 
-  .buttons__container .button:hover {
+  .buttons__container .button:is(:hover, :focus-visible) {
     background: rgba(var(--primary-rgb), 0.5);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);

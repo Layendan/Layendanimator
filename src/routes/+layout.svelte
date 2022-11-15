@@ -105,7 +105,7 @@
   }
 
   main {
-    background-color: var(--primary-color);
+    background: var(--primary-color);
     color: var(--text-color);
     flex: 1;
     display: flex;

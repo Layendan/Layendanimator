@@ -112,7 +112,7 @@ body {
   height: 100%;
   overflow-x: hidden;
   scroll-behavior: smooth;
-  background-color: var(--primary-color);
+  background: var(--primary-color);
   accent-color: var(--accent-color);
 }
 

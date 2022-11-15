@@ -19,6 +19,7 @@ serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 # TODO: remove devtools dependency for safety reasons
 tauri = { version = "1.0.0", features = ["api-all", "devtools", "macos-private-api", "updater"] }
+window-vibrancy = "0.3.1"
 
 [features]
 # by default Tauri runs in production mode

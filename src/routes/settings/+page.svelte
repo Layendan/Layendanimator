@@ -484,7 +484,11 @@
       </block>
     </Group>
   </main>
-  <p slot="modalContent">Test Modal</p>
+
+  <!--<Modal Content>-->
+  <Group title="Test Modal" slot="modalContent">
+    <p>Test Modal</p>
+  </Group>
 </Modal>
 
 <style>

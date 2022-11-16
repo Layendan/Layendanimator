@@ -25,6 +25,10 @@
   >
     <img class="bg" src={episode.thumbnail} alt="" />
     <div class="bg progress" style="width: {episode.percentWatched ?? '0'}%;" />
+    <div
+      class="small__progress"
+      style="width: {episode.percentWatched ?? '0'}%;"
+    />
     <span>
       {#if thumbnail}
         <img
@@ -72,6 +76,14 @@
     transition: width 0.5s ease-in-out, opacity 0.4s ease-in-out;
   }
 
+  .small__progress {
+    position: absolute;
+    height: 2px;
+    left: 0;
+    bottom: 0;
+    background: rgba(var(--accent-rgb), 0.5);
+  }
+
   .image {
     position: relative;
     display: block;
@@ -87,7 +99,7 @@
   }
 
   .episode {
-    background-color: var(--secondary-color);
+    background: var(--secondary-color);
     border-radius: 5px;
     margin-left: 2em;
     margin-right: 2em;
@@ -96,11 +108,11 @@
     margin-top: 5px;
     overflow: hidden;
     position: relative;
-    transition: background-color 0.1s ease-in-out;
+    transition: background 0.1s ease-in-out;
   }
 
   .episode:hover {
-    background-color: var(--tertiary-color);
+    background: var(--tertiary-color);
   }
 
   .episode:hover .bg {
@@ -122,7 +134,7 @@
 
   .episode:focus-within {
     outline: 1px solid var(--accent-color);
-    background-color: var(--tertiary-color);
+    background: var(--tertiary-color);
   }
 
   .episode:focus-within .bg {

@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^1.0.0-next.48",
-    "@sveltejs/kit": "1.0.0-next.546",
+    "@sveltejs/kit": "1.0.0-next.548",
     "@tauri-apps/cli": "^1.2.0",
     "@types/dompurify": "^2.4.0",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
@@ -35,7 +35,7 @@
     "svelte-check": "^2.9.2",
     "svelte-preprocess": "^4.10.7",
     "tslib": "^2.4.1",
-    "typescript": "~4.8.4"
+    "typescript": "~4.9.3"
   },
   "type": "module",
   "dependencies": {
@@ -43,6 +43,6 @@
     "@tauri-apps/api": "^1.2.0",
     "hls.js": "^1.2.7",
     "radix-icons-svelte": "^1.2.1",
-    "vite": "^3.2.3"
+    "vite": "^3.2.4"
   }
 }

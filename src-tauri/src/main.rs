@@ -11,7 +11,7 @@ mod api;
 
 use api::{add_module, close_splashscreen, search_anime};
 use tauri::Manager;
-use window_vibrancy::{apply_blur, apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState};
+use window_vibrancy::{apply_mica, apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState};
 
 fn main() {
     let ctx = tauri::generate_context!();
@@ -31,7 +31,7 @@ fn main() {
             }
             #[cfg(target_os = "windows")]
             {
-                apply_blur(&window, Some((31, 31, 31, 31)))
+                apply_mica(&window)
                     .expect("Unsupported platform! 'apply_blur' is only supported on Windows");
             }
             Ok(())

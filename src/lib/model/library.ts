@@ -21,3 +21,14 @@ export const library = writable<Library>({
   subscriptions: [],
   downloads: [],
 });
+
+library.subscribe((item) => {
+  window.localStorage.setItem(
+    `library/subscriptions`,
+    JSON.stringify(item.subscriptions)
+  );
+  window.localStorage.setItem(
+    `library/downloads`,
+    JSON.stringify(item.downloads)
+  );
+});

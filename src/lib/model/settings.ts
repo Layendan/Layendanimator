@@ -1,4 +1,5 @@
-import { writable } from "svelte/store";
+import { get, writable } from "svelte/store";
+import { getCurrent } from "@tauri-apps/api/window";
 import type { ActiveSource } from "./sources";
 import type { History } from "./history";
 
@@ -116,3 +117,10 @@ export interface Schema {
 export const schema = {
   schemaVersion: 0.1,
 };
+
+getCurrent().onThemeChanged((event) => {
+  console.log(`Theme changed to ${event.payload}`);
+  get(settings).theme.syncWithSystem &&
+    (get(settings).theme.appearance =
+      (event.payload as "dark" | "light") ?? "light");
+});

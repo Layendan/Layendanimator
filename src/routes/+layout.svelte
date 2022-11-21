@@ -1,69 +1,13 @@
 <script lang="ts">
   import { settings } from "$lib/model/settings";
-  import { library } from "$lib/model/library";
   import "../app.css";
   import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
-  import { getCurrent } from "@tauri-apps/api/window";
-  import type { Anime } from "$lib/model/anime";
-  import { history } from "$lib/model/history";
   import Footer from "$lib/components/footer/Footer.svelte";
-  import type { ActiveSource } from "$lib/model/sources";
   import { onMount } from "svelte";
 
   export const ssr = false;
 
   let online: boolean;
-
-  $library = {
-    downloads:
-      (JSON.parse(
-        window.localStorage.getItem("library/downloads") ?? "null"
-      ) as {
-        anime: Anime;
-        path: string;
-      }[]) ?? [],
-    subscriptions:
-      (JSON.parse(
-        window.localStorage.getItem("library/subscriptions") ?? "null"
-      ) as {
-        media: Anime;
-        source?: ActiveSource;
-      }[]) ?? [],
-  };
-
-  $history = {
-    search:
-      (JSON.parse(
-        window.localStorage.getItem("history/search") ?? "null"
-      ) as string[]) ?? [],
-    browse:
-      (JSON.parse(
-        window.localStorage.getItem("history/browse") ?? "null"
-      ) as Anime[]) ?? [],
-  };
-
-  getCurrent().onThemeChanged((event) => {
-    console.log(`Theme changed to ${event.payload}`);
-    $settings.theme.syncWithSystem &&
-      ($settings.theme.appearance =
-        (event.payload as "dark" | "light") ?? "light");
-  });
-
-  library.subscribe((item) => {
-    window.localStorage.setItem(
-      `library/subscriptions`,
-      JSON.stringify(item.subscriptions)
-    );
-    window.localStorage.setItem(
-      `library/downloads`,
-      JSON.stringify(item.downloads)
-    );
-  });
-
-  history.subscribe((item) => {
-    window.localStorage.setItem(`history/search`, JSON.stringify(item.search));
-    window.localStorage.setItem(`history/browse`, JSON.stringify(item.browse));
-  });
 
   onMount(() => {
     invoke("close_splashscreen");

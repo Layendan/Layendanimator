@@ -32,7 +32,7 @@
   in:fade={{ delay }}
   href="/{source}/{media?.id}"
   class:unselectable={!media || !media?.id}
-  data-sveltekit-prefetch
+  data-sveltekit-preload-data
   on:click
   style:--color={color}
 >

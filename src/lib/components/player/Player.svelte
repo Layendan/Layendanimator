@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { goto, invalidate, prefetch } from "$app/navigation";
+  import { goto, invalidate, preloadData } from "$app/navigation";
   import { page } from "$app/stores";
   import { onDestroy, onMount } from "svelte";
   import { getCurrent } from "@tauri-apps/api/window";
@@ -83,7 +83,7 @@
       }
     });
     if (nextEpisode)
-      prefetch(
+      preloadData(
         `/${$page.params.source}/${$page.params.id}/watch?episode=${nextEpisode.number}`
       );
   });

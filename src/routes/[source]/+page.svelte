@@ -36,7 +36,7 @@
         <a
           href={source.id}
           class:selected={source.id === data.source.id}
-          data-sveltekit-prefetch
+          data-sveltekit-preload-data
         >
           {capitalize(source.name)}
         </a>

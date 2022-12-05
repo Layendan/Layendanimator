@@ -18,16 +18,18 @@ export interface Library {
  * Library store used for the Library domain route.
  */
 export const library = writable<Library>({
-	subscriptions:
-		(JSON.parse(window.localStorage.getItem('library/subscriptions') ?? 'null') as {
-			media: Anime;
-			source?: ActiveSource;
-		}[]) ?? [],
-	downloads:
-		(JSON.parse(window.localStorage.getItem('library/downloads') ?? 'null') as {
-			anime: Anime;
-			path: string;
-		}[]) ?? [],
+  subscriptions:
+    (JSON.parse(
+      window.localStorage.getItem("library/subscriptions") ?? "null"
+    ) as {
+      media: Anime;
+      source?: ActiveSource;
+    }[]) ?? [],
+  downloads:
+    (JSON.parse(window.localStorage.getItem("library/downloads") ?? "null") as {
+      anime: Anime;
+      path: string;
+    }[]) ?? [],
 });
 
 library.subscribe((item) => {

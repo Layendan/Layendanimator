@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { goto, prefetch } from "$app/navigation";
+  import { goto, preloadData } from "$app/navigation";
   import type { Anime } from "$lib/model/anime";
   import { onDestroy } from "svelte";
   import { fade } from "svelte/transition";
@@ -168,7 +168,7 @@
           removeFromTabOrder={true}
           on:click={() => goto(`/${source}/${medias[medias.length - 1]?.id}`)}
           on:mouseenter={() => {
-            prefetch(`/${source}/${medias[medias.length - 1]?.id}`);
+            preloadData(`/${source}/${medias[medias.length - 1]?.id}`);
           }}
         >
           <h2>Watch Now</h2>
@@ -204,7 +204,7 @@
             removeFromTabOrder={true}
             on:click={() => goto(`/${source}/${media?.id}`)}
             on:mouseenter={() => {
-              prefetch(`/${source}/${media?.id}`);
+              preloadData(`/${source}/${media?.id}`);
             }}
           >
             <h2>Watch Now</h2>
@@ -241,7 +241,7 @@
           removeFromTabOrder={true}
           on:click={() => goto(`/${source}/${medias[0]?.id}`)}
           on:mouseover={() => {
-            prefetch(`/${source}/${medias[0]?.id}`);
+            preloadData(`/${source}/${medias[0]?.id}`);
             hovered = true;
           }}
           on:mouseleave={() => (hovered = false)}

@@ -11,6 +11,7 @@
   import ExternalLink from "$lib/components/public/ExternalLink.svelte";
 
   export let data: PageData;
+  export const ssr = false;
 
   let selectedMirror: number = 0;
   let name: string =

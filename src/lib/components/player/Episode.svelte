@@ -17,11 +17,13 @@
     on:click|preventDefault={() =>
       goto(
         `/${$page.params.source}/${$page.params.id}/watch?episode=${episode.number}`,
-        { replaceState: shouldReplace }
+        {
+          replaceState: shouldReplace,
+        }
       )}
     href="/{$page.params.source}/{$page.params
       .id}/watch?episode={episode.number}"
-    data-sveltekit-prefetch
+    data-sveltekit-preload-data
   >
     <img class="bg" src={episode.thumbnail} alt="" />
     <div class="bg progress" style="width: {episode.percentWatched ?? '0'}%;" />

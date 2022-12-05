@@ -3,6 +3,7 @@
   import type { LayoutData } from "./$types";
 
   export let data: LayoutData;
+  export const ssr = false;
 
   let isTheaterMode: boolean = false;
 </script>

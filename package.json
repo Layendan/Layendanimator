@@ -19,20 +19,20 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^1.0.0-next.48",
-    "@sveltejs/kit": "1.0.0-next.556",
-    "@tauri-apps/cli": "^1.2.0",
+    "@sveltejs/kit": "1.0.0-next.571",
+    "@tauri-apps/cli": "^1.2.1",
     "@types/dompurify": "^2.4.0",
-    "@typescript-eslint/eslint-plugin": "^5.44.0",
-    "@typescript-eslint/parser": "^5.44.0",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
     "colorthief": "^2.3.2",
-    "eslint": "^8.28.0",
+    "eslint": "^8.29.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
-    "npm-check-updates": "^16.4.1",
-    "prettier": "^2.7.1",
+    "npm-check-updates": "^16.4.3",
+    "prettier": "^2.8.0",
     "prettier-plugin-svelte": "^2.8.1",
     "svelte": "^3.53.1",
-    "svelte-check": "^2.9.2",
+    "svelte-check": "^2.10.0",
     "svelte-preprocess": "^4.10.7",
     "tslib": "^2.4.1",
     "typescript": "~4.9.3"
@@ -41,7 +41,7 @@
   "dependencies": {
     "@fontsource/fira-mono": "^4.5.10",
     "@tauri-apps/api": "^1.2.0",
-    "hls.js": "^1.2.7",
+    "hls.js": "^1.2.8",
     "radix-icons-svelte": "^1.2.1",
     "vite": "^3.2.4"
   }

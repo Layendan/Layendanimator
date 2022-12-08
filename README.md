@@ -21,7 +21,9 @@ NineAnimataur(i) is a free and open source anime watching app for Desktop, using
   - [License](#license)
 
 ## Getting Started
+
 - [Set up Tauri](https://tauri.app/v1/guides/getting-started/prerequisites)
+
 ## Features
 
 - [ ] Ads Free and no logins

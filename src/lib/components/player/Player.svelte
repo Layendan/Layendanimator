@@ -30,13 +30,13 @@
   }
 
   function playNext() {
+    exitFullscreen();
     if (nextEpisode) {
       goto(
         `/${$page.params.source}/${$page.params.id}/watch?episode=${nextEpisode.number}&autoplay=true`,
         { replaceState: true }
       );
     } else {
-      exitFullscreen();
       history.back();
     }
   }
@@ -150,6 +150,10 @@
   bind:volume
   bind:muted
   bind:this={video}
+  on:timeupdate={() => {
+    // Workaround for HLS.js since it does not fire ended event
+    if (time === duration) playNext();
+  }}
   on:ended={playNext}
   on:click={() => video.focus()}
   on:play={() => video.focus()}
@@ -178,10 +182,12 @@
         e.preventDefault();
         break;
       case "ArrowUp":
+        // Volume breaks when trying to go above threshold
         volume + 0.1 > 1 ? (volume = 1) : (volume += 0.1);
         e.preventDefault();
         break;
       case "ArrowDown":
+        // Volume breaks when trying to go below threshold
         volume - 0.1 < 0 ? (volume = 0) : (volume -= 0.1);
         e.preventDefault();
         break;

@@ -29,21 +29,6 @@
 />
 
 <section>
-  <!-- TODO: Change this div to header and change header to flex -->
-  <header>
-    <div class="sources">
-      {#each $activeSources as source}
-        <a
-          href={source.id}
-          class:selected={source.id === data.source.id}
-          data-sveltekit-preload-data
-        >
-          {capitalize(source.name)}
-        </a>
-      {/each}
-    </div>
-    <SearchBar source={data.source} />
-  </header>
   {#await data.topAiring.data}
     <div class="loading" />
   {:then medias}
@@ -162,31 +147,6 @@
 </section>
 
 <style>
-  header {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    z-index: 20;
-    background: linear-gradient(
-      to bottom,
-      rgba(var(--primary-rgb), 1) 20%,
-      rgba(var(--primary-rgb), 0) 100%
-    );
-  }
-
-  .sources {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    align-items: center;
-    margin: 1rem;
-  }
-
-  .selected {
-    border-bottom: 2px solid var(--accent-color);
-    text-decoration: none;
-  }
-
   .loading {
     height: 70vh;
     width: 100%;

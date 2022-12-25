@@ -27,7 +27,7 @@
             : anime.title.native ?? anime.title.romaji}
           description={anime.description}
           thumbnail={anime.coverImage.large}
-          ratings={anime.averageScore}
+          ratings={anime.rating}
           genres={anime.genres}
           isNSFW={anime.isAdult}
           source={data.source}

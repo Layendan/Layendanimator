@@ -48,7 +48,7 @@
         contentRating: "EVERYONE",
         desc: "test",
         tags: [],
-        icon: "",
+        icon: "/assets/logo.png",
         author: "me",
         repo: link,
         website: link,

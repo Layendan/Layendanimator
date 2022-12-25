@@ -1,6 +1,6 @@
 <script lang="ts">
   import { settings } from "$lib/model/settings";
-  import "../app.css";
+  import "../../app.css";
   import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
   import Footer from "$lib/components/footer/Footer.svelte";
   import { onMount } from "svelte";

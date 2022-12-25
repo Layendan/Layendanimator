@@ -22,10 +22,10 @@
     "@sveltejs/kit": "1.0.1",
     "@tauri-apps/cli": "^1.2.2",
     "@types/dompurify": "^2.4.0",
-    "@typescript-eslint/eslint-plugin": "^5.46.1",
-    "@typescript-eslint/parser": "^5.46.1",
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
+    "@typescript-eslint/parser": "^5.47.0",
     "colorthief": "^2.3.2",
-    "eslint": "^8.29.0",
+    "eslint": "^8.30.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
     "npm-check-updates": "^16.6.0",
@@ -43,7 +43,7 @@
     "@tauri-apps/api": "^1.2.0",
     "hls.js": "^1.2.9",
     "radix-icons-svelte": "^1.2.1",
-    "vite": "^4.0.1"
+    "vite": "^4.0.2"
   },
   "engines": {
     "npm": ">=8.0.0",

@@ -2,11 +2,8 @@
   import Section from "$lib/components/Section.svelte";
   import { history } from "$lib/model/history";
   import { library } from "$lib/model/library";
-  import { activeSources } from "$lib/model/sources";
   import type { PageData } from "./$types";
-  import { capitalize } from "$lib/model/global";
   import { settings } from "$lib/model/settings";
-  import SearchBar from "$lib/components/SearchBar.svelte";
   import AnimeCard from "$lib/components/AnimeCard.svelte";
   import AnimeCardSmall from "$lib/components/AnimeCardSmall.svelte";
   import { invalidate } from "$app/navigation";
@@ -178,5 +175,9 @@
 
   .error__padding {
     height: 7rem;
+  }
+
+  section {
+    padding-bottom: 1rem;
   }
 </style>

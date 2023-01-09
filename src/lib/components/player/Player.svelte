@@ -3,6 +3,7 @@
   import { page } from "$app/stores";
   import { onDestroy, onMount } from "svelte";
   import { getCurrent } from "@tauri-apps/api/window";
+  import { platform } from "@tauri-apps/api/os";
   import type { Episode, Mirror } from "$lib/model/anime";
   import Hls from "hls.js";
 
@@ -25,8 +26,6 @@
     video?.pause();
     updateTimeWatched();
     setHls();
-    video?.load();
-    video?.play();
   }
 
   function playNext() {
@@ -41,8 +40,9 @@
     }
   }
 
-  function setHls() {
-    if (mirror?.isM3U8) {
+  async function setHls() {
+    console.debug(`Setting HLS for ${mirror?.url ?? "undefined"}`);
+    if (mirror?.isM3U8 && (await platform()) != "darwin") {
       console.log("Using HLS.js");
       const hls = new Hls({
         startPosition:
@@ -64,6 +64,7 @@
       }`;
     }
     video?.load();
+    video?.play();
   }
 
   // Reloads when mirror changes

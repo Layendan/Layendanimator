@@ -12,8 +12,9 @@
 	},
 	"tauri": {
 		"allowlist": {
-			"all": false
+			"all": true
 		},
+		"macOSPrivateApi": true,
 		"bundle": {
 			"active": true,
 			"category": "DeveloperTool",

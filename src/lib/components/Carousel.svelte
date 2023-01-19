@@ -25,13 +25,13 @@
 </script>
 
 <div
-  class="absolute inset-0 bg-gradient-to-b from-transparent to-base-100 z-10 pointer-events-none"
-></div>
+  class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-base-100 z-10 pointer-events-none"
+/>
 {#key current}
   <img
-    in:fade|local="{{ duration: 1000 }}"
+    in:fade|local={{ duration: 1000 }}
     class="w-full h-[45vh] object-cover"
-    src="{animes[current].cover}"
-    alt="{animes[current].english ?? animes[current].romaji}"
+    src={animes[current].cover}
+    alt={animes[current].english ?? animes[current].romaji}
   />
 {/key}

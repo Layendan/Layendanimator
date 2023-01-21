@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
+  import { goto, invalidateAll } from '$app/navigation';
   import { page, navigating } from '$app/stores';
   import '../app.css';
 
-  // @ts-ignore
   import NProgress from 'nprogress';
   // NProgress css
   import '../nprogress.css';
@@ -28,7 +27,7 @@
   on:keydown={e => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
       e.preventDefault();
-      window.location.reload();
+      invalidateAll();
     }
   }}
 />

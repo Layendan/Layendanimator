@@ -1,121 +1,139 @@
+type Status = 'Ongoing' | 'Finished' | 'Not yet aired' | 'Cancelled' | 'Hiatus';
+
+type Type = 'MOVIE' | 'TV' | 'OVA' | 'SPECIAL' | 'ONA' | 'MUSIC';
+
 export type Anime = {
-  id: 'string';
+  id: string;
   title: {
-    romaji: 'string';
-    english: 'string';
-    native: 'string';
+    romaji: string;
+    english: string;
+    native: string;
   };
-  malId: 0;
-  synonyms: ['string'];
+  episodeNumber: number | null;
+  malId: number;
+  synonyms: [string];
   isLicensed: true;
   isAdult: true;
-  countryOfOrigin: 'string';
+  countryOfOrigin: string;
   trailer: {
-    id: 'string';
-    site: 'string';
-    thumbnail: 'string';
+    id: string;
+    site: string;
+    thumbnail: string;
   };
-  image: 'string';
-  popularity: 0;
-  color: 'string';
-  cover: 'string';
-  description: 'string';
-  status: 'Ongoing';
-  releaseDate: 'string';
+  image: string;
+  popularity: number;
+  color: string;
+  cover: string;
+  description: string;
+  status: Status;
+  releaseDate: string;
   startDate: {
-    year: 0;
-    month: 0;
-    day: 0;
+    year: number;
+    month: number;
+    day: number;
   };
   endDate: {
-    year: 0;
-    month: 0;
-    day: 0;
+    year: number;
+    month: number;
+    day: number;
   };
   nextAiringEpisode: {
-    year: 0;
-    month: 0;
-    day: 0;
+    year: number;
+    month: number;
+    day: number;
   };
-  totalEpisodes: 0;
-  rating: 0;
-  duration: 0;
-  genres: ['string'];
-  season: 'WINTER';
-  studios: ['string'];
-  subOrDub: 'sub';
-  type: 'MOVIE';
+  totalEpisodes: number;
+  rating: number;
+  duration: number;
+  genres: [string];
+  season: 'WINTER' | 'SPRING' | 'SUMMER' | 'FALL';
+  studios: [string];
+  subOrDub: 'sub' | 'dub';
+  type: Type;
   recommendations: [
     {
-      id: 0;
-      malId: 0;
+      id: number;
+      malId: number;
       title: {
-        romaji: 'string';
-        english: 'string';
-        native: 'string';
-        userPreferred: 'string';
+        romaji: string;
+        english: string;
+        native: string;
+        userPreferred: string;
       };
-      status: 'Ongoing';
-      episodes: 0;
-      image: 'string';
-      cover: 'string';
-      rating: 0;
+      status: Status;
+      episodes: number;
+      image: string;
+      cover: string;
+      rating: number;
       type: 'MOVIE';
     }
   ];
   characters: [
     {
-      id: 0;
-      role: 'string';
+      id: number;
+      role: string;
       name: {
-        first: 'string';
-        last: 'string';
-        full: 'string';
-        native: 'string';
-        userPreferred: 'string';
+        first: string;
+        last: string;
+        full: string;
+        native: string;
+        userPreferred: string;
       };
-      image: 'string';
+      image: string;
       voiceActors: [
         {
-          id: 0;
+          id: number;
           name: {
-            first: 'string';
-            last: 'string';
-            full: 'string';
-            native: 'string';
-            userPreferred: 'string';
+            first: string;
+            last: string;
+            full: string;
+            native: string;
+            userPreferred: string;
           };
-          image: 'string';
+          image: string;
         }
       ];
     }
   ];
   relations: [
     {
-      id: 0;
-      relationType: 'ADAPTATION';
-      malId: 0;
+      id: number;
+      relationType:
+        | 'ADAPTATION'
+        | 'PREQUEL'
+        | 'SEQUEL'
+        | 'PARENT'
+        | 'SIDE STORY'
+        | 'CHARACTER'
+        | 'SUMMARY'
+        | 'ALTERNATIVE'
+        | 'SPIN OFF'
+        | 'OTHER'
+        | 'SOURCE'
+        | 'COMPILATION'
+        | 'CONTAINS';
+      malId: number;
       title: {
-        romaji: 'string';
-        english: 'string';
-        native: 'string';
-        userPreferred: 'string';
+        romaji: string;
+        english: string;
+        native: string;
+        userPreferred: string;
       };
-      status: 'Ongoing';
-      episodes: 0;
-      image: 'string';
-      color: 'string';
-      type: 'MOVIE';
-      rating: 0;
+      status: Status;
+      episodes: number;
+      image: string;
+      color: string;
+      type: Type;
+      rating: number;
     }
   ];
   episodes: [
     {
-      id: 'string';
-      title: 'string';
-      description: 'string';
-      number: 0;
-      image: 'string';
+      id: string;
+      title: string;
+      description: string;
+      number: number;
+      image: string;
     }
   ];
 };

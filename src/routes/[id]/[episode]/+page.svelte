@@ -5,4 +5,4 @@
   export let data: PageData;
 </script>
 
-<Player sources={data.sources} />
+<Player sources={data.episode.sources} />

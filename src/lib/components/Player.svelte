@@ -10,19 +10,24 @@
   export let poster: string | null = null;
 
   let video: HTMLVideoElement;
-  let paused: boolean = true;
-  let volume: number = 1;
-  let muted: boolean = false;
-  let currentTime: number = 0;
-  let duration: number = 0;
+  let paused = true;
+  let volume = 1;
+  let muted = false;
+  let currentTime = 0;
+  let duration = 0;
   let buffered: TimeRanges = { length: 0, start: () => 0, end: () => 0 };
-  let playbackRate: number = 1;
+  let playbackRate = 1;
 
-  let selectedSource: number = 0;
-  let playbackRates: number[] = [0.5, 0.75, 1, 1.25, 1.5, 2];
+  let selectedSource = sources.length - 1;
+  let playbackRates = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
   function play() {
-    paused = !paused;
+    if (
+      // @ts-ignore
+      !document.webkitCurrentFullScreenElement &&
+      !document.exitFullscreen
+    )
+      paused = !paused;
   }
 
   function isFullscreen(): boolean {

@@ -1,8 +1,9 @@
 <script lang="ts">
+  import type { Anime } from '$lib/model/Anime';
   import { fade } from 'svelte/transition';
 
   // TODO: Create anime type and set it to this
-  export let anime: any;
+  export let anime: Anime;
 </script>
 
 <div in:fade class="flex flex-col gap-2 w-[210px]">

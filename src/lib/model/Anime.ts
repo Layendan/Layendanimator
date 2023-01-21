@@ -1,6 +1,15 @@
 type Status = 'Ongoing' | 'Finished' | 'Not yet aired' | 'Cancelled' | 'Hiatus';
 
-type Type = 'MOVIE' | 'TV' | 'OVA' | 'SPECIAL' | 'ONA' | 'MUSIC';
+type Type =
+  | 'MOVIE'
+  | 'TV'
+  | 'OVA'
+  | 'SPECIAL'
+  | 'ONA'
+  | 'MUSIC'
+  | 'MANGA'
+  | 'NOVEL'
+  | 'ONE_SHOT';
 
 export type Anime = {
   id: string;
@@ -50,24 +59,7 @@ export type Anime = {
   studios: [string];
   subOrDub: 'sub' | 'dub';
   type: Type;
-  recommendations: [
-    {
-      id: number;
-      malId: number;
-      title: {
-        romaji: string;
-        english: string;
-        native: string;
-        userPreferred: string;
-      };
-      status: Status;
-      episodes: number;
-      image: string;
-      cover: string;
-      rating: number;
-      type: 'MOVIE';
-    }
-  ];
+  recommendations: Anime[];
   characters: [
     {
       id: number;
@@ -95,45 +87,15 @@ export type Anime = {
       ];
     }
   ];
-  relations: [
-    {
-      id: number;
-      relationType:
-        | 'ADAPTATION'
-        | 'PREQUEL'
-        | 'SEQUEL'
-        | 'PARENT'
-        | 'SIDE STORY'
-        | 'CHARACTER'
-        | 'SUMMARY'
-        | 'ALTERNATIVE'
-        | 'SPIN OFF'
-        | 'OTHER'
-        | 'SOURCE'
-        | 'COMPILATION'
-        | 'CONTAINS';
-      malId: number;
-      title: {
-        romaji: string;
-        english: string;
-        native: string;
-        userPreferred: string;
-      };
-      status: Status;
-      episodes: number;
-      image: string;
-      color: string;
-      type: Type;
-      rating: number;
-    }
-  ];
-  episodes: [
-    {
-      id: string;
-      title: string;
-      description: string;
-      number: number;
-      image: string;
-    }
-  ];
+  relations: Anime[];
+  episodes: Episode[];
+};
+
+export type Episode = {
+  id: string;
+  title: string;
+  description: string;
+  number: number;
+  image: string;
+  airDate: string;
 };

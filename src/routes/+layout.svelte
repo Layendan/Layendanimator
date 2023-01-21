@@ -21,6 +21,8 @@
       NProgress.done();
     }
   }
+
+  // let scrollY = 0;
 </script>
 
 <svelte:body
@@ -32,12 +34,36 @@
   }}
 />
 
+<!-- <svelte:window bind:scrollY /> -->
+
+<!-- Back Button -->
+<!-- {#if $page.route.id !== '/' && $page.route.id !== '/search' && $page.route.id !== '/settings'}
+  <button
+    class="fixed inset-0 z-50 btn btn-square btn-sm btn-primary border-none ml-4 mt-4 backdrop-filter backdrop-blur-md bg-opacity-50 shadow-xl"
+    on:click={() => history.back()}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="feather feather-chevron-left"
+      ><polyline points="15 18 9 12 15 6" /></svg
+    >
+  </button>
+{/if} -->
+
 <main class="m-4 mb-20">
   <slot />
 </main>
 
 <div
-  class="btm-nav bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-60 z-50"
+  class="btm-nav btm-nav-sm bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-60 z-50"
 >
   <button
     on:click={() => goto('/')}

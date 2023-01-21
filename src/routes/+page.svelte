@@ -10,8 +10,13 @@
 
 <svelte:window bind:scrollY />
 
-<header class="relative m-[-1rem] mb-8 z-0" style="top: {scrollY / 1.5}px;">
-  <Carousel bind:animes={data.popular} />
+<header class="relative m-[-1rem] mb-4 z-0" style="top: {scrollY / 1.5}px;">
+  <Carousel
+    animes={[
+      ...data.trending.filter(a => a.cover !== a.image),
+      ...data.popular
+    ]}
+  />
 </header>
 
 <main class="relative w-full">
@@ -21,6 +26,26 @@
     <svelte:fragment slot="content">
       {#each data.recent as anime}
         <AnimeCard {anime} />
+      {/each}
+    </svelte:fragment>
+  </ScrollCarousel>
+
+  <div class="divider" />
+
+  <ScrollCarousel>
+    <svelte:fragment slot="title">Subscriptions</svelte:fragment>
+
+    <svelte:fragment slot="content">
+      {#each data.subscriptions as anime}
+        <AnimeCard {anime} />
+      {:else}
+        <div class="flex items-center justify-center">
+          <p
+            class="text-xl font-semibold text-center text-base-content text-opacity-70"
+          >
+            No Subscriptions Added
+          </p>
+        </div>
       {/each}
     </svelte:fragment>
   </ScrollCarousel>

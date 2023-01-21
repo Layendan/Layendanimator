@@ -1,5 +1,9 @@
+<script lang="ts">
+  export let key: unknown = undefined;
+</script>
+
 <section
-  class="card bg-base-200 bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-80 shadow-xl p-8 max-w-none overscroll-x-contain"
+  class="card bg-base-200 bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-80 shadow-xl p-8 max-w-none"
 >
   <slot name="header" />
   <h1
@@ -7,9 +11,11 @@
   >
     <slot name="title" />
   </h1>
-  <div
-    class="relative inline-flex overflow-x-scroll whitespace-nowrap w-auto gap-6 p-4 pb-6"
-  >
-    <slot name="content" />
-  </div>
+  {#key key}
+    <div
+      class="relative inline-flex overflow-x-scroll overscroll-x-contain whitespace-nowrap w-auto gap-6 p-4 pb-6"
+    >
+      <slot name="content" />
+    </div>
+  {/key}
 </section>

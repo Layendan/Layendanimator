@@ -5,16 +5,16 @@
 
   export let animes: Anime[];
   let current = 0;
-  let interval = setInterval(() => {
+  let interval = setInterval(next, 10000);
+
+  function next() {
     current = (current + 1) % animes.length;
-  }, 10000);
+  }
 
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
       clearInterval(interval);
-      interval = setInterval(() => {
-        current = (current + 1) % animes.length;
-      }, 10000);
+      interval = setInterval(next, 10000);
     } else {
       clearInterval(interval);
     }

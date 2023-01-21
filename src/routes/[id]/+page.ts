@@ -23,14 +23,8 @@ export const load = (async ({ fetch, params }) => {
     await store.set(anime.id, episodes);
   }
 
-  const subscriptions = await new Store('.subscriptions.dat').get<Anime[]>(
-    'subscriptions'
-  );
-
   return {
     anime: anime,
-    store: episodes,
-    subscriptions: subscriptions ?? [],
-    isSubscribed: subscriptions?.some(a => a.id === anime.id) ?? false
+    store: episodes
   };
 }) satisfies PageLoad;

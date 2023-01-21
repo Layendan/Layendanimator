@@ -4,7 +4,6 @@
   import '../app.css';
 
   import NProgress from 'nprogress';
-  // NProgress css
   import '../nprogress.css';
 
   NProgress.configure({
@@ -16,8 +15,7 @@
   $: {
     if ($navigating) {
       NProgress.start();
-    }
-    if (!$navigating) {
+    } else {
       NProgress.done();
     }
   }

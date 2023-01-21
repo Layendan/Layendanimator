@@ -5,9 +5,9 @@
   import DownArrow from '$lib/components/svg/DownArrow.svelte';
   import { goto } from '$app/navigation';
   import { fade } from 'svelte/transition';
-  import { Store } from 'tauri-plugin-store-api';
   import type { PageData } from './$types';
-  import type { Anime, Episode } from '$lib/model/Anime';
+  import type { Episode } from '$lib/model/Anime';
+  import { subscriptions } from '$lib/model/subscriptions';
 
   export let data: PageData;
   const watchPercentage = 0.8;
@@ -20,18 +20,6 @@
   const lastEpisodeWatched = data.anime.episodes.findLast(
     e => (data.store[e.id]?.watched ?? 0) > 0
   );
-
-  async function setSubscriptions(anime: Anime) {
-    const store = new Store('.subscriptions.dat');
-    const filtered = data.subscriptions.filter(a => a.id !== anime.id);
-    if (data.isSubscribed) {
-      store.set('subscriptions', filtered);
-      data.isSubscribed = false;
-    } else {
-      store.set('subscriptions', [anime, ...filtered]);
-      data.isSubscribed = true;
-    }
-  }
 
   function sortEpisodes(episodes: Episode[], isAscending: boolean): Episode[] {
     if (isAscending) {
@@ -74,9 +62,15 @@
       </a>
       <button
         class="btn btn-primary w-full mt-4"
-        class:btn-error={data.isSubscribed}
-        class:btn-outline={data.isSubscribed}
-        on:click={() => setSubscriptions(data.anime)}
+        class:btn-error={$subscriptions.some(s => s.id === data.anime.id)}
+        class:btn-outline={$subscriptions.some(s => s.id === data.anime.id)}
+        on:click={() => {
+          if ($subscriptions.some(s => s.id === data.anime.id)) {
+            subscriptions.remove(data.anime);
+          } else {
+            subscriptions.add(data.anime);
+          }
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -91,7 +85,7 @@
           class="mr-2"
         >
           <!-- TODO: Check to see if anime is added to subscription list -->
-          {#if data.isSubscribed}
+          {#if $subscriptions.some(s => s.id === data.anime.id)}
             <circle cx="12" cy="12" r="10" />
             <line x1="8" y1="12" x2="16" y2="12" />
           {:else}
@@ -168,7 +162,7 @@
 <div class="divider relative" />
 
 <!-- EPISODES -->
-<ScrollCarousel>
+<ScrollCarousel bind:key={data.anime.episodes}>
   <div slot="header" class="flex justify-between">
     <div class="flex items-center gap-4 mb-4">
       <h1
@@ -332,7 +326,7 @@
 <div class="divider relative" />
 
 <!-- RECOMMENDATIONS -->
-<ScrollCarousel>
+<ScrollCarousel bind:key={data.anime.recommendations}>
   <svelte:fragment slot="title">Recommendations</svelte:fragment>
   <svelte:fragment slot="content">
     {#each data.anime.recommendations as anime}
@@ -352,7 +346,7 @@
 <div class="divider relative" />
 
 <!-- RELATED -->
-<ScrollCarousel>
+<ScrollCarousel bind:key={data.anime.relations}>
   <svelte:fragment slot="title">Related</svelte:fragment>
   <svelte:fragment slot="content">
     {#each data.anime.relations.filter(a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT') as anime}

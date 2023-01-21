@@ -4,9 +4,16 @@
 
   // TODO: Create anime type and set it to this
   export let anime: Anime;
+
+  export let numUpdates = 0;
 </script>
 
-<div in:fade class="flex flex-col gap-2 w-[210px]">
+<div in:fade class="indicator flex-col gap-2 w-[210px]">
+  {#if numUpdates > 0}
+    <div class="indicator-item badge badge-primary">
+      {numUpdates}
+    </div>
+  {/if}
   <a
     class="relative bg-clip-content rounded-md m-0 p-0 card w-[210px] h-auto aspect-[0.7/1] bg-base-300 shadow-lg hover:translate-y-[-4px] transition-transform duration-300"
     href="/{anime.id}"

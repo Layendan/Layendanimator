@@ -2,6 +2,10 @@
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import Carousel from '$lib/components/Carousel.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
+  import {
+    subscriptions,
+    unwatchedSubscriptions
+  } from '$lib/model/subscriptions';
   import type { PageData } from './$types';
 
   export let data: PageData;
@@ -36,7 +40,10 @@
     <svelte:fragment slot="title">Subscriptions</svelte:fragment>
 
     <svelte:fragment slot="content">
-      {#each data.subscriptions as anime}
+      {#each $unwatchedSubscriptions as { anime, newEpisodes }}
+        <AnimeCard {anime} bind:numUpdates={newEpisodes} />
+      {/each}
+      {#each $subscriptions.filter(e => !$unwatchedSubscriptions.some(a => a.anime.id === e.id)) as anime}
         <AnimeCard {anime} />
       {:else}
         <div class="flex items-center justify-center">

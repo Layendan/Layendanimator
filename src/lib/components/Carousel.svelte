@@ -25,14 +25,14 @@
   });
 </script>
 
-<div
-  class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-base-100 z-10 pointer-events-none"
-/>
+<div class="absolute inset-0 scrim z-10 pointer-events-none" />
 {#key current}
-  <img
-    in:fade|local={{ duration: 1000 }}
-    class="w-full h-[45vh] object-cover"
-    src={animes[current].cover}
-    alt={animes[current].title.english ?? animes[current].title.romaji}
-  />
+  <a href="/{animes[current].id}">
+    <img
+      in:fade|local={{ duration: 1000 }}
+      class="w-full h-[45vh] object-cover"
+      src={animes[current].cover}
+      alt={animes[current].title.english ?? animes[current].title.romaji}
+    />
+  </a>
 {/key}

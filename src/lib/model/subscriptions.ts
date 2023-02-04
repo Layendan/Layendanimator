@@ -2,57 +2,55 @@ import { writable } from 'svelte/store';
 import { Store } from 'tauri-plugin-store-api';
 import type { Anime } from './Anime';
 
-async function createSubscriptions() {
-  const { subscribe, set } = writable<Anime[]>(
-    (await new Store('.subscriptions.dat').get<Anime[]>('subscriptions')) ?? []
-  );
+const store = new Store('.subscriptions.dat');
+
+function createSubscriptions() {
+  const { subscribe, set, update } = writable<Anime[]>([]);
   return {
     subscribe,
     set: async (subscriptions: Anime[]) => {
       set(subscriptions);
-      await new Store('.subscriptions.dat').set('subscriptions', subscriptions);
+      await store.set('subscriptions', subscriptions);
     },
-    add: async (anime: Anime) => {
-      const subscriptions = await new Store('.subscriptions.dat').get<Anime[]>(
-        'subscriptions'
-      );
-      const result = [
-        anime,
-        ...(subscriptions?.filter(a => a.id !== anime.id) ?? [])
-      ];
-      set(result);
-      await new Store('.subscriptions.dat').set('subscriptions', result);
+    add: (anime: Anime) => {
+      update(subscriptions => {
+        const result = [anime, ...subscriptions.filter(i => i.id !== anime.id)];
+        store.set('subscriptions', result);
+        return result;
+      });
     },
-    remove: async (anime: Anime) => {
-      const subscriptions = await new Store('.subscriptions.dat').get<Anime[]>(
-        'subscriptions'
-      );
-      const result = subscriptions?.filter(a => a.id !== anime.id) ?? [];
-      set(result);
-      await new Store('.subscriptions.dat').set('subscriptions', result);
+    remove: (anime: Anime) => {
+      update(subscriptions => {
+        const result = subscriptions.filter(i => i.id !== anime.id);
+        store.set('subscriptions', result);
+        return result;
+      });
+    },
+    initialize: async () => {
+      const data = await store.get<Anime[]>('subscriptions');
+      if (data) {
+        set(data);
+      } else {
+        await store.set('subscriptions', []);
+      }
     }
   };
 }
 
 export const subscriptions = await createSubscriptions();
 
-async function createUnwatchedSubscriptions() {
+function createUnwatchedSubscriptions() {
   const { subscribe, set } = writable<{ anime: Anime; newEpisodes: number }[]>(
-    (await new Store('.subscriptions.dat').get<
-      { anime: Anime; newEpisodes: number }[]
-    >('activeSubscriptions')) ?? []
+    []
   );
   return {
     subscribe,
     set: async (subscriptions: { anime: Anime; newEpisodes: number }[]) => {
       set(subscriptions);
-      await new Store('.subscriptions.dat').set(
-        'activeSubscriptions',
-        subscriptions
-      );
+      await store.set('activeSubscriptions', subscriptions);
     },
     add: async (anime: { anime: Anime; newEpisodes: number }) => {
-      const subscriptions = await new Store('.subscriptions.dat').get<
+      const subscriptions = await store.get<
         { anime: Anime; newEpisodes: number }[]
       >('activeSubscriptions');
       const result = [
@@ -60,16 +58,26 @@ async function createUnwatchedSubscriptions() {
         ...(subscriptions?.filter(a => a.anime.id !== anime.anime.id) ?? [])
       ];
       set(result);
-      await new Store('.subscriptions.dat').set('activeSubscriptions', result);
+      await store.set('activeSubscriptions', result);
     },
     remove: async (anime: { anime: Anime; newEpisodes: number }) => {
-      const subscriptions = await new Store('.subscriptions.dat').get<
+      const subscriptions = await store.get<
         { anime: Anime; newEpisodes: number }[]
       >('activeSubscriptions');
       const result =
         subscriptions?.filter(a => a.anime.id !== anime.anime.id) ?? [];
       set(result);
-      await new Store('.subscriptions.dat').set('activeSubscriptions', result);
+      await store.set('activeSubscriptions', result);
+    },
+    initialize: async () => {
+      const data = await store.get<{ anime: Anime; newEpisodes: number }[]>(
+        'activeSubscriptions'
+      );
+      if (data) {
+        set(data);
+      } else {
+        await store.set('activeSubscriptions', []);
+      }
     }
   };
 }

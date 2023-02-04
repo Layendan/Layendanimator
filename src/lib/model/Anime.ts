@@ -47,9 +47,9 @@ export type Anime = {
     day: number;
   };
   nextAiringEpisode: {
-    year: number;
-    month: number;
-    day: number;
+    airingTime: number;
+    timeUntilAiring: number;
+    episode: number;
   };
   totalEpisodes: number;
   rating: number;

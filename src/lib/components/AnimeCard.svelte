@@ -8,15 +8,14 @@
   export let numUpdates = 0;
 </script>
 
-<div in:fade class="indicator flex-col gap-2 w-[210px]">
+<a in:fade href="/{anime.id}" class="indicator flex-col gap-2 w-[210px]">
   {#if numUpdates > 0}
     <div class="indicator-item badge badge-primary">
       {numUpdates}
     </div>
   {/if}
-  <a
-    class="relative bg-clip-content rounded-md m-0 p-0 card w-[210px] h-auto aspect-[0.7/1] bg-base-300 shadow-lg hover:translate-y-[-4px] transition-transform duration-300"
-    href="/{anime.id}"
+  <div
+    class="relative bg-clip-content rounded-md m-0 p-0 card w-[210px] h-auto aspect-[0.7/1] bg-base-300 shadow-lg hover:-translate-y-1 transition-transform duration-200"
   >
     <img
       class="relative card-body m-0 p-0 w-full h-full object-cover object-center rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-no-repeat bg-center"
@@ -35,15 +34,15 @@
         </h2>
       </div>
     {/if}
-  </a>
+  </div>
 
-  <a href="/{anime.id}">
+  <div>
     <h3
       style:--anime-color={anime.color}
-      class="text-sm font-bold leading-tight whitespace-normal hover:text-accent line-clamp-2 accent hover:text-opacity-80 transition-colors duration-300"
+      class="text-sm font-bold leading-tight whitespace-normal hover:text-accent line-clamp-2 accent hover:text-opacity-80 transition-colors duration-200"
       class:hover:text-[var(--anime-color)]={anime.color}
     >
       {anime.title.english ?? anime.title.romaji}
     </h3>
-  </a>
-</div>
+  </div>
+</a>

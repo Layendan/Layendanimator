@@ -1,4 +1,5 @@
 {
   "css.lint.unknownAtRules": "ignore",
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "html.customData": ["/node_modules/vidstack/vscode.html-data.json"]
 }

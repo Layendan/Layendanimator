@@ -7,7 +7,6 @@ function toUpperCase(value: string): string {
 
 export const load = (async ({ fetch, url }) => {
   let query = url.searchParams.get('q');
-  console.debug(query);
   if (!query) return;
   query = toUpperCase(query);
   const animes: Anime[] = (
@@ -15,7 +14,6 @@ export const load = (async ({ fetch, url }) => {
       r.json()
     )
   ).results;
-  console.debug(animes);
   return {
     animes: animes,
     query: query

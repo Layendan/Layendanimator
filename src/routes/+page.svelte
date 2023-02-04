@@ -14,7 +14,7 @@
 
 <svelte:window bind:scrollY />
 
-<header class="relative m-[-1rem] mb-4 z-0" style="top: {scrollY / 1.5}px;">
+<header class="relative -m-4 mb-4 z-0" style="top: {scrollY / 1.5}px;">
   <Carousel
     animes={[
       ...data.trending.filter(a => a.cover !== a.image),
@@ -43,6 +43,9 @@
       {#each $unwatchedSubscriptions as { anime, newEpisodes }}
         <AnimeCard {anime} bind:numUpdates={newEpisodes} />
       {/each}
+      {#if $unwatchedSubscriptions.length > 0}
+        <div class="divider divider-horizontal" />
+      {/if}
       {#each $subscriptions.filter(e => !$unwatchedSubscriptions.some(a => a.anime.id === e.id)) as anime}
         <AnimeCard {anime} />
       {:else}
@@ -60,10 +63,10 @@
   <div class="divider" />
 
   <ScrollCarousel>
-    <svelte:fragment slot="title">Popular Animes</svelte:fragment>
+    <svelte:fragment slot="title">Trending Animes</svelte:fragment>
 
     <svelte:fragment slot="content">
-      {#each data.popular as anime}
+      {#each data.trending as anime}
         <AnimeCard {anime} />
       {/each}
     </svelte:fragment>
@@ -72,10 +75,10 @@
   <div class="divider" />
 
   <ScrollCarousel>
-    <svelte:fragment slot="title">Trending Animes</svelte:fragment>
+    <svelte:fragment slot="title">Popular Animes</svelte:fragment>
 
     <svelte:fragment slot="content">
-      {#each data.trending as anime}
+      {#each data.popular as anime}
         <AnimeCard {anime} />
       {/each}
     </svelte:fragment>

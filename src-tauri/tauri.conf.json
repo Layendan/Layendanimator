@@ -7,7 +7,7 @@
 		"distDir": "../build"
 	},
 	"package": {
-		"productName": "layendanimator",
+		"productName": "Layendanimator",
 		"version": "0.1.0"
 	},
 	"tauri": {
@@ -61,9 +61,11 @@
 				"height": 600,
 				"resizable": true,
 				"maximized": true,
-				"title": "layendanimator",
+				"title": "Layendanimator",
+				"label": "main",
 				"minWidth": 800,
-				"width": 800
+				"width": 800,
+				"visible": true
 			}
 		]
 	}

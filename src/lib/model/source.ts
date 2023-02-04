@@ -1,12 +1,10 @@
 import { writable } from 'svelte/store';
-import { Store } from 'tauri-plugin-store-api';
+import type { Store } from 'tauri-plugin-store-api';
 
 /**
  * IDK why but for some reason only this store breaks building, maybe because of settings?
- * Prbly will replace this with consumet anyways
  */
-
-const store = new Store('.settings.dat');
+let store: Store | undefined = undefined;
 
 export type Provider = {
   name: string;
@@ -36,14 +34,14 @@ function createSource() {
     subscribe,
     set: async (source: Provider) => {
       set(source);
-      await store.set('source', source);
+      await store?.set('source', source);
     },
     initialize: async () => {
-      const data = await store.get<Provider>('source');
+      const data = await store?.get<Provider>('source');
       if (data) {
         set(data);
       } else {
-        await store.set('source', defaultProviders[0]);
+        await store?.set('source', defaultProviders[0]);
       }
     }
   };
@@ -57,7 +55,7 @@ function createProviders() {
     subscribe,
     set: async (providers: Provider[]) => {
       set(providers);
-      await store.set('providers', providers);
+      await store?.set('providers', providers);
     },
     add: (provider: Provider) => {
       update(providers => {
@@ -65,18 +63,20 @@ function createProviders() {
           provider,
           ...providers.filter(i => i.id !== provider.id)
         ];
-        store.set('providers', result);
+        store?.set('providers', result);
         return result;
       });
     },
     remove(provider: Provider) {
       update(providers => {
         const result = providers.filter(i => i.id !== provider.id);
-        store.set('providers', result);
+        store?.set('providers', result);
         return result;
       });
     },
     initialize: async () => {
+      const StoreImport = (await import('tauri-plugin-store-api')).Store;
+      store = new StoreImport('.settings.dat');
       const data = await store.get<Provider[]>('providers');
       if (data) {
         set(data);

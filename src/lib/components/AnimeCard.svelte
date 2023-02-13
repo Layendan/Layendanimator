@@ -39,8 +39,9 @@
   <div>
     <h3
       style:--anime-color={anime.color}
-      class="text-sm font-bold leading-tight whitespace-normal hover:text-accent line-clamp-2 accent hover:text-opacity-80 transition-colors duration-200"
+      class="text-sm font-bold leading-tight whitespace-normal text-base-content text-opacity-80 hover:text-opacity-100 line-clamp-2 transition-colors duration-200"
       class:hover:text-[var(--anime-color)]={anime.color}
+      class:hover:text-accent={!anime.color}
     >
       {anime.title.english ?? anime.title.romaji}
     </h3>

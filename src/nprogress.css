@@ -4,7 +4,7 @@
 }
 
 #nprogress .bar {
-  @apply bg-primary;
+  @apply bg-accent shadow-2xl;
 
   position: fixed;
   z-index: 1031;

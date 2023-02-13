@@ -1,7 +1,7 @@
-import type { PageLoad } from './$types';
 import { source } from '$lib/model/source';
-import type { Anime } from '$lib/model/Anime';
 import { get } from 'svelte/store';
+import type { PageLoad } from './$types';
+import type { Anime } from '$lib/model/Anime';
 
 export const load = (async ({ fetch, params }) => {
   // TODO: Create store for episodes
@@ -14,12 +14,14 @@ export const load = (async ({ fetch, params }) => {
     }
   > = {};
 
+  const anime: Anime = await fetch(
+    `https://api.consumet.org/meta/anilist/info/${params.id}?provider=${
+      get(source).id
+    }`
+  ).then(r => r.json());
+
   return {
-    anime: (await fetch(
-      `https://api.consumet.org/meta/anilist/info/${params.id}?provider=${
-        get(source).id
-      }`
-    ).then(r => r.json())) as Anime,
+    anime: anime,
     episode: (await fetch(
       `https://api.consumet.org/meta/anilist/watch/${params.episode}?provider=${
         get(source).id
@@ -32,6 +34,11 @@ export const load = (async ({ fetch, params }) => {
       }[];
     },
     id: params.episode,
+    episodeObject: anime.episodes.find(item => item.id === params.episode),
+    nextEpisode:
+      anime.episodes[
+        anime.episodes.findIndex(item => item.id === params.episode) + 1
+      ],
     store: episodes
   };
 }) satisfies PageLoad;

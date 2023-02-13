@@ -7,7 +7,7 @@ body {
   overscroll-behavior-x: none;
 }
 
-@layer utilities {
+@layer components {
   .scrim {
     @apply bg-gradient-to-t;
     --tw-gradient-stops: theme(colors.base-100) 0%,

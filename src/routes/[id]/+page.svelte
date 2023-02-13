@@ -19,7 +19,7 @@
   let showWatched = true;
   $: sortedEpisodes = sortEpisodes(data.anime.episodes, isAscending);
 
-  let nextEpisodeDate = new Date(
+  const nextEpisodeDate = new Date(
     Date.now() +
       new Date(
         (data.anime.nextAiringEpisode?.timeUntilAiring ?? 0) * 1000
@@ -64,12 +64,14 @@
           <img
             src={data.anime.image}
             alt={data.anime.title.english ?? data.anime.title.romaji}
-            class="w-full object-cover rounded-lg hover:ring ring-[var(--anime-color)] transition-shadow duration-200"
-            style:--anime-color={data.anime.color ?? 'var(--accent-color)'}
+            class="w-full object-cover rounded-lg shadow-xl ring ring-transparent transition-shadow duration-200"
+            class:hover:ring-[var(--anime-color)]={data.anime.color}
+            class:hover:ring-accent={!data.anime.color}
+            style:--anime-color={data.anime.color}
           />
         </a>
         <button
-          class="btn btn-primary w-full mt-4 bg-clip-border backdrop-blur-xl"
+          class="btn btn-primary w-full mt-4 bg-clip-border backdrop-blur-xl shadow-xl"
           class:btn-error={$subscriptions.some(s => s.id === data.anime.id)}
           class:btn-outline={$subscriptions.some(s => s.id === data.anime.id)}
           on:click={() => {
@@ -107,7 +109,7 @@
       </div>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
-        class="block w-auto h-min p-4 card bg-base-200 backdrop-filter backdrop-blur-xl bg-opacity-80 hover:bg-opacity-80 transition-colors duration-200"
+        class="block w-auto h-min p-4 card bg-base-200 backdrop-filter backdrop-blur-xl bg-opacity-80 shadow-xl transition-colors duration-200"
         class:hover:bg-base-300={descriptionCollapsed}
         class:cursor-pointer={descriptionCollapsed}
         on:click={() => (descriptionCollapsed = false)}
@@ -147,7 +149,7 @@
           class:line-clamp-[3]={descriptionCollapsed}
           class:lg:line-clamp-[6]={descriptionCollapsed}
         >
-          {@html data.anime.description}
+          {@html data.anime.description || '<i>No description available.</i>'}
         </p>
         <br />
         <p
@@ -280,7 +282,9 @@
             >
               <h3
                 style:--anime-color={data.anime.color}
-                class="text-md font-bold leading-tight whitespace-normal line-clamp-2 group-hover:text-[var(--anime-color)] transition-colors duration-200"
+                class="text-md font-bold leading-tight whitespace-normal line-clamp-2 text-base-content text-opacity-80 transition-colors duration-200"
+                class:group-hover:text-[var(--anime-color)]={data.anime.color}
+                class:group-hover:text-accent={!data.anime.color}
               >
                 {episode.title || `Episode ${episode.number}`}
               </h3>
@@ -391,7 +395,9 @@
         >
           <div class="avatar">
             <div
-              class="w-28 rounded-full ring ring-transparent hover:ring-[var(--anime-color)] transition-shadow duration-200"
+              class="w-28 rounded-full ring ring-transparent transition-shadow duration-200"
+              class:hover:ring-[var(--anime-color)]={data.anime.color}
+              class:hover:ring-accent={!data.anime.color}
             >
               <img src={character.image} alt={character.name.full} />
             </div>
@@ -400,7 +406,9 @@
             class="flex flex-col w-full gap-1 text-base-content text-opacity-80 group hover:text-opacity-100"
           >
             <h3
-              class="text-md font-bold leading-tight whitespace-normal line-clamp-2 group-hover:text-[var(--anime-color)] transition-colors duration-200"
+              class="text-md font-bold leading-tight whitespace-normal line-clamp-2 transition-colors duration-200"
+              class:group-hover:text-[var(--anime-color)]={data.anime.color}
+              class:group-hover:text-accent={!data.anime.color}
             >
               {character.name.full}
             </h3>

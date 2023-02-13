@@ -1,19 +1,27 @@
 <script lang="ts">
   export let height: number;
   export let width: number;
+  export let active = false;
 </script>
 
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  {width}
-  {height}
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width="1.5"
-  stroke-linecap="round"
-  stroke-linejoin="round"
+<div
+  class="rounded-md p-2 px-12 bg-base-content"
+  class:bg-opacity-100={active}
+  class:bg-opacity-0={!active}
 >
-  <circle cx="11" cy="11" r="8" />
-  <line x1="21" y1="21" x2="16.65" y2="16.65" />
-</svg>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    {width}
+    {height}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class:stroke-base-100={active}
+    class:stroke-current={!active}
+  >
+    <circle cx="11" cy="11" r="8" />
+    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+  </svg>
+</div>

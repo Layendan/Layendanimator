@@ -5,7 +5,7 @@
 
   export let animes: Anime[];
   let current = 0;
-  let interval = setInterval(next, 10000);
+  let interval = setInterval(next, 15000);
 
   function next() {
     current = (current + 1) % animes.length;
@@ -14,7 +14,7 @@
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
       clearInterval(interval);
-      interval = setInterval(next, 10000);
+      interval = setInterval(next, 15000);
     } else {
       clearInterval(interval);
     }

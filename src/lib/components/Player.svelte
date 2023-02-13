@@ -5,9 +5,12 @@
   import 'vidstack/styles/ui/sliders.css';
   // the `.js` extension is required.
   import 'vidstack/define/media-player.js';
-  import { defineCustomElements } from 'vidstack/elements';
-  import { onMount } from 'svelte';
   import Cpu from './svg/Cpu.svelte';
+  import FastForward from './svg/FastForward.svelte';
+  import { defineCustomElements } from 'vidstack/elements';
+  import type { MediaPlayerElement } from 'vidstack';
+  import { onMount, createEventDispatcher, onDestroy } from 'svelte';
+  import { fly } from 'svelte/transition';
 
   export let sources: {
     url: string;
@@ -16,10 +19,37 @@
   }[];
   export let poster: string;
 
-  let selectedSource = 0;
+  let player: MediaPlayerElement;
+  let subscriptions: (() => void)[] = [];
+
+  const defaultIndex = sources.findIndex(
+    source => source.quality === 'default'
+  );
+  let selectedSource = defaultIndex !== -1 ? defaultIndex : 0;
+  const dispatcher = createEventDispatcher();
+
+  function requestNextEpisode() {
+    dispatcher('requestNextEpisode');
+  }
 
   onMount(async () => {
     await defineCustomElements();
+    // TODO: Replace with bindings when video element comes back
+    subscriptions.push(
+      player.subscribe(({ duration }) => {
+        console.log('Duration:', duration);
+      })
+    );
+    subscriptions.push(
+      player.subscribe(({ paused, playing }) => {
+        console.log('Paused:', paused);
+        console.log('Playing:', playing);
+      })
+    );
+  });
+
+  onDestroy(() => {
+    subscriptions.forEach(unsubscribe => unsubscribe());
   });
 </script>
 
@@ -31,6 +61,7 @@
     aspect-ratio="16/9"
     class="block w-[max(calc(800px),70vw)] mx-auto object-cover"
     preload="metadata"
+    bind:this={player}
   >
     <media-outlet />
   </media-player>
@@ -40,7 +71,7 @@
       <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
       <label
         tabindex="0"
-        class="btn btn-outline btn-accent bg-black bg-opacity-40 backdrop-blur-lg w-fit"
+        class="btn btn-ghost bg-black bg-opacity-60 backdrop-blur-lg w-fit"
       >
         <Cpu height={20} width={20} />
       </label>
@@ -63,4 +94,16 @@
       </ul>
     </div>
   </div>
+  <!-- TODO: Check time and guess when video is ending -->
+  {#if false}
+    <div in:fly={{ y: 50 }} class="bottom-4 right-4 absolute">
+      <button
+        on:click={requestNextEpisode}
+        class="btn btn-ghost items-center gap-1 bg-black bg-opacity-60 backdrop-blur-lg"
+      >
+        <FastForward height={20} width={20} />
+        Next Episode
+      </button>
+    </div>
+  {/if}
 </div>

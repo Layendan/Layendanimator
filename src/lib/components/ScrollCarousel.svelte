@@ -3,7 +3,7 @@
 </script>
 
 <section
-  class="card bg-base-200 bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-80 shadow-xl p-8 max-w-full"
+  class="card bg-clip-padding bg-base-200 backdrop-filter backdrop-blur-xl bg-opacity-80 shadow-xl p-8 max-w-full"
 >
   <slot name="header" />
   <h1

@@ -1,12 +1,13 @@
 <script lang="ts">
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
+  import X from '$lib/components/svg/X.svelte';
+  import Trash from '$lib/components/svg/Trash.svelte';
+  import { fade } from 'svelte/transition';
   import { goto } from '$app/navigation';
   import { searchHistory } from '$lib/model/searchHistory';
+  import { _toUpperCase } from './+page';
   import type { PageData } from './$types';
-  import X from '$lib/components/svg/X.svelte';
-  import { fade } from 'svelte/transition';
-  import Trash from '$lib/components/svg/Trash.svelte';
 
   export let data: PageData;
 
@@ -15,17 +16,18 @@
 
 <form
   on:submit|preventDefault={() => {
-    if (value) {
-      goto(`/search?q=${value}`);
+    const query = _toUpperCase(value.trim());
+    if (query) {
+      goto(`/search?q=${query}`);
+      searchHistory.add(query);
     }
-    searchHistory.add(value);
   }}
   class="flex items-center justify-center w-full h-12"
 >
   <input
     type="search"
     placeholder="Search an anime"
-    class="w-full h-full px-2 text-base bg-base-200 backdrop-filter backdrop-blur-xl bg-opacity-60 rounded-md shadow-md focus:outline-none ring-2 ring-base-200 focus:ring-accent focus:ring-opacity-50 transition-shadow duration-200"
+    class="w-full h-full px-2 text-base bg-base-200 backdrop-filter backdrop-blur-xl bg-opacity-80 rounded-md shadow-md focus:outline-none ring-2 ring-base-200 focus:ring-accent focus:ring-opacity-50 transition-shadow duration-200"
     autocomplete="off"
     autocapitalize="words"
     bind:value

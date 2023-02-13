@@ -91,30 +91,22 @@
 <div
   class="btm-nav btm-nav-sm bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-60 z-50"
 >
-  <button
-    on:click={() => goto('/')}
-    class:border-t-2={$page.route.id === '/' ||
-      $page.route.id === '/[id]' ||
-      $page.route.id === '/[id]/[episode]'}
-  >
-    <Home height={20} width={20} />
+  <button on:click={() => goto('/')}>
+    <Home
+      height={20}
+      width={20}
+      active={$page.route.id === '/' ||
+        $page.route.id === '/[id]' ||
+        $page.route.id === '/[id]/[episode]'}
+    />
   </button>
-  <button
-    on:click={() => goto('/search')}
-    class:border-t-2={$page.route.id === '/search'}
-  >
-    <Search height={20} width={20} />
+  <button on:click={() => goto('/search')}>
+    <Search height={20} width={20} active={$page.route.id === '/search'} />
   </button>
-  <button
-    on:click={() => goto('/library')}
-    class:border-t-2={$page.route.id === '/library'}
-  >
-    <Bookmark height={20} width={20} />
+  <button on:click={() => goto('/library')}>
+    <Bookmark height={20} width={20} active={$page.route.id === '/library'} />
   </button>
-  <button
-    on:click={() => goto('/settings')}
-    class:border-t-2={$page.route.id === '/settings'}
-  >
-    <Settings height={20} width={20} />
+  <button on:click={() => goto('/settings')}>
+    <Settings height={20} width={20} active={$page.route.id === '/settings'} />
   </button>
 </div>

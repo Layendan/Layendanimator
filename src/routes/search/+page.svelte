@@ -1,14 +1,13 @@
 <script lang="ts">
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
-  import X from '$lib/components/svg/X.svelte';
-  import Trash from '$lib/components/svg/Trash.svelte';
-  import { fade } from 'svelte/transition';
+  import { fade, fly } from 'svelte/transition';
   import { goto } from '$app/navigation';
   import { searchHistory } from '$lib/model/searchHistory';
   import { _toUpperCase } from './+page';
   import type { PageData } from './$types';
-
+  import Fa from 'svelte-fa';
+  import { faXmarkCircle } from '@fortawesome/free-regular-svg-icons';
   export let data: PageData;
 
   let value = data.query ?? '';
@@ -17,17 +16,16 @@
 <form
   on:submit|preventDefault={() => {
     const query = _toUpperCase(value.trim());
-    if (query) {
-      goto(`/search?q=${query}`);
-      searchHistory.add(query);
-    }
+    if (!query) return;
+    searchHistory.add(query);
+    goto(`/search?q=${query}`);
   }}
   class="flex items-center justify-center w-full h-12"
 >
   <input
     type="search"
     placeholder="Search an anime"
-    class="w-full h-full px-2 text-base bg-base-200 backdrop-filter backdrop-blur-xl bg-opacity-80 rounded-md shadow-md focus:outline-none ring-2 ring-base-200 focus:ring-accent focus:ring-opacity-50 transition-shadow duration-200"
+    class="flex-1 h-full px-2 text-base bg-base-200 rounded-md shadow-md focus:outline-none ring-2 ring-base-200 focus:ring-accent focus:ring-opacity-50 transition-shadow duration-200"
     autocomplete="off"
     autocapitalize="words"
     bind:value
@@ -42,15 +40,13 @@
 
     <svelte:fragment slot="content">
       {#each data.animes as anime}
-        {#key anime.id}
-          <AnimeCard {anime} />
-        {/key}
+        <AnimeCard {anime} />
       {:else}
         <div class="flex items-center justify-center">
           <p
             class="text-xl font-semibold text-center text-base-content text-opacity-70"
           >
-            No results found
+            No results
           </p>
         </div>
       {/each}
@@ -60,38 +56,28 @@
   <section
     class="card bg-base-200 bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-80 shadow-xl p-8 max-w-none"
   >
-    <div class="flex items-center gap-4 mb-4">
-      <h1
-        class="text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
-      >
-        Episodes
-      </h1>
-      {#if $searchHistory.length > 0}
-        <button
-          transition:fade|local={{ duration: 200 }}
-          class="btn btn-outline btn-accent w-fit"
-          on:click={() => searchHistory.clear()}
-        >
-          <Trash width={20} height={20} />
-        </button>
-      {/if}
+    <div class="flex items-center justify-between gap-4 mb-4">
+      <h1 class="text-md font-extrabold  md:text-xl lg:text-2xl">History</h1>
     </div>
     <div class="relative flex flex-col w-auto p-4 pb-6">
       <!-- Can replace with $, but doing this so that it does not update while navigating -->
-      {#each $searchHistory as query}
+      {#each $searchHistory as query (query)}
         <div class="divider" />
         <div
           in:fade={{ duration: 200 }}
-          class="flex gap-1 p-2 text-xl font-semibold text-base-content group transition-colors duration-200"
+          out:fly={{ duration: 300, x: 500 }}
+          class="flex items-center gap-2 p-2 text-2xl font-semibold"
         >
-          <X
-            width={18}
-            height={18}
+          <button
             on:click={() => searchHistory.remove(query)}
-          />
+            class="hover:text-red-500"
+          >
+            <Fa icon={faXmarkCircle} />
+          </button>
+
           <a
             href="/search?q={query}"
-            class="hover:text-accent cursor-pointer w-full"
+            class="hover:text-accent cursor-pointer max-w-max"
           >
             {query}
           </a>
@@ -100,7 +86,7 @@
         <p
           class="text-xl font-semibold text-center text-base-content text-opacity-70"
         >
-          No previous searches
+          Such empty...
         </p>
       {/each}
     </div>

@@ -1,16 +1,14 @@
 <script lang="ts">
   import 'vidstack/styles/base.css';
-  // the following styles are optional - remove to go headless.
   import 'vidstack/styles/ui/buttons.css';
   import 'vidstack/styles/ui/sliders.css';
-  // the `.js` extension is required.
   import 'vidstack/define/media-player.js';
-  import Cpu from './svg/Cpu.svelte';
-  import FastForward from './svg/FastForward.svelte';
-  import { defineCustomElements } from 'vidstack/elements';
   import type { MediaPlayerElement } from 'vidstack';
+  import { defineCustomElements } from 'vidstack/elements';
+
+  import Fa from 'svelte-fa';
+  import { faMicrochip } from '@fortawesome/free-solid-svg-icons';
   import { onMount, createEventDispatcher, onDestroy } from 'svelte';
-  import { fly } from 'svelte/transition';
 
   export let sources: {
     url: string;
@@ -70,22 +68,16 @@
   </media-player>
   <div class="bottom-4 left-4 absolute">
     <div class="dropdown dropdown-right dropdown-end">
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-      <label
-        tabindex="0"
-        class="btn btn-ghost bg-black bg-opacity-60 backdrop-blur-lg w-fit"
-      >
-        <Cpu height={20} width={20} />
-      </label>
-      <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+      <button tabindex="0" class="btn btn-ghost bg-black ">
+        <Fa icon={faMicrochip} size="2x" />
+      </button>
       <ul
-        tabindex="0"
         class="dropdown-content z-10 p-2 ml-2 shadow bg-base-200 rounded-box w-52"
       >
         {#each sources as source, i}
           <li class="m-1">
             <button
+              tabindex="0"
               class="btn btn-outline btn-accent w-full items-center"
               disabled={selectedSource === i}
               on:click={() => (selectedSource = i)}
@@ -97,16 +89,4 @@
       </ul>
     </div>
   </div>
-  <!-- TODO: Check time and guess when video is ending -->
-  {#if false}
-    <div in:fly={{ y: 50 }} class="bottom-4 right-4 absolute">
-      <button
-        on:click={requestNextEpisode}
-        class="btn btn-ghost items-center gap-1 bg-black bg-opacity-60 backdrop-blur-lg"
-      >
-        <FastForward height={20} width={20} />
-        Next Episode
-      </button>
-    </div>
-  {/if}
 </div>

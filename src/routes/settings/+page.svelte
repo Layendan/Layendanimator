@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Discord from '$lib/components/svg/Discord.svelte';
-  import Github from '$lib/components/svg/Github.svelte';
   import { providers, source } from '$lib/model/source';
+  import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
+  import Fa from 'svelte-fa';
 </script>
 
 <section>
@@ -51,22 +51,20 @@
     >
       Links
     </h1>
-    <div class="relative inline-flex w-auto gap-6 p-4 pb-6">
+    <div class="flex space-x-6">
       <a
         href="https://github.com/Layendan/NineAnimator-Tauri"
         target="_blank"
         rel="noopener noreferrer"
-        class="flex items-center rounded-full bg-base-content p-1 hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
       >
-        <Github height={60} width={60} />
+        <Fa icon={faGithub} size="3x" />
       </a>
       <a
         href="https://discord.gg/dzTVzeW"
         target="_blank"
         rel="noopener noreferrer"
-        class="flex items-center rounded-full bg-base-content p-1 hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
       >
-        <Discord height={60} width={60} />
+        <Fa icon={faDiscord} size="3x" />
       </a>
     </div>
   </section>

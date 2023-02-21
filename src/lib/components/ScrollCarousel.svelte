@@ -19,3 +19,22 @@
     </div>
   {/key}
 </section>
+
+<style lang="postcss">
+  /* your styles go here */
+  /* width */
+  ::-webkit-scrollbar {
+    @apply w-full;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    @apply rounded-md filter;
+    box-shadow: inset 0 0 3px hsl(var(--bc));
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    @apply bg-base-content rounded-md;
+  }
+</style>

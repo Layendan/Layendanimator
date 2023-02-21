@@ -50,40 +50,45 @@
     </a>
   {/key}
   <div class="absolute inset-0 scrim pointer-events-none" />
-  {#if scrollY <= 0}
-    <div
-      class="absolute inset-0 pb-4 pl-4 bg-gradient-to-r from-base-100 w-full h-full"
-      transition:fade|local
-    >
-      {#key current}
-        <div
-          in:fade|local
-          class="flex flex-col justify-center h-full w-5/12 gap-4 p-4"
-        >
-          <h1 class="text-4xl font-bold line-clamp-3">
-            {animes[current].title.english ?? animes[current].title.romaji}
-          </h1>
-          <p class="text-xl line-clamp-2">
-            {@html animes[current].description}
-          </p>
-          <div class="flex gap-4">
-            <!-- TODO: Actually play episode -->
-            <button
-              class="btn btn-primary"
-              on:click={() => goto(`/${animes[current].id}`)}
-            >
-              <Play width={24} height={24} />
-              Play
-            </button>
-            <button
-              class="btn btn-outline"
-              on:click={() => goto(`/${animes[current].id}`)}
-            >
-              Details
-            </button>
-          </div>
+  <div
+    class="absolute inset-0 pb-4 pl-4 bg-gradient-to-r from-base-100 w-full h-full transition-opacity duration-500"
+    class:hide={scrollY > 0}
+    transition:fade|local
+  >
+    {#key current}
+      <div
+        in:fade|local
+        class="flex flex-col justify-center h-full w-5/12 gap-4 p-4"
+      >
+        <h1 class="text-4xl font-bold line-clamp-3">
+          {animes[current].title.english ?? animes[current].title.romaji}
+        </h1>
+        <p class="text-xl line-clamp-2">
+          {@html animes[current].description}
+        </p>
+        <div class="flex gap-4">
+          <!-- TODO: Actually play episode -->
+          <button
+            class="btn btn-primary"
+            on:click={() => goto(`/${animes[current].id}`)}
+          >
+            <Play width={24} height={24} />
+            Play
+          </button>
+          <button
+            class="btn btn-outline"
+            on:click={() => goto(`/${animes[current].id}`)}
+          >
+            Details
+          </button>
         </div>
-      {/key}
-    </div>
-  {/if}
+      </div>
+    {/key}
+  </div>
 </header>
+
+<style>
+  .hide {
+    @apply opacity-0 pointer-events-none;
+  }
+</style>

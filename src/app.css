@@ -2,14 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  overscroll-behavior-x: none;
-}
-
 @layer components {
   .scrim {
-    @apply bg-gradient-to-t;
+    @apply bg-gradient-to-tr;
     --tw-gradient-stops: theme(colors.base-100) 0%,
       theme(colors.base-100 / 73.8%) 19%, theme(colors.base-100 / 54.1%) 34%,
       theme(colors.base-100 / 38.2%) 47%, theme(colors.base-100 / 27.8%) 56.5%,

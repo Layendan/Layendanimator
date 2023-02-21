@@ -54,6 +54,7 @@
 </script>
 
 <div class="relative w-screen h-auto bg-black -m-4 mb-4">
+  <!-- svelte-ignore a11y-autofocus -->
   <media-player
     src={sources[selectedSource].url}
     {poster}
@@ -61,6 +62,8 @@
     aspect-ratio="16/9"
     class="block w-[max(calc(800px),70vw)] mx-auto object-cover"
     preload="metadata"
+    autoplay
+    autofocus
     bind:this={player}
   >
     <media-outlet />

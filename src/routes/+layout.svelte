@@ -83,6 +83,33 @@
     >
   </button>
 {/if} -->
+<!-- <header
+  data-tauri-drag-region
+  class="h-8 absolute z-50 left-0 right-0 top-0 bg-base-100 w-screen inline-flex content-between items-center"
+>
+  <img src="/loading_failure.jpeg" alt="logo" class="aspect-square w-4" />
+  <div class="inline-flex gap-1">
+    <button class="minimize" on:click={() => console.log('Minimize requested')}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="feather feather-minus"
+      >
+        <line x1="5" y1="12" x2="19" y2="12" />
+      </svg>
+    </button>
+    <button class="exit" on:click={() => console.log('Exit requested')}>
+      <X width={24} height={24} />
+    </button>
+  </div>
+</header> -->
 
 <main class="m-4 mb-20">
   <slot />

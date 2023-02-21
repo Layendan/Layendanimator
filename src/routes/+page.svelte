@@ -9,19 +9,11 @@
   import type { PageData } from './$types';
 
   export let data: PageData;
-  let scrollY = 0;
 </script>
 
-<svelte:window bind:scrollY />
-
-<header class="relative -m-4 mb-4 z-0" style="top: {scrollY / 1.5}px;">
-  <Carousel
-    animes={[
-      ...data.trending.filter(a => a.cover !== a.image),
-      ...data.popular
-    ]}
-  />
-</header>
+<Carousel
+  animes={[...data.trending.filter(a => a.cover !== a.image), ...data.popular]}
+/>
 
 <main class="relative w-full">
   <ScrollCarousel>
@@ -30,6 +22,14 @@
     <svelte:fragment slot="content">
       {#each data.recent as anime}
         <AnimeCard {anime} />
+      {:else}
+        <div class="flex items-center justify-center">
+          <p
+            class="text-xl font-semibold text-center text-base-content text-opacity-70"
+          >
+            No Recent Episodes Found
+          </p>
+        </div>
       {/each}
     </svelte:fragment>
   </ScrollCarousel>
@@ -68,6 +68,14 @@
     <svelte:fragment slot="content">
       {#each data.trending as anime}
         <AnimeCard {anime} />
+      {:else}
+        <div class="flex items-center justify-center">
+          <p
+            class="text-xl font-semibold text-center text-base-content text-opacity-70"
+          >
+            No Trending Animes Found
+          </p>
+        </div>
       {/each}
     </svelte:fragment>
   </ScrollCarousel>
@@ -80,6 +88,14 @@
     <svelte:fragment slot="content">
       {#each data.popular as anime}
         <AnimeCard {anime} />
+      {:else}
+        <div class="flex items-center justify-center">
+          <p
+            class="text-xl font-semibold text-center text-base-content text-opacity-70"
+          >
+            No Popular Animes Found
+          </p>
+        </div>
       {/each}
     </svelte:fragment>
   </ScrollCarousel>

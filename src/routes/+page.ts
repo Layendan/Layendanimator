@@ -6,17 +6,18 @@ export const load = (async ({ fetch }) => {
     recent: (
       await fetch(
         'https://api.consumet.org/meta/anilist/recent-episodes?perPage=25',
-        { signal: AbortSignal.timeout(15000) }
+        { signal: AbortSignal.timeout(5_000) }
       ).then(r => r.json())
     ).results as Anime[],
+
     popular: (
       await fetch('https://api.consumet.org/meta/anilist/popular', {
-        signal: AbortSignal.timeout(15000)
+        signal: AbortSignal.timeout(5_000)
       }).then(r => r.json())
     ).results as Anime[],
     trending: (
       await fetch('https://api.consumet.org/meta/anilist/trending?perPage=25', {
-        signal: AbortSignal.timeout(15000)
+        signal: AbortSignal.timeout(5_000)
       }).then(r => r.json())
     ).results as Anime[]
   };

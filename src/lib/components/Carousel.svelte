@@ -1,85 +1,90 @@
 <script lang="ts">
-  import Play from './svg/Play.svelte';
   import { onDestroy, onMount } from 'svelte';
-  import { fade } from 'svelte/transition';
-  import { goto, preloadData } from '$app/navigation';
+  import { preloadData } from '$app/navigation';
   import type { Anime } from '$lib/model/Anime';
+  import { faPlayCircle } from '@fortawesome/free-solid-svg-icons';
+  import Fa from 'svelte-fa';
 
   export let animes: Anime[];
-  let scrollY = 0;
-  let current = 0;
-  let interval = setInterval(next, 10000);
+  export let fadeSpeed = 300;
+  export let transitionTime = 10_000;
+  export let animeIdx = 0;
 
-  function next() {
-    current = (current + 1) % animes.length;
+  let fade = false;
+  let interval = setInterval(next, transitionTime);
+  async function next() {
+    fade = true;
+    await new Promise(resolve => setTimeout(resolve, fadeSpeed));
+    animeIdx = (animeIdx + 1) % animes.length;
+    fade = false;
   }
 
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
       clearInterval(interval);
-      interval = setInterval(next, 10000);
+      interval = setInterval(next, transitionTime);
     } else {
       clearInterval(interval);
     }
   });
 
-  $: if (current) {
-    preloadData(`/${animes[current].id}`);
+  $: if (animeIdx) {
+    preloadData(`/${animes[animeIdx].id}`);
   }
 
   onMount(() => {
-    preloadData(`/${animes[current].id}`);
+    preloadData(`/${animes[animeIdx].id}`);
   });
 
   onDestroy(() => {
     clearInterval(interval);
   });
+
+  let scrollY = 0;
+  $: textOn = scrollY <= 0;
 </script>
 
 <svelte:window bind:scrollY />
 
-<header class="relative -m-4 mb-4 z-0" style="top: {scrollY / 1.5}px;">
-  {#key current}
-    <a href="/{animes[current].id}">
-      <img
-        in:fade|local={{ duration: 1000 }}
-        class="w-full h-[45vh] object-cover"
-        src={animes[current].cover}
-        alt={animes[current].title.english ?? animes[current].title.romaji}
-      />
-    </a>
-  {/key}
+<header class={`relative -m-4 mb-4`} style="top: {scrollY / 1.5}px;">
+  <a href="/{animes[animeIdx].id}">
+    <img
+      class={`w-full h-96 object-cover 
+      ${fade ? ' opacity-0 ' : 'opacity-100 '}
+       transition-opacity duration-300 ease-in-out
+      `}
+      src={animes[animeIdx].cover}
+      alt={animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
+    />
+  </a>
   <div class="absolute inset-0 scrim pointer-events-none" />
   <div
-    class="absolute inset-0 pb-4 pl-4 bg-gradient-to-r from-base-100 w-full h-full transition-opacity duration-500"
-    class:hide={scrollY > 0}
-    transition:fade|local
+    class={`absolute inset-0 flex items-end bg-gradient-to-tr from-base-100
+        ${fade ? '!opacity-0' : 'opacity-100'}
+        ${
+          textOn ? 'opacity-100' : '!opacity-0 pointer-events-none'
+        } transition-opacity duration-300 ease-in-out`}
   >
-    <div
-      in:fade|local
-      class="flex flex-col justify-center h-full w-5/12 gap-4 p-4"
-    >
-      <h1 class="text-2xl lg:text-4xl font-bold line-clamp-2 lg:line-clamp-3">
-        {animes[current].title.english ?? animes[current].title.romaji}
+    <div class="flex-1 flex flex-col justify-center gap-y-4 p-4">
+      <h1 class="text-4xl font-bold line-clamp-2 max-w-lg drop-shadow-lg">
+        {animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
       </h1>
-      <p class="text-base lg:text-xl line-clamp-2">
-        {@html animes[current].description}
+
+      <p class="text-xl max-w-sm line-clamp-3 drop-shadow-lg">
+        {animes[animeIdx].description.replace(/<[^>]+>/g, '').slice(0, 200)}
       </p>
-      <div class="flex gap-4">
-        <!-- TODO: Actually play episode -->
-        <button
-          class="btn btn-primary"
-          on:click={() => goto(`/${animes[current].id}`)}
+
+      <div class="flex gap-x-2">
+        <a
+          class="flex gap-x-2 btn btn-primary px-8"
+          href={`/${animes[animeIdx].id}`}
         >
-          <Play width={24} height={24} />
+          <Fa icon={faPlayCircle} size="lg" />
           Play
-        </button>
-        <button
-          class="btn btn-outline"
-          on:click={() => goto(`/${animes[current].id}`)}
-        >
+        </a>
+        <a class="btn btn-outline" href={`/${animes[animeIdx].id}`}>
           Details
-        </button>
+        </a>
       </div>
     </div>
   </div>

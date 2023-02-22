@@ -2,12 +2,15 @@
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import Player from '$lib/components/Player.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
-  import FastForward from '$lib/components/svg/FastForward.svelte';
-  import Tv from '$lib/components/svg/TV.svelte';
-  import Info from '$lib/components/svg/Info.svelte';
   import { goto } from '$app/navigation';
   import { fade } from 'svelte/transition';
   import type { PageData } from './$types';
+  import {
+    faForward,
+    faInfoCircle,
+    faTv
+  } from '@fortawesome/free-solid-svg-icons';
+  import Fa from 'svelte-fa';
 
   export let data: PageData;
 
@@ -53,14 +56,14 @@
     class:tab-active={selectedTab === 'episodes'}
     on:click={() => (selectedTab = 'episodes')}
   >
-    <Tv width={20} height={20} />
+    <Fa icon={faTv} />
   </button>
   <button
     class="tab"
     class:tab-active={selectedTab === 'wiki'}
     on:click={() => (selectedTab = 'wiki')}
   >
-    <Info width={20} height={20} />
+    <Fa icon={faInfoCircle} size="1.2x" />
   </button>
 </div>
 
@@ -99,13 +102,13 @@
               <p
                 class="absolute inset-0 w-full h-full inline-flex items-center justify-center uppercase text-lg font-bold gap-1 bg-base-100 bg-opacity-80 backdrop-blur-lg rounded-md"
               >
-                <FastForward width={24} height={24} />
+                <Fa icon={faForward} />
                 Next Episode
               </p>
             {/if}
           </div>
           <div
-            class="flex flex-col gap-1 text-base-content text-opacity-80 group hover:text-opacity-100"
+            class="flex flex-col gap-1 text-base-content text-left text-opacity-80 group hover:text-opacity-100"
           >
             <h3
               style:--anime-color={data.anime.color}

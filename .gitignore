@@ -9,3 +9,4 @@ node_modules
 *.log
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+pnpm-lock.yaml

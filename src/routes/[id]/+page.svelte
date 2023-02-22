@@ -1,15 +1,17 @@
 <script lang="ts">
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
-  import UpArrow from '$lib/components/svg/UpArrow.svelte';
-  import DownArrow from '$lib/components/svg/DownArrow.svelte';
-  import Graph from '$lib/components/svg/Graph.svelte';
-  import Play from '$lib/components/svg/Play.svelte';
-  import { goto } from '$app/navigation';
   import { fade } from 'svelte/transition';
   import { subscriptions } from '$lib/model/subscriptions';
   import type { PageData } from './$types';
   import type { Episode } from '$lib/model/Anime';
+  import Fa from 'svelte-fa';
+  import {
+    faArrowUp,
+    faArrowDown,
+    faFilter,
+    faPlayCircle
+  } from '@fortawesome/free-solid-svg-icons';
 
   export let data: PageData;
   const watchPercentage = 0.8;
@@ -71,7 +73,7 @@
           />
         </a>
         <button
-          class="btn btn-primary w-full mt-4 bg-clip-border backdrop-blur-xl shadow-xl"
+          class="btn btn-primary w-full mt-4 backdrop-blur-xl shadow-xl"
           class:btn-error={$subscriptions.some(s => s.id === data.anime.id)}
           class:btn-outline={$subscriptions.some(s => s.id === data.anime.id)}
           on:click={() => {
@@ -183,19 +185,18 @@
           Episodes
         </h1>
         {#if data.anime.episodes.length > 0}
-          <button
-            class="btn btn-outline btn-accent w-fit"
-            on:click={() =>
-              goto(
-                `/${data.anime.id}/${
-                  lastEpisodeWatched?.id ?? data.anime.episodes[0].id
-                }`
-              )}
+          <a
+            class="btn btn-outline btn-accent w-fit flex space-x-2"
+            href={`/${data.anime.id}/${
+              lastEpisodeWatched?.id ?? data.anime.episodes[0].id
+            }`}
           >
-            <Play width={24} height={24} />
+            <Fa icon={faPlayCircle} size="lg" />
             <!-- Check if not user has watched anime yet -->
-            {lastEpisodeWatched ? 'Continue' : 'Start'} Watching
-          </button>
+            <span>
+              {lastEpisodeWatched ? 'Continue' : 'Start'} Watching
+            </span>
+          </a>
         {/if}
       </div>
       {#if data.anime.episodes.length > 0}
@@ -203,7 +204,7 @@
           <!-- svelte-ignore a11y-label-has-associated-control -->
           <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
           <label tabindex="0" class="btn btn-outline btn-accent w-fit">
-            <Graph width={20} height={20} />
+            <Fa icon={faFilter} />
           </label>
           <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
           <ul
@@ -216,7 +217,7 @@
                 disabled={isAscending}
                 on:click={() => (isAscending = true)}
               >
-                <UpArrow width={20} height={20} />
+                <Fa icon={faArrowUp} />
                 Episode
               </button>
             </li>
@@ -226,7 +227,7 @@
                 disabled={!isAscending}
                 on:click={() => (isAscending = false)}
               >
-                <DownArrow width={20} height={20} />
+                <Fa icon={faArrowDown} />
                 Episode
               </button>
             </li>
@@ -414,7 +415,7 @@
             </h3>
             {#if character.name.native}
               <h2
-                class="text-xs leading-tight whitespace-normal line-clamp-2 transition-colors duration-200"
+                class="text-xs leading-tight whitespace-normal line-clamp-2 transition-colors duration-200 native-name"
               >
                 {character.name.native}
               </h2>
@@ -433,3 +434,9 @@
     </svelte:fragment>
   </ScrollCarousel>
 </main>
+
+<style>
+  .native-name {
+    font-family: 'FOT-NewRodin Pro M';
+  }
+</style>

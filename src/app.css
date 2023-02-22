@@ -4,7 +4,12 @@
 
 html,
 body {
-  overscroll-behavior-x: none;
+  @apply overscroll-x-none;
+}
+
+@font-face {
+  font-family: FOT-NewRodin Pro M;
+  src: url('/assets/FOT-NewRodin Pro M.otf') format('opentype');
 }
 
 @layer components {

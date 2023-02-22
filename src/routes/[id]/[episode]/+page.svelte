@@ -63,7 +63,7 @@
     class:tab-active={selectedTab === 'wiki'}
     on:click={() => (selectedTab = 'wiki')}
   >
-    <Fa icon={faInfoCircle} size="2x" />
+    <Fa icon={faInfoCircle} size="1.2x" />
   </button>
 </div>
 
@@ -108,7 +108,7 @@
             {/if}
           </div>
           <div
-            class="flex flex-col gap-1 text-base-content text-opacity-80 group hover:text-opacity-100"
+            class="flex flex-col gap-1 text-base-content text-left text-opacity-80 group hover:text-opacity-100"
           >
             <h3
               style:--anime-color={data.anime.color}

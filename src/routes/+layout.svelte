@@ -35,7 +35,6 @@
     // dude.... why is this offsetting everything on refresh
     new LocomotiveScroll({
       el: main,
-      smooth: true,
       multiplier: 2
     });
 

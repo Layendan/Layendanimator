@@ -2,9 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: FOT-NewRodin Pro M;
+  src: url('/assets/FOT-NewRodin Pro M.otf') format('opentype');
+}
+
 @layer components {
   .scrim {
-    @apply bg-gradient-to-tr;
+    @apply bg-gradient-to-t;
     --tw-gradient-stops: theme(colors.base-100) 0%,
       theme(colors.base-100 / 73.8%) 19%, theme(colors.base-100 / 54.1%) 34%,
       theme(colors.base-100 / 38.2%) 47%, theme(colors.base-100 / 27.8%) 56.5%,

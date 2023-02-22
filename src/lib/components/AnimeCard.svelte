@@ -24,7 +24,7 @@
     />
     {#if anime.episodeNumber}
       <div
-        class="card-body rounded-lg m-0 p-0 absolute bg-base-300  h-8 w-auto mx-3 bottom-3 left-0 right-0 flex items-center justify-center pointer-events-none"
+        class="card-body rounded-lg m-0 p-0 absolute bg-base-300 bg-clip-border backdrop-blur-xl bg-opacity-60 h-8 w-auto mx-3 bottom-3 left-0 right-0 flex items-center justify-center pointer-events-none"
       >
         <!-- text-accent-content only works on light/dark color schemes otherwise dark theme text color is too light and is not readable -->
         <h2
@@ -39,7 +39,8 @@
   <div>
     <h3
       style:--anime-color={anime.color}
-      class="text-sm font-bold leading-tight whitespace-normal text-base-content text-opacity-80 hover:text-opacity-100 line-clamp-2 transition-colors duration-200"
+      class={`text-sm font-bold leading-tight whitespace-normal text-base-content text-opacity-80 hover:text-opacity-100 line-clamp-2 transition-colors duration-200
+      ${anime.color ? 'hover:text-[var(--anime-color)]' : 'hover:text-accent'}`}
     >
       {anime.title.english ?? anime.title.romaji}
     </h3>

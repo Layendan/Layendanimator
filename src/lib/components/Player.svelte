@@ -68,10 +68,14 @@
   </media-player>
   <div class="bottom-4 left-4 absolute">
     <div class="dropdown dropdown-right dropdown-end">
-      <button tabindex="0" class="btn btn-ghost bg-black ">
-        <Fa icon={faMicrochip} size="2x" />
-      </button>
+      <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+      <!-- svelte-ignore a11y-label-has-associated-control -->
+      <label tabindex="0" class="btn btn-ghost ">
+        <Fa icon={faMicrochip} size="1.5x" />
+      </label>
+      <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
       <ul
+        tabindex="0"
         class="dropdown-content z-10 p-2 ml-2 shadow bg-base-200 rounded-box w-52"
       >
         {#each sources as source, i}

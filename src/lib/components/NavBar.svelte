@@ -31,7 +31,9 @@
   ];
 </script>
 
-<div class="btm-nav btm-nav-sm bg-clip-padding bg-base-300">
+<div
+  class="btm-nav btm-nav-sm bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-60 z-50"
+>
   {#each navRoutes as { href, active, icon }}
     <a
       {href}

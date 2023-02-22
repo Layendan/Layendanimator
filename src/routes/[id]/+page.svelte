@@ -415,7 +415,7 @@
             </h3>
             {#if character.name.native}
               <h2
-                class="text-xs leading-tight whitespace-normal line-clamp-2 transition-colors duration-200"
+                class="text-xs leading-tight whitespace-normal line-clamp-2 transition-colors duration-200 native-name"
               >
                 {character.name.native}
               </h2>
@@ -434,3 +434,9 @@
     </svelte:fragment>
   </ScrollCarousel>
 </main>
+
+<style>
+  .native-name {
+    font-family: 'FOT-NewRodin Pro M';
+  }
+</style>

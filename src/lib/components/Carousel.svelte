@@ -89,3 +89,9 @@
     </div>
   </div>
 </header>
+
+<style>
+  .hide {
+    @apply opacity-0 pointer-events-none;
+  }
+</style>

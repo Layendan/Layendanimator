@@ -73,7 +73,7 @@
           />
         </a>
         <button
-          class="btn btn-primary w-full mt-4 bg-clip-border backdrop-blur-xl shadow-xl"
+          class="btn btn-primary w-full mt-4 backdrop-blur-xl shadow-xl"
           class:btn-error={$subscriptions.some(s => s.id === data.anime.id)}
           class:btn-outline={$subscriptions.some(s => s.id === data.anime.id)}
           on:click={() => {

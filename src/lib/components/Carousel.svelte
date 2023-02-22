@@ -60,9 +60,9 @@
   <div class="absolute inset-0 scrim pointer-events-none" />
   <div
     class={`absolute inset-0 flex items-end bg-gradient-to-tr from-base-100
-        ${fade ? ' opacity-0' : 'opacity-100'}
+        ${fade ? '!opacity-0' : 'opacity-100'}
         ${
-          textOn ? '!opacity-100' : '!opacity-0 pointer-events-none'
+          textOn ? 'opacity-100' : '!opacity-0 pointer-events-none'
         } transition-opacity duration-300 ease-in-out`}
   >
     <div class="flex-1 flex flex-col justify-center gap-y-4 p-4">

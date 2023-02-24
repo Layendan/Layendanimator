@@ -65,7 +65,8 @@
 				"label": "main",
 				"minWidth": 800,
 				"width": 800,
-				"visible": true
+				"visible": true,
+				"acceptFirstMouse": true
 			}
 		]
 	}

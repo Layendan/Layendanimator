@@ -10,9 +10,9 @@ export const load = (async ({ fetch, url }) => {
   if (!query) return;
   query = _toUpperCase(query.trim());
   const animes: Anime[] = (
-    await fetch(`https://api.consumet.org/meta/anilist/${query}`).then(r =>
-      r.json()
-    )
+    await fetch(
+      `https://consumet.app.jet-black.xyz/meta/anilist/${query}`
+    ).then(r => r.json())
   ).results;
   return {
     animes: animes,

@@ -2,7 +2,7 @@
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import Player from '$lib/components/Player.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
-  import { goto } from '$app/navigation';
+  import { goto, preloadData } from '$app/navigation';
   import { fade } from 'svelte/transition';
   import type { PageData } from './$types';
   import {
@@ -75,6 +75,8 @@
       {#each data.anime.episodes.filter(item => item.number > (data.episodeObject?.number ?? Infinity)) as episode}
         <button
           in:fade
+          on:mouseover={() => preloadData(`/${data.anime.id}/${episode.id}`)}
+          on:focus={() => preloadData(`/${data.anime.id}/${episode.id}`)}
           on:click={() => {
             goto(
               data.store[episode.id]?.watched

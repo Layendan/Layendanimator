@@ -10,8 +10,11 @@
     faArrowUp,
     faArrowDown,
     faFilter,
-    faPlayCircle
+    faPlayCircle,
+    faRotateRight
   } from '@fortawesome/free-solid-svg-icons';
+  import { animeCache } from '$lib/model/cache';
+  import { invalidate } from '$app/navigation';
 
   export let data: PageData;
   const watchPercentage = 0.8;
@@ -43,13 +46,16 @@
 
 <svelte:window bind:scrollY />
 
-<header class="relative m-[-1rem] mb-4 z-0" style="top: {scrollY / 1.5}px;">
-  <div class="absolute inset-0 scrim pointer-events-none" />
+<header
+  class="relative -m-4 mb-4"
+  style="transform: translate3d(0, {scrollY / 1.5}px, 0);"
+>
   <img
     class="w-full h-[38vh] object-cover object-top"
     src={data.anime.cover ?? data.anime.image}
     alt="{data.anime.title.english ?? data.anime.title.romaji} Cover"
   />
+  <div class="absolute inset-0 scrim pointer-events-none" />
 </header>
 
 <main class="relative">
@@ -57,7 +63,7 @@
     <div
       class="grid gap-x-4 grid-cols-[240px_auto] lg:grid-cols-[300px_auto] grid-rows-1 mx-auto transition-[grid-template-columns] duration-200"
     >
-      <div class="relative m-0 mt-[-20vh]">
+      <div class="relative m-0 -mt-[20vh]">
         <a
           href="https://anilist.co/anime/{data.anime.id}"
           target="_blank"
@@ -178,9 +184,9 @@
   <!-- EPISODES -->
   <ScrollCarousel bind:key={sortedEpisodes}>
     <div slot="header" class="flex justify-between">
-      <div class="flex items-center gap-4 mb-4">
+      <div class="flex items-center gap-1 mb-4">
         <h1
-          class="text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
+          class="text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl mr-3"
         >
           Episodes
         </h1>
@@ -198,6 +204,15 @@
             </span>
           </a>
         {/if}
+        <button
+          class="btn btn-outline btn-accent"
+          on:click={() => {
+            animeCache.delete(data.anime.id);
+            invalidate(data.anime.id);
+          }}
+        >
+          <Fa icon={faRotateRight} />
+        </button>
       </div>
       {#if data.anime.episodes.length > 0}
         <div class="block dropdown dropdown-end">
@@ -283,9 +298,12 @@
             >
               <h3
                 style:--anime-color={data.anime.color}
-                class="text-md font-bold leading-tight whitespace-normal line-clamp-2 text-base-content text-opacity-80 transition-colors duration-200"
-                class:group-hover:text-[var(--anime-color)]={data.anime.color}
-                class:group-hover:text-accent={!data.anime.color}
+                class={`text-md font-bold leading-tight whitespace-normal line-clamp-2 text-base-content text-opacity-80 transition-colors duration-200
+                ${
+                  data.anime.color
+                    ? 'group-hover:text-[var(--anime-color)]'
+                    : 'group-hover:text-accent'
+                }`}
               >
                 {episode.title || `Episode ${episode.number}`}
               </h3>

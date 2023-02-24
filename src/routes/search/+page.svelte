@@ -1,7 +1,7 @@
 <script lang="ts">
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
-  import { fade, fly } from 'svelte/transition';
+  import { fade } from 'svelte/transition';
   import { goto } from '$app/navigation';
   import { searchHistory } from '$lib/model/searchHistory';
   import { _toUpperCase } from './+page';
@@ -65,12 +65,11 @@
         <div class="divider" />
         <div
           in:fade={{ duration: 200 }}
-          out:fly={{ duration: 300, x: 500 }}
           class="flex items-center gap-2 p-2 text-2xl font-semibold"
         >
           <button
             on:click={() => searchHistory.remove(query)}
-            class="hover:text-red-500"
+            class="hover:text-error"
           >
             <Fa icon={faXmarkCircle} />
           </button>

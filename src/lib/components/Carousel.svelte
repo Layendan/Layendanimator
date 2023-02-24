@@ -46,13 +46,15 @@
 
 <svelte:window bind:scrollY />
 
-<header class={`relative -m-4 mb-4`} style="top: {scrollY / 1.5}px;">
+<header
+  class={`relative -m-4 mb-4`}
+  style="transform: translate3d(0, {scrollY / 1.5}px, 0);"
+>
   <a href="/{animes[animeIdx].id}">
     <img
       class={`w-full h-96 object-cover 
       ${fade ? ' opacity-0 ' : 'opacity-100 '}
-       transition-opacity duration-300 ease-in-out
-      `}
+       transition-opacity duration-300 ease-in-out`}
       src={animes[animeIdx].cover}
       alt={animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
     />
@@ -61,16 +63,19 @@
   <div
     class={`absolute inset-0 flex items-end bg-gradient-to-tr from-base-100
         ${fade ? '!opacity-0' : 'opacity-100'}
-        ${
-          textOn ? 'opacity-100' : '!opacity-0 pointer-events-none'
-        } transition-opacity duration-300 ease-in-out`}
+        ${textOn ? 'opacity-100' : '!opacity-0 pointer-events-none'} 
+        transition-opacity duration-300 ease-in-out`}
   >
-    <div class="flex-1 flex flex-col justify-center gap-y-4 p-4">
-      <h1 class="text-4xl font-bold line-clamp-2 max-w-lg drop-shadow-lg">
+    <div
+      class="flex-1 flex flex-col justify-center gap-y-4 p-4 max-w-lg lg:max-w-xl"
+    >
+      <h1
+        class="text-3xl font-extrabold tracking-tight pb-1 md:text-4xl lg:text-5xl line-clamp-3 drop-shadow-lg"
+      >
         {animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
       </h1>
 
-      <p class="text-xl max-w-sm line-clamp-3 drop-shadow-lg">
+      <p class="text-md md:text-lg lg:text-xl line-clamp-2 drop-shadow-lg">
         {animes[animeIdx].description.replace(/<[^>]+>/g, '').slice(0, 200)}
       </p>
 

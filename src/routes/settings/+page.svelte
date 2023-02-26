@@ -8,26 +8,26 @@
   <h1>Settings</h1>
   <ul>
     <li>
-      <a href="/settings/application" class="link link-hover">Application</a>
+      <a href="/settings/application" class="link-hover link">Application</a>
     </li>
-    <li><a href="/settings/app" class="link link-hover">App</a></li>
+    <li><a href="/settings/app" class="link-hover link">App</a></li>
   </ul>
   <div class="divider" />
-  <div class="block dropdown">
+  <div class="dropdown block">
     <!-- svelte-ignore a11y-label-has-associated-control -->
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-    <label tabindex="0" class="btn btn-outline btn-accent w-fit">
+    <label tabindex="0" class="btn-outline btn-accent btn w-fit">
       Change Source
     </label>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <ul
       tabindex="0"
-      class="dropdown-content z-10 p-2 mt-2 shadow bg-base-200 rounded-box w-52"
+      class="dropdown-content rounded-box z-10 mt-2 w-52 bg-base-200 p-2 shadow"
     >
       {#each $providers as provider}
         <li class="m-1">
           <button
-            class="btn btn-outline btn-accent w-full flex flex-row gap-1 text-base-content items-center"
+            class="btn-outline btn-accent btn flex w-full flex-row items-center gap-1 text-base-content"
             disabled={$source.id === provider.id}
             on:click={() => source.set(provider)}
           >
@@ -44,7 +44,7 @@
   </div>
   <div class="divider" />
   <section
-    class="card bg-base-200 bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-80 shadow-xl p-8 max-w-none"
+    class="card max-w-none bg-base-200 bg-opacity-80 bg-clip-padding p-8 shadow-xl backdrop-blur-xl backdrop-filter"
   >
     <h1
       class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"

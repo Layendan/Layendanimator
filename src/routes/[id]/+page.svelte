@@ -51,17 +51,17 @@
   style="transform: translate3d(0, {scrollY / 1.5}px, 0);"
 >
   <img
-    class="w-full h-[38vh] object-cover object-top"
+    class="h-[38vh] w-full object-cover object-top"
     src={data.anime.cover ?? data.anime.image}
     alt="{data.anime.title.english ?? data.anime.title.romaji} Cover"
   />
-  <div class="absolute inset-0 scrim pointer-events-none" />
+  <div class="scrim pointer-events-none absolute inset-0" />
 </header>
 
 <main class="relative">
   <section in:fade class="block px-4">
     <div
-      class="grid gap-x-4 grid-cols-[240px_auto] lg:grid-cols-[300px_auto] grid-rows-1 mx-auto transition-[grid-template-columns] duration-200"
+      class="mx-auto grid grid-cols-[240px_auto] grid-rows-1 gap-x-4 transition-[grid-template-columns] duration-200 lg:grid-cols-[300px_auto]"
     >
       <div class="relative m-0 -mt-[20vh]">
         <a
@@ -72,14 +72,15 @@
           <img
             src={data.anime.image}
             alt={data.anime.title.english ?? data.anime.title.romaji}
-            class="w-full object-cover rounded-lg shadow-xl ring ring-transparent transition-shadow duration-200"
-            class:hover:ring-[var(--anime-color)]={data.anime.color}
-            class:hover:ring-accent={!data.anime.color}
+            class={`w-full rounded-lg object-cover shadow-xl ring ring-transparent transition-shadow duration-200
+              ${
+                data.anime.color ? 'ring-[var(--anime-color)]' : 'ring-accent'
+              }`}
             style:--anime-color={data.anime.color}
           />
         </a>
         <button
-          class="btn btn-primary w-full mt-4 backdrop-blur-xl shadow-xl"
+          class="btn-primary btn mt-4 w-full shadow-xl backdrop-blur-xl"
           class:btn-error={$subscriptions.some(s => s.id === data.anime.id)}
           class:btn-outline={$subscriptions.some(s => s.id === data.anime.id)}
           on:click={() => {
@@ -117,17 +118,17 @@
       </div>
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div
-        class="block w-auto h-min p-4 card bg-base-200 backdrop-filter backdrop-blur-xl bg-opacity-80 shadow-xl transition-colors duration-200"
+        class="card block h-min w-auto bg-base-200 bg-opacity-80 p-4 shadow-xl backdrop-blur-xl backdrop-filter transition-colors duration-200"
         class:hover:bg-base-300={descriptionCollapsed}
         class:cursor-pointer={descriptionCollapsed}
         on:click={() => (descriptionCollapsed = false)}
       >
         <h1
-          class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl transition-[font-size] duration-200"
+          class="mb-4 text-3xl font-extrabold leading-none tracking-tight transition-[font-size] duration-200 md:text-4xl lg:text-5xl"
         >
           {data.anime.title.english ?? data.anime.title.romaji}
         </h1>
-        <ul class="flex flex-wrap gap-1 mb-4">
+        <ul class="mb-4 flex flex-wrap gap-1">
           <div class="badge badge-accent badge-outline">
             {data.anime.type.replaceAll('_', ' ')}
           </div>
@@ -153,7 +154,7 @@
           {/if}
         </ul>
         <p
-          class="w-fit h-min"
+          class="h-min w-fit"
           class:line-clamp-[3]={descriptionCollapsed}
           class:lg:line-clamp-[6]={descriptionCollapsed}
         >
@@ -161,7 +162,7 @@
         </p>
         <br />
         <p
-          class="font-semibold cursor-pointer"
+          class="cursor-pointer font-semibold"
           on:click={e => {
             descriptionCollapsed = !descriptionCollapsed;
             if (descriptionCollapsed) {
@@ -184,15 +185,15 @@
   <!-- EPISODES -->
   <ScrollCarousel bind:key={sortedEpisodes}>
     <div slot="header" class="flex justify-between">
-      <div class="flex items-center gap-1 mb-4">
+      <div class="mb-4 flex items-center gap-1">
         <h1
-          class="text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl mr-3"
+          class="mr-3 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
         >
           Episodes
         </h1>
         {#if data.anime.episodes.length > 0}
           <a
-            class="btn btn-outline btn-accent w-fit flex space-x-2"
+            class="btn-outline btn-accent btn flex w-fit space-x-2"
             href={`/${data.anime.id}/${
               lastEpisodeWatched?.id ?? data.anime.episodes[0].id
             }`}
@@ -205,7 +206,7 @@
           </a>
         {/if}
         <button
-          class="btn btn-outline btn-accent"
+          class="btn-outline btn-accent btn"
           on:click={() => {
             animeCache.delete(data.anime.id);
             invalidate(data.anime.id);
@@ -215,20 +216,20 @@
         </button>
       </div>
       {#if data.anime.episodes.length > 0}
-        <div class="block dropdown dropdown-end">
+        <div class="dropdown-end dropdown block">
           <!-- svelte-ignore a11y-label-has-associated-control -->
           <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-          <label tabindex="0" class="btn btn-outline btn-accent w-fit">
+          <label tabindex="0" class="btn-outline btn-accent btn w-fit">
             <Fa icon={faFilter} />
           </label>
           <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
           <ul
             tabindex="0"
-            class="dropdown-content z-10 p-2 mt-1 shadow bg-base-100 rounded-box w-52"
+            class="dropdown-content rounded-box z-10 mt-1 w-52 bg-base-100 p-2 shadow"
           >
             <li class="m-1">
               <button
-                class="btn btn-outline btn-accent w-full flex flex-row gap-1 text-base-content items-center"
+                class="btn-outline btn-accent btn flex w-full flex-row items-center gap-1 text-base-content"
                 disabled={isAscending}
                 on:click={() => (isAscending = true)}
               >
@@ -238,7 +239,7 @@
             </li>
             <li class="m-1">
               <button
-                class="btn btn-outline btn-accent w-full flex flex-row gap-1 text-base-content items-center"
+                class="btn-outline btn-accent btn flex w-full flex-row items-center gap-1 text-base-content"
                 disabled={!isAscending}
                 on:click={() => (isAscending = false)}
               >
@@ -248,13 +249,13 @@
             </li>
             <li class="m-1">
               <button
-                class="btn btn-outline btn-accent w-full flex flex-row gap-2 text-base-content items-center"
+                class="btn-outline btn-accent btn flex w-full flex-row items-center gap-2 text-base-content"
                 on:click={() => (showWatched = !showWatched)}
               >
                 <input
                   type="checkbox"
                   checked={showWatched}
-                  class="checkbox checkbox-accent"
+                  class="checkbox-accent checkbox"
                 />
                 Show Watched
               </button>
@@ -275,30 +276,30 @@
                   data.store[episode.id].duration
                 }`
               : `/${data.anime.id}/${episode.id}`}
-            class="flex flex-col gap-2 w-[210px]"
+            class="flex w-[210px] flex-col gap-2"
           >
             <div
-              class="relative bg-clip-content rounded-md m-0 p-0 card w-[210px] h-auto aspect-video bg-base-300 shadow-lg hover:-translate-y-1 transition-transform duration-200"
+              class="card relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0 shadow-lg transition-transform duration-200 hover:-translate-y-1"
             >
               <img
                 src={episode.image ?? 'loading_failure.jpeg'}
                 alt={episode.title ?? `Episode ${episode.number}`}
-                class="relative card-body m-0 p-0 w-full h-full aspect-video object-cover object-center rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-no-repeat bg-center"
+                class="card-body relative m-0 aspect-video h-full w-full rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center p-0"
               />
               <div class="relative mx-1">
                 <div
                   style="width: {(data.store[episode.id]?.watched ?? 0) *
                     100}%;"
-                  class="absolute bottom-1 left-0 right-0 h-1 bg-primary rounded-md"
+                  class="absolute bottom-1 left-0 right-0 h-1 rounded-md bg-primary"
                 />
               </div>
             </div>
             <div
-              class="flex flex-col gap-1 text-base-content text-opacity-80 group hover:text-opacity-100"
+              class="group flex flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100"
             >
               <h3
                 style:--anime-color={data.anime.color}
-                class={`text-md font-bold leading-tight whitespace-normal line-clamp-2 text-base-content text-opacity-80 transition-colors duration-200
+                class={`text-md whitespace-normal font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200 line-clamp-2
                 ${
                   data.anime.color
                     ? 'group-hover:text-[var(--anime-color)]'
@@ -309,7 +310,7 @@
               </h3>
               {#if episode.title && episode.number}
                 <h2
-                  class="text-xs leading-none whitespace-normal transition-colors duration-200"
+                  class="whitespace-normal text-xs leading-none transition-colors duration-200"
                 >
                   Episode {episode.number}
                 </h2>
@@ -329,7 +330,7 @@
       {#if data.anime.nextAiringEpisode}
         <div class="divider divider-horizontal mx-0" />
 
-        <div class="card bg-base-300 p-8 h-full self-center">
+        <div class="card h-full self-center bg-base-300 p-8">
           <p class="text-sm text-base-content text-opacity-80">
             Episode {data.anime.nextAiringEpisode.episode} airing in
           </p>
@@ -409,7 +410,7 @@
           href="https://anilist.co/character/{character.id}"
           target="_blank"
           rel="noreferrer"
-          class="flex flex-col gap-2 w-32 items-center"
+          class="flex w-32 flex-col items-center gap-2"
           style:--anime-color={data.anime.color}
         >
           <div class="avatar">
@@ -422,10 +423,10 @@
             </div>
           </div>
           <div
-            class="flex flex-col w-full gap-1 text-base-content text-opacity-80 group hover:text-opacity-100"
+            class="group flex w-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100"
           >
             <h3
-              class="text-md font-bold leading-tight whitespace-normal line-clamp-2 transition-colors duration-200"
+              class="text-md whitespace-normal font-bold leading-tight transition-colors duration-200 line-clamp-2"
               class:group-hover:text-[var(--anime-color)]={data.anime.color}
               class:group-hover:text-accent={!data.anime.color}
             >
@@ -433,7 +434,7 @@
             </h3>
             {#if character.name.native}
               <h2
-                class="text-xs leading-tight whitespace-normal line-clamp-2 transition-colors duration-200 native-name"
+                class="native-name whitespace-normal text-xs leading-tight transition-colors duration-200 line-clamp-2"
               >
                 {character.name.native}
               </h2>

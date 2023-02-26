@@ -50,7 +50,7 @@
   }}
 />
 
-<div class="tabs tabs-boxed w-fit p-4 px-8 gap-1 mx-auto bg-opacity-80 mb-4">
+<div class="tabs tabs-boxed mx-auto mb-4 w-fit gap-1 bg-opacity-80 p-4 px-8">
   <button
     class="tab"
     class:tab-active={selectedTab === 'episodes'}
@@ -90,19 +90,19 @@
               }
             );
           }}
-          class="flex flex-col gap-2 w-[210px]"
+          class="flex w-[210px] flex-col gap-2"
         >
           <div
-            class="relative bg-clip-content rounded-md m-0 p-0 card w-[210px] h-auto aspect-video bg-base-300 shadow-lg hover:-translate-y-1 transition-transform duration-200"
+            class="card relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0 shadow-lg transition-transform duration-200 hover:-translate-y-1"
           >
             <img
               src={episode.image ?? 'loading_failure.jpeg'}
               alt={episode.title ?? `Episode ${episode.number}`}
-              class="relative card-body m-0 p-0 w-full h-full aspect-video object-cover object-center rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-no-repeat bg-center"
+              class="card-body relative m-0 aspect-video h-full w-full rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center p-0"
             />
             {#if episode.id === data.nextEpisode.id}
               <p
-                class="absolute inset-0 w-full h-full inline-flex items-center justify-center uppercase text-lg font-bold gap-1 bg-base-100 bg-opacity-80 backdrop-blur-lg rounded-md"
+                class="absolute inset-0 inline-flex h-full w-full items-center justify-center gap-1 rounded-md bg-base-100 bg-opacity-80 text-lg font-bold uppercase backdrop-blur-lg"
               >
                 <Fa icon={faForward} />
                 Next Episode
@@ -110,11 +110,11 @@
             {/if}
           </div>
           <div
-            class="flex flex-col gap-1 text-base-content text-left text-opacity-80 group hover:text-opacity-100"
+            class="group flex flex-col gap-1 text-left text-base-content text-opacity-80 hover:text-opacity-100"
           >
             <h3
               style:--anime-color={data.anime.color}
-              class="text-md font-bold leading-tight whitespace-normal line-clamp-2 text-base-content text-opacity-80 transition-colors duration-200"
+              class="text-md whitespace-normal font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200 line-clamp-2"
               class:group-hover:text-[var(--anime-color)]={data.anime.color}
               class:group-hover:text-accent={!data.anime.color}
             >
@@ -122,7 +122,7 @@
             </h3>
             {#if episode.title && episode.number}
               <h2
-                class="text-xs leading-none whitespace-normal transition-colors duration-200"
+                class="whitespace-normal text-xs leading-none transition-colors duration-200"
               >
                 Episode {episode.number}
               </h2>
@@ -141,7 +141,7 @@
       {#if data.anime.nextAiringEpisode}
         <div class="divider divider-horizontal mx-0" />
 
-        <div class="card bg-base-300 p-8 h-full self-center">
+        <div class="card h-full self-center bg-base-300 p-8">
           <p class="text-sm text-base-content text-opacity-80">
             Episode {data.anime.nextAiringEpisode.episode} airing in
           </p>
@@ -169,22 +169,22 @@
     </svelte:fragment>
   </ScrollCarousel>
 {:else if selectedTab === 'wiki'}
-  <main in:fade class="block w-full px-4 mt-4 lg:mt-0">
+  <main in:fade class="mt-4 block w-full px-4 lg:mt-0">
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <section
-      class="card bg-clip-padding bg-base-200 backdrop-filter backdrop-blur-xl bg-opacity-80 shadow-xl p-8 max-w-full transition-colors duration-200"
+      class="card max-w-full bg-base-200 bg-opacity-80 bg-clip-padding p-8 shadow-xl backdrop-blur-xl backdrop-filter transition-colors duration-200"
       class:hover:bg-base-300={descriptionCollapsed}
       class:cursor-pointer={descriptionCollapsed}
       on:click={() => (descriptionCollapsed = false)}
     >
       <h1
-        class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl transition-[font-size] duration-200"
+        class="mb-4 text-3xl font-extrabold leading-none tracking-tight transition-[font-size] duration-200 md:text-4xl lg:text-5xl"
       >
         {data.anime.episodes.find(item => item.id === data.id)?.title ??
           data.anime.title.english ??
           data.anime.title.romaji}
       </h1>
-      <ul class="flex flex-wrap gap-1 mb-4">
+      <ul class="mb-4 flex flex-wrap gap-1">
         <div class="badge badge-accent badge-outline">
           {data.anime.type.replaceAll('_', ' ')}
         </div>
@@ -210,7 +210,7 @@
         {/if}
       </ul>
       <p
-        class="w-fit h-min"
+        class="h-min w-fit"
         class:line-clamp-[2]={descriptionCollapsed}
         class:lg:line-clamp-[4]={descriptionCollapsed}
       >
@@ -219,7 +219,7 @@
       </p>
       <br />
       <p
-        class="font-semibold cursor-pointer"
+        class="cursor-pointer font-semibold"
         on:click={e => {
           descriptionCollapsed = !descriptionCollapsed;
           if (descriptionCollapsed) {
@@ -287,7 +287,7 @@
             href="https://anilist.co/character/{character.id}"
             target="_blank"
             rel="noreferrer"
-            class="flex flex-col gap-2 w-32 items-center"
+            class="flex w-32 flex-col items-center gap-2"
             style:--anime-color={data.anime.color}
           >
             <div class="avatar">
@@ -300,10 +300,10 @@
               </div>
             </div>
             <div
-              class="flex flex-col w-full gap-1 text-base-content text-opacity-80 group hover:text-opacity-100"
+              class="group flex w-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100"
             >
               <h3
-                class="text-md font-bold leading-tight whitespace-normal line-clamp-2 transition-colors duration-200"
+                class="text-md whitespace-normal font-bold leading-tight transition-colors duration-200 line-clamp-2"
                 class:group-hover:text-[var(--anime-color)]={data.anime.color}
                 class:group-hover:text-accent={!data.anime.color}
               >
@@ -311,7 +311,7 @@
               </h3>
               {#if character.name.native}
                 <h2
-                  class="text-xs leading-tight whitespace-normal line-clamp-2 transition-colors duration-200"
+                  class="whitespace-normal text-xs leading-tight transition-colors duration-200 line-clamp-2"
                 >
                   {character.name.native}
                 </h2>

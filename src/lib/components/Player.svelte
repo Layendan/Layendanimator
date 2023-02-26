@@ -51,14 +51,14 @@
   });
 </script>
 
-<div class="relative w-screen h-auto bg-black -m-4 mb-4">
+<div class="relative -m-4 mb-4 h-auto w-screen bg-black">
   <!-- svelte-ignore a11y-autofocus -->
   <media-player
     src={sources[selectedSource].url}
     {poster}
     controls
     aspect-ratio="16/9"
-    class="block w-[max(calc(800px),70vw)] mx-auto object-cover"
+    class="mx-auto block w-[max(calc(800px),70vw)] object-cover"
     preload="metadata"
     autoplay
     autofocus
@@ -66,23 +66,23 @@
   >
     <media-outlet />
   </media-player>
-  <div class="bottom-4 left-4 absolute">
-    <div class="dropdown dropdown-right dropdown-end">
+  <div class="absolute bottom-4 left-4">
+    <div class="dropdown-right dropdown-end dropdown">
       <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
       <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label tabindex="0" class="btn btn-ghost ">
+      <label tabindex="0" class="btn-ghost btn ">
         <Fa icon={faMicrochip} size="1.5x" />
       </label>
       <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
       <ul
         tabindex="0"
-        class="dropdown-content z-10 p-2 ml-2 shadow bg-base-200 rounded-box w-52"
+        class="dropdown-content rounded-box z-10 ml-2 w-52 bg-base-200 p-2 shadow"
       >
         {#each sources as source, i}
           <li class="m-1">
             <button
               tabindex="0"
-              class="btn btn-outline btn-accent w-full items-center"
+              class="btn-outline btn-accent btn w-full items-center"
               disabled={selectedSource === i}
               on:click={() => (selectedSource = i)}
             >

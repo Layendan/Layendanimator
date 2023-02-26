@@ -3,7 +3,7 @@
 </script>
 
 <section
-  class="card bg-clip-padding bg-base-200 backdrop-filter backdrop-blur-xl bg-opacity-80 shadow-xl p-8 max-w-full"
+  class="card max-w-full bg-base-200 bg-opacity-80 bg-clip-padding p-8 shadow-xl backdrop-blur-xl backdrop-filter"
 >
   <slot name="header" />
   <h1
@@ -13,7 +13,7 @@
   </h1>
   {#key key}
     <div
-      class="relative inline-flex overflow-x-scroll overscroll-x-contain whitespace-nowrap w-auto gap-6 p-4 pb-6"
+      class="relative inline-flex w-auto gap-6 overflow-x-scroll overscroll-x-contain whitespace-nowrap p-4 pb-6"
     >
       <slot name="content" />
     </div>
@@ -24,7 +24,7 @@
   /* your styles go here */
   /* width */
   ::-webkit-scrollbar {
-    @apply w-4 h-4;
+    @apply h-4 w-4;
   }
 
   ::-webkit-scrollbar-corner {
@@ -33,11 +33,11 @@
 
   /* Track */
   ::-webkit-scrollbar-track {
-    @apply rounded-lg bg-base-300 border-solid border-4 border-transparent bg-clip-padding;
+    @apply rounded-lg border-4 border-solid border-transparent bg-base-300 bg-clip-padding;
   }
 
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    @apply rounded-lg bg-base-content border-solid border-4 border-transparent bg-clip-padding min-h-[40px] min-w-[40px];
+    @apply min-h-[40px] min-w-[40px] rounded-lg border-4 border-solid border-transparent bg-base-content bg-clip-padding;
   }
 </style>

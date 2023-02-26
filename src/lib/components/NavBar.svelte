@@ -31,11 +31,11 @@
   ];
 </script>
 
-<div class="btm-nav btm-nav-sm backdrop-filter backdrop-blur-xl bg-opacity-60">
+<div class="btm-nav btm-nav-sm bg-opacity-60 backdrop-blur-xl backdrop-filter">
   {#each navRoutes as { href, active, icon }}
     <a
       {href}
-      class={`rounded-md p-2 px-12 bg-base-content 
+      class={`rounded-md bg-base-content p-2 px-12 
       ${
         active
           ? // If function was provided

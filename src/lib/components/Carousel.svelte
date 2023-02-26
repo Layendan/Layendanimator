@@ -52,42 +52,42 @@
 >
   <a href="/{animes[animeIdx].id}">
     <img
-      class={`w-full h-96 object-cover 
+      class={`h-96 w-full object-cover 
       ${fade ? ' opacity-0 ' : 'opacity-100 '}
        transition-opacity duration-300 ease-in-out`}
       src={animes[animeIdx].cover}
       alt={animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
     />
   </a>
-  <div class="absolute inset-0 scrim pointer-events-none" />
+  <div class="scrim pointer-events-none absolute inset-0" />
   <div
     class={`absolute inset-0 flex items-end bg-gradient-to-tr from-base-100
         ${fade ? '!opacity-0' : 'opacity-100'}
-        ${textOn ? 'opacity-100' : '!opacity-0 pointer-events-none'} 
+        ${textOn ? 'opacity-100' : 'pointer-events-none !opacity-0'} 
         transition-opacity duration-300 ease-in-out`}
   >
     <div
-      class="flex-1 flex flex-col justify-center gap-y-4 p-4 max-w-lg lg:max-w-xl"
+      class="flex max-w-lg flex-1 flex-col justify-center gap-y-4 p-4 lg:max-w-xl"
     >
       <h1
-        class="text-3xl font-extrabold tracking-tight pb-1 md:text-4xl lg:text-5xl line-clamp-3 drop-shadow-lg"
+        class="pb-1 text-3xl font-extrabold tracking-tight drop-shadow-lg line-clamp-3 md:text-4xl lg:text-5xl"
       >
         {animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
       </h1>
 
-      <p class="text-md md:text-lg lg:text-xl line-clamp-2 drop-shadow-lg">
+      <p class="text-md drop-shadow-lg line-clamp-2 md:text-lg lg:text-xl">
         {animes[animeIdx].description.replace(/<[^>]+>/g, '').slice(0, 200)}
       </p>
 
       <div class="flex gap-x-2">
         <a
-          class="flex gap-x-2 btn btn-primary px-8"
+          class="btn-primary btn flex gap-x-2 px-8"
           href={`/${animes[animeIdx].id}`}
         >
           <Fa icon={faPlayCircle} size="lg" />
           Play
         </a>
-        <a class="btn btn-outline" href={`/${animes[animeIdx].id}`}>
+        <a class="btn-outline btn" href={`/${animes[animeIdx].id}`}>
           Details
         </a>
       </div>
@@ -97,6 +97,6 @@
 
 <style>
   .hide {
-    @apply opacity-0 pointer-events-none;
+    @apply pointer-events-none opacity-0;
   }
 </style>

@@ -8,27 +8,27 @@
   export let numUpdates = 0;
 </script>
 
-<a in:fade href="/{anime.id}" class="indicator flex-col gap-2 w-[210px]">
+<a in:fade href="/{anime.id}" class="indicator w-[210px] flex-col gap-2">
   {#if numUpdates > 0}
-    <div class="indicator-item badge badge-primary">
+    <div class="badge-primary badge indicator-item">
       {numUpdates}
     </div>
   {/if}
   <div
-    class="relative bg-clip-content rounded-md m-0 p-0 card w-[210px] h-auto aspect-[0.7/1] bg-base-300  hover:-translate-y-1 transition-transform duration-200"
+    class="card relative m-0 aspect-[0.7/1] h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0  transition-transform duration-200 hover:-translate-y-1"
   >
     <img
-      class="relative card-body m-0 p-0 w-full h-full object-cover object-center rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-no-repeat bg-center"
+      class="card-body relative m-0 h-full w-full rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center p-0"
       src={anime.image ?? '/assets/loading_failure.jpeg'}
       alt={anime.title.english ?? anime.title.romaji}
     />
     {#if anime.episodeNumber}
       <div
-        class="card-body rounded-lg m-0 p-0 absolute bg-base-300 backdrop-blur-xl bg-opacity-60 h-8 w-auto mx-3 bottom-3 left-0 right-0 flex items-center justify-center pointer-events-none"
+        class="card-body pointer-events-none absolute bottom-3 left-0 right-0 m-0 mx-3 flex h-8 w-auto items-center justify-center rounded-lg bg-base-300 bg-opacity-60 p-0 backdrop-blur-xl"
       >
         <!-- text-accent-content only works on light/dark color schemes otherwise dark theme text color is too light and is not readable -->
         <h2
-          class="card-title text-center font-bold text-sm text-accent-content"
+          class="card-title text-center text-sm font-bold text-accent-content"
         >
           Episode {anime.episodeNumber}
         </h2>
@@ -39,7 +39,7 @@
   <div>
     <h3
       style:--anime-color={anime.color}
-      class={`text-sm font-bold leading-tight whitespace-normal text-base-content text-opacity-80 hover:text-opacity-100 line-clamp-2 transition-colors duration-200
+      class={`whitespace-normal text-sm font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200 line-clamp-2 hover:text-opacity-100
       ${anime.color ? 'hover:text-[var(--anime-color)]' : 'hover:text-accent'}`}
     >
       {anime.title.english ?? anime.title.romaji}

@@ -20,12 +20,12 @@
     searchHistory.add(query);
     goto(`/search?q=${query}`);
   }}
-  class="flex items-center justify-center w-full h-12"
+  class="flex h-12 w-full items-center justify-center"
 >
   <input
     type="search"
     placeholder="Search an anime"
-    class="flex-1 h-full px-2 text-base bg-base-200 rounded-md shadow-md focus:outline-none ring-2 ring-base-200 focus:ring-accent focus:ring-opacity-50 transition-shadow duration-200"
+    class="h-full flex-1 rounded-md bg-base-200 px-2 text-base shadow-md ring-2 ring-base-200 transition-shadow duration-200 focus:outline-none focus:ring-accent focus:ring-opacity-50"
     autocomplete="off"
     autocapitalize="words"
     bind:value
@@ -54,12 +54,12 @@
   </ScrollCarousel>
 {:else}
   <section
-    class="card bg-base-200 bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-80 shadow-xl p-8 max-w-none"
+    class="card max-w-none bg-base-200 bg-opacity-80 bg-clip-padding p-8 shadow-xl backdrop-blur-xl backdrop-filter"
   >
-    <div class="flex items-center justify-between gap-4 mb-4">
+    <div class="mb-4 flex items-center justify-between gap-4">
       <h1 class="text-md font-extrabold  md:text-xl lg:text-2xl">History</h1>
     </div>
-    <div class="relative flex flex-col w-auto p-4 pb-6">
+    <div class="relative flex w-auto flex-col p-4 pb-6">
       <!-- Can replace with $, but doing this so that it does not update while navigating -->
       {#each $searchHistory as query (query)}
         <div class="divider" />
@@ -76,7 +76,7 @@
 
           <a
             href="/search?q={query}"
-            class="hover:text-accent cursor-pointer max-w-max"
+            class="max-w-max cursor-pointer hover:text-accent"
           >
             {query}
           </a>

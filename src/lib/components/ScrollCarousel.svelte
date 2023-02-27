@@ -1,4 +1,5 @@
 <script lang="ts">
+  // TODO: Remove this in favor of css transitions
   export let key: unknown = undefined;
 </script>
 
@@ -21,8 +22,6 @@
 </section>
 
 <style lang="postcss">
-  /* your styles go here */
-  /* width */
   ::-webkit-scrollbar {
     @apply h-4 w-4;
   }

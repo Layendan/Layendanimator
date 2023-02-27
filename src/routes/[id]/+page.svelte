@@ -72,11 +72,13 @@
           <img
             src={data.anime.image}
             alt={data.anime.title.english ?? data.anime.title.romaji}
+            style:--anime-color={data.anime.color}
             class={`w-full rounded-lg object-cover shadow-xl ring ring-transparent transition-shadow duration-200
               ${
-                data.anime.color ? 'ring-[var(--anime-color)]' : 'ring-accent'
+                data.anime.color
+                  ? 'hover:ring-[var(--anime-color)]'
+                  : 'hover:ring-accent'
               }`}
-            style:--anime-color={data.anime.color}
           />
         </a>
         <button
@@ -266,7 +268,7 @@
     </div>
 
     <svelte:fragment slot="content">
-      {#each sortedEpisodes as episode}
+      {#each sortedEpisodes as episode (episode.id)}
         {#if showWatched || (data.store[episode.id]?.watched ?? 0) < watchPercentage}
           <a
             in:fade
@@ -279,7 +281,7 @@
             class="flex w-[210px] flex-col gap-2"
           >
             <div
-              class="card relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0 shadow-lg transition-transform duration-200 hover:-translate-y-1"
+              class="card relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0 shadow-lg transition-transform duration-200 hover:-translate3d-y-1"
             >
               <img
                 src={episode.image ?? 'loading_failure.jpeg'}
@@ -415,9 +417,12 @@
         >
           <div class="avatar">
             <div
-              class="w-28 rounded-full ring ring-transparent transition-shadow duration-200"
-              class:hover:ring-[var(--anime-color)]={data.anime.color}
-              class:hover:ring-accent={!data.anime.color}
+              class={`w-28 rounded-full ring ring-transparent transition-shadow duration-200 
+              ${
+                data.anime.color
+                  ? 'hover:ring-[var(--anime-color)]'
+                  : 'hover:ring-accent'
+              }`}
             >
               <img src={character.image} alt={character.name.full} />
             </div>
@@ -426,9 +431,12 @@
             class="group flex w-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100"
           >
             <h3
-              class="text-md whitespace-normal font-bold leading-tight transition-colors duration-200 line-clamp-2"
-              class:group-hover:text-[var(--anime-color)]={data.anime.color}
-              class:group-hover:text-accent={!data.anime.color}
+              class={`text-md whitespace-normal font-bold leading-tight transition-colors duration-200 line-clamp-2 
+              ${
+                data.anime.color
+                  ? 'group-hover:text-[var(--anime-color)]'
+                  : 'group-hover:text-accent'
+              }`}
             >
               {character.name.full}
             </h3>

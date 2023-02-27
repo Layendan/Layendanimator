@@ -93,7 +93,7 @@
           class="flex w-[210px] flex-col gap-2"
         >
           <div
-            class="card relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0 shadow-lg transition-transform duration-200 hover:-translate-y-1"
+            class="card relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0 shadow-lg transition-transform duration-200 hover:-translate3d-y-1"
           >
             <img
               src={episode.image ?? 'loading_failure.jpeg'}

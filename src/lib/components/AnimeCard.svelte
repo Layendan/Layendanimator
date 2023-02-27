@@ -2,7 +2,6 @@
   import type { Anime } from '$lib/model/Anime';
   import { fade } from 'svelte/transition';
 
-  // TODO: Create anime type and set it to this
   export let anime: Anime;
 
   export let numUpdates = 0;
@@ -15,7 +14,7 @@
     </div>
   {/if}
   <div
-    class="card relative m-0 aspect-[0.7/1] h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0  transition-transform duration-200 hover:-translate-y-1"
+    class="card relative m-0 aspect-[0.7/1] h-[300px] w-[210px] rounded-md bg-base-300 bg-clip-content p-0  transition-transform duration-200 hover:-translate3d-y-1"
   >
     <img
       class="card-body relative m-0 h-full w-full rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center p-0"

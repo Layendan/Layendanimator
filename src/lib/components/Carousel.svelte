@@ -47,7 +47,7 @@
 <svelte:window bind:scrollY />
 
 <header
-  class={`relative -m-4 mb-4`}
+  class="relative -m-4 mb-4"
   style="transform: translate3d(0, {scrollY / 1.5}px, 0);"
 >
   <a href="/{animes[animeIdx].id}">
@@ -82,21 +82,13 @@
       <div class="flex gap-x-2">
         <a
           class="btn-primary btn flex gap-x-2 px-8"
-          href={`/${animes[animeIdx].id}`}
+          href="/{animes[animeIdx].id}"
         >
           <Fa icon={faPlayCircle} size="lg" />
           Play
         </a>
-        <a class="btn-outline btn" href={`/${animes[animeIdx].id}`}>
-          Details
-        </a>
+        <a class="btn-outline btn" href="/{animes[animeIdx].id}"> Details </a>
       </div>
     </div>
   </div>
 </header>
-
-<style>
-  .hide {
-    @apply pointer-events-none opacity-0;
-  }
-</style>

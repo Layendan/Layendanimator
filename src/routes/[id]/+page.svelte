@@ -4,7 +4,6 @@
   import { fade } from 'svelte/transition';
   import { subscriptions } from '$lib/model/subscriptions';
   import type { PageData } from './$types';
-  import type { Episode } from '$lib/model/Anime';
   import Fa from 'svelte-fa';
   import {
     faArrowUp,
@@ -15,33 +14,19 @@
   } from '@fortawesome/free-solid-svg-icons';
   import { animeCache } from '$lib/model/cache';
   import { invalidate } from '$app/navigation';
+  import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
 
   export let data: PageData;
-  const watchPercentage = 0.8;
   let scrollY = 0;
   let descriptionCollapsed = true;
   let isAscending = true;
   let showWatched = true;
-  $: sortedEpisodes = sortEpisodes(data.anime.episodes, isAscending);
-
-  const nextEpisodeDate = new Date(
-    Date.now() +
-      new Date(
-        (data.anime.nextAiringEpisode?.timeUntilAiring ?? 0) * 1000
-      ).valueOf()
-  );
+  const reversedEpisodes = [...data.anime.episodes].reverse();
+  $: sortedEpisodes = isAscending ? data.anime.episodes : reversedEpisodes;
 
   const lastEpisodeWatched = data.anime.episodes.findLast(
     e => (data.store[e.id]?.watched ?? 0) > 0
   );
-
-  function sortEpisodes(episodes: Episode[], isAscending: boolean): Episode[] {
-    if (isAscending) {
-      return episodes.sort((a, b) => a.number - b.number);
-    } else {
-      return episodes.sort((a, b) => b.number - a.number);
-    }
-  }
 </script>
 
 <svelte:window bind:scrollY />
@@ -185,7 +170,7 @@
   <div class="divider" />
 
   <!-- EPISODES -->
-  <ScrollCarousel bind:key={sortedEpisodes}>
+  <EpisodeCarousel anime={data.anime} episodes={sortedEpisodes}>
     <div slot="header" class="flex justify-between">
       <div class="mb-4 flex items-center gap-1">
         <h1
@@ -266,99 +251,7 @@
         </div>
       {/if}
     </div>
-
-    <svelte:fragment slot="content">
-      {#each sortedEpisodes as episode (episode.id)}
-        {#if showWatched || (data.store[episode.id]?.watched ?? 0) < watchPercentage}
-          <a
-            in:fade
-            href={data.store[episode.id]?.watched
-              ? `/${data.anime.id}/${episode.id}?t=${
-                  data.store[episode.id].watched *
-                  data.store[episode.id].duration
-                }`
-              : `/${data.anime.id}/${episode.id}`}
-            class="flex w-[210px] flex-col gap-2"
-          >
-            <div
-              class="card relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0 shadow-lg transition-transform duration-200 hover:-translate3d-y-1"
-            >
-              <img
-                src={episode.image ?? 'loading_failure.jpeg'}
-                alt={episode.title ?? `Episode ${episode.number}`}
-                class="card-body relative m-0 aspect-video h-full w-full rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center p-0"
-              />
-              <div class="relative mx-1">
-                <div
-                  style="width: {(data.store[episode.id]?.watched ?? 0) *
-                    100}%;"
-                  class="absolute bottom-1 left-0 right-0 h-1 rounded-md bg-primary"
-                />
-              </div>
-            </div>
-            <div
-              class="group flex flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100"
-            >
-              <h3
-                style:--anime-color={data.anime.color}
-                class={`text-md whitespace-normal font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200 line-clamp-2
-                ${
-                  data.anime.color
-                    ? 'group-hover:text-[var(--anime-color)]'
-                    : 'group-hover:text-accent'
-                }`}
-              >
-                {episode.title || `Episode ${episode.number}`}
-              </h3>
-              {#if episode.title && episode.number}
-                <h2
-                  class="whitespace-normal text-xs leading-none transition-colors duration-200"
-                >
-                  Episode {episode.number}
-                </h2>
-              {/if}
-            </div>
-          </a>
-        {/if}
-      {:else}
-        <div class="flex items-center justify-center">
-          <p
-            class="text-xl font-semibold text-center text-base-content text-opacity-70"
-          >
-            No Episodes Found
-          </p>
-        </div>
-      {/each}
-      {#if data.anime.nextAiringEpisode}
-        <div class="divider divider-horizontal mx-0" />
-
-        <div class="card h-full self-center bg-base-300 p-8">
-          <p class="text-sm text-base-content text-opacity-80">
-            Episode {data.anime.nextAiringEpisode.episode} airing in
-          </p>
-          <h2 class="text-lg font-bold">
-            {Math.floor((nextEpisodeDate.valueOf() - Date.now()) / 86400000)} Days,
-            {Math.floor(
-              (((nextEpisodeDate.valueOf() - Date.now()) / 86400000) % 1) * 24
-            )} Hours
-          </h2>
-          <p class="text-sm text-base-content text-opacity-80">
-            {new Date(
-              data.anime.nextAiringEpisode.airingTime * 1000
-            ).toLocaleString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              hour: undefined,
-              minute: undefined,
-              timeZoneName: undefined
-            })}
-          </p>
-        </div>
-      {/if}
-    </svelte:fragment>
-  </ScrollCarousel>
+  </EpisodeCarousel>
 
   <div class="divider" />
 

@@ -2,7 +2,7 @@
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import Player from '$lib/components/Player.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
-  import { goto, preloadData } from '$app/navigation';
+  import { goto, invalidate, preloadData } from '$app/navigation';
   import { fade } from 'svelte/transition';
   import type { PageData } from './$types';
   import {
@@ -11,6 +11,7 @@
     faTv
   } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
+  import { episodeCache } from '$lib/model/cache';
 
   export let data: PageData;
 
@@ -47,6 +48,11 @@
         }
       );
     }
+  }}
+  on:error={e => {
+    console.error(e);
+    episodeCache.delete(data.id);
+    invalidate(data.id);
   }}
 />
 

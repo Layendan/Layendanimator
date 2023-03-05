@@ -63,6 +63,7 @@
     autoplay
     autofocus
     bind:this={player}
+    on:error
   >
     <media-outlet />
   </media-player>

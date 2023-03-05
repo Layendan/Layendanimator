@@ -21,7 +21,7 @@ async function fetchAnime(id: string, _fetch: typeof fetch) {
 
 async function fetchEpisode(id: string, _fetch: typeof fetch) {
   const episode = (await _fetch(
-    `https://consumet.app.jet-black.xyz/meta/anilist/watch/${id}?provider=${
+    `https://api.consumet.org/meta/anilist/watch/${id}?provider=${
       get(source).id
     }`
   ).then(r => r.json())) as {
@@ -39,7 +39,9 @@ async function fetchEpisode(id: string, _fetch: typeof fetch) {
   return episode;
 }
 
-export const load = (async ({ fetch, params }) => {
+export const load = (async ({ fetch, depends, params }) => {
+  depends(params.episode);
+
   const anime =
     animeCache.get(params.id) ?? (await fetchAnime(params.id, fetch));
   const episode =

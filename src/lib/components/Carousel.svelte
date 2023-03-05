@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount } from 'svelte';
+  import { onDestroy } from 'svelte';
   import { preloadData } from '$app/navigation';
   import type { Anime } from '$lib/model/Anime';
   import { faPlayCircle } from '@fortawesome/free-solid-svg-icons';
@@ -28,13 +28,7 @@
     }
   });
 
-  $: if (animeIdx) {
-    preloadData(`/${animes[animeIdx].id}`);
-  }
-
-  onMount(() => {
-    preloadData(`/${animes[animeIdx].id}`);
-  });
+  $: preloadData(`/${animes[animeIdx].id}`);
 
   onDestroy(() => {
     clearInterval(interval);

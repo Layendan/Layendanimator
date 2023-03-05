@@ -52,7 +52,7 @@
     "postcss": "^8.4.21",
     "prettier-plugin-tailwindcss": "^0.2.4",
     "tauri-plugin-store-api": "https://github.com/tauri-apps/tauri-plugin-store",
-    "vidstack": "^0.4.1"
+    "vidstack": "^0.3.3"
   },
   "engines": {
     "yarn": ">=1.22.19",

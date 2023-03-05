@@ -332,10 +332,10 @@
   resolved "https://registry.yarnpkg.com/@sveltejs/adapter-static/-/adapter-static-2.0.1.tgz#b76f7742ae635e1c063efcab8c6de064255f6292"
   integrity sha512-o5/q3YwD/ErxYCFlK1v3ydvldyNKk1lh3oeyxn4mhz+Pkbx/uuxhzmbOpytTlp5aVqNHDVsb04xadUzOFCDDzw==
 
-"@sveltejs/kit@^1.9.3":
-  version "1.9.3"
-  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.9.3.tgz#eb648a04bd8bc9646461a70a45e5bedc86fd6b60"
-  integrity sha512-rh9FbGfS8w328JZSZmG/ahabBbE50TisHvfz4sVNU3IM3AOhgUAv3EhAJ2dij9R8uARbDHRTY8jOQbIPjcKBZQ==
+"@sveltejs/kit@^1.10.0":
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.10.0.tgz#17d3565e5903f6d2c0730197fd875c2cf921ad01"
+  integrity sha512-0P35zHrByfbF3Ym3RdQL+RvzgsCDSyO3imSwuZ67XAD5HoCQFF3a8Mhh0V3sObz3rc5aJd4Qn82UpAihJqZ6gQ==
   dependencies:
     "@sveltejs/vite-plugin-svelte" "^2.0.0"
     "@types/cookie" "^0.5.1"
@@ -2028,10 +2028,10 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-lru-cache@^7.18.1:
-  version "7.18.1"
-  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.18.1.tgz#4716408dec51d5d0104732647f584d1f6738b109"
-  integrity sha512-8/HcIENyQnfUTCDizRu9rrDyG6XG/21M4X7/YEGZeD76ZJilFPAUVb/2zysFf7VVO1LEjCDFyHp8pMMvozIrvg==
+lru-cache@^7.18.2:
+  version "7.18.2"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.18.2.tgz#5ba8dba5778e7771af65803172ce75b49c1504c2"
+  integrity sha512-KytVYmZ3reaw/f3d7GCISvWWjTYxszNdvD5rDvm/zECga3eSWzryRY7iauJsjo6aaw03lHYTSNTk7lW83Bv+zQ==
 
 lru-cache@^7.4.4, lru-cache@^7.5.1, lru-cache@^7.7.1:
   version "7.14.1"
@@ -2125,10 +2125,10 @@ maverick.js@^0.32.3:
     "@maverick-js/signals" "^5.9.1"
     type-fest "^2.17.0"
 
-media-icons@0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/media-icons/-/media-icons-0.3.3.tgz#4809bfcbd0e18fb6446d9c00510c8bb8340289a7"
-  integrity sha512-U0LTiqZlhV4uY+dHAiOKBdP+kMbl9AwY2KYsdejt0KFwbS4wyh0Kem7G+FP5CQ1SbBWgizt2yg6IvXpLWQHElg==
+media-icons@0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/media-icons/-/media-icons-0.4.1.tgz#a8421e5d231ca429957b6f9347f3e54aca0c70c5"
+  integrity sha512-HxcXgxk7TCYLhny3JN8A0tEh2XUbrLTd6hnnQnD+N4CFBRWSde+2g6+zF1V1SBapdW2fRSiXXR2d4KIcXs4B2g==
 
 merge2@^1.3.0, merge2@^1.4.1:
   version "1.4.1"
@@ -3535,13 +3535,13 @@ validate-npm-package-name@^5.0.0:
   dependencies:
     builtins "^5.0.0"
 
-vidstack@^0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/vidstack/-/vidstack-0.3.3.tgz#ff5ba3e46f0f82b72c66f5f47c8bbbd1f35d0e53"
-  integrity sha512-n/tQERegBNHDWoDk2SRuUJ104jG2yOmzbAp89g1jbZVm7FjGbx9DqiyOKEs5Nspj8K5K9skC24DZbap1yHzdrA==
+vidstack@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/vidstack/-/vidstack-0.4.1.tgz#129f1e9653a2de76b95dd15b1cb7244415e15124"
+  integrity sha512-WArbYnm5zFzXkR8UrXMLg/MfnBi74lB7DFdlbWp5M149uCSxbRt4FkzpLFGesg/tUOw8ktsxMvpc1S+ifMtvGA==
   dependencies:
     maverick.js "^0.32.3"
-    media-icons "0.3.3"
+    media-icons "0.4.1"
     type-fest "^3.5.0"
 
 virtual-scroll@^1.5.2:

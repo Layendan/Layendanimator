@@ -26,7 +26,7 @@
     <svelte:fragment slot="title">Recent Episodes</svelte:fragment>
 
     <svelte:fragment slot="content">
-      {#each data.recent as anime}
+      {#each data.recent as anime (`${anime.id}/${anime.episodeNumber}`)}
         <AnimeCard {anime} />
       {:else}
         <div class="flex items-center justify-center">
@@ -46,13 +46,13 @@
     <svelte:fragment slot="title">Subscriptions</svelte:fragment>
 
     <svelte:fragment slot="content">
-      {#each $unwatchedSubscriptions as { anime, newEpisodes }}
+      {#each $unwatchedSubscriptions as { anime, newEpisodes } (anime.id)}
         <AnimeCard {anime} bind:numUpdates={newEpisodes} />
       {/each}
       {#if $unwatchedSubscriptions.length > 0}
         <div class="divider divider-horizontal" />
       {/if}
-      {#each $subscriptions.filter(e => !$unwatchedSubscriptions.some(a => a.anime.id === e.id)) as anime}
+      {#each $subscriptions.filter(e => !$unwatchedSubscriptions.some(a => a.anime.id === e.id)) as anime (anime.id)}
         <AnimeCard {anime} />
       {:else}
         <div class="flex items-center justify-center">
@@ -72,7 +72,7 @@
     <svelte:fragment slot="title">Trending Animes</svelte:fragment>
 
     <svelte:fragment slot="content">
-      {#each data.trending as anime}
+      {#each data.trending as anime (anime.id)}
         <AnimeCard {anime} />
       {:else}
         <div class="flex items-center justify-center">
@@ -92,7 +92,7 @@
     <svelte:fragment slot="title">Popular Animes</svelte:fragment>
 
     <svelte:fragment slot="content">
-      {#each data.popular as anime}
+      {#each data.popular as anime (anime.id)}
         <AnimeCard {anime} />
       {:else}
         <div class="flex items-center justify-center">

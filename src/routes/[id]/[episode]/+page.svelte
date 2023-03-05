@@ -28,6 +28,9 @@
     ).length > 0
       ? 'episodes'
       : 'wiki';
+  $: relations = data.anime.relations.filter(
+    a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT'
+  );
 </script>
 
 <Player
@@ -241,100 +244,82 @@
       </p>
     </section>
 
-    <div class="divider" />
+    {#if data.anime.recommendations.length > 0}
+      <div class="divider" />
 
-    <!-- RECOMMENDATIONS -->
-    <ScrollCarousel bind:key={data.anime.recommendations}>
-      <svelte:fragment slot="title">Recommendations</svelte:fragment>
-      <svelte:fragment slot="content">
-        {#each data.anime.recommendations as anime}
-          <AnimeCard {anime} />
-        {:else}
-          <div class="flex items-center justify-center">
-            <p
-              class="text-xl font-semibold text-center text-base-content text-opacity-70"
+      <!-- RECOMMENDATIONS -->
+      <ScrollCarousel>
+        <svelte:fragment slot="title">Recommendations</svelte:fragment>
+        <svelte:fragment slot="content">
+          {#each data.anime.recommendations as anime (anime.id)}
+            <AnimeCard {anime} />
+          {/each}
+        </svelte:fragment>
+      </ScrollCarousel>
+    {/if}
+
+    {#if relations.length > 0}
+      <div class="divider" />
+
+      <!-- RELATED -->
+      <ScrollCarousel>
+        <svelte:fragment slot="title">Related</svelte:fragment>
+        <svelte:fragment slot="content">
+          {#each relations as anime (anime.id)}
+            <AnimeCard {anime} />
+          {/each}
+        </svelte:fragment>
+      </ScrollCarousel>
+    {/if}
+
+    {#if data.anime.characters.length > 0}
+      <div class="divider" />
+
+      <!-- CHARACTERS -->
+      <ScrollCarousel>
+        <svelte:fragment slot="title">Characters</svelte:fragment>
+        <svelte:fragment slot="content">
+          {#each data.anime.characters as character (character.id)}
+            <a
+              in:fade
+              href="https://anilist.co/character/{character.id}"
+              target="_blank"
+              rel="noreferrer"
+              class="flex w-32 flex-col items-center gap-2"
+              style:--anime-color={data.anime.color}
             >
-              No Recommendations
-            </p>
-          </div>
-        {/each}
-      </svelte:fragment>
-    </ScrollCarousel>
-
-    <div class="divider" />
-
-    <!-- RELATED -->
-    <ScrollCarousel bind:key={data.anime.relations}>
-      <svelte:fragment slot="title">Related</svelte:fragment>
-      <svelte:fragment slot="content">
-        {#each data.anime.relations.filter(a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT') as anime}
-          <AnimeCard {anime} />
-        {:else}
-          <div class="flex items-center justify-center">
-            <p
-              class="text-xl font-semibold text-center text-base-content text-opacity-70"
-            >
-              No Related Animes Found
-            </p>
-          </div>
-        {/each}
-      </svelte:fragment>
-    </ScrollCarousel>
-
-    <div class="divider" />
-
-    <!-- CHARACTERS -->
-    <ScrollCarousel bind:key={data.anime.relations}>
-      <svelte:fragment slot="title">Characters</svelte:fragment>
-      <svelte:fragment slot="content">
-        {#each data.anime.characters as character}
-          <a
-            in:fade
-            href="https://anilist.co/character/{character.id}"
-            target="_blank"
-            rel="noreferrer"
-            class="flex w-32 flex-col items-center gap-2"
-            style:--anime-color={data.anime.color}
-          >
-            <div class="avatar">
-              <div
-                class="w-28 rounded-full ring ring-transparent transition-shadow duration-200"
-                class:hover:ring-[var(--anime-color)]={data.anime.color}
-                class:hover:ring-accent={!data.anime.color}
-              >
-                <img src={character.image} alt={character.name.full} />
-              </div>
-            </div>
-            <div
-              class="group flex w-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100"
-            >
-              <h3
-                class="text-md whitespace-normal font-bold leading-tight transition-colors duration-200 line-clamp-2"
-                class:group-hover:text-[var(--anime-color)]={data.anime.color}
-                class:group-hover:text-accent={!data.anime.color}
-              >
-                {character.name.full}
-              </h3>
-              {#if character.name.native}
-                <h2
-                  class="whitespace-normal text-xs leading-tight transition-colors duration-200 line-clamp-2"
+              <div class="avatar">
+                <div
+                  class="w-28 rounded-full ring ring-transparent transition-shadow duration-200"
+                  class:hover:ring-[var(--anime-color)]={data.anime.color}
+                  class:hover:ring-accent={!data.anime.color}
                 >
-                  {character.name.native}
-                </h2>
-              {/if}
-            </div>
-          </a>
-        {:else}
-          <div class="flex items-center justify-center">
-            <p
-              class="text-xl font-semibold text-center text-base-content text-opacity-70"
-            >
-              No Characters Found
-            </p>
-          </div>
-        {/each}
-      </svelte:fragment>
-    </ScrollCarousel>
+                  <img src={character.image} alt={character.name.full} />
+                </div>
+              </div>
+              <div
+                class="group flex w-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100"
+              >
+                <h3
+                  class="text-md whitespace-normal font-bold leading-tight transition-colors duration-200 line-clamp-2"
+                  class:group-hover:text-[var(--anime-color)]={data.anime.color}
+                  class:group-hover:text-accent={!data.anime.color}
+                >
+                  {character.name.full}
+                </h3>
+                {#if character.name.native}
+                  <h2
+                    class="whitespace-normal text-xs leading-tight transition-colors duration-200 line-clamp-2"
+                  >
+                    {character.name.native}
+                  </h2>
+                {/if}
+              </div>
+            </a>
+          {/each}
+        </svelte:fragment>
+      </ScrollCarousel>
+    {/if}
   </main>
 {:else}
   You shouldn't be here

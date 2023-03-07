@@ -7,6 +7,10 @@ body {
   @apply overscroll-x-none;
 }
 
+* {
+  @apply outline-2 outline-offset-2 outline-current focus-visible:outline;
+}
+
 @font-face {
   font-family: FOT-NewRodin Pro M;
   src: url('/assets/FOT-NewRodin Pro M.otf') format('opentype');

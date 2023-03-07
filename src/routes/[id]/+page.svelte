@@ -35,8 +35,8 @@
 <svelte:window bind:scrollY />
 
 <header
-  class="relative -m-4 mb-4"
-  style="transform: translate3d(0, {scrollY / 1.5}px, 0);"
+  class="relative -m-4 mb-4 motion-reduce:!translate3d-y-0"
+  style="transform: translate3d(0, {scrollY < 0 ? 0 : scrollY / 1.5}px, 0);"
 >
   <img
     class="h-[38vh] w-full object-cover object-top"
@@ -56,17 +56,16 @@
           href="https://anilist.co/anime/{data.anime.id}"
           target="_blank"
           rel="noreferrer"
+          class="group"
         >
           <img
             src={data.anime.image}
             alt={data.anime.title.english ?? data.anime.title.romaji}
             style:--anime-color={data.anime.color}
-            class={`w-full rounded-lg object-cover shadow-xl ring ring-transparent transition-shadow duration-200
-              ${
-                data.anime.color
-                  ? 'hover:ring-[var(--anime-color)]'
-                  : 'hover:ring-accent'
-              }`}
+            class="w-full rounded-lg object-cover shadow-xl ring ring-transparent transition-shadow duration-200
+              {data.anime.color
+              ? 'hover:ring-[var(--anime-color)] group-focus-visible:ring-[var(--anime-color)]'
+              : 'hover:ring-accent group-focus-visible:ring-accent'}"
           />
         </a>
         <button
@@ -123,7 +122,7 @@
             {data.anime.type.replaceAll('_', ' ')}
           </div>
           {#if data.anime.isAdult}
-            <div class="badge badge-outline badge-error">18+</div>
+            <div class="badge badge-error badge-outline">18+</div>
           {/if}
           <div class="badge badge-accent badge-outline">
             {data.anime.status}
@@ -184,9 +183,8 @@
         {#if data.anime.episodes.length > 0}
           <a
             class="btn-outline btn-accent btn flex w-fit space-x-2"
-            href={`/${data.anime.id}/${
-              lastEpisodeWatched?.id ?? data.anime.episodes[0].id
-            }`}
+            href="/{data.anime.id}/{lastEpisodeWatched?.id ??
+              data.anime.episodes[0].id}"
           >
             <Fa icon={faPlayCircle} size="lg" />
             <!-- Check if not user has watched anime yet -->
@@ -246,6 +244,7 @@
                   type="checkbox"
                   checked={showWatched}
                   class="checkbox-accent checkbox"
+                  tabindex="-1"
                 />
                 Show Watched
               </button>
@@ -297,31 +296,27 @@
             href="https://anilist.co/character/{character.id}"
             target="_blank"
             rel="noreferrer"
-            class="flex w-32 flex-col items-center gap-2"
+            class="group-one flex w-32 flex-col items-center gap-2 focus-visible:outline-transparent"
             style:--anime-color={data.anime.color}
           >
             <div class="avatar">
               <div
-                class={`w-28 rounded-full ring ring-transparent transition-shadow duration-200 
-              ${
-                data.anime.color
-                  ? 'hover:ring-[var(--anime-color)]'
-                  : 'hover:ring-accent'
-              }`}
+                class="w-28 rounded-full ring ring-transparent transition-shadow duration-200 
+              {data.anime.color
+                  ? 'hover:ring-[var(--anime-color)] group-one-focus-visible:ring-[var(--anime-color)]'
+                  : 'hover:ring-accent group-one-focus-visible:ring-accent'}"
               >
                 <img src={character.image} alt={character.name.full} />
               </div>
             </div>
             <div
-              class="group flex w-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100"
+              class="group flex w-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100 group-one-focus-visible:text-opacity-100"
             >
               <h3
-                class={`text-md whitespace-normal font-bold leading-tight transition-colors duration-200 line-clamp-2 
-              ${
-                data.anime.color
-                  ? 'group-hover:text-[var(--anime-color)]'
-                  : 'group-hover:text-accent'
-              }`}
+                class="text-md whitespace-normal font-bold leading-tight transition-colors duration-200 line-clamp-2 
+              {data.anime.color
+                  ? 'group-hover:text-[var(--anime-color)] group-one-focus-visible:text-[var(--anime-color)]'
+                  : 'group-hover:text-accent group-one-focus-visible:text-accent'}"
               >
                 {character.name.full}
               </h3>

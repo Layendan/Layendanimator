@@ -7,14 +7,18 @@
   export let numUpdates = 0;
 </script>
 
-<a in:fade href="/{anime.id}" class="indicator w-[210px] flex-col gap-2">
+<a
+  in:fade
+  href="/{anime.id}"
+  class="group indicator w-[210px] flex-col gap-2 focus-visible:outline-transparent"
+>
   {#if numUpdates > 0}
     <div class="badge-primary badge indicator-item">
       {numUpdates}
     </div>
   {/if}
   <div
-    class="card relative m-0 aspect-[0.7/1] h-[300px] w-[210px] bg-base-300 bg-clip-content p-0  transition-transform duration-200 hover:-translate3d-y-1"
+    class="card relative m-0 aspect-[0.7/1] h-[300px] w-[210px] bg-base-300 bg-clip-content p-0  transition-transform duration-200 hover:-translate3d-y-1 group-focus-visible:-translate-y-1"
   >
     <img
       class="card-body relative m-0 h-full w-full rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center p-0"
@@ -38,8 +42,10 @@
   <div>
     <h3
       style:--anime-color={anime.color}
-      class={`whitespace-normal text-sm font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200 line-clamp-2 hover:text-opacity-100
-      ${anime.color ? 'hover:text-[var(--anime-color)]' : 'hover:text-accent'}`}
+      class="whitespace-normal text-sm font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200 line-clamp-2 hover:text-opacity-100 group-focus-visible:text-opacity-100
+      {anime.color
+        ? 'hover:text-[var(--anime-color)] group-focus-visible:text-[var(--anime-color)]'
+        : 'hover:text-accent group-focus-visible:text-accent'}"
     >
       {anime.title.english ?? anime.title.romaji}
     </h3>

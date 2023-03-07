@@ -41,24 +41,26 @@
 <svelte:window bind:scrollY />
 
 <header
-  class="relative -m-4 mb-4"
-  style="transform: translate3d(0, {scrollY / 1.5}px, 0);"
+  class="relative -m-4 mb-4 motion-reduce:!translate3d-y-0"
+  style="transform: translate3d(0, {scrollY < 0 ? 0 : scrollY / 1.5}px, 0);"
 >
   <a href="/{animes[animeIdx].id}">
     <img
-      class={`h-96 w-full object-cover 
-      ${fade ? ' opacity-0 ' : 'opacity-100 '}
-       transition-opacity duration-300 ease-in-out`}
+      class="h-96 w-full object-cover 
+      {fade ? 'motion-safe:opacity-0 ' : 'motion-safe:opacity-100 '}
+       transition-opacity duration-300 ease-in-out"
       src={animes[animeIdx].cover}
       alt={animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
     />
   </a>
   <div class="scrim pointer-events-none absolute inset-0" />
   <div
-    class={`absolute inset-0 flex items-end bg-gradient-to-tr from-base-100
-        ${fade ? '!opacity-0' : 'opacity-100'}
-        ${textOn ? 'opacity-100' : 'pointer-events-none !opacity-0'} 
-        transition-opacity duration-300 ease-in-out`}
+    class="absolute inset-0 flex items-end bg-gradient-to-tr from-base-100
+        {fade ? 'motion-safe:!opacity-0' : 'motion-safe:opacity-100'}
+        {textOn
+      ? 'motion-safe:opacity-100'
+      : 'motion-safe::pointer-events-none motion-safe:!opacity-0'} 
+        transition-opacity duration-300 ease-in-out"
   >
     <div
       class="flex max-w-lg flex-1 flex-col justify-center gap-y-4 p-4 lg:max-w-xl"

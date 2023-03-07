@@ -4,16 +4,12 @@
 
   export let anime: Anime;
   export let episodes: EpisodeType[];
-  const classes = {
-    scroll:
-      'relative inline-flex w-auto gap-6 overflow-x-scroll overscroll-x-contain whitespace-nowrap p-4 pb-6',
-    grid: 'relative gap-4 grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))]'
-  };
-  const nextEpisodeDate = new Date(
+  $: nextEpisodeDate = new Date(
     Date.now() +
       new Date((anime.nextAiringEpisode?.timeUntilAiring ?? 0) * 1000).valueOf()
   );
   const gridLength = 12;
+  const imageLength = 50;
 </script>
 
 <section
@@ -26,9 +22,17 @@
       <slot name="title" />
     </h1>
   </slot>
-  <div class={episodes.length <= gridLength ? classes.scroll : classes.grid}>
+  <div class="relative {episodes.length <= gridLength ? 'scroll' : 'useGrid'}">
     {#each episodes as episode (episode.id)}
-      <Episode {anime} {episode} showImage={episodes.length <= 50} />
+      <Episode {anime} {episode} showImage={episodes.length <= imageLength} />
+    {:else}
+      <div class="flex items-center justify-center">
+        <p
+          class="text-xl font-semibold text-center text-base-content text-opacity-70"
+        >
+          No Episodes Found
+        </p>
+      </div>
     {/each}
     {#if anime.nextAiringEpisode && episodes.length <= gridLength}
       <div class="divider divider-horizontal" />
@@ -90,6 +94,14 @@
 </section>
 
 <style lang="postcss">
+  .scroll {
+    @apply inline-flex w-auto gap-6 overflow-x-scroll overscroll-x-contain whitespace-nowrap p-4 pb-6;
+  }
+
+  .useGrid {
+    @apply grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-4;
+  }
+
   ::-webkit-scrollbar {
     @apply h-4 w-4;
   }

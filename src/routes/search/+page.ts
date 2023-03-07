@@ -1,3 +1,4 @@
+import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 import type { Anime } from '$lib/model/Anime';
 
@@ -7,7 +8,7 @@ export function _toUpperCase(value: string): string {
 
 export const load = (async ({ fetch, url }) => {
   let query = url.searchParams.get('q');
-  if (!query) return;
+  if (!query) throw error(400, 'No query provided');
   query = _toUpperCase(query.trim());
   const animes: Anime[] = (
     await fetch(

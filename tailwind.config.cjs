@@ -8,6 +8,9 @@ module.exports = {
     require('@tailwindcss/line-clamp'),
     require('daisyui'),
     require('vidstack/tailwind.cjs'),
+    require('tailwindcss-scoped-groups')({
+      groups: ['one']
+    }),
     plugin(function ({ matchUtilities, theme }) {
       // https://stackoverflow.com/a/73165741
       matchUtilities(

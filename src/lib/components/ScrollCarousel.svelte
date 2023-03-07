@@ -1,24 +1,18 @@
-<script lang="ts">
-  // TODO: Remove this in favor of css transitions
-  export let key: unknown = undefined;
-</script>
-
 <section
   class="card max-w-full bg-base-200 bg-opacity-80 bg-clip-padding p-8 shadow-xl backdrop-blur-xl backdrop-filter"
 >
-  <slot name="header" />
-  <h1
-    class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
-  >
-    <slot name="title" />
-  </h1>
-  {#key key}
-    <div
-      class="relative inline-flex w-auto gap-6 overflow-x-scroll overscroll-x-contain whitespace-nowrap p-4 pb-6"
+  <slot name="header">
+    <h1
+      class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
     >
-      <slot name="content" />
-    </div>
-  {/key}
+      <slot name="title" />
+    </h1>
+  </slot>
+  <div
+    class="relative inline-flex w-auto gap-6 overflow-x-scroll overscroll-x-contain whitespace-nowrap p-4 pb-6"
+  >
+    <slot name="content" />
+  </div>
 </section>
 
 <style lang="postcss">

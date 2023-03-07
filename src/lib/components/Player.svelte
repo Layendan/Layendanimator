@@ -51,7 +51,9 @@
   });
 </script>
 
-<div class="relative -m-4 mb-4 h-auto w-screen bg-black">
+<div
+  class="relative -m-4 mb-4 h-auto w-screen border-b-2 border-accent bg-black"
+>
   <!-- svelte-ignore a11y-autofocus -->
   <media-player
     src={sources[selectedSource].url}
@@ -62,6 +64,7 @@
     preload="metadata"
     autoplay
     autofocus
+    prefer-native-hls
     bind:this={player}
     on:error
   >

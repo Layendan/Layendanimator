@@ -19,11 +19,11 @@
         episodeData.watched * episodeData.duration
       }`
     : `/${anime.id}/${episode.id}`}
-  class="flex w-[210px] flex-col gap-2"
+  class="group-one flex w-[210px] flex-col gap-2 focus-visible:outline-transparent"
 >
   {#if showImage}
     <div
-      class="card relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0 shadow-lg transition-transform duration-200 hover:-translate3d-y-1"
+      class="card relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0 shadow-lg transition-transform duration-200 hover:-translate3d-y-1 group-one-focus-visible:-translate-y-1"
     >
       <img
         src={episode.image ?? 'loading_failure.jpeg'}
@@ -40,17 +40,15 @@
   {/if}
   <!-- TODO: Check if no image is shown and if user has already watched -->
   <div
-    class="group flex h-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100"
+    class="group flex h-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100 group-one-focus-visible:text-opacity-100"
     class:noImageDesc={!showImage}
   >
     <h3
       style:--anime-color={anime.color}
-      class={`text-md whitespace-normal font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200 line-clamp-2
-                ${
-                  anime.color
-                    ? 'group-hover:text-[var(--anime-color)]'
-                    : 'group-hover:text-accent'
-                }`}
+      class="text-md whitespace-normal font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200 line-clamp-2
+      {anime.color
+        ? 'group-hover:text-[var(--anime-color)] group-one-focus-visible:text-[var(--anime-color)]'
+        : 'group-hover:text-accent group-one-focus-visible:text-accent'}"
     >
       {episode.title || `Episode ${episode.number}`}
     </h3>

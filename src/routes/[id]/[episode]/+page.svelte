@@ -1,27 +1,18 @@
 <script lang="ts">
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import Player from '$lib/components/Player.svelte';
+  import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
-  import { goto, invalidate, preloadData } from '$app/navigation';
+  import { goto, invalidate } from '$app/navigation';
   import { fade } from 'svelte/transition';
   import type { PageData } from './$types';
-  import {
-    faForward,
-    faInfoCircle,
-    faTv
-  } from '@fortawesome/free-solid-svg-icons';
+  import { faInfoCircle, faTv } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
   import { episodeCache } from '$lib/model/cache';
 
   export let data: PageData;
 
   let descriptionCollapsed = true;
-  const nextEpisodeDate = new Date(
-    Date.now() +
-      new Date(
-        (data.anime.nextAiringEpisode?.timeUntilAiring ?? 0) * 1000
-      ).valueOf()
-  );
   let selectedTab: 'episodes' | 'wiki' =
     data.anime.episodes.filter(
       item => item.number > (data.episodeObject?.number ?? Infinity)
@@ -77,106 +68,14 @@
 </div>
 
 {#if selectedTab === 'episodes'}
-  <ScrollCarousel>
-    <svelte:fragment slot="title">Episodes</svelte:fragment>
-
-    <svelte:fragment slot="content">
-      {#each data.anime.episodes.filter(item => item.number > (data.episodeObject?.number ?? Infinity)) as episode}
-        <button
-          in:fade
-          on:mouseover={() => preloadData(`/${data.anime.id}/${episode.id}`)}
-          on:focus={() => preloadData(`/${data.anime.id}/${episode.id}`)}
-          on:click={() => {
-            goto(
-              data.store[episode.id]?.watched
-                ? `/${data.anime.id}/${episode.id}?t=${
-                    data.store[episode.id].watched *
-                    data.store[episode.id].duration
-                  }`
-                : `/${data.anime.id}/${episode.id}`,
-              {
-                replaceState: true
-              }
-            );
-          }}
-          class="flex w-[210px] flex-col gap-2"
-        >
-          <div
-            class="card relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0 shadow-lg transition-transform duration-200 hover:-translate3d-y-1"
-          >
-            <img
-              src={episode.image ?? 'loading_failure.jpeg'}
-              alt={episode.title ?? `Episode ${episode.number}`}
-              class="card-body relative m-0 aspect-video h-full w-full rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center p-0"
-            />
-            {#if episode.id === data.nextEpisode.id}
-              <p
-                class="absolute inset-0 inline-flex h-full w-full items-center justify-center gap-1 rounded-md bg-base-100 bg-opacity-80 text-lg font-bold uppercase backdrop-blur-lg"
-              >
-                <Fa icon={faForward} />
-                Next Episode
-              </p>
-            {/if}
-          </div>
-          <div
-            class="group flex flex-col gap-1 text-left text-base-content text-opacity-80 hover:text-opacity-100"
-          >
-            <h3
-              style:--anime-color={data.anime.color}
-              class="text-md whitespace-normal font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200 line-clamp-2"
-              class:group-hover:text-[var(--anime-color)]={data.anime.color}
-              class:group-hover:text-accent={!data.anime.color}
-            >
-              {episode.title || `Episode ${episode.number}`}
-            </h3>
-            {#if episode.title && episode.number}
-              <h2
-                class="whitespace-normal text-xs leading-none transition-colors duration-200"
-              >
-                Episode {episode.number}
-              </h2>
-            {/if}
-          </div>
-        </button>
-      {:else}
-        <div class="flex items-center justify-center">
-          <p
-            class="text-xl font-semibold text-center text-base-content text-opacity-70"
-          >
-            Finished Watching
-          </p>
-        </div>
-      {/each}
-      {#if data.anime.nextAiringEpisode}
-        <div class="divider divider-horizontal mx-0" />
-
-        <div class="card h-full self-center bg-base-300 p-8">
-          <p class="text-sm text-base-content text-opacity-80">
-            Episode {data.anime.nextAiringEpisode.episode} airing in
-          </p>
-          <h2 class="text-lg font-bold">
-            {Math.floor((nextEpisodeDate.valueOf() - Date.now()) / 86400000)} Days,
-            {Math.floor(
-              (((nextEpisodeDate.valueOf() - Date.now()) / 86400000) % 1) * 24
-            )} Hours
-          </h2>
-          <p class="text-sm text-base-content text-opacity-80">
-            {new Date(
-              data.anime.nextAiringEpisode.airingTime * 1000
-            ).toLocaleString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              hour: undefined,
-              minute: undefined,
-              timeZoneName: undefined
-            })}
-          </p>
-        </div>
-      {/if}
-    </svelte:fragment>
-  </ScrollCarousel>
+  <EpisodeCarousel
+    anime={data.anime}
+    episodes={data.anime.episodes.filter(
+      item => item.number > (data.episodeObject?.number ?? Infinity)
+    )}
+  >
+    <svelte:fragment slot="title">Next episodes</svelte:fragment>
+  </EpisodeCarousel>
 {:else if selectedTab === 'wiki'}
   <main in:fade class="mt-4 block w-full px-4 lg:mt-0">
     <!-- svelte-ignore a11y-click-events-have-key-events -->

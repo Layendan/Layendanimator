@@ -17,21 +17,22 @@
   class="navbar sticky top-0 left-0 right-0 z-50 rounded-b-md bg-base-100 bg-opacity-80 backdrop-blur-xl backdrop-filter"
 >
   <div class="navbar-start flex gap-2">
-    <div class="flex gap-1">
-      <button
-        class="btn-ghost btn-sm btn"
-        on:click={() => window.history.back()}
-      >
-        <Fa icon={faArrowLeft} size="1.2x" />
-      </button>
-      <button
-        class="btn-ghost btn-sm btn"
-        on:click={() => window.history.forward()}
-      >
-        <Fa icon={faArrowRight} size="1.2x" />
-      </button>
-    </div>
-    <!-- TODO: Add other navigation links -->
+    {#if window?.__TAURI__}
+      <div class="flex gap-1">
+        <button
+          class="btn-ghost btn-sm btn"
+          on:click={() => window.history.back()}
+        >
+          <Fa icon={faArrowLeft} size="1.2x" />
+        </button>
+        <button
+          class="btn-ghost btn-sm btn"
+          on:click={() => window.history.forward()}
+        >
+          <Fa icon={faArrowRight} size="1.2x" />
+        </button>
+      </div>
+    {/if}
     <a href="/" class="btn-ghost btn text-xl normal-case">Layendanimator</a>
     <form
       on:submit|preventDefault={() => {

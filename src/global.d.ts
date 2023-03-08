@@ -21,4 +21,8 @@ declare global {
     webkitExitFullscreen(): Promise<undefined>;
     webkitCurrentFullScreenElement: Element | null;
   }
+
+  interface Window {
+    __TAURI__: object;
+  }
 }

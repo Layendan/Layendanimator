@@ -36,7 +36,7 @@
 
 <header
   class="relative -m-4 mb-4 motion-reduce:!translate3d-y-0"
-  style="transform: translate3d(0, {scrollY < 0 ? 0 : scrollY / 1.5}px, 0);"
+  style="transform: translate3d(0, {scrollY <= 0 ? 0 : scrollY / 1.5}px, 0);"
 >
   <img
     class="h-[38vh] w-full object-cover object-top"

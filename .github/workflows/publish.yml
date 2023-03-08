@@ -1,8 +1,12 @@
 name: 'publish'
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - master
+    branches: ['master']
+    paths:
+      - 'src/**/*'
+      - 'src-tauri/**/*'
+      - 'static/**/*'
 
 jobs:
   create-release:
@@ -65,7 +69,9 @@ jobs:
         env:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
-        run: yarn build
+        run: |
+          yarn
+          yarn build
       - uses: tauri-apps/tauri-action@dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

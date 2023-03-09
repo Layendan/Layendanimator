@@ -22,6 +22,8 @@ jobs:
           node-version: 18
       - name: install dependencies
         run: yarn
+      - name: install rust formatting tool
+        run: rustup component add rustfmt --toolchain 1.65-x86_64-unknown-linux-gnu
       - name: lint
         run: yarn lint
   # TODO: Add tests

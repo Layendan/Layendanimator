@@ -12,10 +12,16 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+      - name: webfactory/ssh-agent
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: setup node
         uses: actions/setup-node@v1
         with:
           node-version: 18
+      - name: install dependencies
+        run: yarn
       - name: lint
         run: yarn lint
   # TODO: Add tests

@@ -1,0 +1,23 @@
+name: 'CI / lint'
+on: [push, pull_request]
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: install Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18
+      - name: install dependencies
+        run: yarn
+      - name: lint
+        run: yarn lint
+  # TODO: Add

@@ -60,7 +60,7 @@
     {poster}
     controls
     aspect-ratio="16/9"
-    class="mx-auto block w-[max(calc(800px),70vw)] object-cover"
+    class="mx-auto block object-cover md:w-[max(calc(800px),70vw)]"
     preload="metadata"
     autoplay
     autofocus

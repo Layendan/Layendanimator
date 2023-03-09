@@ -3,6 +3,7 @@
   import {
     faArrowLeft,
     faArrowRight,
+    faRotateRight,
     faBookmark,
     faCog
   } from '@fortawesome/free-solid-svg-icons';
@@ -30,6 +31,12 @@
           on:click={() => window.history.forward()}
         >
           <Fa icon={faArrowRight} size="1.2x" />
+        </button>
+        <button
+          class="btn-ghost btn-sm btn"
+          on:click={() => window.location.reload()}
+        >
+          <Fa icon={faRotateRight} size="1.2x" />
         </button>
       </div>
     {/if}

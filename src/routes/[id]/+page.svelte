@@ -21,6 +21,7 @@
   let descriptionCollapsed = true;
   let isAscending = true;
   let showWatched = true;
+  let showImage: boolean;
   const reversedEpisodes = [...data.anime.episodes].reverse();
   $: sortedEpisodes = isAscending ? data.anime.episodes : reversedEpisodes;
   $: relations = data.anime.relations.filter(
@@ -172,7 +173,7 @@
   <div class="divider" />
 
   <!-- EPISODES -->
-  <EpisodeCarousel anime={data.anime} episodes={sortedEpisodes}>
+  <EpisodeCarousel anime={data.anime} episodes={sortedEpisodes} bind:showImage>
     <div slot="header" class="flex justify-between">
       <div class="mb-4 flex items-center gap-1">
         <h1
@@ -247,6 +248,20 @@
                   tabindex="-1"
                 />
                 Show Watched
+              </button>
+            </li>
+            <li class="m-1">
+              <button
+                class="btn-outline btn-accent btn flex w-full flex-row items-center gap-2 text-base-content"
+                on:click={() => (showImage = !showImage)}
+              >
+                <input
+                  type="checkbox"
+                  checked={showImage}
+                  class="checkbox-accent checkbox"
+                  tabindex="-1"
+                />
+                Thumbnails
               </button>
             </li>
           </ul>

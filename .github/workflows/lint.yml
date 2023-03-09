@@ -16,8 +16,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 18
-      - name: install dependencies
-        run: yarn
       - name: lint
         run: yarn lint
-  # TODO: Add
+  # TODO: Add tests

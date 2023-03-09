@@ -11,6 +11,7 @@ export const animeCache = new LRUCache<string, Anime>({
 export const episodeCache = new LRUCache<
   string,
   {
+    download: string | undefined;
     sources: {
       url: string;
       isM3U8: boolean;

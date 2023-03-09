@@ -2,7 +2,7 @@
   import '../app.css';
   import '../nprogress.css';
 
-  import { invalidateAll } from '$app/navigation';
+  // import { invalidateAll } from '$app/navigation';
   import { navigating } from '$app/stores';
   import { onMount } from 'svelte';
   import { source } from '$lib/model/source';
@@ -51,7 +51,8 @@
   on:keydown={e => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
       e.preventDefault();
-      invalidateAll();
+      window.location.reload();
+      // invalidateAll();
     }
   }}
 />

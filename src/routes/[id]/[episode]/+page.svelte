@@ -28,6 +28,7 @@
   sources={data.episode.sources}
   poster={data.anime.episodes.find(item => item.id === data.id)?.image ??
     data.anime.image}
+  download={data.episode.download}
   on:requestNextEpisode={() => {
     if (data.nextEpisode) {
       goto(

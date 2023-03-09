@@ -30,6 +30,7 @@ async function fetchEpisode(id: string, _fetch: typeof fetch) {
       isM3U8: boolean;
       quality: string;
     }[];
+    download: string;
   };
 
   if (episode) {

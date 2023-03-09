@@ -2,14 +2,17 @@
   import type { Anime, Episode as EpisodeType } from '$lib/model/Anime';
   import Episode from './Episode.svelte';
 
+  const gridLength = 12;
+  const imageLength = 50;
+
   export let anime: Anime;
   export let episodes: EpisodeType[];
+  export let showImage = episodes.length <= imageLength;
+
   $: nextEpisodeDate = new Date(
     Date.now() +
       new Date((anime.nextAiringEpisode?.timeUntilAiring ?? 0) * 1000).valueOf()
   );
-  const gridLength = 12;
-  const imageLength = 50;
 </script>
 
 <section
@@ -22,9 +25,13 @@
       <slot name="title" />
     </h1>
   </slot>
-  <div class="relative {episodes.length <= gridLength ? 'scroll' : 'useGrid'}">
+  <div
+    class="relative {episodes.length > gridLength || !showImage
+      ? 'useGrid'
+      : 'scroll'}"
+  >
     {#each episodes as episode (episode.id)}
-      <Episode {anime} {episode} showImage={episodes.length <= imageLength} />
+      <Episode {anime} {episode} {showImage} />
     {:else}
       <div class="flex items-center justify-center">
         <p
@@ -34,7 +41,7 @@
         </p>
       </div>
     {/each}
-    {#if anime.nextAiringEpisode && episodes.length <= gridLength}
+    {#if anime.nextAiringEpisode && episodes.length <= gridLength && showImage}
       <div class="divider divider-horizontal" />
       <div class="card h-max self-center bg-base-300 p-8">
         <p class="text-sm text-base-content text-opacity-80">
@@ -63,7 +70,7 @@
       </div>
     {/if}
   </div>
-  {#if anime.nextAiringEpisode && episodes.length > gridLength}
+  {#if anime.nextAiringEpisode && (episodes.length > gridLength || !showImage)}
     <div class="divider" />
     <div class="card h-max self-center bg-base-300 p-8">
       <p class="text-sm text-base-content text-opacity-80">

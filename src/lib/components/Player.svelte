@@ -7,7 +7,7 @@
   import { defineCustomElements } from 'vidstack/elements';
 
   import Fa from 'svelte-fa';
-  import { faMicrochip } from '@fortawesome/free-solid-svg-icons';
+  import { faMicrochip, faDownload } from '@fortawesome/free-solid-svg-icons';
   import { onMount, createEventDispatcher, onDestroy } from 'svelte';
 
   export let sources: {
@@ -16,6 +16,7 @@
     quality: string;
   }[];
   export let poster: string;
+  export let download: string | undefined = undefined;
 
   let player: MediaPlayerElement;
   let subscriptions: (() => void)[] = [];
@@ -60,7 +61,7 @@
     {poster}
     controls
     aspect-ratio="16/9"
-    class="mx-auto block w-[max(calc(800px),70vw)] object-cover"
+    class="mx-auto block object-cover md:w-[max(calc(800px),70vw)]"
     preload="metadata"
     autoplay
     autofocus
@@ -97,4 +98,14 @@
       </ul>
     </div>
   </div>
+  {#if download}
+    <a
+      href={download}
+      target="_blank"
+      rel="noreferrer"
+      class="btn-ghost btn absolute bottom-4 right-4"
+    >
+      <Fa icon={faDownload} size="1.5x" />
+    </a>
+  {/if}
 </div>

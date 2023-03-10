@@ -57,7 +57,7 @@
 >
   <!-- svelte-ignore a11y-autofocus -->
   <media-player
-    src={sources[selectedSource].url}
+    src="https://jb-proxy.app.jet-black.xyz/{sources[selectedSource].url}"
     {poster}
     controls
     aspect-ratio="16/9"

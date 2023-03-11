@@ -1,5 +1,6 @@
 <script lang="ts">
   import AnimeCard from '$lib/components/AnimeCard.svelte';
+  import CharacterCard from '$lib/components/CharacterCard.svelte';
   import Player from '$lib/components/Player.svelte';
   import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
@@ -180,42 +181,7 @@
         <svelte:fragment slot="title">Characters</svelte:fragment>
         <svelte:fragment slot="content">
           {#each data.anime.characters as character (character.id)}
-            <a
-              in:fade
-              href="https://anilist.co/character/{character.id}"
-              target="_blank"
-              rel="noreferrer"
-              class="flex w-32 flex-col items-center gap-2"
-              style:--anime-color={data.anime.color}
-            >
-              <div class="avatar">
-                <div
-                  class="w-28 rounded-full ring ring-transparent transition-shadow duration-200"
-                  class:hover:ring-[var(--anime-color)]={data.anime.color}
-                  class:hover:ring-accent={!data.anime.color}
-                >
-                  <img src={character.image} alt={character.name.full} />
-                </div>
-              </div>
-              <div
-                class="group flex w-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100"
-              >
-                <h3
-                  class="text-md whitespace-normal font-bold leading-tight transition-colors duration-200 line-clamp-2"
-                  class:group-hover:text-[var(--anime-color)]={data.anime.color}
-                  class:group-hover:text-accent={!data.anime.color}
-                >
-                  {character.name.full}
-                </h3>
-                {#if character.name.native}
-                  <h2
-                    class="whitespace-normal text-xs leading-tight transition-colors duration-200 line-clamp-2"
-                  >
-                    {character.name.native}
-                  </h2>
-                {/if}
-              </div>
-            </a>
+            <CharacterCard {character} color={data.anime.color} />
           {/each}
         </svelte:fragment>
       </ScrollCarousel>

@@ -11,9 +11,8 @@
   export let data: PageData;
 </script>
 
-<!-- Heading carousel -->
-
 <main class="relative w-full">
+  <!-- Heading carousel -->
   <Carousel
     animes={[
       ...data.trending.filter(a => a.cover !== a.image),

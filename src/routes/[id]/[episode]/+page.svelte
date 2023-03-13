@@ -31,19 +31,7 @@
     data.anime.image}
   download={data.episode.download}
   on:requestNextEpisode={() => {
-    if (data.nextEpisode) {
-      goto(
-        data.store[data.nextEpisode.id]?.watched
-          ? `/${data.anime.id}/${data.nextEpisode.id}?t=${
-              data.store[data.nextEpisode.id].watched *
-              data.store[data.nextEpisode.id].duration
-            }`
-          : `/${data.anime.id}/${data.nextEpisode.id}`,
-        {
-          replaceState: true
-        }
-      );
-    }
+    if (data.nextEpisode) goto(`/${data.anime.id}/${data.nextEpisode.id}`);
   }}
   on:error={e => {
     console.error(e);

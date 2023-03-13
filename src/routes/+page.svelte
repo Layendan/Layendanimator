@@ -13,12 +13,7 @@
 
 <main class="relative w-full">
   <!-- Heading carousel -->
-  <Carousel
-    animes={[
-      ...data.trending.filter(a => a.cover !== a.image),
-      ...data.popular
-    ]}
-  />
+  <Carousel animes={data.trending.filter(a => a.cover !== a.image)} />
 
   <!-- Recent episode carouse -->
   <ScrollCarousel>

@@ -3,12 +3,11 @@
   import 'vidstack/styles/ui/buttons.css';
   import 'vidstack/styles/ui/sliders.css';
   import 'vidstack/define/media-player.js';
-  import type { MediaPlayerElement } from 'vidstack';
   import { defineCustomElements } from 'vidstack/elements';
 
   import Fa from 'svelte-fa';
   import { faMicrochip, faDownload } from '@fortawesome/free-solid-svg-icons';
-  import { onMount, createEventDispatcher, onDestroy } from 'svelte';
+  import { onMount, createEventDispatcher } from 'svelte';
 
   export let sources: {
     url: string;
@@ -17,9 +16,6 @@
   }[];
   export let poster: string;
   export let download: string | undefined = undefined;
-
-  let player: MediaPlayerElement;
-  let subscriptions: (() => void)[] = [];
 
   const defaultIndex = sources.findIndex(
     source => source.quality === 'default'
@@ -31,47 +27,27 @@
     dispatcher('requestNextEpisode');
   }
 
-  onMount(async () => {
-    await defineCustomElements();
-    // TODO: Replace with bindings when video element comes back
-    subscriptions.push(
-      player.subscribe(({ duration }) => {
-        console.log('Duration:', duration);
-      })
-    );
-    subscriptions.push(
-      player.subscribe(({ paused, playing }) => {
-        console.log('Paused:', paused);
-        console.log('Playing:', playing);
-      })
-    );
-  });
-
-  onDestroy(() => {
-    subscriptions.forEach(unsubscribe => unsubscribe());
-  });
+  onMount(async () => await defineCustomElements());
 </script>
 
-<div
-  class="relative -m-4 mb-4 h-auto w-screen border-b-2 border-accent bg-black"
->
+<div class="relative -m-4 mb-4 h-auto w-screen bg-black">
   <!-- svelte-ignore a11y-autofocus -->
   <media-player
     src="https://jb-proxy.app.jet-black.xyz/{sources[selectedSource].url}"
     {poster}
     controls
     aspect-ratio="16/9"
-    class="mx-auto block object-cover md:w-[max(calc(800px),70vw)]"
+    class="mx-auto block w-screen object-cover md:w-[max(calc(800px),70vw)]"
     preload="metadata"
     autoplay
     autofocus
     prefer-native-hls
-    bind:this={player}
+    on:ended={requestNextEpisode}
     on:error
   >
     <media-outlet />
   </media-player>
-  <div class="absolute bottom-4 left-4">
+  <div class="absolute left-4 bottom-4">
     <div class="dropdown-right dropdown-end dropdown">
       <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
       <!-- svelte-ignore a11y-label-has-associated-control -->

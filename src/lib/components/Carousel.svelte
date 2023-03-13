@@ -2,20 +2,38 @@
   import { onDestroy } from 'svelte';
   import { preloadData } from '$app/navigation';
   import type { Anime } from '$lib/model/Anime';
-  import { faPlayCircle } from '@fortawesome/free-solid-svg-icons';
+  import {
+    faArrowLeft,
+    faArrowRight,
+    faPlayCircle
+  } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
 
   export let animes: Anime[];
   export let fadeSpeed = 300;
   export let transitionTime = 10_000;
   export let animeIdx = 0;
+  export let display: 'rails' | 'arrows' = 'arrows';
+  let tempId = animeIdx;
 
   let fade = false;
   let interval = setInterval(next, transitionTime);
+
   async function next() {
+    await set(animeIdx + 1);
+  }
+  async function previous() {
+    await set(animeIdx - 1);
+  }
+
+  async function set(idx: number) {
+    if (idx === animeIdx) return;
+    clearInterval(interval);
+    interval = setInterval(next, transitionTime);
+    tempId = idx < 0 ? animes.length - 1 : idx % animes.length;
     fade = true;
     await new Promise(resolve => setTimeout(resolve, fadeSpeed));
-    animeIdx = (animeIdx + 1) % animes.length;
+    animeIdx = tempId;
     fade = false;
   }
 
@@ -46,7 +64,7 @@
 >
   <a href="/{animes[animeIdx].id}">
     <img
-      class="h-96 w-full object-cover 
+      class="h-96 w-full object-cover saturate-150
       {fade ? 'motion-safe:opacity-0 ' : 'motion-safe:opacity-100 '}
        transition-opacity duration-300 ease-in-out"
       src={animes[animeIdx].cover}
@@ -55,7 +73,7 @@
   </a>
   <div class="scrim pointer-events-none absolute inset-0" />
   <div
-    class="absolute inset-0 flex items-end bg-gradient-to-tr from-base-100
+    class="absolute inset-0 flex items-end bg-gradient-to-tr from-base-100/80
         {fade ? 'motion-safe:!opacity-0' : 'motion-safe:opacity-100'}
         {textOn
       ? 'motion-safe:opacity-100'
@@ -72,7 +90,8 @@
       </h1>
 
       <p class="text-md drop-shadow-lg line-clamp-2 md:text-lg lg:text-xl">
-        {animes[animeIdx].description.replace(/<[^>]+>/g, '').slice(0, 200)}
+        {animes[animeIdx].description?.replace(/<[^>]+>/g, '').slice(0, 200) ??
+          ''}
       </p>
 
       <div class="flex gap-x-2">
@@ -87,4 +106,40 @@
       </div>
     </div>
   </div>
+  {#if display === 'rails'}
+    <div
+      class="absolute bottom-1 left-0 right-0 mx-auto flex w-min gap-x-1 transition-all duration-300 ease-in-out
+    {textOn
+        ? 'motion-safe:opacity-100'
+        : 'motion-safe::pointer-events-none motion-safe:!opacity-0'}"
+    >
+      {#each animes.slice(0, 5) as anime, i}
+        <button
+          class="h-6 w-6 rounded-lg {i === tempId
+            ? 'bg-accent'
+            : 'bg-accent/10'}"
+          on:click={() => set(i)}
+        />
+      {/each}
+    </div>
+  {:else}
+    <div
+      class="absolute bottom-4 right-4 w-max transition-all duration-300 ease-in-out
+    {textOn
+        ? 'motion-safe:opacity-100'
+        : 'motion-safe::pointer-events-none motion-safe:!opacity-0'}"
+    >
+      <div class="flex">
+        <button class="btn-ghost btn-square btn-sm btn" on:click={previous}>
+          <Fa icon={faArrowLeft} size="1.2x" />
+        </button>
+        <button class="btn-ghost btn-square btn-sm btn" on:click={next}>
+          <Fa icon={faArrowRight} size="1.2x" />
+        </button>
+      </div>
+      <p class="w-full text-center font-bold">
+        {tempId + 1} / {animes.length}
+      </p>
+    </div>
+  {/if}
 </header>

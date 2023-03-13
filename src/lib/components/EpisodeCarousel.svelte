@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Anime, Episode as EpisodeType } from '$lib/model/Anime';
+  import { fade } from 'svelte/transition';
   import Episode from './Episode.svelte';
 
   const gridLength = 12;
@@ -16,6 +17,7 @@
 </script>
 
 <section
+  in:fade
   class="card max-w-full bg-base-200 bg-opacity-80 p-8 shadow-xl backdrop-blur-xl backdrop-filter"
 >
   <slot name="header">

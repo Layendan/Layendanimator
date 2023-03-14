@@ -60,10 +60,25 @@ export type Anime = {
   subOrDub: 'sub' | 'dub';
   type: Type;
   recommendations: Anime[];
-  characters: [
+  characters: Character[];
+  relations: Anime[];
+  episodes: Episode[];
+};
+
+export type Character = {
+  id: number;
+  role: string;
+  name: {
+    first: string;
+    last: string;
+    full: string;
+    native: string;
+    userPreferred: string;
+  };
+  image: string;
+  voiceActors: [
     {
       id: number;
-      role: string;
       name: {
         first: string;
         last: string;
@@ -72,23 +87,8 @@ export type Anime = {
         userPreferred: string;
       };
       image: string;
-      voiceActors: [
-        {
-          id: number;
-          name: {
-            first: string;
-            last: string;
-            full: string;
-            native: string;
-            userPreferred: string;
-          };
-          image: string;
-        }
-      ];
     }
   ];
-  relations: Anime[];
-  episodes: Episode[];
 };
 
 export type Episode = {

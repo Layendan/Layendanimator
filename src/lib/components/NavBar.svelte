@@ -53,7 +53,7 @@
       <input
         type="search"
         placeholder="Search an anime"
-        class="h-full flex-1 rounded-md bg-base-200 px-2 text-base shadow-md ring-2 ring-base-200 transition-shadow duration-200 focus:outline-none focus:ring-accent focus:ring-opacity-50"
+        class="h-full flex-1 rounded-md bg-base-200 px-2 text-base shadow-md ring-2 ring-base-200 transition-shadow duration-200 focus:outline-none focus:ring-accent"
         autocomplete="off"
         autocapitalize="words"
         bind:value

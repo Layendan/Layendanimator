@@ -11,15 +11,9 @@
   export let data: PageData;
 </script>
 
-<!-- Heading carousel -->
-
 <main class="relative w-full">
-  <Carousel
-    animes={[
-      ...data.trending.filter(a => a.cover !== a.image),
-      ...data.popular
-    ]}
-  />
+  <!-- Heading carousel -->
+  <Carousel animes={data.trending.filter(a => a.cover !== a.image)} />
 
   <!-- Recent episode carouse -->
   <ScrollCarousel>

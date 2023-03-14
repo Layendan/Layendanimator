@@ -1,6 +1,8 @@
-<section
-  class="card max-w-full bg-base-200 bg-opacity-80 bg-clip-padding p-8 shadow-xl backdrop-blur-xl backdrop-filter"
->
+<script>
+  import Content from './Content.svelte';
+</script>
+
+<Content>
   <slot name="header">
     <h1
       class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
@@ -13,7 +15,7 @@
   >
     <slot name="content" />
   </div>
-</section>
+</Content>
 
 <style lang="postcss">
   ::-webkit-scrollbar {

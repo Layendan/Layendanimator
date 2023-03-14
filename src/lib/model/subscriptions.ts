@@ -1,8 +1,8 @@
 import { writable } from 'svelte/store';
-import { Store } from 'tauri-plugin-store-api';
+import type { Store } from 'tauri-plugin-store-api';
 import type { Anime } from './Anime';
 
-const store = new Store('.subscriptions.dat');
+let store: Store;
 
 function createSubscriptions() {
   const { subscribe, set, update } = writable<Anime[]>([]);
@@ -27,6 +27,8 @@ function createSubscriptions() {
       });
     },
     initialize: async () => {
+      const StoreImport = (await import('tauri-plugin-store-api')).Store;
+      store ??= new StoreImport('.subscriptions.dat');
       const data = await store.get<Anime[]>('subscriptions');
       if (data) {
         set(data);
@@ -59,17 +61,22 @@ function createUnwatchedSubscriptions() {
       ];
       set(result);
       await store.set('activeSubscriptions', result);
+      await sendNotification(
+        anime.anime.title.english ?? anime.anime.title.native,
+        anime.newEpisodes
+      );
     },
-    remove: async (anime: { anime: Anime; newEpisodes: number }) => {
+    remove: async (anime: Anime) => {
       const subscriptions = await store.get<
         { anime: Anime; newEpisodes: number }[]
       >('activeSubscriptions');
-      const result =
-        subscriptions?.filter(a => a.anime.id !== anime.anime.id) ?? [];
+      const result = subscriptions?.filter(a => a.anime.id !== anime.id) ?? [];
       set(result);
       await store.set('activeSubscriptions', result);
     },
     initialize: async () => {
+      const StoreImport = (await import('tauri-plugin-store-api')).Store;
+      store ??= new StoreImport('.subscriptions.dat');
       const data = await store.get<{ anime: Anime; newEpisodes: number }[]>(
         'activeSubscriptions'
       );
@@ -83,3 +90,21 @@ function createUnwatchedSubscriptions() {
 }
 
 export const unwatchedSubscriptions = await createUnwatchedSubscriptions();
+
+async function sendNotification(title: string, episodes: number) {
+  const { isPermissionGranted, requestPermission, sendNotification } =
+    await import('@tauri-apps/api/notification');
+  if (await isPermissionGranted()) {
+    sendNotification({
+      title: `New Episodes for ${title}`,
+      body: `There are ${episodes} new episodes for ${title}`
+    });
+  } else if ((await requestPermission()) === 'granted') {
+    sendNotification({
+      title: `New Episodes for ${title}`,
+      body: `There are ${episodes} new episodes for ${title}`
+    });
+  } else {
+    console.log('Permission not granted');
+  }
+}

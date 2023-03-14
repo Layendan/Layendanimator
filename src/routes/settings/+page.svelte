@@ -1,18 +1,18 @@
 <script lang="ts">
+  import Content from '$lib/components/Content.svelte';
+  import {
+    animeCache,
+    episodeCache,
+    popularAnimes,
+    recentEpisodes,
+    trendingAnimes
+  } from '$lib/model/cache';
   import { providers, source } from '$lib/model/source';
   import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
   import Fa from 'svelte-fa';
 </script>
 
 <section>
-  <h1>Settings</h1>
-  <ul>
-    <li>
-      <a href="/settings/application" class="link-hover link">Application</a>
-    </li>
-    <li><a href="/settings/app" class="link-hover link">App</a></li>
-  </ul>
-  <div class="divider" />
   <div class="dropdown block">
     <!-- svelte-ignore a11y-label-has-associated-control -->
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -43,9 +43,7 @@
     </ul>
   </div>
   <div class="divider" />
-  <section
-    class="card max-w-none bg-base-200 bg-opacity-80 bg-clip-padding p-8 shadow-xl backdrop-blur-xl backdrop-filter"
-  >
+  <Content>
     <h1
       class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
     >
@@ -67,5 +65,49 @@
         <Fa icon={faDiscord} size="3x" />
       </a>
     </div>
-  </section>
+  </Content>
+
+  <div class="divider" />
+
+  <Content>
+    <h1
+      class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
+    >
+      Data
+    </h1>
+    <div class="grid grid-cols-1">
+      <button
+        class="btn-outline btn-accent btn w-full"
+        on:click={() => {
+          recentEpisodes.clear();
+          trendingAnimes.clear();
+          popularAnimes.clear();
+          animeCache.clear();
+          episodeCache.clear();
+          localStorage.clear();
+        }}>Clear Cache</button
+      >
+      <div class="divider" />
+      <button
+        class="btn-outline btn-accent btn w-full"
+        on:click={async () => {
+          const { isPermissionGranted, requestPermission, sendNotification } =
+            await import('@tauri-apps/api/notification');
+          if (await isPermissionGranted()) {
+            sendNotification({
+              title: 'Test Notification',
+              body: 'This is a test notification'
+            });
+          } else if ((await requestPermission()) === 'granted') {
+            sendNotification({
+              title: 'Test Notification',
+              body: 'This is a test notification'
+            });
+          } else {
+            console.error('Notification permission not granted');
+          }
+        }}>Send Test Notification</button
+      >
+    </div>
+  </Content>
 </section>

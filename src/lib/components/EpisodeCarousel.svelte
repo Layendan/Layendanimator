@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Anime, Episode as EpisodeType } from '$lib/model/Anime';
-  import { fade } from 'svelte/transition';
+  import Content from './Content.svelte';
   import Episode from './Episode.svelte';
 
   const gridLength = 12;
@@ -16,10 +16,7 @@
   );
 </script>
 
-<section
-  in:fade
-  class="card max-w-full bg-base-200 bg-opacity-80 p-8 shadow-xl backdrop-blur-xl backdrop-filter"
->
+<Content>
   <slot name="header">
     <h1
       class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
@@ -100,7 +97,7 @@
       </p>
     </div>
   {/if}
-</section>
+</Content>
 
 <style lang="postcss">
   .scroll {

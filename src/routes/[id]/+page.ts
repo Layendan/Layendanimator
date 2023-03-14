@@ -3,6 +3,10 @@ import type { Anime } from '$lib/model/Anime';
 import { source } from '$lib/model/source';
 import { animeCache } from '$lib/model/cache';
 import { get } from 'svelte/store';
+import {
+  subscriptions,
+  unwatchedSubscriptions
+} from '$lib/model/subscriptions';
 
 export const load = (async ({ fetch, depends, params }) => {
   depends(params.id);
@@ -33,6 +37,15 @@ export const load = (async ({ fetch, depends, params }) => {
 
     if (anime) {
       animeCache.set(params.id, anime);
+    }
+
+    const sub = get(subscriptions).find(({ id }) => id === anime.id);
+    if (sub && sub.episodes.length < anime.episodes.length) {
+      subscriptions.remove(anime);
+      unwatchedSubscriptions.add({
+        anime: anime,
+        newEpisodes: anime.episodes.length - sub.episodes.length
+      });
     }
 
     return {

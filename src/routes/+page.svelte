@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { preloadData } from '$app/navigation';
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import Carousel from '$lib/components/Carousel.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
@@ -9,6 +10,8 @@
   import type { PageData } from './$types';
 
   export let data: PageData;
+
+  Promise.allSettled($subscriptions.map(({ id }) => preloadData(`/${id}`)));
 </script>
 
 <main class="relative w-full">
@@ -46,17 +49,19 @@
       {#if $unwatchedSubscriptions.length > 0}
         <div class="divider divider-horizontal" />
       {/if}
-      {#each $subscriptions.filter(e => !$unwatchedSubscriptions.some(a => a.anime.id === e.id)) as anime (anime.id)}
+      {#each $subscriptions as anime (anime.id)}
         <AnimeCard {anime} />
-      {:else}
+      {/each}
+      <!-- Can't use else since it can only check one and not both -->
+      {#if $subscriptions.length === 0 && $unwatchedSubscriptions.length === 0}
         <div class="flex items-center justify-center">
           <p
-            class="text-xl font-semibold text-center text-base-content text-opacity-70"
+            class="text-center text-xl font-semibold text-base-content text-opacity-70"
           >
             No Subscriptions Added
           </p>
         </div>
-      {/each}
+      {/if}
     </svelte:fragment>
   </ScrollCarousel>
 

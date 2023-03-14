@@ -4,12 +4,15 @@
   import Player from '$lib/components/Player.svelte';
   import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
-  import { goto, invalidate } from '$app/navigation';
+  import { afterNavigate, goto } from '$app/navigation';
   import { fade } from 'svelte/transition';
   import type { PageData } from './$types';
   import { faInfoCircle, faTv } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
-  import { episodeCache } from '$lib/model/cache';
+  import {
+    subscriptions,
+    unwatchedSubscriptions
+  } from '$lib/model/subscriptions';
 
   export let data: PageData;
 
@@ -23,6 +26,15 @@
   $: relations = data.anime.relations.filter(
     a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT'
   );
+
+  afterNavigate(() => {
+    if (
+      $unwatchedSubscriptions.find(({ anime: { id } }) => id === data.anime.id)
+    ) {
+      unwatchedSubscriptions.remove(data.anime);
+      subscriptions.add(data.anime);
+    }
+  });
 </script>
 
 <Player
@@ -32,11 +44,6 @@
   download={data.episode.download}
   on:requestNextEpisode={() => {
     if (data.nextEpisode) goto(`/${data.anime.id}/${data.nextEpisode.id}`);
-  }}
-  on:error={e => {
-    console.error(e);
-    episodeCache.delete(data.id);
-    invalidate(data.id);
   }}
 />
 

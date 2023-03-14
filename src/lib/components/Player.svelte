@@ -43,7 +43,6 @@
     autofocus
     prefer-native-hls
     on:ended={requestNextEpisode}
-    on:error
   >
     <media-outlet />
   </media-player>

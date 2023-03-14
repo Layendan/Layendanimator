@@ -64,7 +64,7 @@
 >
   <a href="/{animes[animeIdx].id}">
     <img
-      class="h-96 w-full object-cover saturate-150
+      class="h-96 w-full object-cover
       {fade ? 'motion-safe:opacity-0 ' : 'motion-safe:opacity-100 '}
        transition-opacity duration-300 ease-in-out"
       src={animes[animeIdx].cover}

@@ -39,12 +39,21 @@ export const load = (async ({ fetch, depends, params }) => {
       animeCache.set(params.id, anime);
     }
 
-    const sub = get(subscriptions).find(({ id }) => id === anime.id);
-    if (sub && sub.episodes.length < anime.episodes.length) {
+    const temp = get(subscriptions).find(({ id }) => id === anime.id);
+    const sub = temp
+      ? {
+          anime: temp,
+          newEpisodes: 0
+        }
+      : get(unwatchedSubscriptions).find(
+          ({ anime: { id } }) => id === anime.id
+        );
+    if (sub && sub.anime.episodes.length < anime.episodes.length) {
       subscriptions.remove(anime);
       unwatchedSubscriptions.add({
         anime: anime,
-        newEpisodes: anime.episodes.length - sub.episodes.length
+        newEpisodes:
+          anime.episodes.length - sub.anime.episodes.length + sub.newEpisodes
       });
     }
 

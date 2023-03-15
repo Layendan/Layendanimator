@@ -44,6 +44,7 @@
   download={data.episode.download}
   on:requestNextEpisode={() => {
     if (data.nextEpisode) goto(`/${data.anime.id}/${data.nextEpisode.id}`);
+    else goto(`/${data.anime.id}`);
   }}
 />
 

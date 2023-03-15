@@ -3,7 +3,10 @@
   import CharacterCard from '$lib/components/CharacterCard.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
   import { fade } from 'svelte/transition';
-  import { subscriptions } from '$lib/model/subscriptions';
+  import {
+    subscriptions,
+    unwatchedSubscriptions
+  } from '$lib/model/subscriptions';
   import type { PageData } from './$types';
   import Fa from 'svelte-fa';
   import {
@@ -23,11 +26,14 @@
   let isAscending = true;
   let showWatched = true;
   let showImage: boolean;
-  const reversedEpisodes = [...data.anime.episodes].reverse();
+  $: reversedEpisodes = [...data.anime.episodes].reverse();
   $: sortedEpisodes = isAscending ? data.anime.episodes : reversedEpisodes;
   $: relations = data.anime.relations.filter(
     a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT'
   );
+  $: subscribed =
+    $subscriptions.some(({ id }) => id === data.anime.id) ||
+    $unwatchedSubscriptions.some(({ anime: { id } }) => id === data.anime.id);
 
   const lastEpisodeWatched = data.anime.episodes.findLast(
     e => (data.store[e.id]?.watched ?? 0) > 0
@@ -71,12 +77,13 @@
           />
         </a>
         <button
-          class="btn-primary btn mt-4 w-full shadow-xl backdrop-blur-xl"
-          class:btn-error={$subscriptions.some(s => s.id === data.anime.id)}
-          class:btn-outline={$subscriptions.some(s => s.id === data.anime.id)}
+          class="btn mt-4 w-full shadow-xl backdrop-blur-xl {subscribed
+            ? 'btn-outline btn-error'
+            : 'btn-primary'}"
           on:click={() => {
-            if ($subscriptions.some(s => s.id === data.anime.id)) {
+            if (subscribed) {
               subscriptions.remove(data.anime);
+              unwatchedSubscriptions.remove(data.anime);
             } else {
               subscriptions.add(data.anime);
             }
@@ -94,8 +101,7 @@
             stroke-linejoin="round"
             class="mr-2"
           >
-            <!-- TODO: Check to see if anime is added to subscription list -->
-            {#if $subscriptions.some(s => s.id === data.anime.id)}
+            {#if subscribed}
               <circle cx="12" cy="12" r="10" />
               <line x1="8" y1="12" x2="16" y2="12" />
             {:else}

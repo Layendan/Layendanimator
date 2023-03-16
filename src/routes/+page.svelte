@@ -11,7 +11,16 @@
 
   export let data: PageData;
 
-  Promise.allSettled($subscriptions.map(({ id }) => preloadData(`/${id}`)));
+  Promise.allSettled([
+    ...$unwatchedSubscriptions.map(({ anime: { id, status } }) => {
+      if (status !== 'Finished' && status !== 'Cancelled')
+        preloadData(`/${id}`);
+    }),
+    ...$subscriptions.map(({ id, status }) => {
+      if (status !== 'Finished' && status !== 'Cancelled')
+        preloadData(`/${id}`);
+    })
+  ]);
 </script>
 
 <main class="relative w-full">

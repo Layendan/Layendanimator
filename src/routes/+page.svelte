@@ -5,7 +5,8 @@
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
   import {
     subscriptions,
-    unwatchedSubscriptions
+    unwatchedSubscriptions,
+    watching
   } from '$lib/model/subscriptions';
   import type { PageData } from './$types';
 
@@ -46,6 +47,20 @@
     </svelte:fragment>
   </ScrollCarousel>
 
+  {#if $watching.length > 0}
+    <div class="divider" />
+
+    <ScrollCarousel>
+      <svelte:fragment slot="title">Continue Watching</svelte:fragment>
+
+      <svelte:fragment slot="content">
+        {#each $watching as { anime, episode } (anime.id)}
+          <AnimeCard anime={{ ...anime, episodeNumber: episode }} />
+        {/each}
+      </svelte:fragment>
+    </ScrollCarousel>
+  {/if}
+
   <div class="divider" />
 
   <ScrollCarousel>
@@ -77,26 +92,6 @@
   <div class="divider" />
 
   <ScrollCarousel>
-    <svelte:fragment slot="title">Trending Animes</svelte:fragment>
-
-    <svelte:fragment slot="content">
-      {#each data.trending as anime (anime.id)}
-        <AnimeCard {anime} />
-      {:else}
-        <div class="flex items-center justify-center">
-          <p
-            class="text-xl font-semibold text-center text-base-content text-opacity-70"
-          >
-            No Trending Animes Found
-          </p>
-        </div>
-      {/each}
-    </svelte:fragment>
-  </ScrollCarousel>
-
-  <div class="divider" />
-
-  <ScrollCarousel>
     <svelte:fragment slot="title">Popular Animes</svelte:fragment>
 
     <svelte:fragment slot="content">
@@ -108,6 +103,26 @@
             class="text-xl font-semibold text-center text-base-content text-opacity-70"
           >
             No Popular Animes Found
+          </p>
+        </div>
+      {/each}
+    </svelte:fragment>
+  </ScrollCarousel>
+
+  <div class="divider" />
+
+  <ScrollCarousel>
+    <svelte:fragment slot="title">Trending Animes</svelte:fragment>
+
+    <svelte:fragment slot="content">
+      {#each data.trending as anime (anime.id)}
+        <AnimeCard {anime} />
+      {:else}
+        <div class="flex items-center justify-center">
+          <p
+            class="text-xl font-semibold text-center text-base-content text-opacity-70"
+          >
+            No Trending Animes Found
           </p>
         </div>
       {/each}

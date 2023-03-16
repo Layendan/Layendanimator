@@ -11,7 +11,8 @@
   import Fa from 'svelte-fa';
   import {
     subscriptions,
-    unwatchedSubscriptions
+    unwatchedSubscriptions,
+    watching
   } from '$lib/model/subscriptions';
 
   export let data: PageData;
@@ -34,6 +35,8 @@
       unwatchedSubscriptions.remove(data.anime);
       subscriptions.add(data.anime);
     }
+
+    watching.add(data.anime, data.episodeObject?.number ?? 0);
   });
 </script>
 
@@ -94,7 +97,7 @@
           {data.anime.type.replaceAll('_', ' ')}
         </div>
         {#if data.anime.isAdult}
-          <div class="badge badge-error badge-outline">18+</div>
+          <div class="badge badge-outline badge-error">18+</div>
         {/if}
         <div class="badge badge-accent badge-outline">
           {data.anime.status}

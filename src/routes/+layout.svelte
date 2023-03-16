@@ -8,7 +8,8 @@
   import { source } from '$lib/model/source';
   import {
     subscriptions,
-    unwatchedSubscriptions
+    unwatchedSubscriptions,
+    watching
   } from '$lib/model/subscriptions';
   import { searchHistory } from '$lib/model/searchHistory';
 
@@ -42,6 +43,7 @@
       source.initialize(),
       subscriptions.initialize(),
       unwatchedSubscriptions.initialize(),
+      watching.initialize(),
       searchHistory.initialize()
     ]);
   });

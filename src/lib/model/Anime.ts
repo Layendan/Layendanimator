@@ -1,4 +1,10 @@
-type Status = 'Ongoing' | 'Finished' | 'Not yet aired' | 'Cancelled' | 'Hiatus';
+type Status =
+  | 'Ongoing'
+  | 'Completed'
+  | 'Not yet aired'
+  | 'Cancelled'
+  | 'Hiatus'
+  | 'Unknown';
 
 type Type =
   | 'MOVIE'

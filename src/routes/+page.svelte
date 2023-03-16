@@ -13,11 +13,11 @@
 
   Promise.allSettled([
     ...$unwatchedSubscriptions.map(({ anime: { id, status } }) => {
-      if (status !== 'Finished' && status !== 'Cancelled')
+      if (status !== 'Completed' && status !== 'Cancelled')
         preloadData(`/${id}`);
     }),
     ...$subscriptions.map(({ id, status }) => {
-      if (status !== 'Finished' && status !== 'Cancelled')
+      if (status !== 'Completed' && status !== 'Cancelled')
         preloadData(`/${id}`);
     })
   ]);

@@ -39,8 +39,7 @@
 
 <Player
   sources={data.episode.sources}
-  poster={data.anime.episodes.find(item => item.id === data.id)?.image ??
-    data.anime.image}
+  poster={data.episodeObject?.image ?? data.anime.image}
   download={data.episode.download}
   on:requestNextEpisode={() => {
     if (data.nextEpisode) goto(`/${data.anime.id}/${data.nextEpisode.id}`);
@@ -86,7 +85,7 @@
       <h1
         class="mb-4 text-3xl font-extrabold leading-none tracking-tight transition-[font-size] duration-200 md:text-4xl lg:text-5xl"
       >
-        {data.anime.episodes.find(item => item.id === data.id)?.title ??
+        {data.episodeObject?.title ??
           data.anime.title.english ??
           data.anime.title.romaji}
       </h1>
@@ -120,8 +119,7 @@
         class:line-clamp-[2]={descriptionCollapsed}
         class:lg:line-clamp-[4]={descriptionCollapsed}
       >
-        {@html data.anime.episodes.find(item => item.id === data.id)
-          ?.description ?? data.anime.description}
+        {@html data.episodeObject?.description ?? data.anime.description}
       </p>
       <br />
       <p

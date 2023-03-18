@@ -10,7 +10,7 @@
 </script>
 
 <a
-  in:fade
+  transition:fade|local
   href="/{anime.id}/{episode.id}"
   class="group-one flex w-[210px] flex-col gap-2 focus-visible:outline-transparent"
 >

@@ -55,7 +55,7 @@
 
       <svelte:fragment slot="content">
         {#each $watching as { anime, episode } (anime.id)}
-          <AnimeCard anime={{ ...anime, episodeNumber: episode }} />
+          <AnimeCard anime={{ ...anime, episodeNumber: episode }} deleteable />
         {/each}
       </svelte:fragment>
     </ScrollCarousel>

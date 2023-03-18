@@ -2,7 +2,7 @@
   import type { Anime, Episode as EpisodeType } from '$lib/model/Anime';
   import { watched } from '$lib/model/watch';
   import Content from './Content.svelte';
-  import Episode from './Episode.svelte';
+  import EpisodeCard from './EpisodeCard.svelte';
 
   const gridLength = 12;
   const imageLength = 50;
@@ -31,7 +31,7 @@
       : 'scroll'}"
   >
     {#each episodes as episode (episode.id)}
-      <Episode
+      <EpisodeCard
         {anime}
         {episode}
         {showImage}

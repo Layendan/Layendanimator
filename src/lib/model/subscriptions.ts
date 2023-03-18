@@ -2,27 +2,27 @@ import { writable } from 'svelte/store';
 import type { Store } from 'tauri-plugin-store-api';
 import type { Anime } from './Anime';
 
-let store: Store;
+let store: Store | undefined = undefined;
 
 function createSubscriptions() {
   const { subscribe, set, update } = writable<Anime[]>([]);
   return {
     subscribe,
-    set: async (subscriptions: Anime[]) => {
+    set: (subscriptions: Anime[]) => {
       set(subscriptions);
-      await store.set('subscriptions', subscriptions);
+      store?.set('subscriptions', subscriptions);
     },
     add: (anime: Anime) => {
       update(subscriptions => {
         const result = [anime, ...subscriptions.filter(i => i.id !== anime.id)];
-        store.set('subscriptions', result);
+        store?.set('subscriptions', result);
         return result;
       });
     },
     remove: (anime: Anime) => {
       update(subscriptions => {
         const result = subscriptions.filter(i => i.id !== anime.id);
-        store.set('subscriptions', result);
+        store?.set('subscriptions', result);
         return result;
       });
     },
@@ -39,57 +39,7 @@ function createSubscriptions() {
   };
 }
 
-export const subscriptions = await createSubscriptions();
-
-function createUnwatchedSubscriptions() {
-  const { subscribe, set } = writable<{ anime: Anime; newEpisodes: number }[]>(
-    []
-  );
-  return {
-    subscribe,
-    set: async (subscriptions: { anime: Anime; newEpisodes: number }[]) => {
-      set(subscriptions);
-      await store.set('activeSubscriptions', subscriptions);
-    },
-    add: async (anime: { anime: Anime; newEpisodes: number }) => {
-      const subscriptions = await store.get<
-        { anime: Anime; newEpisodes: number }[]
-      >('activeSubscriptions');
-      const result = [
-        anime,
-        ...(subscriptions?.filter(a => a.anime.id !== anime.anime.id) ?? [])
-      ];
-      set(result);
-      await store.set('activeSubscriptions', result);
-      await sendNotification(
-        anime.anime.title.english ?? anime.anime.title.native,
-        anime.newEpisodes
-      );
-    },
-    remove: async (anime: Anime) => {
-      const subscriptions = await store.get<
-        { anime: Anime; newEpisodes: number }[]
-      >('activeSubscriptions');
-      const result = subscriptions?.filter(a => a.anime.id !== anime.id) ?? [];
-      set(result);
-      await store.set('activeSubscriptions', result);
-    },
-    initialize: async () => {
-      const StoreImport = (await import('tauri-plugin-store-api')).Store;
-      store ??= new StoreImport('.subscriptions.dat');
-      const data = await store.get<{ anime: Anime; newEpisodes: number }[]>(
-        'activeSubscriptions'
-      );
-      if (data) {
-        set(data);
-      } else {
-        await store.set('activeSubscriptions', []);
-      }
-    }
-  };
-}
-
-export const unwatchedSubscriptions = await createUnwatchedSubscriptions();
+export const subscriptions = createSubscriptions();
 
 async function sendNotification(title: string, episodes: number) {
   const { isPermissionGranted, requestPermission, sendNotification } =
@@ -109,23 +59,27 @@ async function sendNotification(title: string, episodes: number) {
   }
 }
 
-function createWatching() {
+function createUnwatchedSubscriptions() {
   const { subscribe, set, update } = writable<
-    { anime: Anime; episode: number }[]
+    { anime: Anime; newEpisodes: number }[]
   >([]);
   return {
     subscribe,
-    set: async (subscriptions: { anime: Anime; episode: number }[]) => {
+    set: (subscriptions: { anime: Anime; newEpisodes: number }[]) => {
       set(subscriptions);
-      await store.set('watching', subscriptions);
+      store?.set('activeSubscriptions', subscriptions);
     },
-    add: (anime: Anime, episode: number) => {
+    add: (anime: { anime: Anime; newEpisodes: number }) => {
       update(subscriptions => {
         const result = [
-          { anime: anime, episode: episode },
-          ...subscriptions.filter(({ anime: { id } }) => id !== anime.id)
+          anime,
+          ...subscriptions.filter(({ anime: { id } }) => id !== anime.anime.id)
         ];
-        store.set('watching', result);
+        store?.set('activeSubscriptions', result);
+        sendNotification(
+          anime.anime.title.english ?? anime.anime.title.native,
+          anime.newEpisodes
+        );
         return result;
       });
     },
@@ -134,23 +88,23 @@ function createWatching() {
         const result = subscriptions.filter(
           ({ anime: { id } }) => id !== anime.id
         );
-        store.set('watching', result);
+        store?.set('activeSubscriptions', result);
         return result;
       });
     },
     initialize: async () => {
       const StoreImport = (await import('tauri-plugin-store-api')).Store;
       store ??= new StoreImport('.subscriptions.dat');
-      const data = await store.get<{ anime: Anime; episode: number }[]>(
-        'watching'
+      const data = await store.get<{ anime: Anime; newEpisodes: number }[]>(
+        'activeSubscriptions'
       );
       if (data) {
         set(data);
       } else {
-        await store.set('watching', []);
+        await store.set('activeSubscriptions', []);
       }
     }
   };
 }
 
-export const watching = await createWatching();
+export const unwatchedSubscriptions = createUnwatchedSubscriptions();

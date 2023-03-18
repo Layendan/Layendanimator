@@ -11,21 +11,22 @@
   import Fa from 'svelte-fa';
   import {
     subscriptions,
-    unwatchedSubscriptions,
-    watching
+    unwatchedSubscriptions
   } from '$lib/model/subscriptions';
+  import { watching } from '$lib/model/watch';
 
   export let data: PageData;
 
+  $: filteredEpisodes = data.anime.episodes.filter(
+    ({ number }) => number > (data.episodeObject.number ?? Infinity)
+  );
   let descriptionCollapsed = true;
-  let selectedTab: 'episodes' | 'wiki' =
-    data.anime.episodes.filter(
-      item => item.number > (data.episodeObject?.number ?? Infinity)
-    ).length > 0
-      ? 'episodes'
-      : 'wiki';
+  // For some reason filteredEpisode is undefined when the page loads
+  $: selectedTab = filteredEpisodes?.length > 0 ? 'episodes' : 'wiki';
+
+  const filteredTypes = ['MANGA', 'NOVEL', 'ONE_SHOT'];
   $: relations = data.anime.relations.filter(
-    a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT'
+    ({ type }) => !filteredTypes.includes(type)
   );
 
   afterNavigate(() => {
@@ -36,14 +37,16 @@
       subscriptions.add(data.anime);
     }
 
-    watching.add(data.anime, data.episodeObject?.number ?? 0);
+    watching.add(data.anime, data.episodeObject.number);
   });
 </script>
 
 <Player
   sources={data.episode.sources}
-  poster={data.episodeObject?.image ?? data.anime.image}
+  poster={data.episodeObject.image ?? data.anime.image}
   download={data.episode.download}
+  animeId={data.anime.id}
+  episode={data.episodeObject}
   on:requestNextEpisode={() => {
     if (data.nextEpisode) goto(`/${data.anime.id}/${data.nextEpisode.id}`);
     else goto(`/${data.anime.id}`);
@@ -68,12 +71,7 @@
 </div>
 
 {#if selectedTab === 'episodes'}
-  <EpisodeCarousel
-    anime={data.anime}
-    episodes={data.anime.episodes.filter(
-      item => item.number > (data.episodeObject?.number ?? Infinity)
-    )}
-  >
+  <EpisodeCarousel anime={data.anime} episodes={filteredEpisodes}>
     <svelte:fragment slot="title">Next episodes</svelte:fragment>
   </EpisodeCarousel>
 {:else if selectedTab === 'wiki'}
@@ -88,7 +86,7 @@
       <h1
         class="mb-4 text-3xl font-extrabold leading-none tracking-tight transition-[font-size] duration-200 md:text-4xl lg:text-5xl"
       >
-        {data.episodeObject?.title ??
+        {data.episodeObject.title ??
           data.anime.title.english ??
           data.anime.title.romaji}
       </h1>
@@ -97,7 +95,7 @@
           {data.anime.type.replaceAll('_', ' ')}
         </div>
         {#if data.anime.isAdult}
-          <div class="badge badge-outline badge-error">18+</div>
+          <div class="badge badge-error badge-outline">18+</div>
         {/if}
         <div class="badge badge-accent badge-outline">
           {data.anime.status}
@@ -122,7 +120,7 @@
         class:line-clamp-[2]={descriptionCollapsed}
         class:lg:line-clamp-[4]={descriptionCollapsed}
       >
-        {@html data.episodeObject?.description ?? data.anime.description}
+        {@html data.episodeObject.description ?? data.anime.description}
       </p>
       <br />
       <p

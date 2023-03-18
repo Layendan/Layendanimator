@@ -97,7 +97,7 @@
       <div class="flex gap-x-2">
         <a
           class="btn-primary btn flex gap-x-2 px-8"
-          href="/{animes[animeIdx].id}"
+          href="/{animes[animeIdx].id}?autoplay=true"
         >
           <Fa icon={faPlayCircle} size="lg" />
           Play

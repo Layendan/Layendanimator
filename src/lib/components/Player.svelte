@@ -8,6 +8,9 @@
   import Fa from 'svelte-fa';
   import { faMicrochip, faDownload } from '@fortawesome/free-solid-svg-icons';
   import { onMount, createEventDispatcher } from 'svelte';
+  import { watched } from '$lib/model/watch';
+  import type { Episode } from '$lib/model/Anime';
+  import { beforeNavigate } from '$app/navigation';
 
   export let sources: {
     url: string;
@@ -15,7 +18,13 @@
     quality: string;
   }[];
   export let poster: string;
+  export let animeId: string;
+  export let episode: Episode;
   export let download: string | undefined = undefined;
+
+  $: watchedObject = $watched[animeId]?.find(
+    item => item.episode.number === episode.number
+  );
 
   const defaultIndex = sources.findIndex(
     source => source.quality === 'default'
@@ -28,12 +37,25 @@
   }
 
   onMount(async () => await defineCustomElements());
+
+  beforeNavigate(() => {
+    const state = document.querySelector('media-player')?.state;
+    if (state) {
+      watched.add(animeId, {
+        episode,
+        time: state.currentTime,
+        // TODO: Fix duration being 0
+        percentage: state.currentTime / (state.duration || Infinity)
+      });
+    }
+  });
 </script>
 
 <div class="relative -m-4 mb-4 h-auto w-screen bg-black">
   <!-- svelte-ignore a11y-autofocus -->
   <media-player
-    src="https://jb-proxy.app.jet-black.xyz/{sources[selectedSource].url}"
+    src="https://jb-proxy.app.jet-black.xyz/{sources[selectedSource]
+      .url}?t={watchedObject?.time ?? 0}"
     {poster}
     controls
     aspect-ratio="16/9"

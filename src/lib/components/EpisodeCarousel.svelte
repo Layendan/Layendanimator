@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Anime, Episode as EpisodeType } from '$lib/model/Anime';
+  import { watched } from '$lib/model/watch';
   import Content from './Content.svelte';
   import Episode from './Episode.svelte';
 
@@ -30,7 +31,14 @@
       : 'scroll'}"
   >
     {#each episodes as episode (episode.id)}
-      <Episode {anime} {episode} {showImage} />
+      <Episode
+        {anime}
+        {episode}
+        {showImage}
+        episodeData={$watched[anime.id]?.find(
+          item => item.episode.number === episode.number
+        )}
+      />
     {:else}
       <div class="flex items-center justify-center">
         <p

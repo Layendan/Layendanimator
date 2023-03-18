@@ -5,9 +5,9 @@
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
   import {
     subscriptions,
-    unwatchedSubscriptions,
-    watching
+    unwatchedSubscriptions
   } from '$lib/model/subscriptions';
+  import { watching } from '$lib/model/watch';
   import type { PageData } from './$types';
 
   export let data: PageData;

@@ -17,8 +17,9 @@
     faRotateRight
   } from '@fortawesome/free-solid-svg-icons';
   import { animeCache } from '$lib/model/cache';
-  import { invalidate } from '$app/navigation';
+  import { afterNavigate, invalidate } from '$app/navigation';
   import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
+  import { watched } from '$lib/model/watch';
 
   export let data: PageData;
   let scrollY = 0;
@@ -34,10 +35,29 @@
   $: subscribed =
     $subscriptions.some(({ id }) => id === data.anime.id) ||
     $unwatchedSubscriptions.some(({ anime: { id } }) => id === data.anime.id);
+  $: lastWatched = $watched[data.anime.id];
 
-  const lastEpisodeWatched = data.anime.episodes.findLast(
-    e => (data.store[e.id]?.watched ?? 0) > 0
-  );
+  afterNavigate(() => {
+    const temp = $subscriptions.find(({ id }) => id === data.anime.id);
+    const sub = temp
+      ? {
+          anime: temp,
+          newEpisodes: 0
+        }
+      : $unwatchedSubscriptions.find(
+          ({ anime: { id } }) => id === data.anime.id
+        );
+    if (sub && sub.anime.episodes.length < data.anime.episodes.length) {
+      subscriptions.remove(data.anime);
+      unwatchedSubscriptions.add({
+        anime: data.anime,
+        newEpisodes:
+          data.anime.episodes.length -
+          sub.anime.episodes.length +
+          sub.newEpisodes
+      });
+    }
+  });
 </script>
 
 <svelte:window bind:scrollY />
@@ -191,13 +211,13 @@
         {#if data.anime.episodes.length > 0}
           <a
             class="btn-outline btn-accent btn flex w-fit space-x-2"
-            href="/{data.anime.id}/{lastEpisodeWatched?.id ??
-              data.anime.episodes[0].id}"
+            href="/{data.anime.id}/{lastWatched?.[lastWatched.length - 1]
+              .episode.id ?? data.anime.episodes[0].id}"
           >
             <Fa icon={faPlayCircle} size="lg" />
             <!-- Check if not user has watched anime yet -->
             <span>
-              {lastEpisodeWatched ? 'Continue' : 'Start'} Watching
+              {lastWatched ? 'Continue' : 'Start'} Watching
             </span>
           </a>
         {/if}

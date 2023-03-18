@@ -1,24 +1,17 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
   import type { Anime, Episode } from '$lib/model/Anime';
+  import type { WatchType } from '$lib/model/watch';
 
   export let anime: Anime;
   export let episode: Episode;
-  export let episodeData: {
-    watched: number;
-    duration: number;
-    lastWatched: string;
-  } | null = null;
+  export let episodeData: WatchType | undefined = undefined;
   export let showImage = true;
 </script>
 
 <a
   in:fade
-  href={episodeData?.watched
-    ? `/${anime.id}/${episode.id}?t=${
-        episodeData.watched * episodeData.duration
-      }`
-    : `/${anime.id}/${episode.id}`}
+  href="/{anime.id}/{episode.id}"
   class="group-one flex w-[210px] flex-col gap-2 focus-visible:outline-transparent"
 >
   {#if showImage}
@@ -30,10 +23,11 @@
         alt={episode.title ?? `Episode ${episode.number}`}
         class="card-body relative m-0 aspect-video h-full w-full rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center p-0"
       />
-      <div class="relative mx-1">
+      <div style:--anime-color={anime.color} class="relative mx-1 select-none">
         <div
-          style="width: {(episodeData?.watched ?? 0) * 100}%;"
-          class="absolute bottom-1 left-0 right-0 h-1 rounded-md bg-primary"
+          style="width: {(episodeData?.percentage ?? 0) * 100}%;"
+          class="absolute bottom-1 left-0 right-0 h-1 rounded-md shadow-lg
+          {anime.color ? 'bg-[var(--anime-color)]' : 'bg-accent'}"
         />
       </div>
     </div>

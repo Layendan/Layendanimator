@@ -1,3 +1,4 @@
+import { error } from '@sveltejs/kit';
 import { source } from '$lib/model/source';
 import { animeCache, episodeCache } from '$lib/model/cache';
 import { get } from 'svelte/store';
@@ -59,11 +60,17 @@ export const load = (async ({ fetch, depends, params }) => {
     }
   > = {};
 
+  const episodeObject = anime.episodes.find(item => item.id === params.episode);
+
+  if (!episodeObject) {
+    throw error(404, 'Episode not found');
+  }
+
   return {
-    anime: anime,
-    episode: episode,
+    anime,
+    episode,
     id: params.episode,
-    episodeObject: anime.episodes.find(item => item.id === params.episode),
+    episodeObject,
     nextEpisode:
       anime.episodes[
         anime.episodes.findIndex(item => item.id === params.episode) + 1

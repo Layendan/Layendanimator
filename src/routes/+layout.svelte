@@ -8,14 +8,14 @@
   import { source } from '$lib/model/source';
   import {
     subscriptions,
-    unwatchedSubscriptions,
-    watching
+    unwatchedSubscriptions
   } from '$lib/model/subscriptions';
   import { searchHistory } from '$lib/model/searchHistory';
 
   import NProgress from 'nprogress';
   import NavBar from '$lib/components/NavBar.svelte';
   import LocomotiveScroll from 'locomotive-scroll';
+  import { watched, watching } from '$lib/model/watch';
 
   NProgress.configure({
     // Full list: https://github.com/rstacruz/nprogress#configuration
@@ -33,7 +33,6 @@
 
   let main: HTMLElement;
   onMount(async () => {
-    // dude.... why is this offsetting everything on refresh
     new LocomotiveScroll({
       el: main,
       multiplier: 2
@@ -44,6 +43,7 @@
       subscriptions.initialize(),
       unwatchedSubscriptions.initialize(),
       watching.initialize(),
+      watched.initialize(),
       searchHistory.initialize()
     ]);
   });

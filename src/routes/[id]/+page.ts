@@ -5,6 +5,10 @@ import { animeCache } from '$lib/model/cache';
 import { get } from 'svelte/store';
 import { redirect, error } from '@sveltejs/kit';
 import { watched } from '$lib/model/watch';
+import {
+  subscriptions,
+  unwatchedSubscriptions
+} from '$lib/model/subscriptions';
 
 async function fetchAnime(_fetch: typeof fetch, id: string): Promise<Anime> {
   const anime: Anime = await (
@@ -30,6 +34,22 @@ export const load = (async ({ fetch, depends, params, url }) => {
 
   const anime =
     animeCache.get(params.id) ?? (await fetchAnime(fetch, params.id));
+
+  const temp = get(subscriptions).find(({ id }) => id === anime.id);
+  const sub = temp
+    ? {
+        anime: temp,
+        newEpisodes: 0
+      }
+    : get(unwatchedSubscriptions).find(({ anime: { id } }) => id === anime.id);
+  if (sub && sub.anime.episodes.length < anime.episodes.length) {
+    subscriptions.remove(anime);
+    unwatchedSubscriptions.add({
+      anime: anime,
+      newEpisodes:
+        anime.episodes.length - sub.anime.episodes.length + sub.newEpisodes
+    });
+  }
 
   if (url.searchParams.get('autoplay') === 'true') {
     const data = get(watched)[params.id];

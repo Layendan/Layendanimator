@@ -17,7 +17,7 @@
     faRotateRight
   } from '@fortawesome/free-solid-svg-icons';
   import { animeCache } from '$lib/model/cache';
-  import { afterNavigate, invalidate } from '$app/navigation';
+  import { invalidate } from '$app/navigation';
   import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
   import { watched } from '$lib/model/watch';
 
@@ -36,28 +36,6 @@
     $subscriptions.some(({ id }) => id === data.anime.id) ||
     $unwatchedSubscriptions.some(({ anime: { id } }) => id === data.anime.id);
   $: lastWatched = $watched[data.anime.id];
-
-  afterNavigate(() => {
-    const temp = $subscriptions.find(({ id }) => id === data.anime.id);
-    const sub = temp
-      ? {
-          anime: temp,
-          newEpisodes: 0
-        }
-      : $unwatchedSubscriptions.find(
-          ({ anime: { id } }) => id === data.anime.id
-        );
-    if (sub && sub.anime.episodes.length < data.anime.episodes.length) {
-      subscriptions.remove(data.anime);
-      unwatchedSubscriptions.add({
-        anime: data.anime,
-        newEpisodes:
-          data.anime.episodes.length -
-          sub.anime.episodes.length +
-          sub.newEpisodes
-      });
-    }
-  });
 </script>
 
 <svelte:window bind:scrollY />

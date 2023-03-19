@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { preloadData } from '$app/navigation';
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import Carousel from '$lib/components/Carousel.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
@@ -11,17 +10,6 @@
   import type { PageData } from './$types';
 
   export let data: PageData;
-
-  Promise.allSettled([
-    ...$unwatchedSubscriptions.map(({ anime: { id, status } }) => {
-      if (status !== 'Completed' && status !== 'Cancelled')
-        preloadData(`/${id}`);
-    }),
-    ...$subscriptions.map(({ id, status }) => {
-      if (status !== 'Completed' && status !== 'Cancelled')
-        preloadData(`/${id}`);
-    })
-  ]);
 </script>
 
 <main class="relative w-full">

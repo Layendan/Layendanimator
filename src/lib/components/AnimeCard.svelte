@@ -26,7 +26,7 @@
     {#if deleteable}
       <button
         on:click|stopPropagation|preventDefault={() => watching.remove(anime)}
-        class="badge-error badge indicator-item opacity-0 transition-opacity duration-200 focus-within:opacity-100 group-one-hover:opacity-100"
+        class="badge-error badge indicator-item opacity-0 transition-opacity duration-200 focus-visible:opacity-100 group-one-hover:opacity-100"
       >
         <Fa icon={faX} size="0.8x" />
       </button>

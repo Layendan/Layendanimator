@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { Anime, Episode as EpisodeType } from '$lib/model/Anime';
-  import { watched } from '$lib/model/watch';
   import Content from './Content.svelte';
   import EpisodeCard from './EpisodeCard.svelte';
 

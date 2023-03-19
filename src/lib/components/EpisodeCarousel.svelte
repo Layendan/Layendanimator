@@ -31,14 +31,7 @@
       : 'scroll'}"
   >
     {#each episodes as episode (episode.id)}
-      <EpisodeCard
-        {anime}
-        {episode}
-        {showImage}
-        episodeData={$watched[anime.id]?.find(
-          item => item.episode.number === episode.number
-        )}
-      />
+      <EpisodeCard {anime} {episode} {showImage} />
     {:else}
       <div class="flex items-center justify-center">
         <p

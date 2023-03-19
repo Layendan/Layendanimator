@@ -95,7 +95,7 @@ function createWatched() {
       store ??= new StoreImport('.subscriptions.dat');
       const data = await store.get<{ [key: string]: WatchType[] }>('watched');
       if (data) {
-        set({});
+        set(data);
       } else {
         await store.set('watched', {});
       }

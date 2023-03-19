@@ -54,16 +54,14 @@
 
     if (unsubscribe) clearInterval(unsubscribe);
     unsubscribe = setInterval(() => {
-      Promise.allSettled([
-        ...$unwatchedSubscriptions.map(({ anime: { id, status } }) => {
-          if (status !== 'Completed' && status !== 'Cancelled')
-            preloadData(`/${id}`);
-        }),
-        ...$subscriptions.map(({ id, status }) => {
-          if (status !== 'Completed' && status !== 'Cancelled')
-            preloadData(`/${id}`);
-        })
-      ]);
+      $unwatchedSubscriptions.forEach(({ anime: { id, status } }) => {
+        if (status !== 'Completed' && status !== 'Cancelled')
+          preloadData(`/${id}`);
+      });
+      $subscriptions.forEach(({ id, status }) => {
+        if (status !== 'Completed' && status !== 'Cancelled')
+          preloadData(`/${id}`);
+      });
     }, animeCache.ttl || MINUTE * 30);
   });
 

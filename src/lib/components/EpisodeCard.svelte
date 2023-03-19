@@ -1,11 +1,10 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
   import type { Anime, Episode } from '$lib/model/Anime';
-  import type { WatchType } from '$lib/model/watch';
+  import { watched } from '$lib/model/watch';
 
   export let anime: Anime;
   export let episode: Episode;
-  export let episodeData: WatchType | undefined = undefined;
   export let showImage = true;
 </script>
 
@@ -25,7 +24,9 @@
       />
       <div style:--anime-color={anime.color} class="relative mx-1 select-none">
         <div
-          style="width: {(episodeData?.percentage ?? 0) * 100}%;"
+          style="width: {($watched[anime.id]?.find(
+            item => item.episode.id === episode.id
+          )?.percentage ?? 0) * 100}%;"
           class="absolute bottom-1 left-0 right-0 h-1 rounded-md shadow-lg
           {anime.color ? 'bg-[var(--anime-color)]' : 'bg-accent'}"
         />

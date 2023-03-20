@@ -6,12 +6,14 @@
   export let anime: Anime;
   export let episode: Episode;
   export let showImage = true;
+  export let replaceState = false;
 </script>
 
 <a
   transition:fade|local
   href="/{anime.id}/{episode.id}"
   class="group-one flex w-[210px] flex-col gap-2 focus-visible:outline-transparent"
+  data-sveltekit-replacestate={replaceState ? true : undefined}
 >
   {#if showImage}
     <div

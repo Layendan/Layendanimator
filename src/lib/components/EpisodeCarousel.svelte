@@ -9,6 +9,7 @@
   export let anime: Anime;
   export let episodes: EpisodeType[];
   export let showImage = episodes.length <= imageLength;
+  export let replaceState = false;
 
   $: nextEpisodeDate = new Date(
     Date.now() +
@@ -30,7 +31,7 @@
       : 'scroll'}"
   >
     {#each episodes as episode (episode.id)}
-      <EpisodeCard {anime} {episode} {showImage} />
+      <EpisodeCard {anime} {episode} {showImage} {replaceState} />
     {:else}
       <div class="flex items-center justify-center">
         <p

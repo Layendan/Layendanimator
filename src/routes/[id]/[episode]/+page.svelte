@@ -71,7 +71,7 @@
 </div>
 
 {#if selectedTab === 'episodes'}
-  <EpisodeCarousel anime={data.anime} episodes={filteredEpisodes}>
+  <EpisodeCarousel anime={data.anime} episodes={filteredEpisodes} replaceState>
     <svelte:fragment slot="title">Next episodes</svelte:fragment>
   </EpisodeCarousel>
 {:else if selectedTab === 'wiki'}
@@ -91,21 +91,21 @@
           data.anime.title.romaji}
       </h1>
       <ul class="mb-4 flex flex-wrap gap-1">
-        <div class="badge badge-accent badge-outline">
+        <div class="badge-accent badge-outline badge">
           {data.anime.type.replaceAll('_', ' ')}
         </div>
         {#if data.anime.isAdult}
-          <div class="badge badge-error badge-outline">18+</div>
+          <div class="badge-error badge-outline badge">18+</div>
         {/if}
-        <div class="badge badge-accent badge-outline">
+        <div class="badge-accent badge-outline badge">
           {data.anime.status}
         </div>
         {#each data.anime.genres as genre}
-          <div class="badge badge-accent badge-outline">{genre}</div>
+          <div class="badge-accent badge-outline badge">{genre}</div>
         {/each}
         {#if data.anime.rating}
           <div
-            class="badge badge-outline"
+            class="badge-outline badge"
             class:badge-error={data.anime.rating <= 40}
             class:badge-warning={data.anime.rating > 40 &&
               data.anime.rating <= 75}

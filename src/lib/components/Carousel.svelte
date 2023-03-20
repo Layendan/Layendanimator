@@ -31,6 +31,7 @@
     clearInterval(interval);
     interval = setInterval(next, transitionTime);
     tempId = idx < 0 ? animes.length - 1 : idx % animes.length;
+    new Image().src = animes[tempId].cover; // preload image
     fade = true;
     await new Promise(resolve => setTimeout(resolve, fadeSpeed));
     animeIdx = tempId;

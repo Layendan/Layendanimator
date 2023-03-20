@@ -5,6 +5,9 @@ const config: UserConfig = {
   plugins: [sveltekit()],
   build: {
     target: 'esnext'
+  },
+  optimizeDeps: {
+    entries: ['**/*.svelte']
   }
 };
 

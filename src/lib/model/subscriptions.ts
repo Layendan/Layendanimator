@@ -47,12 +47,18 @@ async function sendNotification(title: string, episodes: number) {
   if (await isPermissionGranted()) {
     sendNotification({
       title: `New Episodes for ${title}`,
-      body: `There are ${episodes} new episodes for ${title}`
+      body:
+        episodes === 1
+          ? `There is 1 new episode for ${title}`
+          : `There are ${episodes} new episodes for ${title}`
     });
   } else if ((await requestPermission()) === 'granted') {
     sendNotification({
       title: `New Episodes for ${title}`,
-      body: `There are ${episodes} new episodes for ${title}`
+      body:
+        episodes === 1
+          ? `There is 1 new episode for ${title}`
+          : `There are ${episodes} new episodes for ${title}`
     });
   } else {
     console.log('Permission not granted');

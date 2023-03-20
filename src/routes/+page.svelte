@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { invalidate } from '$app/navigation';
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import Carousel from '$lib/components/Carousel.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
@@ -7,9 +8,17 @@
     unwatchedSubscriptions
   } from '$lib/model/subscriptions';
   import { watching } from '$lib/model/watch';
+  import { onDestroy } from 'svelte';
   import type { PageData } from './$types';
 
   export let data: PageData;
+
+  const MINUTE = 1000 * 60;
+  const interval = setInterval(invalidate, MINUTE * 5);
+
+  onDestroy(() => {
+    clearInterval(interval);
+  });
 </script>
 
 <main class="relative w-full">

@@ -36,7 +36,13 @@
     dispatcher('requestNextEpisode');
   }
 
-  onMount(async () => await defineCustomElements());
+  onMount(async () => {
+    await defineCustomElements();
+    const player = document.querySelector('media-player');
+    player?.onAttach(() => {
+      player.currentTime = watchedObject?.time ?? 0;
+    });
+  });
 
   beforeNavigate(() => {
     const state = document.querySelector('media-player')?.state;

@@ -128,7 +128,7 @@
             {data.anime.type.replaceAll('_', ' ')}
           </div>
           {#if data.anime.isAdult}
-            <div class="badge badge-outline badge-error">18+</div>
+            <div class="badge badge-error badge-outline">18+</div>
           {/if}
           <div class="badge badge-accent badge-outline">
             {data.anime.status}

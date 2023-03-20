@@ -41,17 +41,19 @@
   });
 </script>
 
-<Player
-  sources={data.episode.sources}
-  poster={data.episodeObject.image ?? data.anime.image}
-  download={data.episode.download}
-  animeId={data.anime.id}
-  episode={data.episodeObject}
-  on:requestNextEpisode={() => {
-    if (data.nextEpisode) goto(`/${data.anime.id}/${data.nextEpisode.id}`);
-    else goto(`/${data.anime.id}`);
-  }}
-/>
+{#key data.episodeObject.id}
+  <Player
+    sources={data.episode.sources}
+    poster={data.episodeObject.image ?? data.anime.image}
+    download={data.episode.download}
+    animeId={data.anime.id}
+    episode={data.episodeObject}
+    on:requestNextEpisode={() => {
+      if (data.nextEpisode) goto(`/${data.anime.id}/${data.nextEpisode.id}`);
+      else goto(`/${data.anime.id}`);
+    }}
+  />
+{/key}
 
 <div class="tabs tabs-boxed mx-auto mb-4 w-fit gap-1 bg-opacity-80 p-4 px-8">
   <button
@@ -95,7 +97,7 @@
           {data.anime.type.replaceAll('_', ' ')}
         </div>
         {#if data.anime.isAdult}
-          <div class="badge badge-error badge-outline">18+</div>
+          <div class="badge badge-outline badge-error">18+</div>
         {/if}
         <div class="badge badge-accent badge-outline">
           {data.anime.status}

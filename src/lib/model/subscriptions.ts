@@ -61,7 +61,7 @@ async function sendNotification(title: string, episodes: number) {
           : `There are ${episodes} new episodes for ${title}`
     });
   } else {
-    console.log('Permission not granted');
+    console.error('Permission not granted');
   }
 }
 

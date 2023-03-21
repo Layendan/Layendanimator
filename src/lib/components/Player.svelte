@@ -40,7 +40,10 @@
     await defineCustomElements();
     const player = document.querySelector('media-player');
     player?.onAttach(() => {
-      player.currentTime = watchedObject?.time ?? 0;
+      player.currentTime =
+        (watchedObject?.time ?? 0) < (player.state.duration || anime.duration)
+          ? watchedObject?.time ?? 0
+          : 0;
     });
   });
 
@@ -49,9 +52,9 @@
     if (state) {
       watched.add(anime.id, {
         episode,
-        time: state.currentTime,
+        time: state.currentTime ?? 0,
         percentage:
-          state.currentTime / ((state.duration || anime.duration) ?? Infinity)
+          state.currentTime / (state.duration || anime.duration || Infinity)
       });
     }
   });
@@ -60,8 +63,7 @@
 <div class="relative -m-4 mb-4 h-auto w-screen bg-black">
   <!-- svelte-ignore a11y-autofocus -->
   <media-player
-    src="https://jb-proxy.app.jet-black.xyz/{sources[selectedSource]
-      .url}?t={watchedObject?.time ?? 0}"
+    src="https://jb-proxy.app.jet-black.xyz/{sources[selectedSource].url}"
     {poster}
     controls
     aspect-ratio="16/9"

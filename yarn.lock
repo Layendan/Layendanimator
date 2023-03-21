@@ -2414,6 +2414,7 @@ npm-check-updates@^16.7.13:
   version "16.7.13"
   resolved "https://registry.yarnpkg.com/npm-check-updates/-/npm-check-updates-16.7.13.tgz#2f06c72a3db2c485d573c11836f1940b20e1eff4"
   integrity sha512-D+wxsd58eTmkEXiJQcRNKUFNpQ4TAaQnK2QcZ861gSitUI3fgPOFFqe+AJcqZ8yeAUnmwcW547jpN1KKvJ9g2A==
+
   dependencies:
     chalk "^5.2.0"
     cli-table3 "^0.6.3"

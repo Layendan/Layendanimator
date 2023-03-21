@@ -9,7 +9,7 @@
   import { faMicrochip, faDownload } from '@fortawesome/free-solid-svg-icons';
   import { onMount, createEventDispatcher } from 'svelte';
   import { watched } from '$lib/model/watch';
-  import type { Episode } from '$lib/model/Anime';
+  import type { Anime, Episode } from '$lib/model/Anime';
   import { beforeNavigate } from '$app/navigation';
 
   export let sources: {
@@ -18,11 +18,11 @@
     quality: string;
   }[];
   export let poster: string;
-  export let animeId: string;
+  export let anime: Anime;
   export let episode: Episode;
   export let download: string | undefined = undefined;
 
-  $: watchedObject = $watched[animeId]?.find(
+  $: watchedObject = $watched[anime.id]?.find(
     item => item.episode.number === episode.number
   );
 
@@ -47,11 +47,11 @@
   beforeNavigate(() => {
     const state = document.querySelector('media-player')?.state;
     if (state) {
-      watched.add(animeId, {
+      watched.add(anime.id, {
         episode,
         time: state.currentTime,
-        // TODO: Fix duration being 0
-        percentage: state.currentTime / (state.duration || Infinity)
+        percentage:
+          state.currentTime / ((state.duration || anime.duration) ?? Infinity)
       });
     }
   });

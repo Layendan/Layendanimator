@@ -46,7 +46,7 @@
     sources={data.episode.sources}
     poster={data.episodeObject.image ?? data.anime.image}
     download={data.episode.download}
-    animeId={data.anime.id}
+    anime={data.anime}
     episode={data.episodeObject}
     on:requestNextEpisode={() => {
       if (data.nextEpisode) goto(`/${data.anime.id}/${data.nextEpisode.id}`);

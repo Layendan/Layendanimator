@@ -7,6 +7,10 @@
   export let episode: Episode;
   export let showImage = true;
   export let replaceState = false;
+
+  $: watchedObject = $watched[anime.id]?.find(
+    item => item.episode.id === episode.id
+  );
 </script>
 
 <a
@@ -37,11 +41,12 @@
   {/if}
   <!-- TODO: Check if no image is shown and if user has already watched -->
   <div
-    class="group flex h-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100 group-one-focus-visible:text-opacity-100"
+    style:--anime-color={anime.color}
+    class="group relative flex h-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100 group-one-focus-visible:text-opacity-100"
     class:noImageDesc={!showImage}
+    class:pb-5={watchedObject?.percentage}
   >
     <h3
-      style:--anime-color={anime.color}
       class="text-md whitespace-normal font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200 line-clamp-2
       {anime.color
         ? 'group-hover:text-[var(--anime-color)] group-one-focus-visible:text-[var(--anime-color)]'
@@ -55,6 +60,15 @@
       >
         Episode {episode.number}
       </h2>
+    {/if}
+    {#if !showImage}
+      <div class="absolute bottom-1 left-0 right-0  mx-1 select-none">
+        <div
+          style="width: {(watchedObject?.percentage ?? 0) * 100}%;"
+          class="h-1 rounded-md shadow-lg
+          {anime.color ? 'bg-[var(--anime-color)]' : 'bg-accent'}"
+        />
+      </div>
     {/if}
   </div>
 </a>

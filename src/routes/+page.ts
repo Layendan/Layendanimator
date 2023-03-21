@@ -13,7 +13,7 @@ async function fetchRecentEpisodes(_fetch: typeof fetch) {
       { signal: AbortSignal.timeout(15_000) }
     ).then(r => r.json())
   ).results as Anime[];
-  recentEpisodes.set(null, recent);
+  recentEpisodes.set(0, recent);
   return recent;
 }
 
@@ -26,7 +26,7 @@ async function fetchTrendingAnime(_fetch: typeof fetch) {
       }
     ).then(r => r.json())
   ).results as Anime[];
-  trendingAnimes.set(null, trending);
+  trendingAnimes.set(0, trending);
   return trending;
 }
 
@@ -36,15 +36,15 @@ async function fetchPopularAnime(_fetch: typeof fetch) {
       signal: AbortSignal.timeout(15_000)
     }).then(r => r.json())
   ).results as Anime[];
-  popularAnimes.set(null, popular);
+  popularAnimes.set(0, popular);
   return popular;
 }
 
 export const load = (async ({ fetch }) => {
   const [recent, trending, popular] = await Promise.all([
-    recentEpisodes.get(null) ?? fetchRecentEpisodes(fetch),
-    trendingAnimes.get(null) ?? fetchTrendingAnime(fetch),
-    popularAnimes.get(null) ?? fetchPopularAnime(fetch)
+    recentEpisodes.get(0) ?? fetchRecentEpisodes(fetch),
+    trendingAnimes.get(0) ?? fetchTrendingAnime(fetch),
+    popularAnimes.get(0) ?? fetchPopularAnime(fetch)
   ]);
 
   return {

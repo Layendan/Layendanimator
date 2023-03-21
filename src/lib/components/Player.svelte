@@ -8,6 +8,9 @@
   import Fa from 'svelte-fa';
   import { faMicrochip, faDownload } from '@fortawesome/free-solid-svg-icons';
   import { onMount, createEventDispatcher } from 'svelte';
+  import { watched } from '$lib/model/watch';
+  import type { Anime, Episode } from '$lib/model/Anime';
+  import { beforeNavigate } from '$app/navigation';
 
   export let sources: {
     url: string;
@@ -15,7 +18,13 @@
     quality: string;
   }[];
   export let poster: string;
+  export let anime: Anime;
+  export let episode: Episode;
   export let download: string | undefined = undefined;
+
+  $: watchedObject = $watched[anime.id]?.find(
+    item => item.episode.number === episode.number
+  );
 
   const defaultIndex = sources.findIndex(
     source => source.quality === 'default'
@@ -27,13 +36,32 @@
     dispatcher('requestNextEpisode');
   }
 
-  onMount(async () => await defineCustomElements());
+  onMount(async () => {
+    await defineCustomElements();
+    const player = document.querySelector('media-player');
+    player?.onAttach(() => {
+      player.currentTime = watchedObject?.time ?? 0;
+    });
+  });
+
+  beforeNavigate(() => {
+    const state = document.querySelector('media-player')?.state;
+    if (state) {
+      watched.add(anime.id, {
+        episode,
+        time: state.currentTime,
+        percentage:
+          state.currentTime / ((state.duration || anime.duration) ?? Infinity)
+      });
+    }
+  });
 </script>
 
 <div class="relative -m-4 mb-4 h-auto w-screen bg-black">
   <!-- svelte-ignore a11y-autofocus -->
   <media-player
-    src="https://jb-proxy.app.jet-black.xyz/{sources[selectedSource].url}"
+    src="https://jb-proxy.app.jet-black.xyz/{sources[selectedSource]
+      .url}?t={watchedObject?.time ?? 0}"
     {poster}
     controls
     aspect-ratio="16/9"
@@ -43,7 +71,6 @@
     autofocus
     prefer-native-hls
     on:ended={requestNextEpisode}
-    on:error
   >
     <media-outlet />
   </media-player>

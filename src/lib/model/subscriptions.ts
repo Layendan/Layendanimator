@@ -1,32 +1,34 @@
 import { writable } from 'svelte/store';
-import { Store } from 'tauri-plugin-store-api';
+import type { Store } from 'tauri-plugin-store-api';
 import type { Anime } from './Anime';
 
-const store = new Store('.subscriptions.dat');
+let store: Store | undefined = undefined;
 
 function createSubscriptions() {
   const { subscribe, set, update } = writable<Anime[]>([]);
   return {
     subscribe,
-    set: async (subscriptions: Anime[]) => {
+    set: (subscriptions: Anime[]) => {
       set(subscriptions);
-      await store.set('subscriptions', subscriptions);
+      store?.set('subscriptions', subscriptions);
     },
     add: (anime: Anime) => {
       update(subscriptions => {
         const result = [anime, ...subscriptions.filter(i => i.id !== anime.id)];
-        store.set('subscriptions', result);
+        store?.set('subscriptions', result);
         return result;
       });
     },
     remove: (anime: Anime) => {
       update(subscriptions => {
         const result = subscriptions.filter(i => i.id !== anime.id);
-        store.set('subscriptions', result);
+        store?.set('subscriptions', result);
         return result;
       });
     },
     initialize: async () => {
+      const StoreImport = (await import('tauri-plugin-store-api')).Store;
+      store ??= new StoreImport('.subscriptions.dat');
       const data = await store.get<Anime[]>('subscriptions');
       if (data) {
         set(data);
@@ -37,39 +39,68 @@ function createSubscriptions() {
   };
 }
 
-export const subscriptions = await createSubscriptions();
+export const subscriptions = createSubscriptions();
+
+async function sendNotification(title: string, episodes: number) {
+  const { isPermissionGranted, requestPermission, sendNotification } =
+    await import('@tauri-apps/api/notification');
+  if (await isPermissionGranted()) {
+    sendNotification({
+      title: `New Episodes for ${title}`,
+      body:
+        episodes === 1
+          ? `There is 1 new episode for ${title}`
+          : `There are ${episodes} new episodes for ${title}`
+    });
+  } else if ((await requestPermission()) === 'granted') {
+    sendNotification({
+      title: `New Episodes for ${title}`,
+      body:
+        episodes === 1
+          ? `There is 1 new episode for ${title}`
+          : `There are ${episodes} new episodes for ${title}`
+    });
+  } else {
+    console.log('Permission not granted');
+  }
+}
 
 function createUnwatchedSubscriptions() {
-  const { subscribe, set } = writable<{ anime: Anime; newEpisodes: number }[]>(
-    []
-  );
+  const { subscribe, set, update } = writable<
+    { anime: Anime; newEpisodes: number }[]
+  >([]);
   return {
     subscribe,
-    set: async (subscriptions: { anime: Anime; newEpisodes: number }[]) => {
+    set: (subscriptions: { anime: Anime; newEpisodes: number }[]) => {
       set(subscriptions);
-      await store.set('activeSubscriptions', subscriptions);
+      store?.set('activeSubscriptions', subscriptions);
     },
-    add: async (anime: { anime: Anime; newEpisodes: number }) => {
-      const subscriptions = await store.get<
-        { anime: Anime; newEpisodes: number }[]
-      >('activeSubscriptions');
-      const result = [
-        anime,
-        ...(subscriptions?.filter(a => a.anime.id !== anime.anime.id) ?? [])
-      ];
-      set(result);
-      await store.set('activeSubscriptions', result);
+    add: (anime: { anime: Anime; newEpisodes: number }) => {
+      update(subscriptions => {
+        const result = [
+          anime,
+          ...subscriptions.filter(({ anime: { id } }) => id !== anime.anime.id)
+        ];
+        store?.set('activeSubscriptions', result);
+        sendNotification(
+          anime.anime.title.english ?? anime.anime.title.native,
+          anime.newEpisodes
+        );
+        return result;
+      });
     },
-    remove: async (anime: { anime: Anime; newEpisodes: number }) => {
-      const subscriptions = await store.get<
-        { anime: Anime; newEpisodes: number }[]
-      >('activeSubscriptions');
-      const result =
-        subscriptions?.filter(a => a.anime.id !== anime.anime.id) ?? [];
-      set(result);
-      await store.set('activeSubscriptions', result);
+    remove: (anime: Anime) => {
+      update(subscriptions => {
+        const result = subscriptions.filter(
+          ({ anime: { id } }) => id !== anime.id
+        );
+        store?.set('activeSubscriptions', result);
+        return result;
+      });
     },
     initialize: async () => {
+      const StoreImport = (await import('tauri-plugin-store-api')).Store;
+      store ??= new StoreImport('.subscriptions.dat');
       const data = await store.get<{ anime: Anime; newEpisodes: number }[]>(
         'activeSubscriptions'
       );
@@ -82,4 +113,4 @@ function createUnwatchedSubscriptions() {
   };
 }
 
-export const unwatchedSubscriptions = await createUnwatchedSubscriptions();
+export const unwatchedSubscriptions = createUnwatchedSubscriptions();

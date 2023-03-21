@@ -4,41 +4,56 @@
   import Player from '$lib/components/Player.svelte';
   import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
-  import { goto, invalidate } from '$app/navigation';
+  import { afterNavigate, goto } from '$app/navigation';
   import { fade } from 'svelte/transition';
   import type { PageData } from './$types';
   import { faInfoCircle, faTv } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
-  import { episodeCache } from '$lib/model/cache';
+  import {
+    subscriptions,
+    unwatchedSubscriptions
+  } from '$lib/model/subscriptions';
+  import { watching } from '$lib/model/watch';
 
   export let data: PageData;
 
-  let descriptionCollapsed = true;
-  let selectedTab: 'episodes' | 'wiki' =
-    data.anime.episodes.filter(
-      item => item.number > (data.episodeObject?.number ?? Infinity)
-    ).length > 0
-      ? 'episodes'
-      : 'wiki';
-  $: relations = data.anime.relations.filter(
-    a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT'
+  $: filteredEpisodes = data.anime.episodes.filter(
+    ({ number }) => number > (data.episodeObject.number ?? Infinity)
   );
+  let descriptionCollapsed = true;
+  // For some reason filteredEpisode is undefined when the page loads
+  $: selectedTab = filteredEpisodes?.length > 0 ? 'episodes' : 'wiki';
+
+  const filteredTypes = ['MANGA', 'NOVEL', 'ONE_SHOT'];
+  $: relations = data.anime.relations.filter(
+    ({ type }) => !filteredTypes.includes(type)
+  );
+
+  afterNavigate(() => {
+    if (
+      $unwatchedSubscriptions.find(({ anime: { id } }) => id === data.anime.id)
+    ) {
+      unwatchedSubscriptions.remove(data.anime);
+      subscriptions.add(data.anime);
+    }
+
+    watching.add(data.anime, data.episodeObject.number);
+  });
 </script>
 
-<Player
-  sources={data.episode.sources}
-  poster={data.anime.episodes.find(item => item.id === data.id)?.image ??
-    data.anime.image}
-  download={data.episode.download}
-  on:requestNextEpisode={() => {
-    if (data.nextEpisode) goto(`/${data.anime.id}/${data.nextEpisode.id}`);
-  }}
-  on:error={e => {
-    console.error(e);
-    episodeCache.delete(data.id);
-    invalidate(data.id);
-  }}
-/>
+{#key data.episodeObject.id}
+  <Player
+    sources={data.episode.sources}
+    poster={data.episodeObject.image ?? data.anime.image}
+    download={data.episode.download}
+    anime={data.anime}
+    episode={data.episodeObject}
+    on:requestNextEpisode={() => {
+      if (data.nextEpisode) goto(`/${data.anime.id}/${data.nextEpisode.id}`);
+      else goto(`/${data.anime.id}`);
+    }}
+  />
+{/key}
 
 <div class="tabs tabs-boxed mx-auto mb-4 w-fit gap-1 bg-opacity-80 p-4 px-8">
   <button
@@ -58,12 +73,7 @@
 </div>
 
 {#if selectedTab === 'episodes'}
-  <EpisodeCarousel
-    anime={data.anime}
-    episodes={data.anime.episodes.filter(
-      item => item.number > (data.episodeObject?.number ?? Infinity)
-    )}
-  >
+  <EpisodeCarousel anime={data.anime} episodes={filteredEpisodes} replaceState>
     <svelte:fragment slot="title">Next episodes</svelte:fragment>
   </EpisodeCarousel>
 {:else if selectedTab === 'wiki'}
@@ -78,7 +88,7 @@
       <h1
         class="mb-4 text-3xl font-extrabold leading-none tracking-tight transition-[font-size] duration-200 md:text-4xl lg:text-5xl"
       >
-        {data.anime.episodes.find(item => item.id === data.id)?.title ??
+        {data.episodeObject.title ??
           data.anime.title.english ??
           data.anime.title.romaji}
       </h1>
@@ -112,20 +122,13 @@
         class:line-clamp-[2]={descriptionCollapsed}
         class:lg:line-clamp-[4]={descriptionCollapsed}
       >
-        {@html data.anime.episodes.find(item => item.id === data.id)
-          ?.description ?? data.anime.description}
+        {@html data.episodeObject.description ?? data.anime.description}
       </p>
       <br />
       <p
         class="cursor-pointer font-semibold"
         on:click={e => {
           descriptionCollapsed = !descriptionCollapsed;
-          if (descriptionCollapsed) {
-            window.scrollTo({
-              top: 0,
-              behavior: 'smooth'
-            });
-          }
           e.stopPropagation();
         }}
       >

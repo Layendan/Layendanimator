@@ -31,6 +31,7 @@
     clearInterval(interval);
     interval = setInterval(next, transitionTime);
     tempId = idx < 0 ? animes.length - 1 : idx % animes.length;
+    new Image().src = animes[tempId].cover; // preload image
     fade = true;
     await new Promise(resolve => setTimeout(resolve, fadeSpeed));
     animeIdx = tempId;
@@ -64,7 +65,7 @@
 >
   <a href="/{animes[animeIdx].id}">
     <img
-      class="h-96 w-full object-cover saturate-150
+      class="h-96 w-full object-cover
       {fade ? 'motion-safe:opacity-0 ' : 'motion-safe:opacity-100 '}
        transition-opacity duration-300 ease-in-out"
       src={animes[animeIdx].cover}
@@ -97,7 +98,7 @@
       <div class="flex gap-x-2">
         <a
           class="btn-primary btn flex gap-x-2 px-8"
-          href="/{animes[animeIdx].id}"
+          href="/{animes[animeIdx].id}?autoplay=true"
         >
           <Fa icon={faPlayCircle} size="lg" />
           Play

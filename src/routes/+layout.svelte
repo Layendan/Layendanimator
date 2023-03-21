@@ -4,7 +4,7 @@
 
   // import { invalidateAll } from '$app/navigation';
   import { navigating } from '$app/stores';
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { source } from '$lib/model/source';
   import {
     subscriptions,
@@ -15,12 +15,18 @@
   import NProgress from 'nprogress';
   import NavBar from '$lib/components/NavBar.svelte';
   import LocomotiveScroll from 'locomotive-scroll';
+  import { watched, watching } from '$lib/model/watch';
+  import { preloadData } from '$app/navigation';
+  import { animeCache } from '$lib/model/cache';
 
   NProgress.configure({
     // Full list: https://github.com/rstacruz/nprogress#configuration
     minimum: 0.16,
     showSpinner: false
   });
+
+  const MINUTE = 1000 * 60;
+  let unsubscribe: NodeJS.Timer | undefined = undefined;
 
   $: {
     if ($navigating) {
@@ -32,7 +38,6 @@
 
   let main: HTMLElement;
   onMount(async () => {
-    // dude.... why is this offsetting everything on refresh
     new LocomotiveScroll({
       el: main,
       multiplier: 2
@@ -42,8 +47,26 @@
       source.initialize(),
       subscriptions.initialize(),
       unwatchedSubscriptions.initialize(),
+      watching.initialize(),
+      watched.initialize(),
       searchHistory.initialize()
     ]);
+
+    if (unsubscribe) clearInterval(unsubscribe);
+    unsubscribe = setInterval(() => {
+      $unwatchedSubscriptions.forEach(({ anime: { id, status } }) => {
+        if (status !== 'Completed' && status !== 'Cancelled')
+          preloadData(`/${id}`);
+      });
+      $subscriptions.forEach(({ id, status }) => {
+        if (status !== 'Completed' && status !== 'Cancelled')
+          preloadData(`/${id}`);
+      });
+    }, animeCache.ttl || MINUTE * 30);
+  });
+
+  onDestroy(() => {
+    if (unsubscribe) clearInterval(unsubscribe);
   });
 </script>
 

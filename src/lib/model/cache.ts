@@ -24,19 +24,19 @@ export const episodeCache = new LRUCache<
 });
 
 // Only used for ttl, but didn't want to install another package
-export const recentEpisodes = new LRUCache<null, Anime[]>({
+export const recentEpisodes = new LRUCache<number, Anime[]>({
   max: 1,
   ttl: MINUTE * 15
 });
 
 // Only used for ttl, but didn't want to install another package
-export const trendingAnimes = new LRUCache<null, Anime[]>({
+export const trendingAnimes = new LRUCache<number, Anime[]>({
   max: 1,
   ttl: MINUTE * 30
 });
 
 // Only used for ttl, but didn't want to install another package
-export const popularAnimes = new LRUCache<null, Anime[]>({
+export const popularAnimes = new LRUCache<number, Anime[]>({
   max: 1,
   ttl: MINUTE * 60 * 24
 });

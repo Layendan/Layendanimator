@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Anime, Episode as EpisodeType } from '$lib/model/Anime';
-  import { fade } from 'svelte/transition';
-  import Episode from './Episode.svelte';
+  import Content from './Content.svelte';
+  import EpisodeCard from './EpisodeCard.svelte';
 
   const gridLength = 12;
   const imageLength = 50;
@@ -9,6 +9,7 @@
   export let anime: Anime;
   export let episodes: EpisodeType[];
   export let showImage = episodes.length <= imageLength;
+  export let replaceState = false;
 
   $: nextEpisodeDate = new Date(
     Date.now() +
@@ -16,10 +17,7 @@
   );
 </script>
 
-<section
-  in:fade
-  class="card max-w-full bg-base-200 bg-opacity-80 p-8 shadow-xl backdrop-blur-xl backdrop-filter"
->
+<Content>
   <slot name="header">
     <h1
       class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
@@ -33,7 +31,7 @@
       : 'scroll'}"
   >
     {#each episodes as episode (episode.id)}
-      <Episode {anime} {episode} {showImage} />
+      <EpisodeCard {anime} {episode} {showImage} {replaceState} />
     {:else}
       <div class="flex items-center justify-center">
         <p
@@ -100,7 +98,7 @@
       </p>
     </div>
   {/if}
-</section>
+</Content>
 
 <style lang="postcss">
   .scroll {

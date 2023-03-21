@@ -3,7 +3,10 @@
   import CharacterCard from '$lib/components/CharacterCard.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
   import { fade } from 'svelte/transition';
-  import { subscriptions } from '$lib/model/subscriptions';
+  import {
+    subscriptions,
+    unwatchedSubscriptions
+  } from '$lib/model/subscriptions';
   import type { PageData } from './$types';
   import Fa from 'svelte-fa';
   import {
@@ -16,6 +19,7 @@
   import { animeCache } from '$lib/model/cache';
   import { invalidate } from '$app/navigation';
   import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
+  import { watched } from '$lib/model/watch';
 
   export let data: PageData;
   let scrollY = 0;
@@ -23,15 +27,15 @@
   let isAscending = true;
   let showWatched = true;
   let showImage: boolean;
-  const reversedEpisodes = [...data.anime.episodes].reverse();
+  $: reversedEpisodes = [...data.anime.episodes].reverse();
   $: sortedEpisodes = isAscending ? data.anime.episodes : reversedEpisodes;
   $: relations = data.anime.relations.filter(
     a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT'
   );
-
-  const lastEpisodeWatched = data.anime.episodes.findLast(
-    e => (data.store[e.id]?.watched ?? 0) > 0
-  );
+  $: subscribed =
+    $subscriptions.some(({ id }) => id === data.anime.id) ||
+    $unwatchedSubscriptions.some(({ anime: { id } }) => id === data.anime.id);
+  $: lastWatched = $watched[data.anime.id];
 </script>
 
 <svelte:window bind:scrollY />
@@ -71,12 +75,13 @@
           />
         </a>
         <button
-          class="btn-primary btn mt-4 w-full shadow-xl backdrop-blur-xl"
-          class:btn-error={$subscriptions.some(s => s.id === data.anime.id)}
-          class:btn-outline={$subscriptions.some(s => s.id === data.anime.id)}
+          class="btn mt-4 w-full shadow-xl backdrop-blur-xl {subscribed
+            ? 'btn-outline btn-error'
+            : 'btn-primary'}"
           on:click={() => {
-            if ($subscriptions.some(s => s.id === data.anime.id)) {
+            if (subscribed) {
               subscriptions.remove(data.anime);
+              unwatchedSubscriptions.remove(data.anime);
             } else {
               subscriptions.add(data.anime);
             }
@@ -94,8 +99,7 @@
             stroke-linejoin="round"
             class="mr-2"
           >
-            <!-- TODO: Check to see if anime is added to subscription list -->
-            {#if $subscriptions.some(s => s.id === data.anime.id)}
+            {#if subscribed}
               <circle cx="12" cy="12" r="10" />
               <line x1="8" y1="12" x2="16" y2="12" />
             {:else}
@@ -156,12 +160,6 @@
           class="cursor-pointer font-semibold"
           on:click={e => {
             descriptionCollapsed = !descriptionCollapsed;
-            if (descriptionCollapsed) {
-              window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-              });
-            }
             e.stopPropagation();
           }}
         >
@@ -185,13 +183,13 @@
         {#if data.anime.episodes.length > 0}
           <a
             class="btn-outline btn-accent btn flex w-fit space-x-2"
-            href="/{data.anime.id}/{lastEpisodeWatched?.id ??
-              data.anime.episodes[0].id}"
+            href="/{data.anime.id}/{lastWatched?.[lastWatched.length - 1]
+              .episode.id ?? data.anime.episodes[0].id}"
           >
             <Fa icon={faPlayCircle} size="lg" />
             <!-- Check if not user has watched anime yet -->
             <span>
-              {lastEpisodeWatched ? 'Continue' : 'Start'} Watching
+              {lastWatched ? 'Continue' : 'Start'} Watching
             </span>
           </a>
         {/if}

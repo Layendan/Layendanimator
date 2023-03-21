@@ -37,6 +37,8 @@ function createSource() {
       await store?.set('source', source);
     },
     initialize: async () => {
+      const StoreImport = (await import('tauri-plugin-store-api')).Store;
+      store ??= new StoreImport('.settings.dat');
       const data = await store?.get<Provider>('source');
       if (data) {
         set(data);
@@ -53,9 +55,9 @@ function createProviders() {
   const { subscribe, set, update } = writable<Provider[]>(defaultProviders);
   return {
     subscribe,
-    set: async (providers: Provider[]) => {
+    set: (providers: Provider[]) => {
       set(providers);
-      await store?.set('providers', providers);
+      store?.set('providers', providers);
     },
     add: (provider: Provider) => {
       update(providers => {
@@ -76,7 +78,7 @@ function createProviders() {
     },
     initialize: async () => {
       const StoreImport = (await import('tauri-plugin-store-api')).Store;
-      store = new StoreImport('.settings.dat');
+      store ??= new StoreImport('.settings.dat');
       const data = await store.get<Provider[]>('providers');
       if (data) {
         set(data);

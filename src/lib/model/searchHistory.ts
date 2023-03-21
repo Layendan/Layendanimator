@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
-import { Store } from 'tauri-plugin-store-api';
+import type { Store } from 'tauri-plugin-store-api';
 
-const store = new Store('.library.dat');
+let store: Store | undefined = undefined;
 
 function createSearchHistory() {
   const { subscribe, set, update } = writable<string[]>([]);
@@ -25,11 +25,13 @@ function createSearchHistory() {
         return result;
       });
     },
-    clear: async () => {
+    clear: () => {
       set([]);
-      await store?.set('searchHistory', []);
+      store?.set('searchHistory', []);
     },
     initialize: async () => {
+      const StoreImport = (await import('tauri-plugin-store-api')).Store;
+      store ??= new StoreImport('.library.dat');
       const data = await store.get<string[]>('searchHistory');
       if (data) {
         set(data);

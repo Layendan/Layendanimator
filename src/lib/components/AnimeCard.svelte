@@ -1,25 +1,36 @@
 <script lang="ts">
   import type { Anime } from '$lib/model/Anime';
+  import { watching } from '$lib/model/watch';
+  import { faX } from '@fortawesome/free-solid-svg-icons';
+  import Fa from 'svelte-fa';
   import { fade } from 'svelte/transition';
 
   export let anime: Anime;
-
   export let numUpdates = 0;
+  export let deleteable = false;
 </script>
 
 <a
-  in:fade
+  transition:fade|local
   href="/{anime.id}"
   class="group indicator w-[210px] flex-col gap-2 focus-visible:outline-transparent"
 >
-  {#if numUpdates > 0}
-    <div class="badge-primary badge indicator-item">
-      {numUpdates}
-    </div>
-  {/if}
   <div
-    class="card relative m-0 aspect-[0.7/1] h-[300px] w-[210px] bg-base-300 bg-clip-content p-0  transition-transform duration-200 hover:-translate3d-y-1 group-focus-visible:-translate-y-1"
+    class="group-one card relative m-0 aspect-[0.7/1] h-[300px] w-[210px] bg-base-300 bg-clip-content p-0  transition-transform duration-200 hover:-translate3d-y-1 group-focus-visible:-translate-y-1"
   >
+    {#if numUpdates > 0}
+      <div class="badge-primary badge indicator-item">
+        {numUpdates}
+      </div>
+    {/if}
+    {#if deleteable}
+      <button
+        on:click|stopPropagation|preventDefault={() => watching.remove(anime)}
+        class="badge-error badge indicator-item opacity-0 transition-opacity duration-200 focus-visible:opacity-100 group-one-hover:opacity-100"
+      >
+        <Fa icon={faX} size="0.8x" />
+      </button>
+    {/if}
     <img
       class="card-body relative m-0 h-full w-full rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center p-0"
       src={anime.image ?? '/assets/loading_failure.jpeg'}

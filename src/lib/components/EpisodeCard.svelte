@@ -13,7 +13,7 @@
   transition:fade|local
   href="/{anime.id}/{episode.id}"
   class="group-one flex w-[210px] flex-col gap-2 focus-visible:outline-transparent"
-  data-sveltekit-replacestate={replaceState ? true : undefined}
+  data-sveltekit-replacestate={replaceState ? '' : 'off'}
 >
   {#if showImage}
     <div

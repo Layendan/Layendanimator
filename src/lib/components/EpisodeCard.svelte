@@ -14,7 +14,7 @@
 </script>
 
 <a
-  transition:fade|local
+  in:fade|local
   href="/{anime.id}/{episode.id}"
   class="group-one flex w-[210px] flex-col gap-2 focus-visible:outline-transparent"
   data-sveltekit-replacestate={replaceState ? '' : 'off'}
@@ -44,7 +44,7 @@
     style:--anime-color={anime.color}
     class="group relative flex h-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100 group-one-focus-visible:text-opacity-100"
     class:noImageDesc={!showImage}
-    class:pb-5={watchedObject?.percentage}
+    class:pb-6={watchedObject?.percentage && !showImage}
   >
     <h3
       class="text-md whitespace-normal font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200 line-clamp-2

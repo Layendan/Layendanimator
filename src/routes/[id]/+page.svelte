@@ -172,7 +172,15 @@
   <div class="divider" />
 
   <!-- EPISODES -->
-  <EpisodeCarousel anime={data.anime} episodes={sortedEpisodes} bind:showImage>
+  <EpisodeCarousel
+    anime={data.anime}
+    episodes={showWatched
+      ? sortedEpisodes
+      : sortedEpisodes.filter(({ id }) => {
+          return !lastWatched?.find(({ episode }) => episode.id === id);
+        })}
+    bind:showImage
+  >
     <div slot="header" class="flex justify-between">
       <div class="mb-4 flex items-center gap-1">
         <h1

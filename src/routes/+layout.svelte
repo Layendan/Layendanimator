@@ -55,9 +55,9 @@
     ]);
 
     const { listen } = await import('@tauri-apps/api/event');
-    listen?.('scheme-request-received', e => {
+    listen?.<string>('scheme-request-received', e => {
       if (e.payload) {
-        goto((e.payload as string).replace('layendanimator://', '/'), {
+        goto(e.payload?.replace('layendanimator://', '/') ?? '/', {
           replaceState: true
         });
       }
@@ -74,6 +74,7 @@
           preloadData(`/${id}`);
       });
     }, animeCache.ttl || MINUTE * 30);
+    console.log('Subscriptions cache TTL:', animeCache.ttl || MINUTE * 30);
   });
 
   onDestroy(() => {

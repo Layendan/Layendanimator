@@ -13,11 +13,10 @@
     ({ episode: { id } }) => id === episode.id
   );
 
-  $: unwatched = $unwatchedSubscriptions?.find(
-    ({ anime: { id } }) => id === anime.id
-  );
-
-  console.log(unwatched);
+  $: newEpisode =
+    anime.episodes.length - episode.number <
+    ($unwatchedSubscriptions?.find(({ anime: { id } }) => id === anime.id)
+      ?.newEpisodes ?? 0);
 </script>
 
 <a
@@ -28,7 +27,7 @@
 >
   {#if showImage}
     <div
-      class="indicator card relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0 shadow-lg transition-transform duration-200 hover:-translate3d-y-1 group-one-focus-visible:-translate-y-1"
+      class="card indicator relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0 shadow-lg transition-transform duration-200 hover:-translate3d-y-1 group-one-focus-visible:-translate-y-1"
     >
       <img
         src={episode.image ?? 'loading_failure.jpeg'}
@@ -44,8 +43,8 @@
           {anime.color ? 'bg-[var(--anime-color)]' : 'bg-accent'}"
         />
       </div>
-      {#if anime.episodes.length - episode.number < (unwatched?.newEpisodes ?? 0)}
-        <div class="badge badge-error indicator-item">NEW</div>
+      {#if newEpisode}
+        <div class="badge-error badge indicator-item">NEW</div>
       {/if}
     </div>
   {/if}
@@ -81,8 +80,8 @@
       </div>
     {/if}
   </div>
-  {#if !showImage && anime.episodes.length - episode.number < (unwatched?.newEpisodes ?? 0)}
-    <div class="badge badge-error badge-sm indicator-item">NEW</div>
+  {#if !showImage && newEpisode}
+    <div class="badge-error badge badge-sm indicator-item">NEW</div>
   {/if}
 </a>
 

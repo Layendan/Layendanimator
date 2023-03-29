@@ -85,12 +85,12 @@
       class="flex max-w-lg flex-1 flex-col justify-center gap-y-4 p-4 lg:max-w-xl"
     >
       <h1
-        class="pb-1 text-3xl font-extrabold tracking-tight drop-shadow-lg line-clamp-3 md:text-4xl lg:text-5xl"
+        class="line-clamp-3 pb-1 text-3xl font-extrabold tracking-tight drop-shadow-lg md:text-4xl lg:text-5xl"
       >
         {animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
       </h1>
 
-      <p class="text-md drop-shadow-lg line-clamp-2 md:text-lg lg:text-xl">
+      <p class="text-md line-clamp-2 drop-shadow-lg md:text-lg lg:text-xl">
         {animes[animeIdx].description?.replace(/<[^>]+>/g, '').slice(0, 200) ??
           ''}
       </p>

@@ -15,7 +15,7 @@
 </script>
 
 <div
-  class="navbar sticky top-0 left-0 right-0 z-50 rounded-b-md bg-base-100 bg-opacity-80 backdrop-blur-xl backdrop-filter"
+  class="navbar sticky left-0 right-0 top-0 z-50 rounded-b-md bg-base-100 bg-opacity-80 backdrop-blur-xl backdrop-filter"
 >
   <div class="navbar-start flex gap-2">
     {#if window?.__TAURI__}
@@ -60,7 +60,7 @@
       />
     </form>
   </div>
-  <div class="absolute right-2 top-2 bottom-2 flex gap-2">
+  <div class="absolute bottom-2 right-2 top-2 flex gap-2">
     <a href="/library" class="btn-ghost btn">
       <Fa icon={faBookmark} size="1.2x" />
     </a>

@@ -76,11 +76,11 @@
   >
     <media-outlet />
   </media-player>
-  <div class="absolute left-4 bottom-4">
+  <div class="absolute bottom-4 left-4">
     <div class="dropdown-right dropdown-end dropdown">
       <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
       <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label tabindex="0" class="btn-ghost btn ">
+      <label tabindex="0" class="btn-ghost btn">
         <Fa icon={faMicrochip} size="1.5x" />
       </label>
       <!-- svelte-ignore a11y-no-noninteractive-tabindex -->

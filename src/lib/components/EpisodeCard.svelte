@@ -8,12 +8,13 @@
   export let episode: Episode;
   export let showImage = true;
   export let replaceState = false;
+  export let type: 'sub' | 'dub' = 'sub';
 
   $: watchedObject = $watched[anime.id]?.find(
     ({ episode: { id } }) => id === episode.id
   );
 
-  $: newEpisode =
+  $: isNewEpisode =
     anime.episodes.length - episode.number <
     ($unwatchedSubscriptions?.find(({ anime: { id } }) => id === anime.id)
       ?.newEpisodes ?? 0);
@@ -21,13 +22,13 @@
 
 <a
   in:fade|local
-  href="/{anime.id}/{episode.id}"
+  href="/{anime.id}/{episode.id}?dub={type === 'dub'}"
   class="group-one indicator flex w-[210px] flex-col gap-2 focus-visible:outline-transparent"
   data-sveltekit-replacestate={replaceState ? '' : 'off'}
 >
   {#if showImage}
     <div
-      class="card indicator relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0 shadow-lg transition-transform duration-200 hover:-translate3d-y-1 group-one-focus-visible:-translate-y-1"
+      class="indicator card relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0 shadow-lg transition-transform duration-200 hover:-translate3d-y-1 group-one-focus-visible:-translate-y-1"
     >
       <img
         src={episode.image ?? 'loading_failure.jpeg'}
@@ -43,8 +44,8 @@
           {anime.color ? 'bg-[var(--anime-color)]' : 'bg-accent'}"
         />
       </div>
-      {#if newEpisode}
-        <div class="badge-error badge indicator-item">NEW</div>
+      {#if isNewEpisode}
+        <div class="badge badge-error indicator-item">NEW</div>
       {/if}
     </div>
   {/if}
@@ -80,8 +81,8 @@
       </div>
     {/if}
   </div>
-  {#if !showImage && newEpisode}
-    <div class="badge-error badge badge-sm indicator-item">NEW</div>
+  {#if isNewEpisode && !showImage}
+    <div class="badge badge-error badge-sm indicator-item">NEW</div>
   {/if}
 </a>
 

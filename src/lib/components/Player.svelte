@@ -53,8 +53,10 @@
       watched.add(anime.id, {
         episode,
         time: state.currentTime ?? 0,
-        percentage:
-          state.currentTime / (state.duration || anime.duration || Infinity)
+        percentage: Math.min(
+          state.currentTime / (state.duration || anime.duration || Infinity),
+          1
+        )
       });
     }
   });

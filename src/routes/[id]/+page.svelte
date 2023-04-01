@@ -14,10 +14,8 @@
     faArrowDown,
     faFilter,
     faPlayCircle,
-    faRotateRight
+    faLanguage
   } from '@fortawesome/free-solid-svg-icons';
-  import { animeCache } from '$lib/model/cache';
-  import { invalidate } from '$app/navigation';
   import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
   import { watched } from '$lib/model/watch';
 
@@ -27,6 +25,7 @@
   let isAscending = true;
   let showWatched = true;
   let showImage: boolean;
+  let isSub = true;
   $: reversedEpisodes = [...data.anime.episodes].reverse();
   $: sortedEpisodes = isAscending ? data.anime.episodes : reversedEpisodes;
   $: relations = data.anime.relations.filter(
@@ -156,7 +155,7 @@
           {@html data.anime.description || '<i>No description available.</i>'}
         </p>
         <br />
-        <p
+        <button
           class="cursor-pointer font-semibold"
           on:click={e => {
             descriptionCollapsed = !descriptionCollapsed;
@@ -164,7 +163,7 @@
           }}
         >
           Show {descriptionCollapsed ? 'more' : 'less'}
-        </p>
+        </button>
       </div>
     </div>
   </section>
@@ -179,6 +178,7 @@
       : sortedEpisodes.filter(({ id }) => {
           return !lastWatched?.find(({ episode }) => episode.id === id);
         })}
+    type={isSub ? 'sub' : 'dub'}
     bind:showImage
   >
     <div slot="header" class="flex justify-between">
@@ -201,77 +201,115 @@
             </span>
           </a>
         {/if}
-        <button
-          class="btn-outline btn-accent btn"
-          on:click={() => {
-            animeCache.delete(data.anime.id);
-            invalidate(data.anime.id);
-          }}
-        >
-          <Fa icon={faRotateRight} />
-        </button>
       </div>
       {#if data.anime.episodes.length > 0}
-        <div class="dropdown-end dropdown block">
-          <!-- svelte-ignore a11y-label-has-associated-control -->
-          <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-          <label tabindex="0" class="btn-outline btn-accent btn w-fit">
-            <Fa icon={faFilter} />
-          </label>
-          <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-          <ul
-            tabindex="0"
-            class="dropdown-content rounded-box z-10 mt-1 w-52 bg-base-100 p-2 shadow"
-          >
-            <li class="m-1">
-              <button
-                class="btn-outline btn-accent btn flex w-full flex-row items-center gap-1 text-base-content"
-                disabled={isAscending}
-                on:click={() => (isAscending = true)}
-              >
-                <Fa icon={faArrowUp} />
-                Episode
-              </button>
-            </li>
-            <li class="m-1">
-              <button
-                class="btn-outline btn-accent btn flex w-full flex-row items-center gap-1 text-base-content"
-                disabled={!isAscending}
-                on:click={() => (isAscending = false)}
-              >
-                <Fa icon={faArrowDown} />
-                Episode
-              </button>
-            </li>
-            <li class="m-1">
-              <button
-                class="btn-outline btn-accent btn flex w-full flex-row items-center gap-2 text-base-content"
-                on:click={() => (showWatched = !showWatched)}
-              >
-                <input
-                  type="checkbox"
-                  checked={showWatched}
-                  class="checkbox-accent checkbox"
-                  tabindex="-1"
-                />
-                Show Watched
-              </button>
-            </li>
-            <li class="m-1">
-              <button
-                class="btn-outline btn-accent btn flex w-full flex-row items-center gap-2 text-base-content"
-                on:click={() => (showImage = !showImage)}
-              >
-                <input
-                  type="checkbox"
-                  checked={showImage}
-                  class="checkbox-accent checkbox"
-                  tabindex="-1"
-                />
-                Thumbnails
-              </button>
-            </li>
-          </ul>
+        <div class="mb-4 flex items-center gap-1">
+          <div class="dropdown-end dropdown block">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+            <label tabindex="0" class="btn-outline btn-accent btn w-fit">
+              <Fa icon={faLanguage} />
+            </label>
+            <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+            <ul
+              tabindex="0"
+              class="dropdown-content rounded-box z-10 mt-1 w-32 bg-base-100 p-2 shadow"
+            >
+              <li class="m-1">
+                <div class="form-control">
+                  <label class="label cursor-pointer">
+                    <span class="label-text">Sub</span>
+                    <input
+                      type="radio"
+                      name="radio-10"
+                      class="radio-accent radio"
+                      checked={isSub}
+                      on:click={() => {
+                        isSub = true;
+                      }}
+                    />
+                  </label>
+                </div>
+              </li>
+              <li class="m-1">
+                <div class="form-control">
+                  <label class="label cursor-pointer">
+                    <span class="label-text">Dub</span>
+                    <input
+                      type="radio"
+                      name="radio-10"
+                      class="radio-accent radio"
+                      checked={!isSub}
+                      on:click={() => {
+                        isSub = false;
+                      }}
+                    />
+                  </label>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="dropdown-end dropdown block">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+            <label tabindex="0" class="btn-outline btn-accent btn w-fit">
+              <Fa icon={faFilter} />
+            </label>
+            <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+            <ul
+              tabindex="0"
+              class="dropdown-content rounded-box z-10 mt-1 w-52 bg-base-100 p-2 shadow"
+            >
+              <li class="m-1">
+                <button
+                  class="btn-outline btn-accent btn flex w-full flex-row items-center gap-1 text-base-content"
+                  disabled={isAscending}
+                  on:click={() => (isAscending = true)}
+                >
+                  <Fa icon={faArrowUp} />
+                  Episode
+                </button>
+              </li>
+              <li class="m-1">
+                <button
+                  class="btn-outline btn-accent btn flex w-full flex-row items-center gap-1 text-base-content"
+                  disabled={!isAscending}
+                  on:click={() => (isAscending = false)}
+                >
+                  <Fa icon={faArrowDown} />
+                  Episode
+                </button>
+              </li>
+              <li class="m-1">
+                <button
+                  class="btn-outline btn-accent btn flex w-full flex-row items-center gap-2 text-base-content"
+                  on:click={() => (showWatched = !showWatched)}
+                >
+                  <input
+                    type="checkbox"
+                    checked={showWatched}
+                    class="checkbox-accent checkbox"
+                    tabindex="-1"
+                  />
+                  Show Watched
+                </button>
+              </li>
+              <li class="m-1">
+                <button
+                  class="btn-outline btn-accent btn flex w-full flex-row items-center gap-2 text-base-content"
+                  on:click={() => (showImage = !showImage)}
+                >
+                  <input
+                    type="checkbox"
+                    checked={showImage}
+                    class="checkbox-accent checkbox"
+                    tabindex="-1"
+                  />
+                  Thumbnails
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
       {/if}
     </div>

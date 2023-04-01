@@ -3,13 +3,14 @@
   import Content from './Content.svelte';
   import EpisodeCard from './EpisodeCard.svelte';
 
-  const gridLength = 12;
+  const gridLength = 11;
   const imageLength = 50;
 
   export let anime: Anime;
   export let episodes: EpisodeType[];
   export let showImage = episodes.length <= imageLength;
   export let replaceState = false;
+  export let type: 'sub' | 'dub' = 'sub';
 
   $: nextEpisodeDate = new Date(
     Date.now() +
@@ -31,7 +32,7 @@
       : 'scroll'}"
   >
     {#each episodes as episode (episode.id)}
-      <EpisodeCard {anime} {episode} {showImage} {replaceState} />
+      <EpisodeCard {anime} {episode} {showImage} {replaceState} {type} />
     {:else}
       <div class="flex items-center justify-center">
         <p
@@ -106,7 +107,7 @@
   }
 
   .useGrid {
-    @apply grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-4;
+    @apply grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-4 pt-4;
   }
 
   ::-webkit-scrollbar {

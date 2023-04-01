@@ -20,11 +20,15 @@ async function fetchAnime(id: string, _fetch: typeof fetch) {
   return anime;
 }
 
-async function fetchEpisode(id: string, _fetch: typeof fetch) {
+async function fetchEpisode(id: string, isDub: boolean, _fetch: typeof fetch) {
   const episode = (await _fetch(
-    `https://api.consumet.org/meta/anilist/watch/${id}?provider=${
-      get(source).id
-    }`
+    isDub
+      ? `https://api.consumet.org/meta/anilist/watch/${id}?provider=${
+          get(source).id
+        }&dub=true`
+      : `https://api.consumet.org/meta/anilist/watch/${id}?provider=${
+          get(source).id
+        }`
   ).then(r => r.json())) as {
     sources: {
       url: string;
@@ -41,24 +45,19 @@ async function fetchEpisode(id: string, _fetch: typeof fetch) {
   return episode;
 }
 
-export const load = (async ({ fetch, depends, params }) => {
+export const load = (async ({ fetch, depends, params, url }) => {
   depends(params.episode);
+
+  // TODO: I have no clue where dub went on consumet api
+  const isDub = url.searchParams.get('dub') === 'true';
 
   const anime =
     animeCache.get(params.id) ?? (await fetchAnime(params.id, fetch));
   const episode =
-    episodeCache.get(params.episode) ??
-    (await fetchEpisode(params.episode, fetch));
-
-  // TODO: Create store for episodes
-  const episodes: Record<
-    string,
-    {
-      watched: number;
-      duration: number;
-      lastWatched: string;
-    }
-  > = {};
+    (isDub
+      ? episodeCache.get(`${params.episode}/dub`)
+      : episodeCache.get(params.episode)) ??
+    (await fetchEpisode(params.episode, isDub, fetch));
 
   const episodeObject = anime.episodes.find(item => item.id === params.episode);
 
@@ -74,7 +73,6 @@ export const load = (async ({ fetch, depends, params }) => {
     nextEpisode:
       anime.episodes[
         anime.episodes.findIndex(item => item.id === params.episode) + 1
-      ],
-    store: episodes
+      ]
   };
 }) satisfies PageLoad;

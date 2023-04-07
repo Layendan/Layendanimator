@@ -67,8 +67,12 @@ export type Anime = {
   type: Type;
   recommendations: Anime[];
   characters: Character[];
-  relations: Anime[];
+  relations: Relations[];
   episodes: Episode[];
+};
+
+export type Relations = Anime & {
+  relationType: 'ADAPTATION' | 'PREQUEL' | 'SEQUEL' | 'PARENT' | 'SIDE_STORY';
 };
 
 export type Character = {

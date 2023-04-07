@@ -62,6 +62,6 @@ export const load = (async ({ fetch, depends, params, url }) => {
   }
 
   return {
-    anime: anime
+    anime
   };
 }) satisfies PageLoad;

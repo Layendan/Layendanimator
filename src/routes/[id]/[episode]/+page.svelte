@@ -29,6 +29,8 @@
     ({ type }) => !filteredTypes.includes(type)
   );
 
+  const maxRelations = 15;
+
   afterNavigate(() => {
     if (
       $unwatchedSubscriptions.find(({ anime: { id } }) => id === data.anime.id)
@@ -161,7 +163,12 @@
         <svelte:fragment slot="title">Related</svelte:fragment>
         <svelte:fragment slot="content">
           {#each relations as anime (anime.id)}
-            <AnimeCard {anime} />
+            <AnimeCard
+              {anime}
+              extra={relations.length > maxRelations
+                ? ''
+                : anime.relationType.replaceAll('_', ' ')}
+            />
           {/each}
         </svelte:fragment>
       </ScrollCarousel>

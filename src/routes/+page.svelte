@@ -31,7 +31,7 @@
 
     <svelte:fragment slot="content">
       {#each data.recent as anime (`${anime.id}/${anime.episodeNumber}`)}
-        <AnimeCard {anime} />
+        <AnimeCard {anime} extra={`Episode ${anime.episodeNumber}`} />
       {:else}
         <div class="flex items-center justify-center">
           <p
@@ -52,7 +52,7 @@
 
       <svelte:fragment slot="content">
         {#each $watching as { anime, episode } (anime.id)}
-          <AnimeCard anime={{ ...anime, episodeNumber: episode }} deleteable />
+          <AnimeCard {anime} extra={`Episode ${episode}`} deleteable />
         {/each}
       </svelte:fragment>
     </ScrollCarousel>
@@ -89,26 +89,6 @@
   <div class="divider" />
 
   <ScrollCarousel>
-    <svelte:fragment slot="title">Popular Animes</svelte:fragment>
-
-    <svelte:fragment slot="content">
-      {#each data.popular as anime (anime.id)}
-        <AnimeCard {anime} />
-      {:else}
-        <div class="flex items-center justify-center">
-          <p
-            class="text-xl font-semibold text-center text-base-content text-opacity-70"
-          >
-            No Popular Animes Found
-          </p>
-        </div>
-      {/each}
-    </svelte:fragment>
-  </ScrollCarousel>
-
-  <div class="divider" />
-
-  <ScrollCarousel>
     <svelte:fragment slot="title">Trending Animes</svelte:fragment>
 
     <svelte:fragment slot="content">
@@ -120,6 +100,26 @@
             class="text-xl font-semibold text-center text-base-content text-opacity-70"
           >
             No Trending Animes Found
+          </p>
+        </div>
+      {/each}
+    </svelte:fragment>
+  </ScrollCarousel>
+
+  <div class="divider" />
+
+  <ScrollCarousel>
+    <svelte:fragment slot="title">Popular Animes</svelte:fragment>
+
+    <svelte:fragment slot="content">
+      {#each data.popular as anime (anime.id)}
+        <AnimeCard {anime} />
+      {:else}
+        <div class="flex items-center justify-center">
+          <p
+            class="text-xl font-semibold text-center text-base-content text-opacity-70"
+          >
+            No Popular Animes Found
           </p>
         </div>
       {/each}

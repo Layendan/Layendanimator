@@ -35,6 +35,8 @@
     $subscriptions.some(({ id }) => id === data.anime.id) ||
     $unwatchedSubscriptions.some(({ anime: { id } }) => id === data.anime.id);
   $: lastWatched = $watched[data.anime.id];
+
+  const maxRelations = 15;
 </script>
 
 <svelte:window bind:scrollY />
@@ -337,7 +339,12 @@
       <svelte:fragment slot="title">Related</svelte:fragment>
       <svelte:fragment slot="content">
         {#each relations as anime (anime.id)}
-          <AnimeCard {anime} />
+          <AnimeCard
+            {anime}
+            extra={relations.length > maxRelations
+              ? ''
+              : anime.relationType.replaceAll('_', ' ')}
+          />
         {/each}
       </svelte:fragment>
     </ScrollCarousel>

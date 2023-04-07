@@ -15,7 +15,7 @@
 </script>
 
 <div
-  class="navbar sticky left-0 right-0 top-0 z-50 rounded-b-md bg-base-100 bg-opacity-80 backdrop-blur-xl backdrop-filter"
+  class="navbar sticky left-0 right-0 top-0 z-50 bg-base-100 bg-opacity-80 backdrop-blur-xl backdrop-filter"
 >
   <div class="navbar-start flex gap-2">
     {#if window?.__TAURI__}

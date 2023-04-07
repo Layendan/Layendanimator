@@ -71,8 +71,6 @@
     aspect-ratio="16/9"
     class="mx-auto block w-screen object-cover md:w-[max(calc(800px),70vw)]"
     preload="metadata"
-    autoplay
-    autofocus
     prefer-native-hls
     on:ended={requestNextEpisode}
   >

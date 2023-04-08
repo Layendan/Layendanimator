@@ -37,15 +37,13 @@
       />
       <div style:--anime-color={anime.color} class="relative mx-1 select-none">
         <div
-          style="width: {($watched[anime.id]?.find(
-            item => item.episode.id === episode.id
-          )?.percentage ?? 0) * 100}%;"
-          class="absolute bottom-1 left-0 right-0 h-1 rounded-md shadow-lg
+          style="width: {(watchedObject?.percentage ?? 0) * 100}%;"
+          class="absolute bottom-1 left-0 right-0 h-1 rounded-md shadow-lg shadow-black
           {anime.color ? 'bg-[var(--anime-color)]' : 'bg-accent'}"
         />
       </div>
       {#if isNewEpisode}
-        <div class="badge badge-error indicator-item">NEW</div>
+        <div class="badge badge-error badge-sm indicator-item">NEW</div>
       {/if}
     </div>
   {/if}
@@ -75,7 +73,7 @@
       <div class="absolute bottom-1 left-0 right-0 mx-1 select-none">
         <div
           style="width: {(watchedObject?.percentage ?? 0) * 100}%;"
-          class="h-1 rounded-md shadow-lg
+          class="h-1 rounded-md
           {anime.color ? 'bg-[var(--anime-color)]' : 'bg-accent'}"
         />
       </div>

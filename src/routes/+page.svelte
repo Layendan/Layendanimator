@@ -67,7 +67,7 @@
       {#each $unwatchedSubscriptions as { anime, newEpisodes } (anime.id)}
         <AnimeCard {anime} bind:numUpdates={newEpisodes} />
       {/each}
-      {#if $unwatchedSubscriptions.length > 0}
+      {#if $unwatchedSubscriptions.length > 0 && $subscriptions.length > 0}
         <div class="divider divider-horizontal" />
       {/if}
       {#each $subscriptions as anime (anime.id)}

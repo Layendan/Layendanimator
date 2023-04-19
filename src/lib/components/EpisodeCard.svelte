@@ -43,7 +43,7 @@
         />
       </div>
       {#if isNewEpisode}
-        <div class="badge badge-error badge-sm indicator-item">NEW</div>
+        <div class="badge badge-error indicator-item" />
       {/if}
     </div>
   {/if}
@@ -80,7 +80,7 @@
     {/if}
   </div>
   {#if isNewEpisode && !showImage}
-    <div class="badge badge-error badge-sm indicator-item">NEW</div>
+    <div class="badge badge-error indicator-item">NEW</div>
   {/if}
 </a>
 

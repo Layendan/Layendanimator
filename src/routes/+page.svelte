@@ -51,7 +51,7 @@
       <svelte:fragment slot="title">Continue Watching</svelte:fragment>
 
       <svelte:fragment slot="content">
-        {#each $watching as { anime, episode } (anime.id)}
+        {#each $watching.slice(0, 10) as { anime, episode } (anime.id)}
           <AnimeCard {anime} extra={`Episode ${episode}`} deleteable />
         {/each}
       </svelte:fragment>

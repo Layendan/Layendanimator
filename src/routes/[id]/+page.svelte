@@ -26,7 +26,7 @@
   let showWatched = true;
   let showImage: boolean;
   let isSub = true;
-  $: reversedEpisodes = [...data.anime.episodes].reverse();
+  $: reversedEpisodes = [...(data.anime.episodes ?? [])].reverse();
   $: sortedEpisodes = isAscending ? data.anime.episodes : reversedEpisodes;
   $: relations = data.anime.relations.filter(
     a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT'
@@ -178,7 +178,10 @@
     episodes={showWatched
       ? sortedEpisodes
       : sortedEpisodes.filter(({ id }) => {
-          return !lastWatched?.find(({ episode }) => episode.id === id);
+          return (
+            (lastWatched?.find(({ episode }) => episode.id === id)
+              ?.percentage ?? 0) < 0.8
+          );
         })}
     type={isSub ? 'sub' : 'dub'}
     bind:showImage

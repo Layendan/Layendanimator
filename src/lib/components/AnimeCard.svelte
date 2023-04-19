@@ -21,7 +21,7 @@
       class="group-one card relative m-0 aspect-[0.7/1] h-[300px] w-[210px] bg-base-300 bg-clip-content p-0 transition-transform duration-200 hover:-translate3d-y-1 group-focus-visible:-translate-y-1"
     >
       {#if numUpdates > 0}
-        <div class="badge-primary badge indicator-item">
+        <div class="badge-error badge indicator-item">
           {numUpdates}
         </div>
       {/if}

@@ -1,4 +1,4 @@
-import LRUCache from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import type { Anime } from './Anime';
 
 const MINUTE = 1000 * 60;

@@ -19,7 +19,7 @@ function createWatching() {
         const result = [
           { anime, episode },
           ...subscriptions.filter(({ anime: { id } }) => id !== anime.id)
-        ].slice(0, 10);
+        ];
         store?.set('watching', result);
         return result;
       });

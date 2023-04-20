@@ -9,9 +9,7 @@
     faDownload,
     faSpinner
   } from '@fortawesome/free-solid-svg-icons';
-  import { preloadData } from '$app/navigation';
-  import { episodeCache } from '$lib/model/cache';
-  import { downloads } from '$lib/model/downloads';
+  import { downloads, downloading } from '$lib/model/downloads';
 
   export let anime: Anime;
   export let episode: Episode;
@@ -28,70 +26,25 @@
     ($unwatchedSubscriptions?.find(({ anime: { id } }) => id === anime.id)
       ?.newEpisodes ?? 0);
 
-  let downloadState: 'idle' | 'downloading' | 'downloaded' = $downloads[
-    episode.id
-  ]
-    ? 'downloaded'
-    : 'idle';
+  let downloadState: 'idle' | 'downloading' | 'downloaded' = 'idle';
+
+  $: if ($downloads[episode.id]) {
+    downloadState = 'downloaded';
+  }
+  $: if ($downloading[episode.id]) {
+    downloadState = 'downloading';
+  }
+  $: if (!$downloads[episode.id] && !$downloading[episode.id]) {
+    downloadState = 'idle';
+  }
 
   async function download() {
     switch (downloadState) {
       case 'idle':
-        {
-          downloadState = 'downloading';
-          const { listen } = await import('@tauri-apps/api/event');
-          const { invoke } = await import('@tauri-apps/api/tauri');
-          await preloadData(`/${anime.id}/${episode.id}`);
-          console.debug('Downloading episode', episode);
-          const episodeUrl = episodeCache
-            .get(episode.id)
-            ?.sources?.find(s => s.quality === '1080p')?.url;
-          const unlisten = await listen<{
-            progress: number;
-            status: 'success' | 'error' | 'downloading';
-            logs?: string;
-            path: string;
-          }>(`download-progress-${episode.id}`, e => {
-            console.debug('Download progress', e.payload);
-            switch (e.payload.status) {
-              case 'success':
-                unlisten();
-                downloadState = 'downloaded';
-                downloads.add(
-                  episode.id,
-                  { url: e.payload.path, quality: '1080p', isM3U8: false },
-                  anime
-                );
-                console.debug('Downloaded episode', episode);
-                break;
-              case 'error':
-                unlisten();
-                downloadState = 'idle';
-                console.error(
-                  'Error downloading episode',
-                  e.payload.logs,
-                  episode
-                );
-                break;
-              case 'downloading':
-                downloadState = 'downloading';
-                console.debug('Downloading episode', e.payload.logs);
-                break;
-              default:
-                unlisten();
-                console.error('Unknown download status', e.payload);
-                break;
-            }
-          });
-          invoke('download', {
-            episodeId: episode.id,
-            episodeUrl
-          });
-        }
+        downloading.add(episode.id, anime, '1080p');
         break;
       case 'downloaded':
         downloads.remove(episode.id);
-        downloadState = 'idle';
         break;
       default:
         break;

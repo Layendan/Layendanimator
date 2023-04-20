@@ -76,6 +76,7 @@ function createWatched() {
         temp.sort((a, b) => a.episode.number - b.episode.number);
         map[key] = temp;
         store?.set('watched', map);
+        store?.save();
         return map;
       });
     },

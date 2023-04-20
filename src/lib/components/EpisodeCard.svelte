@@ -28,11 +28,11 @@
 
   let downloadState: 'idle' | 'downloading' | 'downloaded' = 'idle';
 
-  $: if ($downloads[episode.id]) {
-    downloadState = 'downloaded';
-  }
-  $: if ($downloading[episode.id]) {
+  $: if ($downloading[episode.id] && !$downloads[episode.id]) {
     downloadState = 'downloading';
+  }
+  $: if ($downloads[episode.id] && !$downloading[episode.id]) {
+    downloadState = 'downloaded';
   }
   $: if (!$downloads[episode.id] && !$downloading[episode.id]) {
     downloadState = 'idle';
@@ -41,7 +41,7 @@
   async function download() {
     switch (downloadState) {
       case 'idle':
-        downloading.add(episode.id, anime, '1080p');
+        downloading.add(episode.id, anime, '1080p', episode.number);
         break;
       case 'downloaded':
         downloads.remove(episode.id);

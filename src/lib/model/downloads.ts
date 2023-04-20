@@ -7,7 +7,7 @@ import { episodeCache } from './cache';
 let store: Store | undefined = undefined;
 
 export type DownloadedEpisode = {
-  anime: Anime;
+  animeId: string;
   episode: EpisodeData;
 };
 
@@ -20,25 +20,35 @@ function createDownloads() {
       set(downloads);
       store?.set('downloads', downloads);
     },
-    add: (episodeId: string, source: Source, anime: Anime) => {
+    add: (
+      episodeId: string,
+      source: Source,
+      anime: Anime,
+      episodeNumber: number
+    ) => {
       update(downloads => {
         downloads[episodeId] = {
-          anime,
+          animeId: anime.id,
           episode: {
             sources: [source],
             download: undefined
           }
         };
         store?.set('downloads', downloads);
+        downloadedAnimes.add(episodeId, episodeNumber, anime);
+        store?.save();
         return downloads;
       });
     },
     remove: async (episodeId: string) => {
       const { removeFile } = await import('@tauri-apps/api/fs');
       update(downloads => {
-        removeFile(downloads[episodeId].episode.sources[0].url);
+        const data = downloads[episodeId];
+        removeFile(data.episode.sources[0].url);
+        downloadedAnimes.remove(data.animeId, episodeId);
         delete downloads[episodeId];
         store?.set('downloads', downloads);
+        store?.save();
         return downloads;
       });
     },
@@ -50,6 +60,8 @@ function createDownloads() {
           removeFile(val.episode.sources[0].url);
         }
         store?.set('downloads', {});
+        downloadedAnimes.clear();
+        store?.save();
         return {};
       });
     },
@@ -68,6 +80,79 @@ function createDownloads() {
 
 export const downloads = createDownloads();
 
+function createDownloadedAnimes() {
+  type Download = {
+    anime: Anime;
+    episodes: { episode: string; number: number }[];
+  };
+  const { subscribe, set, update } = writable<Download[]>([]);
+  return {
+    subscribe,
+    set: (downloads: Download[]) => {
+      set(downloads);
+      store?.set('animes', downloads);
+    },
+    add: (episodeId: string, epNum: number, anime: Anime) => {
+      update(downloads => {
+        const index = downloads.findIndex(
+          ({ anime: { id } }) => id === anime.id
+        );
+        if (index === -1) {
+          downloads.unshift({
+            anime,
+            episodes: [{ episode: episodeId, number: epNum }]
+          });
+        } else {
+          downloads[index].episodes.unshift({
+            episode: episodeId,
+            number: epNum
+          });
+        }
+        store?.set('animes', downloads);
+        return downloads;
+      });
+    },
+    remove: (animeId: string, episodeId: string) => {
+      update(downloads => {
+        const index = downloads.findIndex(
+          ({ anime: { id } }) => id === animeId
+        );
+        if (index === -1) {
+          return downloads;
+        }
+        const episodeIndex = downloads[index].episodes.findIndex(
+          ({ episode }) => episode === episodeId
+        );
+        if (episodeIndex === -1) {
+          return downloads;
+        }
+        downloads[index].episodes.splice(episodeIndex, 1);
+        if (downloads[index].episodes.length === 0) {
+          downloads.splice(index, 1);
+        }
+        store?.set('animes', downloads);
+        return downloads;
+      });
+    },
+    clear: () => {
+      set([]);
+      store?.set('animes', []);
+    },
+    initialize: async () => {
+      const StoreImport = (await import('tauri-plugin-store-api')).Store;
+      store ??= new StoreImport('.downloads.dat');
+      const data = await store.get<Download[]>('animes');
+      if (data) {
+        set(data);
+      } else {
+        await store.set('animes', []);
+      }
+    }
+  };
+}
+
+export const downloadedAnimes = createDownloadedAnimes();
+
 function createDownloading() {
   const dict: { [key: string]: { anime: Anime; quality: string } } = {};
   const { subscribe, set, update } = writable(dict);
@@ -81,7 +166,12 @@ function createDownloading() {
   return {
     subscribe,
     set,
-    add: async (episodeId: string, anime: Anime, quality: string) => {
+    add: async (
+      episodeId: string,
+      anime: Anime,
+      quality: string,
+      episodeNumber: number
+    ) => {
       update(downloads => {
         downloads[episodeId] = { anime, quality };
         return downloads;
@@ -108,7 +198,8 @@ function createDownloading() {
             downloads.add(
               episodeId,
               { url: e.payload.path, quality: '1080p', isM3U8: false },
-              anime
+              anime,
+              episodeNumber
             );
             console.debug('Downloaded episode', episodeId);
             break;

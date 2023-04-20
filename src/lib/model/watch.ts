@@ -61,7 +61,7 @@ function createWatched() {
   const { subscribe, set, update } = writable(dict);
   return {
     subscribe,
-    set: (map: { [key: string]: WatchType[] }) => {
+    set: (map: typeof dict) => {
       set(map);
       store?.set('watched', map);
     },
@@ -93,7 +93,7 @@ function createWatched() {
     initialize: async () => {
       const StoreImport = (await import('tauri-plugin-store-api')).Store;
       store ??= new StoreImport('.subscriptions.dat');
-      const data = await store.get<{ [key: string]: WatchType[] }>('watched');
+      const data = await store.get<typeof dict>('watched');
       if (data) {
         set(data);
       } else {

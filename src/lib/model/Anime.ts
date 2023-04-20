@@ -109,3 +109,14 @@ export type Episode = {
   image: string;
   airDate: string;
 };
+
+export type EpisodeData = {
+  sources: Source[];
+  download: string | undefined;
+};
+
+export type Source = {
+  url: string;
+  isM3U8: boolean;
+  quality: string;
+};

@@ -8,6 +8,7 @@
     trendingAnimes
   } from '$lib/model/cache';
   import { connections } from '$lib/model/connections';
+  import { downloads } from '$lib/model/downloads';
   import { providers, source } from '$lib/model/source';
   import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
   import Fa from 'svelte-fa';
@@ -132,6 +133,10 @@
       <button
         class="btn-outline btn-accent btn w-full"
         on:click={() => connections.clear()}>Clear Connections</button
+      >
+      <button
+        class="btn-outline btn-accent btn w-full"
+        on:click={() => downloads.clear()}>Delete Downloads</button
       >
       <button
         class="btn-outline btn-accent btn w-full"

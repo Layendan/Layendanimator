@@ -3,12 +3,117 @@
     windows_subsystem = "windows"
 )]
 
+use std::fs::{create_dir_all, File};
+
+use ffmpeg_sidecar::{command::FfmpegCommand, event::FfmpegEvent};
+use serde_json::json;
 use tauri::Manager;
 
 #[derive(Clone, serde::Serialize)]
-struct Payload {
+struct SInst {
     args: Vec<String>,
     cwd: String,
+}
+
+#[tauri::command]
+async fn download<R: tauri::Runtime>(
+    app: tauri::AppHandle<R>,
+    window: tauri::Window<R>,
+    episode_id: String,
+    episode_url: String,
+) -> Result<(), String> {
+    let app_dir = app.path_resolver().app_data_dir().unwrap();
+    let store_path = app_dir.join("downloads").join(episode_id.clone() + ".mp4");
+
+    println!("{}", &store_path.display());
+
+    create_dir_all(store_path.parent().expect("invalid store path")).unwrap();
+    File::create(&store_path).unwrap();
+
+    FfmpegCommand::new()
+        .hwaccel("auto")
+        .input(episode_url)
+        .args("-bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50".split(' '))
+        .create_no_window()
+        .output(&store_path.canonicalize().unwrap().to_str().unwrap())
+        .overwrite()
+        .spawn()
+        .unwrap()
+        .iter()
+        .unwrap()
+        .for_each(|event: FfmpegEvent| {
+            match event {
+                FfmpegEvent::Done => {
+                    println!("download done");
+                    window
+                        .emit(
+                            format!("download-progress-{}", episode_id).as_str(),
+                            json!({
+                                "progress": 100,
+                                "status": "success",
+                                "path": store_path.display().to_string()
+                            }),
+                        )
+                        .unwrap();
+                    // <- download done
+                }
+                FfmpegEvent::LogEOF => {
+                    println!("download log eof");
+                    window
+                        .emit(
+                            format!("download-progress-{}", episode_id).as_str(),
+                            json!({
+                                "progress": 100,
+                                "status": "success",
+                                "path": store_path.display().to_string()
+                            }),
+                        )
+                        .unwrap();
+                    println!("{}", &store_path.display());
+                    // <- download log eof
+                }
+                FfmpegEvent::Error(err) => {
+                    println!("download error: {}", err);
+                    window
+                        .emit(
+                            format!("download-progress-{}", episode_id).as_str(),
+                            json!({
+                                "progress": 100,
+                                "status": "error",
+                                "logs": err,
+                                "path": store_path.display().to_string()
+                            }),
+                        )
+                        .unwrap();
+                    // <- download error
+                }
+                FfmpegEvent::Progress(progress) => {
+                    eprintln!("[ffmpeg] Time: {}", progress.time);
+                    // <- parsed progress updates
+                }
+                FfmpegEvent::Log(level, msg) => {
+                    if level == ffmpeg_sidecar::event::LogLevel::Error
+                        || level == ffmpeg_sidecar::event::LogLevel::Fatal
+                    {
+                        window
+                            .emit(
+                                format!("download-progress-{}", episode_id).as_str(),
+                                json!({
+                                    "progress": 100,
+                                    "status": "error",
+                                    "path": store_path.display().to_string()
+                                }),
+                            )
+                            .unwrap();
+                    }
+                    eprintln!("[ffmpeg] {}", msg);
+                    // <- granular log message from stderr
+                }
+                _ => {}
+            }
+        });
+
+    Ok(())
 }
 
 fn main() {
@@ -37,9 +142,10 @@ fn main() {
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
             println!("{}, {argv:?}, {cwd}", app.package_info().name);
 
-            app.emit_all("single-instance", Payload { args: argv, cwd })
+            app.emit_all("single-instance", SInst { args: argv, cwd })
                 .unwrap();
         }))
+        .invoke_handler(tauri::generate_handler![download])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

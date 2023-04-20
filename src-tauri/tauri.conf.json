@@ -12,7 +12,14 @@
 	},
 	"tauri": {
 		"allowlist": {
-			"all": true
+			"all": true,
+			"protocol": {
+				"all": false,
+				"asset": true,
+				"assetScope": [
+					"**/*.mp4"
+				]
+			}
 		},
 		"macOSPrivateApi": true,
 		"bundle": {
@@ -49,7 +56,7 @@
 			}
 		},
 		"security": {
-			"csp": null
+			"csp": "asset: https://asset.localhost assets://*"
 		},
 		"updater": {
 			"active": true,

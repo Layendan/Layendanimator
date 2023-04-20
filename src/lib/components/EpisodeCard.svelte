@@ -3,6 +3,15 @@
   import type { Anime, Episode } from '$lib/model/Anime';
   import { watched } from '$lib/model/watch';
   import { unwatchedSubscriptions } from '$lib/model/subscriptions';
+  import Fa from 'svelte-fa';
+  import {
+    faCheck,
+    faDownload,
+    faSpinner
+  } from '@fortawesome/free-solid-svg-icons';
+  import { preloadData } from '$app/navigation';
+  import { episodeCache } from '$lib/model/cache';
+  import { downloads } from '$lib/model/downloads';
 
   export let anime: Anime;
   export let episode: Episode;
@@ -18,6 +27,76 @@
     anime.episodes.length - episode.number <
     ($unwatchedSubscriptions?.find(({ anime: { id } }) => id === anime.id)
       ?.newEpisodes ?? 0);
+
+  let downloadState: 'idle' | 'downloading' | 'downloaded' = $downloads[
+    episode.id
+  ]
+    ? 'downloaded'
+    : 'idle';
+
+  async function download() {
+    switch (downloadState) {
+      case 'idle':
+        {
+          downloadState = 'downloading';
+          const { listen } = await import('@tauri-apps/api/event');
+          const { invoke } = await import('@tauri-apps/api/tauri');
+          await preloadData(`/${anime.id}/${episode.id}`);
+          console.debug('Downloading episode', episode);
+          const episodeUrl = episodeCache
+            .get(episode.id)
+            ?.sources?.find(s => s.quality === '1080p')?.url;
+          const unlisten = await listen<{
+            progress: number;
+            status: 'success' | 'error' | 'downloading';
+            logs?: string;
+            path: string;
+          }>(`download-progress-${episode.id}`, e => {
+            console.debug('Download progress', e.payload);
+            switch (e.payload.status) {
+              case 'success':
+                unlisten();
+                downloadState = 'downloaded';
+                downloads.add(
+                  episode.id,
+                  { url: e.payload.path, quality: '1080p', isM3U8: false },
+                  anime
+                );
+                console.debug('Downloaded episode', episode);
+                break;
+              case 'error':
+                unlisten();
+                downloadState = 'idle';
+                console.error(
+                  'Error downloading episode',
+                  e.payload.logs,
+                  episode
+                );
+                break;
+              case 'downloading':
+                downloadState = 'downloading';
+                console.debug('Downloading episode', e.payload.logs);
+                break;
+              default:
+                unlisten();
+                console.error('Unknown download status', e.payload);
+                break;
+            }
+          });
+          invoke('download', {
+            episodeId: episode.id,
+            episodeUrl
+          });
+        }
+        break;
+      case 'downloaded':
+        downloads.remove(episode.id);
+        downloadState = 'idle';
+        break;
+      default:
+        break;
+    }
+  }
 </script>
 
 <a
@@ -50,25 +129,44 @@
   <!-- TODO: Check if no image is shown and if user has already watched -->
   <div
     style:--anime-color={anime.color}
-    class="group relative flex h-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100 group-one-focus-visible:text-opacity-100"
+    class="relative flex h-full flex-col gap-1"
     class:noImageDesc={!showImage}
     class:pb-6={watchedObject?.percentage && !showImage}
   >
-    <h3
-      class="text-md line-clamp-2 whitespace-normal font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200
-      {anime.color
-        ? 'group-hover:text-[var(--anime-color)] group-one-focus-visible:text-[var(--anime-color)]'
-        : 'group-hover:text-accent group-one-focus-visible:text-accent'}"
-    >
-      {episode.title || `Episode ${episode.number}`}
-    </h3>
-    {#if episode.title && episode.number}
-      <h2
-        class="whitespace-normal text-xs leading-none transition-colors duration-200"
+    <div class="flex w-full flex-row justify-between gap-1">
+      <div
+        class="group flex w-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100 group-one-focus-visible:text-opacity-100"
       >
-        Episode {episode.number}
-      </h2>
-    {/if}
+        <h3
+          class="text-md line-clamp-2 whitespace-normal font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200
+      {anime.color
+            ? 'group-hover:text-[var(--anime-color)] group-one-focus-visible:text-[var(--anime-color)]'
+            : 'group-hover:text-accent group-one-focus-visible:text-accent'}"
+        >
+          {episode.title || `Episode ${episode.number}`}
+        </h3>
+        {#if episode.title && episode.number}
+          <h2
+            class="whitespace-normal text-xs leading-none transition-colors duration-200"
+          >
+            Episode {episode.number}
+          </h2>
+        {/if}
+      </div>
+      <button
+        class="btn-ghost btn-sm btn my-auto h-full"
+        class:no-animation={downloadState === 'downloading'}
+        on:click|stopPropagation|preventDefault={download}
+      >
+        {#if downloadState === 'downloading'}
+          <Fa icon={faSpinner} size="1.5x" class="animate-spin text-warning" />
+        {:else if downloadState === 'downloaded'}
+          <Fa icon={faCheck} size="1.5x" class="text-success" />
+        {:else}
+          <Fa icon={faDownload} size="1.5x" />
+        {/if}
+      </button>
+    </div>
     {#if !showImage}
       <div class="absolute bottom-1 left-0 right-0 mx-1 select-none">
         <div

@@ -3,7 +3,8 @@ import { source } from '$lib/model/source';
 import { animeCache, episodeCache } from '$lib/model/cache';
 import { get } from 'svelte/store';
 import type { PageLoad } from './$types';
-import type { Anime } from '$lib/model/Anime';
+import type { Anime, EpisodeData } from '$lib/model/Anime';
+import { downloads } from '$lib/model/downloads';
 
 async function fetchAnime(id: string, _fetch: typeof fetch) {
   const anime = (await _fetch(
@@ -29,20 +30,22 @@ async function fetchEpisode(id: string, isDub: boolean, _fetch: typeof fetch) {
       : `https://api.consumet.org/meta/anilist/watch/${id}?provider=${
           get(source).id
         }`
-  ).then(r => r.json())) as {
-    sources: {
-      url: string;
-      isM3U8: boolean;
-      quality: string;
-    }[];
-    download: string;
-  };
+  ).then(r => r.json())) as EpisodeData;
 
   if (episode) {
     episodeCache.set(id, episode);
   }
 
   return episode;
+}
+
+function getDownload(id: string) {
+  const download = get(downloads)[id];
+  if (download) {
+    return download.episode;
+  } else {
+    return null;
+  }
 }
 
 export const load = (async ({ fetch, depends, params, url }) => {
@@ -54,6 +57,7 @@ export const load = (async ({ fetch, depends, params, url }) => {
   const anime =
     animeCache.get(params.id) ?? (await fetchAnime(params.id, fetch));
   const episode =
+    getDownload(params.episode) ??
     (isDub
       ? episodeCache.get(`${params.episode}/dub`)
       : episodeCache.get(params.episode)) ??

@@ -19,6 +19,7 @@
   import { goto, preloadData } from '$app/navigation';
   import { animeCache } from '$lib/model/cache';
   import { connections } from '$lib/model/connections';
+  import { downloads } from '$lib/model/downloads';
 
   NProgress.configure({
     // Full list: https://github.com/rstacruz/nprogress#configuration
@@ -51,7 +52,8 @@
       watching.initialize(),
       watched.initialize(),
       searchHistory.initialize(),
-      connections.initialize()
+      connections.initialize(),
+      downloads.initialize()
     ]);
 
     const { listen } = await import('@tauri-apps/api/event');

@@ -4,13 +4,15 @@
   import 'vidstack/styles/ui/sliders.css';
   import 'vidstack/define/media-player.js';
   import { defineCustomElements } from 'vidstack/elements';
+  import type { MediaPlayerElement } from 'vidstack';
 
   import Fa from 'svelte-fa';
   import { faMicrochip, faDownload } from '@fortawesome/free-solid-svg-icons';
-  import { onMount, createEventDispatcher } from 'svelte';
+  import { onMount, createEventDispatcher, onDestroy } from 'svelte';
   import { watched } from '$lib/model/watch';
   import type { Anime, Episode } from '$lib/model/Anime';
   import { beforeNavigate } from '$app/navigation';
+  import { convertFileSrc } from '@tauri-apps/api/tauri';
 
   export let sources: {
     url: string;
@@ -22,6 +24,8 @@
   export let episode: Episode;
   export let download: string | undefined = undefined;
 
+  let player: MediaPlayerElement | undefined = undefined;
+
   $: watchedObject = $watched[anime.id]?.find(
     item => item.episode.number === episode.number
   );
@@ -30,6 +34,11 @@
     source => source.quality === 'default'
   );
   let selectedSource = defaultIndex !== -1 ? defaultIndex : 0;
+
+  $: src = sources[selectedSource].isM3U8
+    ? `https://jb-proxy.app.jet-black.xyz/${sources[selectedSource].url}`
+    : convertFileSrc(sources[selectedSource].url);
+
   const dispatcher = createEventDispatcher();
 
   function requestNextEpisode() {
@@ -38,41 +47,59 @@
 
   onMount(async () => {
     await defineCustomElements();
-    const player = document.querySelector('media-player');
     player?.onAttach(() => {
-      player.currentTime =
-        (watchedObject?.time ?? 0) < (player.state.duration || anime.duration)
-          ? watchedObject?.time ?? 0
-          : 0;
+      if (player) {
+        player.currentTime =
+          (watchedObject?.time ?? 0) < (player.state.duration || anime.duration)
+            ? watchedObject?.time ?? 0
+            : 0;
+      }
     });
   });
 
-  beforeNavigate(() => {
+  function updateWatched() {
     const state = document.querySelector('media-player')?.state;
     if (state) {
       watched.add(anime.id, {
         episode,
-        time: state.currentTime ?? 0,
+        time: state.currentTime || (watchedObject?.time ?? 0),
         percentage: Math.min(
           state.currentTime / (state.duration || anime.duration || Infinity),
           1
         )
       });
     }
+  }
+
+  const interval = setInterval(updateWatched, 15000);
+
+  onDestroy(() => {
+    clearInterval(interval);
   });
+
+  beforeNavigate(updateWatched);
 </script>
 
 <div class="relative -m-4 mb-4 h-auto w-screen bg-black">
   <!-- svelte-ignore a11y-autofocus -->
   <media-player
-    src="https://jb-proxy.app.jet-black.xyz/{sources[selectedSource].url}"
+    {src}
     {poster}
     controls
     aspect-ratio="16/9"
     class="mx-auto block w-screen object-cover md:w-[max(calc(800px),70vw)]"
     preload="metadata"
     prefer-native-hls
+    bind:this={player}
     on:ended={requestNextEpisode}
+    on:play|once={() => {
+      if (player) {
+        player.currentTime =
+          (watchedObject?.time ?? 0) < (player.state.duration || anime.duration)
+            ? watchedObject?.time ?? 0
+            : 0;
+      }
+    }}
   >
     <media-outlet />
   </media-player>

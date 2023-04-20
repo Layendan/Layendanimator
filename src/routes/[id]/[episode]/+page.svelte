@@ -83,6 +83,23 @@
   </EpisodeCarousel>
 {:else if selectedTab === 'wiki'}
   <main in:fade class="mt-4 block w-full px-4 lg:mt-0">
+    {#if data.episodeObject.title && data.episodeObject.description}
+      <section
+        class="card max-w-full bg-base-200 bg-opacity-80 bg-clip-padding p-8 shadow-xl backdrop-blur-xl backdrop-filter transition-colors duration-200"
+      >
+        <h1
+          class="mb-4 text-3xl font-extrabold leading-none tracking-tight transition-[font-size] duration-200 md:text-4xl lg:text-5xl"
+        >
+          {data.episodeObject.title}
+        </h1>
+        <p class="h-min w-fit">
+          {@html data.episodeObject.description}
+        </p>
+      </section>
+
+      <div class="divider" />
+    {/if}
+
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <section
       class="card max-w-full bg-base-200 bg-opacity-80 bg-clip-padding p-8 shadow-xl backdrop-blur-xl backdrop-filter transition-colors duration-200"
@@ -93,9 +110,7 @@
       <h1
         class="mb-4 text-3xl font-extrabold leading-none tracking-tight transition-[font-size] duration-200 md:text-4xl lg:text-5xl"
       >
-        {data.episodeObject.title ??
-          data.anime.title.english ??
-          data.anime.title.romaji}
+        {data.anime.title.english ?? data.anime.title.romaji}
       </h1>
       <ul class="mb-4 flex flex-wrap gap-1">
         <div class="badge badge-accent badge-outline">
@@ -127,7 +142,7 @@
         class:line-clamp-[2]={descriptionCollapsed}
         class:lg:line-clamp-[4]={descriptionCollapsed}
       >
-        {@html data.episodeObject.description ?? data.anime.description}
+        {@html data.anime.description}
       </p>
       <br />
       <p

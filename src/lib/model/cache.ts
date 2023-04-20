@@ -1,5 +1,5 @@
 import { LRUCache } from 'lru-cache';
-import type { Anime } from './Anime';
+import type { Anime, EpisodeData } from './Anime';
 
 const MINUTE = 1000 * 60;
 
@@ -8,17 +8,7 @@ export const animeCache = new LRUCache<string, Anime>({
   ttl: MINUTE * 60
 });
 
-export const episodeCache = new LRUCache<
-  string,
-  {
-    download: string | undefined;
-    sources: {
-      url: string;
-      isM3U8: boolean;
-      quality: string;
-    }[];
-  }
->({
+export const episodeCache = new LRUCache<string, EpisodeData>({
   max: 100,
   ttl: MINUTE * 30
 });

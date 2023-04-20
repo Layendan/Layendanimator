@@ -21,6 +21,7 @@ tauri = { version = "1.2.2", features = ["api-all", "macos-private-api", "update
 tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 tauri-plugin-deep-link = "0.1.0"
+ffmpeg-sidecar = "0.4.0"
 
 [features]
 # by default Tauri runs in production mode

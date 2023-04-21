@@ -5,7 +5,10 @@
 
 use std::fs::{create_dir_all, File};
 
-use ffmpeg_sidecar::{command::FfmpegCommand, event::FfmpegEvent};
+use ffmpeg_sidecar::{
+    command::{ffmpeg_is_installed, FfmpegCommand},
+    event::FfmpegEvent,
+};
 use serde_json::json;
 use tauri::Manager;
 
@@ -134,6 +137,10 @@ fn main() {
             // on macos the plugin handles this (macos doesn't use cli args for the url)
             if let Some(url) = std::env::args().nth(1) {
                 app.emit_all("scheme-request-received", url).unwrap();
+            }
+
+            if !ffmpeg_is_installed() {
+                ffmpeg_sidecar::download::auto_download().unwrap();
             }
 
             Ok(())

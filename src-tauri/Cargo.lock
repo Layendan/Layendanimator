@@ -42,7 +42,6 @@ checksum = "2cb2f989d18dd141ab8ae82f64d1a8cdd37e0840f73a406896cf5e99502fab61"
 name = "app"
 version = "0.1.0"
 dependencies = [
- "ffmpeg-sidecar",
  "serde",
  "serde_json",
  "tauri",
@@ -775,12 +774,6 @@ checksum = "a7a407cfaa3385c4ae6b23e84623d48c2798d06e3e6a1878f7f59f17b3f86499"
 dependencies = [
  "instant",
 ]
-
-[[package]]
-name = "ffmpeg-sidecar"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "40a81b00196d2e220967aa1a239534e63335724036e786c1bd4899c24a7e2dd5"
 
 [[package]]
 name = "field-offset"

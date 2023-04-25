@@ -14,10 +14,26 @@
 		"allowlist": {
 			"all": true,
 			"protocol": {
-				"all": false,
-				"asset": true,
+				"all": true,
 				"assetScope": [
 					"**/*.mp4"
+				]
+			},
+			"fs": {
+				"all": true,
+				"scope": [
+					"$DATA/**/*"
+				]
+			},
+			"shell": {
+				"sidecar": true,
+				"scope": [
+					{
+						"name": "bin/ffmpeg",
+						"sidecar": true,
+						"cmd": "bin/ffmpeg",
+						"args": true
+					}
 				]
 			}
 		},
@@ -29,7 +45,9 @@
 			"deb": {
 				"depends": []
 			},
-			"externalBin": [],
+			"externalBin": [
+				"bin/ffmpeg"
+			],
 			"icon": [
 				"icons/32x32.png",
 				"icons/128x128.png",

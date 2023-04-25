@@ -153,8 +153,26 @@ function createDownloadedAnimes() {
 
 export const downloadedAnimes = createDownloadedAnimes();
 
+async function sendNotification(title: string, episode: number) {
+  const { isPermissionGranted, requestPermission, sendNotification } =
+    await import('@tauri-apps/api/notification');
+  if (await isPermissionGranted()) {
+    sendNotification({
+      title: `Downloaded episode ${episode} of ${title}`
+    });
+  } else if ((await requestPermission()) === 'granted') {
+    sendNotification({
+      title: `Downloaded episode ${episode} of ${title}`
+    });
+  } else {
+    console.error('Permission not granted');
+  }
+}
+
 function createDownloading() {
-  const dict: { [key: string]: { anime: Anime; quality: string } } = {};
+  const dict: {
+    [key: string]: { anime: Anime; quality: string; progress: number };
+  } = {};
   const { subscribe, set, update } = writable(dict);
   const remove = (episodeId: string) => {
     update(downloads => {
@@ -172,60 +190,74 @@ function createDownloading() {
       quality: string,
       episodeNumber: number
     ) => {
-      update(downloads => {
-        downloads[episodeId] = { anime, quality };
-        return downloads;
-      });
+      try {
+        update(downloads => {
+          downloads[episodeId] = { anime, quality, progress: 0 };
+          return downloads;
+        });
 
-      const { listen } = await import('@tauri-apps/api/event');
-      const { invoke } = await import('@tauri-apps/api/tauri');
-      await preloadData(`/${anime.id}/${episodeId}`);
-      console.debug('Downloading episode', episodeId);
-      const episodeUrl = episodeCache
-        .get(episodeId)
-        ?.sources?.find(s => s.quality === quality)?.url;
-      const unlisten = await listen<{
-        progress: number;
-        status: 'success' | 'error' | 'downloading';
-        logs?: string;
-        path: string;
-      }>(`download-progress-${episodeId}`, e => {
-        console.debug('Download progress', e.payload);
-        switch (e.payload.status) {
-          case 'success':
-            unlisten();
-            remove(episodeId);
-            downloads.add(
-              episodeId,
-              { url: e.payload.path, quality: '1080p', isM3U8: false },
-              anime,
-              episodeNumber
-            );
-            console.debug('Downloaded episode', episodeId);
-            break;
-          case 'error':
-            unlisten();
-            remove(episodeId);
-            console.error(
-              'Error downloading episode',
-              e.payload.logs,
-              episodeId
-            );
-            break;
-          case 'downloading':
-            console.debug('Downloading episode', e.payload.logs);
-            break;
-          default:
-            unlisten();
-            remove(episodeId);
-            console.error('Unknown download status', e.payload);
-            break;
+        await preloadData(`/${anime.id}/${episodeId}`);
+        const cache = episodeCache.get(episodeId);
+        if (!cache) {
+          throw new Error('Episode not found');
         }
-      });
-      invoke('download', {
-        episodeId: episodeId,
-        episodeUrl
-      });
+        let episodeUrl = cache.sources.find(s => s.quality === quality)?.url;
+        if (!episodeUrl) {
+          episodeUrl = cache.sources[0].url;
+          quality = cache.sources[0].quality;
+        }
+        if (!episodeUrl) {
+          throw new Error('Source not found');
+        }
+        const { Command } = await import('@tauri-apps/api/shell');
+        const { appDataDir, join } = await import('@tauri-apps/api/path');
+        const path = await join(
+          await appDataDir(),
+          'downloads',
+          `${episodeId}.mp4`
+        );
+
+        // -i {input} -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 {output}
+        const command = Command.sidecar('bin/ffmpeg', [
+          '-y',
+          '-i',
+          episodeUrl,
+          '-bsf:a',
+          'aac_adtstoasc',
+          '-vcodec',
+          'copy',
+          '-c',
+          'copy',
+          '-crf',
+          '50',
+          path
+        ]);
+        const output = await command.execute();
+        console.log(output.stdout);
+        console.log(output.stderr);
+        console.debug(output.code);
+        console.debug('Downloaded: ', path);
+
+        if (output.code !== 0) {
+          throw new Error('Download failed');
+        }
+
+        downloads.add(
+          episodeId,
+          { url: path, quality, isM3U8: false },
+          anime,
+          episodeNumber
+        );
+
+        sendNotification(
+          anime.title.english ?? anime.title.romaji,
+          episodeNumber
+        );
+      } catch (e) {
+        console.error(e);
+      } finally {
+        remove(episodeId);
+      }
     },
     remove,
     clear: () => {

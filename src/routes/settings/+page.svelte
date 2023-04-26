@@ -10,6 +10,7 @@
   import { connections } from '$lib/model/connections';
   import { downloads } from '$lib/model/downloads';
   import { providers, source } from '$lib/model/source';
+  import { getVersion, getArch, getOS } from '$lib/model/info';
   import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
   import Fa from 'svelte-fa';
 
@@ -158,6 +159,38 @@
           }
         }}>Send Test Notification</button
       >
+    </div>
+  </Content>
+
+  <div class="divider" />
+
+  <Content>
+    <h1
+      class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
+    >
+      Information
+    </h1>
+    <div class="ml-2">
+      <p>
+        <b>App Version:</b>
+        {#await getVersion() then version}
+          {version}
+        {/await}
+      </p>
+      <br />
+      <p>
+        <b>Operating System:</b>
+        {#await getOS() then os}
+          {os}
+        {/await}
+      </p>
+      <br />
+      <p>
+        <b>System Archetype:</b>
+        {#await getArch() then arch}
+          {arch}
+        {/await}
+      </p>
     </div>
   </Content>
 </section>

@@ -11,6 +11,7 @@
   import { onMount, createEventDispatcher, onDestroy } from 'svelte';
   import { watched } from '$lib/model/watch';
   import type { Anime, Episode } from '$lib/model/Anime';
+  import { getOS } from '$lib/model/info';
   import { beforeNavigate } from '$app/navigation';
   import Hls from 'hls.js';
 
@@ -61,6 +62,14 @@
             : 0;
       }
     });
+    const os = await getOS();
+    if (os !== 'Darwin' && os !== 'Unknown') {
+      player?.addEventListener('fullscreen-change', async event => {
+        const { appWindow } = await import('@tauri-apps/api/window');
+        const isFullscreen = event.detail;
+        appWindow?.setFullscreen(isFullscreen);
+      });
+    }
   });
 
   function updateWatched() {

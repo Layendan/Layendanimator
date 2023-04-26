@@ -12,7 +12,6 @@
   import { watched } from '$lib/model/watch';
   import type { Anime, Episode } from '$lib/model/Anime';
   import { beforeNavigate } from '$app/navigation';
-  import { convertFileSrc } from '@tauri-apps/api/tauri';
 
   export let sources: {
     url: string;
@@ -37,7 +36,7 @@
 
   $: src = sources[selectedSource].isM3U8
     ? `https://jb-proxy.app.jet-black.xyz/${sources[selectedSource].url}`
-    : convertFileSrc(sources[selectedSource].url);
+    : sources[selectedSource].url;
 
   const dispatcher = createEventDispatcher();
 

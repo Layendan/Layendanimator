@@ -35,8 +35,18 @@
     $subscriptions.some(({ id }) => id === data.anime.id) ||
     $unwatchedSubscriptions.some(({ anime: { id } }) => id === data.anime.id);
   $: lastWatched = $watched[data.anime.id];
+  $: continueWatching =
+    (lastWatched?.[lastWatched.length - 1]?.percentage ?? Infinity) <
+    watchPercentage
+      ? lastWatched[lastWatched.length - 1].episode
+      : data.anime.episodes.find(
+          e =>
+            e.number >
+            (lastWatched?.[lastWatched.length - 1]?.episode.number ?? Infinity)
+        ) ?? data.anime.episodes[0];
 
   const maxRelations = 15;
+  const watchPercentage = 0.8;
 </script>
 
 <svelte:window bind:scrollY />
@@ -180,7 +190,7 @@
       : sortedEpisodes.filter(({ id }) => {
           return (
             (lastWatched?.find(({ episode }) => episode.id === id)
-              ?.percentage ?? 0) < 0.8
+              ?.percentage ?? 0) < watchPercentage
           );
         })}
     type={isSub ? 'sub' : 'dub'}
@@ -196,13 +206,16 @@
         {#if data.anime.episodes.length > 0}
           <a
             class="btn-outline btn-accent btn flex w-fit space-x-2"
-            href="/{data.anime.id}/{lastWatched?.[lastWatched.length - 1]
-              .episode.id ?? data.anime.episodes[0].id}"
+            href="/{data.anime.id}/{continueWatching.id}"
           >
             <Fa icon={faPlayCircle} size="lg" />
             <!-- Check if not user has watched anime yet -->
             <span>
-              {lastWatched ? 'Continue' : 'Start'} Watching
+              {continueWatching.id === data.anime.episodes[0].id
+                ? lastWatched
+                  ? 'Watch Again'
+                  : 'Start Watching'
+                : 'Continue Watching'}
             </span>
           </a>
         {/if}

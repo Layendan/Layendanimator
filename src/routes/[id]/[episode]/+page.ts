@@ -39,10 +39,17 @@ async function fetchEpisode(id: string, isDub: boolean, _fetch: typeof fetch) {
   return episode;
 }
 
-function getDownload(id: string) {
+async function getDownload(id: string) {
   const download = get(downloads)[id];
   if (download) {
-    return download.episode;
+    const { convertFileSrc } = await import('@tauri-apps/api/tauri');
+    return {
+      ...download.episode,
+      sources: download.episode.sources.map(source => ({
+        ...source,
+        url: convertFileSrc(source.url)
+      }))
+    } as EpisodeData;
   } else {
     return null;
   }
@@ -57,7 +64,7 @@ export const load = (async ({ fetch, depends, params, url }) => {
   const anime =
     animeCache.get(params.id) ?? (await fetchAnime(params.id, fetch));
   const episode =
-    getDownload(params.episode) ??
+    (await getDownload(params.episode)) ??
     (isDub
       ? episodeCache.get(`${params.episode}/dub`)
       : episodeCache.get(params.episode)) ??

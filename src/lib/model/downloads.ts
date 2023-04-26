@@ -230,14 +230,13 @@ function createDownloading() {
           'copy',
           '-crf',
           '50',
+          path,
           '-hwaccel',
-          'auto',
-          path
+          'auto'
         ]);
         const output = await command.execute();
         console.log(output.stdout);
         console.log(output.stderr);
-        console.debug(output.code);
         console.debug('Downloaded: ', path);
 
         if (output.code !== 0) {

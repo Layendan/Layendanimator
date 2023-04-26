@@ -79,14 +79,13 @@
       {/if}
     </div>
   {/if}
-  <!-- TODO: Check if no image is shown and if user has already watched -->
   <div
     style:--anime-color={anime.color}
     class="relative flex h-full flex-col gap-1"
     class:noImageDesc={!showImage}
     class:pb-6={watchedObject?.percentage && !showImage}
   >
-    <div class="flex w-full flex-row justify-between gap-1">
+    <div class="flex h-full w-full flex-row items-center justify-between gap-1">
       <div
         class="group flex w-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100 group-one-focus-visible:text-opacity-100"
       >
@@ -107,7 +106,7 @@
         {/if}
       </div>
       <button
-        class="btn-ghost btn-sm btn my-auto h-full"
+        class="btn-ghost btn-sm btn"
         class:no-animation={downloadState === 'downloading'}
         on:click|stopPropagation|preventDefault={download}
       >

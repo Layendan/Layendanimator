@@ -230,6 +230,8 @@ function createDownloading() {
           'copy',
           '-crf',
           '50',
+          '-hwaccel',
+          'auto',
           path
         ]);
         const output = await command.execute();

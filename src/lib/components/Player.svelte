@@ -102,7 +102,7 @@
     {poster}
     controls
     aspect-ratio="16/9"
-    class="mx-auto flex w-screen items-center justify-center object-cover fullscreen:h-screen md:w-[max(calc(800px),70vw)]"
+    class="mx-auto flex w-screen items-center justify-center object-cover focus-visible:outline-transparent fullscreen:h-screen md:w-[max(calc(800px),70vw)]"
     preload="metadata"
     prefer-native-hls
     bind:this={player}

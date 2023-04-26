@@ -4,7 +4,7 @@
   import 'vidstack/styles/ui/sliders.css';
   import 'vidstack/define/media-player.js';
   import { defineCustomElements } from 'vidstack/elements';
-  import type { MediaPlayerElement } from 'vidstack';
+  import type { HLSProvider, MediaPlayerElement } from 'vidstack';
 
   import Fa from 'svelte-fa';
   import { faMicrochip, faDownload } from '@fortawesome/free-solid-svg-icons';
@@ -12,6 +12,7 @@
   import { watched } from '$lib/model/watch';
   import type { Anime, Episode } from '$lib/model/Anime';
   import { beforeNavigate } from '$app/navigation';
+  import Hls from 'hls.js';
 
   export let sources: {
     url: string;
@@ -46,6 +47,12 @@
 
   onMount(async () => {
     await defineCustomElements();
+    player?.addEventListener('provider-change', event => {
+      const provider = event.detail;
+      if (provider?.type === 'hls') {
+        (provider as HLSProvider).library = Hls;
+      }
+    });
     player?.onAttach(() => {
       if (player) {
         player.currentTime =

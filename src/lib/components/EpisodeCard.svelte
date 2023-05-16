@@ -56,7 +56,7 @@
 </script>
 
 <a
-  in:fade|local
+  in:fade
   {href}
   id={episode.id}
   class="group-one indicator flex w-[210px] flex-col gap-2 focus-visible:outline-transparent"

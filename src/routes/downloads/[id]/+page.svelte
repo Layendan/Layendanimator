@@ -30,6 +30,14 @@
   let imageLoaded = true;
   $: reversedEpisodes = [...(data.episodes ?? [])].reverse();
   $: sortedEpisodes = isAscending ? data.episodes : reversedEpisodes;
+  $: filteredEpisodes = showWatched
+    ? sortedEpisodes
+    : sortedEpisodes.filter(({ id }) => {
+        return (
+          (lastWatched?.find(({ episode }) => episode.id === id)?.percentage ??
+            0) < watchPercentage
+        );
+      });
   $: relations = data.anime.relations.filter(
     a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT'
   );
@@ -193,14 +201,7 @@
   <!-- EPISODES -->
   <EpisodeCarousel
     anime={data.anime}
-    episodes={showWatched
-      ? sortedEpisodes
-      : sortedEpisodes.filter(({ id }) => {
-          return (
-            (lastWatched?.find(({ episode }) => episode.id === id)
-              ?.percentage ?? 0) < watchPercentage
-          );
-        })}
+    bind:episodes={filteredEpisodes}
     type={isSub ? 'sub' : 'dub'}
     href="/downloads/{data.anime.id}"
     bind:showImage

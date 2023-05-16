@@ -1,8 +1,9 @@
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import type { Store } from 'tauri-plugin-store-api';
 import type { Anime, EpisodeData, Source } from './Anime';
-import { preloadData } from '$app/navigation';
+import { goto, preloadData } from '$app/navigation';
 import { episodeCache } from './cache';
+import { page } from '$app/stores';
 
 let store: Store | undefined = undefined;
 
@@ -103,10 +104,15 @@ function createDownloadedAnimes() {
             episodes: [{ episode: episodeId, number: epNum }]
           });
         } else {
-          downloads[index].episodes.unshift({
-            episode: episodeId,
-            number: epNum
-          });
+          const episodeIndex = downloads[index].episodes.findIndex(
+            ({ episode }) => episode === episodeId
+          );
+          if (episodeIndex === -1) {
+            downloads[index].episodes.unshift({
+              episode: episodeId,
+              number: epNum
+            });
+          }
         }
         store?.set('animes', downloads);
         return downloads;
@@ -127,8 +133,11 @@ function createDownloadedAnimes() {
           return downloads;
         }
         downloads[index].episodes.splice(episodeIndex, 1);
-        if (downloads[index].episodes.length === 0) {
+        if (downloads[index].episodes.length - 1 <= 0) {
           downloads.splice(index, 1);
+          if (get(page).url.pathname === `/downloads/${animeId}`) {
+            goto('/library');
+          }
         }
         store?.set('animes', downloads);
         return downloads;

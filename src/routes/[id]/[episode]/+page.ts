@@ -12,7 +12,18 @@ async function fetchAnime(id: string, _fetch: typeof fetch) {
       get(source).id
     }`,
     { signal: AbortSignal.timeout(15000) }
-  ).then(r => r.json())) as Anime;
+  )
+    .then(r => {
+      if (r.status !== 200) {
+        console.error(r);
+        throw error(404, 'Anime not found');
+      }
+      return r.json();
+    })
+    .catch(e => {
+      console.error(e);
+      throw error(404, 'Anime not found');
+    })) as Anime;
 
   if (anime) {
     animeCache.set(id, anime);
@@ -22,18 +33,31 @@ async function fetchAnime(id: string, _fetch: typeof fetch) {
 }
 
 async function fetchEpisode(id: string, isDub: boolean, _fetch: typeof fetch) {
-  const episode = (await _fetch(
+  const episode: EpisodeData = await _fetch(
     isDub
-      ? `https://api.consumet.org/meta/anilist/watch/${id}?provider=${
+      ? `https://consumet.app.jet-black.xyz/meta/anilist/watch/${id}?provider=${
           get(source).id
         }&dub=true`
-      : `https://api.consumet.org/meta/anilist/watch/${id}?provider=${
+      : `https://consumet.app.jet-black.xyz/meta/anilist/watch/${id}?provider=${
           get(source).id
         }`
-  ).then(r => r.json())) as EpisodeData;
+  )
+    .then(r => {
+      if (r.status !== 200) {
+        console.error(r);
+        throw error(404, 'Episode sources not found');
+      }
+      return r.json();
+    })
+    .catch(e => {
+      console.error(e);
+      throw error(404, 'Episode sources not found');
+    });
 
   if (episode) {
     episodeCache.set(id, episode);
+  } else {
+    throw error(404, 'Episode sources not found');
   }
 
   return episode;
@@ -73,7 +97,7 @@ export const load = (async ({ fetch, depends, params, url }) => {
   const episodeObject = anime.episodes.find(item => item.id === params.episode);
 
   if (!episodeObject) {
-    throw error(404, 'Episode not found');
+    throw error(404, 'Episode data not found');
   }
 
   return {

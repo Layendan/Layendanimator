@@ -142,6 +142,14 @@
       <button
         class="btn-outline btn-accent btn w-full"
         on:click={async () => {
+          const { open } = await import('@tauri-apps/api/shell');
+          const { join, appDataDir } = await import('@tauri-apps/api/path');
+          await open(await join(await appDataDir(), 'downloads'));
+        }}>Open Downloads Folder</button
+      >
+      <button
+        class="btn-outline btn-accent btn w-full"
+        on:click={async () => {
           const { isPermissionGranted, requestPermission, sendNotification } =
             await import('@tauri-apps/api/notification');
           if (await isPermissionGranted()) {

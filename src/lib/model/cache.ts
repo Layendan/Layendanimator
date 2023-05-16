@@ -1,4 +1,5 @@
 import { LRUCache } from 'lru-cache';
+import { writable } from 'svelte/store';
 import type { Anime, EpisodeData } from './Anime';
 
 const MINUTE = 1000 * 60;
@@ -30,3 +31,5 @@ export const popularAnimes = new LRUCache<number, Anime[]>({
   max: 1,
   ttl: MINUTE * 60 * 24
 });
+
+export const carouselPage = writable(0);

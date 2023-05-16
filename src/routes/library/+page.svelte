@@ -10,7 +10,7 @@
 
   <svelte:fragment slot="content">
     {#each $downloadedAnimes as { anime } (anime.id)}
-      <AnimeCard {anime} />
+      <AnimeCard {anime} href="/downloads/{anime.id}" />
     {:else}
       <div class="flex items-center justify-center">
         <p

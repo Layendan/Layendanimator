@@ -43,15 +43,21 @@ async function fetchPopularAnime(_fetch: typeof fetch) {
 }
 
 export const load = (async ({ fetch }) => {
-  const [recent, trending, popular] = await Promise.all([
-    recentEpisodes.get(0) ?? fetchRecentEpisodes(fetch),
-    trendingAnimes.get(0) ?? fetchTrendingAnime(fetch),
-    popularAnimes.get(0) ?? fetchPopularAnime(fetch)
-  ]);
-
   return {
-    recent,
-    trending,
-    popular
+    recent: {
+      data: new Promise<Anime[]>(resolve => {
+        resolve(recentEpisodes.get(0) ?? fetchRecentEpisodes(fetch));
+      })
+    },
+    trending: {
+      data: new Promise<Anime[]>(resolve => {
+        resolve(trendingAnimes.get(0) ?? fetchTrendingAnime(fetch));
+      })
+    },
+    popular: {
+      data: new Promise<Anime[]>(resolve => {
+        resolve(popularAnimes.get(0) ?? fetchPopularAnime(fetch));
+      })
+    }
   };
 }) satisfies PageLoad;

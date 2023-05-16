@@ -8,11 +8,12 @@
     faPlayCircle
   } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
+  import { carouselPage } from '$lib/model/cache';
 
   export let animes: Anime[];
   export let fadeSpeed = 300;
   export let transitionTime = 10_000;
-  export let animeIdx = 0;
+  export let animeIdx = $carouselPage;
   export let display: 'rails' | 'arrows' = 'arrows';
   let tempId = animeIdx;
 
@@ -50,6 +51,7 @@
   $: preloadData(`/${animes[animeIdx].id}`);
 
   onDestroy(() => {
+    $carouselPage = animeIdx;
     clearInterval(interval);
   });
 

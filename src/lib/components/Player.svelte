@@ -14,6 +14,8 @@
   import { getOS } from '$lib/model/info';
   import { beforeNavigate } from '$app/navigation';
   import Hls from 'hls.js';
+  import { downloading, downloads } from '$lib/model/downloads';
+  import { settings } from '$lib/model/settings';
 
   export let sources: {
     url: string;
@@ -23,7 +25,6 @@
   export let poster: string;
   export let anime: Anime;
   export let episode: Episode;
-  export let download: string | undefined = undefined;
 
   let player: MediaPlayerElement | undefined = undefined;
 
@@ -43,6 +44,14 @@
   const dispatcher = createEventDispatcher();
 
   function requestNextEpisode() {
+    const state = document.querySelector('media-player')?.state;
+    if (
+      $settings.deleteOnWatch &&
+      state &&
+      state.currentTime / state.duration >= 0.8
+    ) {
+      downloads.remove(episode.id);
+    }
     dispatcher('requestNextEpisode');
   }
 
@@ -50,7 +59,7 @@
     await defineCustomElements();
     player?.addEventListener('provider-change', event => {
       const provider = event.detail;
-      if (provider?.type === 'hls') {
+      if (provider && provider.type === 'hls') {
         (provider as HLSProvider).library = Hls;
       }
     });
@@ -86,10 +95,11 @@
     }
   }
 
-  const interval = setInterval(updateWatched, 15000);
+  const interval = setInterval(updateWatched, 15_000);
 
   onDestroy(() => {
     clearInterval(interval);
+    player?.destroy();
   });
 
   beforeNavigate(updateWatched);
@@ -145,15 +155,19 @@
       </ul>
     </div>
   </div>
-  {#if download}
+  {#if !$downloading[episode.id] && !$downloads[episode.id]}
     <!-- ffmpeg -i "link" -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 "output" -->
-    <a
-      href={download}
-      target="_blank"
-      rel="noreferrer"
+    <button
       class="btn-ghost btn absolute bottom-4 right-4"
+      on:click={() =>
+        downloading.add(
+          episode.id,
+          anime,
+          sources[selectedSource].quality,
+          episode.number
+        )}
     >
       <Fa icon={faDownload} size="1.5x" />
-    </a>
+    </button>
   {/if}
 </div>

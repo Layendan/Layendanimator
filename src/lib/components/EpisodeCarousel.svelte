@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { afterNavigate } from '$app/navigation';
   import type { Anime, Episode as EpisodeType } from '$lib/model/Anime';
   import Content from './Content.svelte';
   import EpisodeCard from './EpisodeCard.svelte';
@@ -11,11 +12,27 @@
   export let showImage = episodes.length <= imageLength;
   export let replaceState = false;
   export let type: 'sub' | 'dub' = 'sub';
+  export let focus: string | undefined = undefined;
+  export let href: string | undefined = undefined;
 
   $: nextEpisodeDate = new Date(
     Date.now() +
       new Date((anime.nextAiringEpisode?.timeUntilAiring ?? 0) * 1000).valueOf()
   );
+  $: useGrid = episodes.length > gridLength || !showImage;
+
+  afterNavigate(() => {
+    if (focus) {
+      const element = document.getElementById(focus);
+      if (element && !useGrid) {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center'
+        });
+      }
+    }
+  });
 </script>
 
 <Content>
@@ -26,13 +43,18 @@
       <slot name="title" />
     </h1>
   </slot>
-  <div
-    class="relative {episodes.length > gridLength || !showImage
-      ? 'useGrid'
-      : 'scroll'}"
-  >
+  <div class="relative {useGrid ? 'useGrid' : 'scroll'}">
     {#each episodes as episode (episode.id)}
-      <EpisodeCard {anime} {episode} {showImage} {replaceState} {type} />
+      <EpisodeCard
+        {anime}
+        {episode}
+        {showImage}
+        {replaceState}
+        {type}
+        href={href
+          ? `${href}/${episode.id}?dub=${type === 'dub'}`
+          : `/${anime.id}/${episode.id}?dub=${type === 'dub'}`}
+      />
     {:else}
       <div class="flex items-center justify-center">
         <p
@@ -71,7 +93,7 @@
       </div>
     {/if}
   </div>
-  {#if anime.nextAiringEpisode && (episodes.length > gridLength || !showImage)}
+  {#if anime.nextAiringEpisode && useGrid}
     <div class="divider" />
     <div class="card h-max self-center bg-base-300 p-8">
       <p class="text-sm text-base-content text-opacity-80">

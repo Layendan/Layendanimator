@@ -87,6 +87,15 @@ function createWatched() {
         return map;
       });
     },
+    removeEpisode: (key: string, episodeId: string) => {
+      update(map => {
+        map[key] = (map[key] ?? []).filter(
+          ({ episode: { id } }) => id !== episodeId
+        );
+        store?.set('watched', map);
+        return map;
+      });
+    },
     clear: () => {
       set({});
       store?.set('watched', {});

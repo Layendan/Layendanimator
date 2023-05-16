@@ -16,6 +16,7 @@
   export let showImage = true;
   export let replaceState = false;
   export let type: 'sub' | 'dub' = 'sub';
+  export let href = `/${anime.id}/${episode.id}?dub=${type === 'dub'}`;
 
   $: watchedObject = $watched[anime.id]?.find(
     ({ episode: { id } }) => id === episode.id
@@ -50,21 +51,28 @@
         break;
     }
   }
+
+  let imageLoaded = true;
 </script>
 
 <a
   in:fade|local
-  href="/{anime.id}/{episode.id}?dub={type === 'dub'}"
+  {href}
+  id={episode.id}
   class="group-one indicator flex w-[210px] flex-col gap-2 focus-visible:outline-transparent"
   data-sveltekit-replacestate={replaceState ? '' : 'off'}
+  on:contextmenu={e => {
+    console.log(e);
+  }}
 >
   {#if showImage}
     <div
       class="indicator card relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 bg-clip-content p-0 shadow-lg transition-transform duration-200 hover:-translate3d-y-1 group-one-focus-visible:-translate-y-1"
     >
       <img
-        src={episode.image ?? 'loading_failure.jpeg'}
+        src={imageLoaded ? episode.image : '/assets/loading_failure.jpeg'}
         alt={episode.title ?? `Episode ${episode.number}`}
+        on:error={() => (imageLoaded = false)}
         class="card-body relative m-0 aspect-video h-full w-full rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center p-0"
       />
       <div style:--anime-color={anime.color} class="relative mx-1 select-none">
@@ -87,11 +95,15 @@
   >
     <div class="flex h-full w-full flex-row items-center justify-between gap-1">
       <div
-        class="group flex w-full flex-col gap-1 text-base-content text-opacity-80 hover:text-opacity-100 group-one-focus-visible:text-opacity-100"
+        class="group flex w-full flex-col gap-1 text-base-content
+        {(watchedObject?.percentage ?? 0) >= 0.8
+          ? 'text-opacity-40'
+          : 'text-opacity-80'}
+        hover:text-opacity-100 group-one-focus-visible:text-opacity-100"
       >
         <h3
-          class="text-md line-clamp-2 whitespace-normal font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200
-      {anime.color
+          class="text-md line-clamp-2 whitespace-normal font-bold leading-tight transition-colors duration-200
+          {anime.color
             ? 'group-hover:text-[var(--anime-color)] group-one-focus-visible:text-[var(--anime-color)]'
             : 'group-hover:text-accent group-one-focus-visible:text-accent'}"
         >
@@ -130,7 +142,7 @@
     {/if}
   </div>
   {#if isNewEpisode && !showImage}
-    <div class="badge badge-error indicator-item">NEW</div>
+    <div class="badge badge-error indicator-item" />
   {/if}
 </a>
 

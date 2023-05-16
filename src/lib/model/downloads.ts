@@ -198,13 +198,14 @@ function createDownloading() {
 
         await preloadData(`/${anime.id}/${episodeId}`);
         const cache = episodeCache.get(episodeId);
+        console.log(cache);
         if (!cache) {
           throw new Error('Episode not found');
         }
-        let episodeUrl = cache.sources.find(s => s.quality === quality)?.url;
+        let episodeUrl = cache.sources?.find(s => s.quality === quality)?.url;
         if (!episodeUrl) {
-          episodeUrl = cache.sources[0].url;
-          quality = cache.sources[0].quality;
+          episodeUrl = cache.sources?.[0]?.url;
+          quality = cache.sources?.[0]?.quality;
         }
         if (!episodeUrl) {
           throw new Error('Source not found');
@@ -217,9 +218,8 @@ function createDownloading() {
           `${episodeId}.mp4`
         );
 
-        // -i {input} -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 {output}
+        // -i {input} -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 {output} -hwaccel auto -y
         const command = Command.sidecar('bin/ffmpeg', [
-          '-y',
           '-i',
           episodeUrl,
           '-bsf:a',
@@ -232,10 +232,11 @@ function createDownloading() {
           '50',
           path,
           '-hwaccel',
-          'auto'
+          'auto',
+          '-y'
         ]);
         const output = await command.execute();
-        console.log(output.stdout);
+        // stderr is used for logging since stdout is used for video data
         console.log(output.stderr);
         console.debug('Downloaded: ', path);
 

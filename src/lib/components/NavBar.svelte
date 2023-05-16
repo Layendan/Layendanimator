@@ -8,7 +8,7 @@
     faCog
   } from '@fortawesome/free-solid-svg-icons';
   import { searchHistory } from '$lib/model/searchHistory';
-  import { goto } from '$app/navigation';
+  import { goto, invalidateAll } from '$app/navigation';
   import { _toUpperCase } from '../../routes/search/+page';
 
   let value = '';
@@ -34,7 +34,10 @@
         </button>
         <button
           class="btn-ghost btn-sm btn"
-          on:click={() => window.location.reload()}
+          on:click={() => {
+            invalidateAll();
+            // window.location.reload();
+          }}
         >
           <Fa icon={faRotateRight} size="1.2x" />
         </button>

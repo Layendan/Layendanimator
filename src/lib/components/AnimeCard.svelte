@@ -9,12 +9,15 @@
   export let numUpdates = 0;
   export let deleteable = false;
   export let extra = '';
+  export let href = `/${anime.id}`;
+
+  let imageLoaded = true;
 </script>
 
 {#if anime.id}
   <a
     in:fade
-    href="/{anime.id}"
+    {href}
     class="group indicator w-[210px] flex-col gap-2 focus-visible:outline-transparent"
   >
     <div
@@ -34,9 +37,10 @@
         </button>
       {/if}
       <img
-        class="card-body relative m-0 h-full w-full rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center p-0"
-        src={anime.image ?? '/assets/loading_failure.jpeg'}
+        src={imageLoaded ? anime.image : '/assets/loading_failure.jpeg'}
         alt={anime.title.english ?? anime.title.romaji}
+        on:error={() => (imageLoaded = false)}
+        class="card-body relative m-0 h-full w-full rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center p-0"
       />
       {#if !!extra}
         <div

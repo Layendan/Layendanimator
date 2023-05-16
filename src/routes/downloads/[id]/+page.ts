@@ -1,7 +1,4 @@
 import type { PageLoad } from './$types';
-import type { Anime } from '$lib/model/Anime';
-import { source } from '$lib/model/source';
-import { animeCache } from '$lib/model/cache';
 import { get } from 'svelte/store';
 import { redirect, error } from '@sveltejs/kit';
 import { watched } from '$lib/model/watch';
@@ -9,40 +6,18 @@ import {
   subscriptions,
   unwatchedSubscriptions
 } from '$lib/model/subscriptions';
+import { downloadedAnimes } from '$lib/model/downloads';
 
-async function fetchAnime(_fetch: typeof fetch, id: string): Promise<Anime> {
-  const anime: Anime = await _fetch(
-    `https://consumet.app.jet-black.xyz/meta/anilist/info/${id}?provider=${
-      get(source).id
-    }`,
-    { signal: AbortSignal.timeout(15000) }
-  )
-    .then(r => {
-      if (r.status !== 200) {
-        console.error(r);
-        throw error(404, 'Anime not found');
-      }
-      return r.json();
-    })
-    .catch(e => {
-      console.error(e);
-      throw error(404, 'Anime not found');
-    });
+export const load = (async ({ params, url }) => {
+  const download = get(downloadedAnimes).find(
+    download => download.anime.id === params.id
+  );
 
-  if (anime) {
-    animeCache.set(id, anime);
-  } else {
+  if (!download) {
     throw error(404, 'Anime not found');
   }
 
-  return anime;
-}
-
-export const load = (async ({ fetch, depends, params, url }) => {
-  depends(params.id);
-
-  const anime =
-    animeCache.get(params.id) ?? (await fetchAnime(fetch, params.id));
+  const anime = download.anime;
 
   const temp = get(subscriptions).find(({ id }) => id === anime.id);
   const sub = temp
@@ -64,13 +39,16 @@ export const load = (async ({ fetch, depends, params, url }) => {
     const data = get(watched)[params.id];
     throw redirect(
       302,
-      `/${params.id}/${
+      `downloads/${params.id}/${
         data?.[data.length - 1].episode.id ?? anime.episodes[0].id
       }`
     );
   }
 
   return {
-    anime
+    anime,
+    episodes: anime.episodes.filter(episode =>
+      download.episodes.find(dEpisode => dEpisode.number === episode.number)
+    )
   };
 }) satisfies PageLoad;

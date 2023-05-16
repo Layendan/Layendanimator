@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { Store } from 'tauri-plugin-store-api';
+import { Store } from 'tauri-plugin-store-api';
 
 /**
  * IDK why but for some reason only this store breaks building, maybe because of settings?
@@ -37,8 +37,7 @@ function createSource() {
       await store?.set('source', source);
     },
     initialize: async () => {
-      const StoreImport = (await import('tauri-plugin-store-api')).Store;
-      store ??= new StoreImport('.settings.dat');
+      store ??= new Store('.settings.dat');
       const data = await store?.get<Provider>('source');
       if (data) {
         set(data);
@@ -77,8 +76,7 @@ function createProviders() {
       });
     },
     initialize: async () => {
-      const StoreImport = (await import('tauri-plugin-store-api')).Store;
-      store ??= new StoreImport('.settings.dat');
+      store ??= new Store('.settings.dat');
       const data = await store.get<Provider[]>('providers');
       if (data) {
         set(data);

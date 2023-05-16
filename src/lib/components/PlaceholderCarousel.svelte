@@ -1,10 +1,14 @@
 <script lang="ts">
+  import { fade } from 'svelte/transition';
+
   let scrollY = 0;
+  $: textOn = scrollY <= 0;
 </script>
 
 <svelte:window bind:scrollY />
 
 <header
+  in:fade
   class="relative -m-4 mb-4 motion-reduce:!translate3d-y-0"
   style="transform: translate3d(0, {scrollY <= 0 ? 0 : scrollY / 1.5}px, 0);"
 >
@@ -15,7 +19,11 @@
   />
   <div class="scrim pointer-events-none absolute inset-0" />
   <div
-    class="absolute inset-0 flex items-end bg-gradient-to-tr from-base-100/80"
+    class="absolute inset-0 flex items-end bg-gradient-to-tr from-base-100/80
+    {textOn
+      ? 'motion-safe:opacity-100'
+      : 'motion-safe:pointer-events-none motion-safe:!opacity-0'} 
+        transition-opacity duration-300 ease-in-out"
   >
     <div
       class="flex max-w-lg flex-1 flex-col justify-center gap-y-4 p-4 lg:max-w-xl"

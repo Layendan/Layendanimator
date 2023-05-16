@@ -1,9 +1,17 @@
-import { get, writable } from 'svelte/store';
-import type { Store } from 'tauri-plugin-store-api';
+import { writable } from 'svelte/store';
+import { Store } from 'tauri-plugin-store-api';
 import type { Anime, EpisodeData, Source } from './Anime';
-import { goto, preloadData } from '$app/navigation';
+import { invalidate, preloadData } from '$app/navigation';
 import { episodeCache } from './cache';
-import { page } from '$app/stores';
+import { removeFile } from '@tauri-apps/api/fs';
+import {
+  isPermissionGranted,
+  requestPermission,
+  sendNotification
+} from '@tauri-apps/api/notification';
+import { Command } from '@tauri-apps/api/shell';
+import { appDataDir, join } from '@tauri-apps/api/path';
+import Semaphore from './classes/Semaphore';
 
 let store: Store | undefined = undefined;
 
@@ -42,7 +50,6 @@ function createDownloads() {
       });
     },
     remove: async (episodeId: string) => {
-      const { removeFile } = await import('@tauri-apps/api/fs');
       update(downloads => {
         const data = downloads[episodeId];
         removeFile(data.episode.sources[0].url);
@@ -54,7 +61,6 @@ function createDownloads() {
       });
     },
     clear: async () => {
-      const { removeFile } = await import('@tauri-apps/api/fs');
       update(downloads => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         for (const [_episodeId, val] of Object.entries(downloads)) {
@@ -67,8 +73,7 @@ function createDownloads() {
       });
     },
     initialize: async () => {
-      const StoreImport = (await import('tauri-plugin-store-api')).Store;
-      store ??= new StoreImport('.downloads.dat');
+      store ??= new Store('.downloads.dat');
       const data = await store.get<typeof dict>('downloads');
       if (data) {
         set(data);
@@ -115,6 +120,7 @@ function createDownloadedAnimes() {
           }
         }
         store?.set('animes', downloads);
+        invalidate(`/downloads/${anime.id}`);
         return downloads;
       });
     },
@@ -133,13 +139,11 @@ function createDownloadedAnimes() {
           return downloads;
         }
         downloads[index].episodes.splice(episodeIndex, 1);
-        if (downloads[index].episodes.length - 1 <= 0) {
+        if (downloads[index].episodes.length <= 0) {
           downloads.splice(index, 1);
-          if (get(page).url.pathname === `/downloads/${animeId}`) {
-            goto('/library');
-          }
         }
         store?.set('animes', downloads);
+        invalidate(`/downloads/${animeId}`);
         return downloads;
       });
     },
@@ -148,8 +152,7 @@ function createDownloadedAnimes() {
       store?.set('animes', []);
     },
     initialize: async () => {
-      const StoreImport = (await import('tauri-plugin-store-api')).Store;
-      store ??= new StoreImport('.downloads.dat');
+      store ??= new Store('.downloads.dat');
       const data = await store.get<Download[]>('animes');
       if (data) {
         set(data);
@@ -162,9 +165,7 @@ function createDownloadedAnimes() {
 
 export const downloadedAnimes = createDownloadedAnimes();
 
-async function sendNotification(title: string, episode: number) {
-  const { isPermissionGranted, requestPermission, sendNotification } =
-    await import('@tauri-apps/api/notification');
+async function sendCustomNotification(title: string, episode: number) {
   if (await isPermissionGranted()) {
     sendNotification({
       title: `Downloaded episode ${episode} of ${title}`
@@ -179,6 +180,7 @@ async function sendNotification(title: string, episode: number) {
 }
 
 function createDownloading() {
+  const semaphore = new Semaphore(5);
   const dict: {
     [key: string]: { anime: Anime; quality: string; progress: number };
   } = {};
@@ -205,65 +207,65 @@ function createDownloading() {
           return downloads;
         });
 
-        await preloadData(`/${anime.id}/${episodeId}`);
-        const cache = episodeCache.get(episodeId);
-        console.log(cache);
-        if (!cache) {
-          throw new Error('Episode not found');
-        }
-        let episodeUrl = cache.sources?.find(s => s.quality === quality)?.url;
-        if (!episodeUrl) {
-          episodeUrl = cache.sources?.[0]?.url;
-          quality = cache.sources?.[0]?.quality;
-        }
-        if (!episodeUrl) {
-          throw new Error('Source not found');
-        }
-        const { Command } = await import('@tauri-apps/api/shell');
-        const { appDataDir, join } = await import('@tauri-apps/api/path');
-        const path = await join(
-          await appDataDir(),
-          'downloads',
-          `${episodeId}.mp4`
-        );
+        await semaphore.callFunction(async () => {
+          await preloadData(`/${anime.id}/${episodeId}`);
+          const cache = episodeCache.get(episodeId);
+          console.log(cache);
+          if (!cache) {
+            throw new Error('Episode not found');
+          }
+          let episodeUrl = cache.sources?.find(s => s.quality === quality)?.url;
+          if (!episodeUrl) {
+            episodeUrl = cache.sources?.[0]?.url;
+            quality = cache.sources?.[0]?.quality;
+          }
+          if (!episodeUrl) {
+            throw new Error('Source not found');
+          }
+          const path = await join(
+            await appDataDir(),
+            'downloads',
+            `${episodeId}.mp4`
+          );
 
-        // -i {input} -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 {output} -hwaccel auto -y
-        const command = Command.sidecar('bin/ffmpeg', [
-          '-i',
-          episodeUrl,
-          '-bsf:a',
-          'aac_adtstoasc',
-          '-vcodec',
-          'copy',
-          '-c',
-          'copy',
-          '-crf',
-          '50',
-          path,
-          '-hwaccel',
-          'auto',
-          '-y'
-        ]);
-        const output = await command.execute();
-        // stderr is used for logging since stdout is used for video data
-        console.log(output.stderr);
-        console.debug('Downloaded: ', path);
+          // -i {input} -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 {output} -hwaccel auto -y
+          const command = Command.sidecar('bin/ffmpeg', [
+            '-i',
+            episodeUrl,
+            '-bsf:a',
+            'aac_adtstoasc',
+            '-vcodec',
+            'copy',
+            '-c',
+            'copy',
+            '-crf',
+            '50',
+            path,
+            '-hwaccel',
+            'auto',
+            '-y'
+          ]);
+          const output = await command.execute();
+          // stderr is used for logging since stdout is used for video data
+          console.log(output.stderr);
+          console.debug('Downloaded: ', path);
 
-        if (output.code !== 0) {
-          throw new Error('Download failed');
-        }
+          if (output.code !== 0) {
+            throw new Error('Download failed');
+          }
 
-        downloads.add(
-          episodeId,
-          { url: path, quality, isM3U8: false },
-          anime,
-          episodeNumber
-        );
+          downloads.add(
+            episodeId,
+            { url: path, quality, isM3U8: false },
+            anime,
+            episodeNumber
+          );
 
-        sendNotification(
-          anime.title.english ?? anime.title.romaji,
-          episodeNumber
-        );
+          sendCustomNotification(
+            anime.title.english ?? anime.title.romaji,
+            episodeNumber
+          );
+        });
       } catch (e) {
         console.error(e);
       } finally {

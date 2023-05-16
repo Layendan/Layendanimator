@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { Store } from 'tauri-plugin-store-api';
+import { Store } from 'tauri-plugin-store-api';
 
 let store: Store | undefined = undefined;
 
@@ -31,8 +31,7 @@ function createConnections() {
       store?.set('connections', {});
     },
     initialize: async () => {
-      const StoreImport = (await import('tauri-plugin-store-api')).Store;
-      store ??= new StoreImport('.connections.dat');
+      store ??= new Store('.connections.dat');
       const data = await store.get<{ [key: string]: string }>('connections');
       if (data) {
         set(data);

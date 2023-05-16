@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { Store } from 'tauri-plugin-store-api';
+import { Store } from 'tauri-plugin-store-api';
 
 let store: Store | undefined = undefined;
 
@@ -31,8 +31,7 @@ function createSettings() {
       store?.set('settings', defaultSettings);
     },
     initialize: async () => {
-      const StoreImport = (await import('tauri-plugin-store-api')).Store;
-      store ??= new StoreImport('.settings.dat');
+      store ??= new Store('.settings.dat');
       const data = await store.get<SettingsType>('settings');
       if (data) {
         set(data);

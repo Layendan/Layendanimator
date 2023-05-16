@@ -1,13 +1,13 @@
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { get } from 'svelte/store';
 import type { PageLoad } from './$types';
 import type { EpisodeData } from '$lib/model/Anime';
 import { downloadedAnimes, downloads } from '$lib/model/downloads';
+import { convertFileSrc } from '@tauri-apps/api/tauri';
 
 async function getDownload(id: string) {
   const download = get(downloads)[id];
   if (download) {
-    const { convertFileSrc } = await import('@tauri-apps/api/tauri');
     return {
       ...download.episode,
       sources: download.episode.sources.map(source => ({
@@ -20,13 +20,15 @@ async function getDownload(id: string) {
   }
 }
 
-export const load = (async ({ params }) => {
+export const load = (async ({ depends, params }) => {
+  depends(`/downloads/${params.id}`);
+
   const download = get(downloadedAnimes).find(
     download => download.anime.id === params.id
   );
 
   if (!download) {
-    throw error(404, 'Anime not found');
+    throw redirect(300, '/library');
   }
 
   const anime = download.anime;

@@ -10,9 +10,16 @@
   import { connections } from '$lib/model/connections';
   import { downloads } from '$lib/model/downloads';
   import { providers, source } from '$lib/model/source';
-  import { getVersion, getArch, getOS } from '$lib/model/info';
+  import { getAppVersion, getArch, getOS } from '$lib/model/info';
   import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
   import Fa from 'svelte-fa';
+  import { open } from '@tauri-apps/api/shell';
+  import { join, appDataDir } from '@tauri-apps/api/path';
+  import {
+    isPermissionGranted,
+    requestPermission,
+    sendNotification
+  } from '@tauri-apps/api/notification';
 
   const anilistClientId = '4602';
 </script>
@@ -142,16 +149,12 @@
       <button
         class="btn-outline btn-accent btn w-full"
         on:click={async () => {
-          const { open } = await import('@tauri-apps/api/shell');
-          const { join, appDataDir } = await import('@tauri-apps/api/path');
           await open(await join(await appDataDir(), 'downloads'));
         }}>Open Downloads Folder</button
       >
       <button
         class="btn-outline btn-accent btn w-full"
         on:click={async () => {
-          const { isPermissionGranted, requestPermission, sendNotification } =
-            await import('@tauri-apps/api/notification');
           if (await isPermissionGranted()) {
             sendNotification({
               title: 'Test Notification',
@@ -181,7 +184,7 @@
     <div class="ml-2">
       <p>
         <b>App Version:</b>
-        {#await getVersion() then version}
+        {#await getAppVersion() then version}
           {version}
         {/await}
       </p>

@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { Store } from 'tauri-plugin-store-api';
+import { Store } from 'tauri-plugin-store-api';
 import type { Anime, Episode } from './Anime';
 
 let store: Store | undefined = undefined;
@@ -34,8 +34,7 @@ function createWatching() {
       });
     },
     initialize: async () => {
-      const StoreImport = (await import('tauri-plugin-store-api')).Store;
-      store ??= new StoreImport('.subscriptions.dat');
+      store ??= new Store('.subscriptions.dat');
       const data = await store.get<{ anime: Anime; episode: number }[]>(
         'watching'
       );
@@ -101,8 +100,7 @@ function createWatched() {
       store?.set('watched', {});
     },
     initialize: async () => {
-      const StoreImport = (await import('tauri-plugin-store-api')).Store;
-      store ??= new StoreImport('.subscriptions.dat');
+      store ??= new Store('.subscriptions.dat');
       const data = await store.get<typeof dict>('watched');
       if (data) {
         set(data);

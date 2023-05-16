@@ -133,8 +133,8 @@
         {#if data.anime.rating}
           <div
             class="badge badge-outline"
-            class:badge-error={data.anime.rating <= 40}
-            class:badge-warning={data.anime.rating > 40 &&
+            class:badge-error={data.anime.rating <= 60}
+            class:badge-warning={data.anime.rating > 60 &&
               data.anime.rating <= 75}
             class:badge-success={data.anime.rating > 75}
           >

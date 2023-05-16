@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
 import { get } from 'svelte/store';
-import { redirect, error } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import { watched } from '$lib/model/watch';
 import {
   subscriptions,
@@ -8,13 +8,15 @@ import {
 } from '$lib/model/subscriptions';
 import { downloadedAnimes } from '$lib/model/downloads';
 
-export const load = (async ({ params, url }) => {
+export const load = (async ({ depends, params, url }) => {
+  depends(`/downloads/${params.id}`);
+
   const download = get(downloadedAnimes).find(
     download => download.anime.id === params.id
   );
 
   if (!download) {
-    throw error(404, 'Anime not found');
+    throw redirect(300, '/library');
   }
 
   const anime = download.anime;

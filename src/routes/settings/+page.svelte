@@ -10,7 +10,6 @@
   import { connections } from '$lib/model/connections';
   import { downloads } from '$lib/model/downloads';
   import { providers, source } from '$lib/model/source';
-  import { getAppVersion, getArch, getOS } from '$lib/model/info';
   import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
   import Fa from 'svelte-fa';
   import { open } from '@tauri-apps/api/shell';
@@ -20,6 +19,8 @@
     requestPermission,
     sendNotification
   } from '@tauri-apps/api/notification';
+  import { getVersion } from '@tauri-apps/api/app';
+  import { arch, type } from '@tauri-apps/api/os';
 
   const anilistClientId = '4602';
 </script>
@@ -184,21 +185,21 @@
     <div class="ml-2">
       <p>
         <b>App Version:</b>
-        {#await getAppVersion() then version}
+        {#await getVersion() then version}
           {version}
         {/await}
       </p>
       <br />
       <p>
         <b>Operating System:</b>
-        {#await getOS() then os}
+        {#await type() then os}
           {os}
         {/await}
       </p>
       <br />
       <p>
         <b>System Archetype:</b>
-        {#await getArch() then arch}
+        {#await arch() then arch}
           {arch}
         {/await}
       </p>

@@ -16,7 +16,6 @@
   import Hls from 'hls.js';
   import { downloading, downloads } from '$lib/model/downloads';
   import { settings } from '$lib/model/settings';
-  import { appWindow } from '@tauri-apps/api/window';
 
   export let sources: {
     url: string;
@@ -75,6 +74,7 @@
     const os = await getOS();
     if (os !== 'Darwin' && os !== 'Unknown') {
       player?.addEventListener('fullscreen-change', async event => {
+        const { appWindow } = await import('@tauri-apps/api/window');
         const isFullscreen = event.detail;
         appWindow?.setFullscreen(isFullscreen);
       });

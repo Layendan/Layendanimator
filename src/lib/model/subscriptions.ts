@@ -1,10 +1,5 @@
 import { writable } from 'svelte/store';
-import { Store } from 'tauri-plugin-store-api';
-import {
-  isPermissionGranted,
-  requestPermission,
-  sendNotification
-} from '@tauri-apps/api/notification';
+import type { Store } from 'tauri-plugin-store-api';
 import type { Anime } from './Anime';
 
 let store: Store | undefined = undefined;
@@ -33,7 +28,8 @@ function createSubscriptions() {
       });
     },
     initialize: async () => {
-      store ??= new Store('.subscriptions.dat');
+      const StoreImport = (await import('tauri-plugin-store-api')).Store;
+      store ??= new StoreImport('.subscriptions.dat');
       const data = await store.get<Anime[]>('subscriptions');
       if (data) {
         set(data);
@@ -46,7 +42,9 @@ function createSubscriptions() {
 
 export const subscriptions = createSubscriptions();
 
-async function sendCustomNotification(title: string, episodes: number) {
+async function sendNotification(title: string, episodes: number) {
+  const { isPermissionGranted, requestPermission, sendNotification } =
+    await import('@tauri-apps/api/notification');
   if (await isPermissionGranted()) {
     sendNotification({
       title: `New Episodes for ${title}`,
@@ -86,7 +84,7 @@ function createUnwatchedSubscriptions() {
         ];
         store?.set('activeSubscriptions', result);
         store?.save();
-        sendCustomNotification(
+        sendNotification(
           anime.anime.title.english ?? anime.anime.title.native,
           anime.newEpisodes
         );
@@ -103,7 +101,8 @@ function createUnwatchedSubscriptions() {
       });
     },
     initialize: async () => {
-      store ??= new Store('.subscriptions.dat');
+      const StoreImport = (await import('tauri-plugin-store-api')).Store;
+      store ??= new StoreImport('.subscriptions.dat');
       const data = await store.get<{ anime: Anime; newEpisodes: number }[]>(
         'activeSubscriptions'
       );

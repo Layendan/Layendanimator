@@ -3,9 +3,9 @@ import { get } from 'svelte/store';
 import type { PageLoad } from './$types';
 import type { EpisodeData } from '$lib/model/Anime';
 import { downloadedAnimes, downloads } from '$lib/model/downloads';
-import { convertFileSrc } from '@tauri-apps/api/tauri';
 
 async function getDownload(id: string) {
+  const { convertFileSrc } = await import('@tauri-apps/api/tauri');
   const download = get(downloads)[id];
   if (download) {
     return {

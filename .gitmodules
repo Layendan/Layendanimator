@@ -1,0 +1,5 @@
+[submodule "FFmpeg"]
+	path = FFmpeg
+	url = https://github.com/FFmpeg/FFmpeg
+[submodule "FFmpeg/"]
+	url = https://github.com/FFmpeg/FFmpeg/tree/release/6.0

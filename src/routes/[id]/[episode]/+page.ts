@@ -5,7 +5,6 @@ import { get } from 'svelte/store';
 import type { PageLoad } from './$types';
 import type { Anime, EpisodeData } from '$lib/model/Anime';
 import { downloads } from '$lib/model/downloads';
-import { convertFileSrc } from '@tauri-apps/api/tauri';
 
 async function fetchAnime(id: string, _fetch: typeof fetch) {
   const anime = (await _fetch(
@@ -67,6 +66,7 @@ async function fetchEpisode(id: string, isDub: boolean, _fetch: typeof fetch) {
 async function getDownload(id: string) {
   const download = get(downloads)[id];
   if (download) {
+    const { convertFileSrc } = await import('@tauri-apps/api/tauri');
     return {
       ...download.episode,
       sources: download.episode.sources.map(source => ({

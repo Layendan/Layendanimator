@@ -20,7 +20,6 @@
   import { animeCache } from '$lib/model/cache';
   import { connections } from '$lib/model/connections';
   import { downloadedAnimes, downloads } from '$lib/model/downloads';
-  import { listen } from '@tauri-apps/api/event';
 
   NProgress.configure({
     // Full list: https://github.com/rstacruz/nprogress#configuration
@@ -58,7 +57,8 @@
       downloadedAnimes.initialize()
     ]);
 
-    listen<string>('scheme-request-received', e => {
+    const { listen } = await import('@tauri-apps/api/event');
+    listen?.<string>('scheme-request-received', e => {
       if (e.payload) {
         goto(e.payload?.replace('layendanimator://', '/') ?? '/', {
           replaceState: true

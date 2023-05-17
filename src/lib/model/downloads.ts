@@ -1,16 +1,8 @@
 import { writable } from 'svelte/store';
-import { Store } from 'tauri-plugin-store-api';
+import type { Store } from 'tauri-plugin-store-api';
 import type { Anime, EpisodeData, Source } from './Anime';
 import { invalidate, preloadData } from '$app/navigation';
 import { episodeCache } from './cache';
-import { removeFile } from '@tauri-apps/api/fs';
-import {
-  isPermissionGranted,
-  requestPermission,
-  sendNotification
-} from '@tauri-apps/api/notification';
-import { Command } from '@tauri-apps/api/shell';
-import { appDataDir, join } from '@tauri-apps/api/path';
 import Semaphore from './classes/Semaphore';
 
 let store: Store | undefined = undefined;
@@ -50,6 +42,7 @@ function createDownloads() {
       });
     },
     remove: async (episodeId: string) => {
+      const { removeFile } = await import('@tauri-apps/api/fs');
       update(downloads => {
         const data = downloads[episodeId];
         removeFile(data.episode.sources[0].url);
@@ -61,6 +54,7 @@ function createDownloads() {
       });
     },
     clear: async () => {
+      const { removeFile } = await import('@tauri-apps/api/fs');
       update(downloads => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         for (const [_episodeId, val] of Object.entries(downloads)) {
@@ -73,7 +67,8 @@ function createDownloads() {
       });
     },
     initialize: async () => {
-      store ??= new Store('.downloads.dat');
+      const StoreImport = (await import('tauri-plugin-store-api')).Store;
+      store ??= new StoreImport('.downloads.dat');
       const data = await store.get<typeof dict>('downloads');
       if (data) {
         set(data);
@@ -152,7 +147,8 @@ function createDownloadedAnimes() {
       store?.set('animes', []);
     },
     initialize: async () => {
-      store ??= new Store('.downloads.dat');
+      const StoreImport = (await import('tauri-plugin-store-api')).Store;
+      store ??= new StoreImport('.downloads.dat');
       const data = await store.get<Download[]>('animes');
       if (data) {
         set(data);
@@ -165,7 +161,9 @@ function createDownloadedAnimes() {
 
 export const downloadedAnimes = createDownloadedAnimes();
 
-async function sendCustomNotification(title: string, episode: number) {
+async function sendNotification(title: string, episode: number) {
+  const { isPermissionGranted, requestPermission, sendNotification } =
+    await import('@tauri-apps/api/notification');
   if (await isPermissionGranted()) {
     sendNotification({
       title: `Downloaded episode ${episode} of ${title}`
@@ -222,6 +220,8 @@ function createDownloading() {
           if (!episodeUrl) {
             throw new Error('Source not found');
           }
+          const { Command } = await import('@tauri-apps/api/shell');
+          const { appDataDir, join } = await import('@tauri-apps/api/path');
           const path = await join(
             await appDataDir(),
             'downloads',
@@ -261,7 +261,7 @@ function createDownloading() {
             episodeNumber
           );
 
-          sendCustomNotification(
+          sendNotification(
             anime.title.english ?? anime.title.romaji,
             episodeNumber
           );

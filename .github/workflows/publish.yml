@@ -52,6 +52,9 @@ jobs:
       - name: Install frontend dependencies
         run: yarn svelte:build
 
+      - name: Download FFmpeg submodule
+        run: git submodule update --init --recursive
+
       - name: Compile FFmpeg
         run: yarn ffmpeg:build
 

@@ -1,7 +1,7 @@
 {
 	"$schema": "../node_modules/@tauri-apps/cli/schema.json",
 	"build": {
-		"beforeBuildCommand": "yarn package && vite build",
+		"beforeBuildCommand": "vite build",
 		"beforeDevCommand": "vite dev",
 		"devPath": "http://localhost:5173",
 		"distDir": "../build"

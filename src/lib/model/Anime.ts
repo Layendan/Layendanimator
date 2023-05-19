@@ -26,9 +26,9 @@ export type Anime = {
   };
   episodeNumber: number | null;
   malId: number;
-  synonyms: [string];
-  isLicensed: true;
-  isAdult: true;
+  synonyms: string[];
+  isLicensed: boolean;
+  isAdult: boolean;
   countryOfOrigin: string;
   trailer: {
     id: string;
@@ -60,15 +60,19 @@ export type Anime = {
   totalEpisodes: number;
   rating: number;
   duration: number;
-  genres: [string];
+  genres: string[];
   season: 'WINTER' | 'SPRING' | 'SUMMER' | 'FALL';
-  studios: [string];
+  studios: string[];
   subOrDub: 'sub' | 'dub';
   type: Type;
   recommendations: Anime[];
   characters: Character[];
-  relations: Anime[];
+  relations: Relations[];
   episodes: Episode[];
+};
+
+export type Relations = Anime & {
+  relationType: 'ADAPTATION' | 'PREQUEL' | 'SEQUEL' | 'PARENT' | 'SIDE_STORY';
 };
 
 export type Character = {
@@ -104,4 +108,15 @@ export type Episode = {
   number: number;
   image: string;
   airDate: string;
+};
+
+export type EpisodeData = {
+  sources: Source[];
+  download: string | undefined;
+};
+
+export type Source = {
+  url: string;
+  isM3U8: boolean;
+  quality: string;
 };

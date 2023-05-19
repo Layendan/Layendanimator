@@ -3,7 +3,8 @@ import { source } from '$lib/model/source';
 import { animeCache, episodeCache } from '$lib/model/cache';
 import { get } from 'svelte/store';
 import type { PageLoad } from './$types';
-import type { Anime } from '$lib/model/Anime';
+import type { Anime, EpisodeData } from '$lib/model/Anime';
+import { downloads } from '$lib/model/downloads';
 
 async function fetchAnime(id: string, _fetch: typeof fetch) {
   const anime = (await _fetch(
@@ -11,7 +12,18 @@ async function fetchAnime(id: string, _fetch: typeof fetch) {
       get(source).id
     }`,
     { signal: AbortSignal.timeout(15000) }
-  ).then(r => r.json())) as Anime;
+  )
+    .then(r => {
+      if (r.status !== 200) {
+        console.error(r);
+        throw error(404, 'Anime not found');
+      }
+      return r.json();
+    })
+    .catch(e => {
+      console.error(e);
+      throw error(404, 'Anime not found');
+    })) as Anime;
 
   if (anime) {
     animeCache.set(id, anime);
@@ -20,50 +32,72 @@ async function fetchAnime(id: string, _fetch: typeof fetch) {
   return anime;
 }
 
-async function fetchEpisode(id: string, _fetch: typeof fetch) {
-  const episode = (await _fetch(
-    `https://api.consumet.org/meta/anilist/watch/${id}?provider=${
-      get(source).id
-    }`
-  ).then(r => r.json())) as {
-    sources: {
-      url: string;
-      isM3U8: boolean;
-      quality: string;
-    }[];
-    download: string;
-  };
+async function fetchEpisode(id: string, isDub: boolean, _fetch: typeof fetch) {
+  const episode: EpisodeData = await _fetch(
+    isDub
+      ? `https://consumet.app.jet-black.xyz/meta/anilist/watch/${id}?provider=${
+          get(source).id
+        }&dub=true`
+      : `https://consumet.app.jet-black.xyz/meta/anilist/watch/${id}?provider=${
+          get(source).id
+        }`
+  )
+    .then(r => {
+      if (r.status !== 200) {
+        console.error(r);
+        throw error(404, 'Episode sources not found');
+      }
+      return r.json();
+    })
+    .catch(e => {
+      console.error(e);
+      throw error(404, 'Episode sources not found');
+    });
 
   if (episode) {
     episodeCache.set(id, episode);
+  } else {
+    throw error(404, 'Episode sources not found');
   }
 
   return episode;
 }
 
-export const load = (async ({ fetch, depends, params }) => {
+async function getDownload(id: string) {
+  const download = get(downloads)[id];
+  if (download) {
+    const { convertFileSrc } = await import('@tauri-apps/api/tauri');
+    return {
+      ...download.episode,
+      sources: download.episode.sources.map(source => ({
+        ...source,
+        url: convertFileSrc(source.url)
+      }))
+    } as EpisodeData;
+  } else {
+    return null;
+  }
+}
+
+export const load = (async ({ fetch, depends, params, url }) => {
   depends(params.episode);
+
+  // TODO: I have no clue where dub went on consumet api
+  const isDub = url.searchParams.get('dub') === 'true';
 
   const anime =
     animeCache.get(params.id) ?? (await fetchAnime(params.id, fetch));
   const episode =
-    episodeCache.get(params.episode) ??
-    (await fetchEpisode(params.episode, fetch));
-
-  // TODO: Create store for episodes
-  const episodes: Record<
-    string,
-    {
-      watched: number;
-      duration: number;
-      lastWatched: string;
-    }
-  > = {};
+    (await getDownload(params.episode)) ??
+    (isDub
+      ? episodeCache.get(`${params.episode}/dub`)
+      : episodeCache.get(params.episode)) ??
+    (await fetchEpisode(params.episode, isDub, fetch));
 
   const episodeObject = anime.episodes.find(item => item.id === params.episode);
 
   if (!episodeObject) {
-    throw error(404, 'Episode not found');
+    throw error(404, 'Episode data not found');
   }
 
   return {
@@ -74,7 +108,6 @@ export const load = (async ({ fetch, depends, params }) => {
     nextEpisode:
       anime.episodes[
         anime.episodes.findIndex(item => item.id === params.episode) + 1
-      ],
-    store: episodes
+      ]
   };
 }) satisfies PageLoad;

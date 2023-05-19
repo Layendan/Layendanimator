@@ -8,14 +8,14 @@
     faCog
   } from '@fortawesome/free-solid-svg-icons';
   import { searchHistory } from '$lib/model/searchHistory';
-  import { goto } from '$app/navigation';
+  import { goto, invalidateAll } from '$app/navigation';
   import { _toUpperCase } from '../../routes/search/+page';
 
   let value = '';
 </script>
 
 <div
-  class="navbar sticky top-0 left-0 right-0 z-50 rounded-b-md bg-base-100 bg-opacity-80 backdrop-blur-xl backdrop-filter"
+  class="navbar sticky left-0 right-0 top-0 z-50 bg-base-100 bg-opacity-80 backdrop-blur-xl backdrop-filter"
 >
   <div class="navbar-start flex gap-2">
     {#if window?.__TAURI__}
@@ -34,7 +34,10 @@
         </button>
         <button
           class="btn-ghost btn-sm btn"
-          on:click={() => window.location.reload()}
+          on:click={() => {
+            invalidateAll();
+            // window.location.reload();
+          }}
         >
           <Fa icon={faRotateRight} size="1.2x" />
         </button>
@@ -60,7 +63,7 @@
       />
     </form>
   </div>
-  <div class="absolute right-2 top-2 bottom-2 flex gap-2">
+  <div class="absolute bottom-2 right-2 top-2 flex gap-2">
     <a href="/library" class="btn-ghost btn">
       <Fa icon={faBookmark} size="1.2x" />
     </a>

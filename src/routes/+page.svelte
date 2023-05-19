@@ -10,11 +10,14 @@
   import { watching } from '$lib/model/watch';
   import { onDestroy } from 'svelte';
   import type { PageData } from './$types';
+  import PlaceholderAnimeCard from '$lib/components/PlaceholderAnimeCard.svelte';
+  import PlaceholderCarousel from '$lib/components/PlaceholderCarousel.svelte';
 
   export let data: PageData;
 
   const MINUTE = 1000 * 60;
   const interval = setInterval(invalidate, MINUTE * 5);
+  const placeholderNum = 10;
 
   onDestroy(() => {
     clearInterval(interval);
@@ -23,24 +26,36 @@
 
 <main class="relative w-full">
   <!-- Heading carousel -->
-  <Carousel animes={data.trending.filter(a => a.cover !== a.image)} />
+  {#await data.trending.data}
+    <PlaceholderCarousel />
+  {:then trending}
+    <Carousel animes={trending.filter(a => a.cover !== a.image)} />
+  {/await}
 
   <!-- Recent episode carouse -->
   <ScrollCarousel>
     <svelte:fragment slot="title">Recent Episodes</svelte:fragment>
 
     <svelte:fragment slot="content">
-      {#each data.recent as anime (`${anime.id}/${anime.episodeNumber}`)}
-        <AnimeCard {anime} />
-      {:else}
-        <div class="flex items-center justify-center">
-          <p
-            class="text-xl font-semibold text-center text-base-content text-opacity-70"
-          >
-            No Recent Episodes Found
-          </p>
-        </div>
-      {/each}
+      {#await data.recent.data}
+        {#each new Array(placeholderNum) as _}
+          <PlaceholderAnimeCard />
+        {/each}
+      {:then recent}
+        {#each recent as anime (`${anime.id}/${anime.episodeNumber}`)}
+          <AnimeCard {anime} extra={`Episode ${anime.episodeNumber}`} />
+        {:else}
+          <div class="flex items-center justify-center">
+            <p
+              class="text-xl font-semibold text-center text-base-content text-opacity-70"
+            >
+              No Recent Episodes Found
+            </p>
+          </div>
+        {/each}
+      {:catch e}
+        Error Loading Recent Episodes: {e}
+      {/await}
     </svelte:fragment>
   </ScrollCarousel>
 
@@ -51,8 +66,8 @@
       <svelte:fragment slot="title">Continue Watching</svelte:fragment>
 
       <svelte:fragment slot="content">
-        {#each $watching as { anime, episode } (anime.id)}
-          <AnimeCard anime={{ ...anime, episodeNumber: episode }} deleteable />
+        {#each $watching.slice(0, 10) as { anime, episode } (anime.id)}
+          <AnimeCard {anime} extra={`Episode ${episode}`} deleteable />
         {/each}
       </svelte:fragment>
     </ScrollCarousel>
@@ -67,7 +82,7 @@
       {#each $unwatchedSubscriptions as { anime, newEpisodes } (anime.id)}
         <AnimeCard {anime} bind:numUpdates={newEpisodes} />
       {/each}
-      {#if $unwatchedSubscriptions.length > 0}
+      {#if $unwatchedSubscriptions.length > 0 && $subscriptions.length > 0}
         <div class="divider divider-horizontal" />
       {/if}
       {#each $subscriptions as anime (anime.id)}
@@ -89,40 +104,56 @@
   <div class="divider" />
 
   <ScrollCarousel>
-    <svelte:fragment slot="title">Popular Animes</svelte:fragment>
+    <svelte:fragment slot="title">Trending Animes</svelte:fragment>
 
     <svelte:fragment slot="content">
-      {#each data.popular as anime (anime.id)}
-        <AnimeCard {anime} />
-      {:else}
-        <div class="flex items-center justify-center">
-          <p
-            class="text-xl font-semibold text-center text-base-content text-opacity-70"
-          >
-            No Popular Animes Found
-          </p>
-        </div>
-      {/each}
+      {#await data.trending.data}
+        {#each new Array(placeholderNum) as _}
+          <PlaceholderAnimeCard />
+        {/each}
+      {:then trending}
+        {#each trending as anime (anime.id)}
+          <AnimeCard {anime} />
+        {:else}
+          <div class="flex items-center justify-center">
+            <p
+              class="text-xl font-semibold text-center text-base-content text-opacity-70"
+            >
+              No Trending Animes Found
+            </p>
+          </div>
+        {/each}
+      {:catch e}
+        Error Loading Trending Anime - {e}
+      {/await}
     </svelte:fragment>
   </ScrollCarousel>
 
   <div class="divider" />
 
   <ScrollCarousel>
-    <svelte:fragment slot="title">Trending Animes</svelte:fragment>
+    <svelte:fragment slot="title">Popular Animes</svelte:fragment>
 
     <svelte:fragment slot="content">
-      {#each data.trending as anime (anime.id)}
-        <AnimeCard {anime} />
-      {:else}
-        <div class="flex items-center justify-center">
-          <p
-            class="text-xl font-semibold text-center text-base-content text-opacity-70"
-          >
-            No Trending Animes Found
-          </p>
-        </div>
-      {/each}
+      {#await data.popular.data}
+        {#each new Array(placeholderNum) as _}
+          <PlaceholderAnimeCard />
+        {/each}
+      {:then popular}
+        {#each popular as anime (anime.id)}
+          <AnimeCard {anime} />
+        {:else}
+          <div class="flex items-center justify-center">
+            <p
+              class="text-xl font-semibold text-center text-base-content text-opacity-70"
+            >
+              No Popular Animes Found
+            </p>
+          </div>
+        {/each}
+      {:catch e}
+        Error Loading Popular Anime - {e}
+      {/await}
     </svelte:fragment>
   </ScrollCarousel>
 </main>

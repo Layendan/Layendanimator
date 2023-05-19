@@ -8,15 +8,17 @@
     faPlayCircle
   } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
+  import { carouselPage } from '$lib/model/cache';
+  import { fade } from 'svelte/transition';
 
   export let animes: Anime[];
   export let fadeSpeed = 300;
   export let transitionTime = 10_000;
-  export let animeIdx = 0;
+  export let animeIdx = $carouselPage;
   export let display: 'rails' | 'arrows' = 'arrows';
   let tempId = animeIdx;
 
-  let fade = false;
+  let doFade = false;
   let interval = setInterval(next, transitionTime);
 
   async function next() {
@@ -32,10 +34,10 @@
     interval = setInterval(next, transitionTime);
     tempId = idx < 0 ? animes.length - 1 : idx % animes.length;
     new Image().src = animes[tempId].cover; // preload image
-    fade = true;
+    doFade = true;
     await new Promise(resolve => setTimeout(resolve, fadeSpeed));
     animeIdx = tempId;
-    fade = false;
+    doFade = false;
   }
 
   document.addEventListener('visibilitychange', () => {
@@ -50,6 +52,7 @@
   $: preloadData(`/${animes[animeIdx].id}`);
 
   onDestroy(() => {
+    $carouselPage = animeIdx;
     clearInterval(interval);
   });
 
@@ -60,13 +63,14 @@
 <svelte:window bind:scrollY />
 
 <header
+  in:fade
   class="relative -m-4 mb-4 motion-reduce:!translate3d-y-0"
   style="transform: translate3d(0, {scrollY <= 0 ? 0 : scrollY / 1.5}px, 0);"
 >
   <a href="/{animes[animeIdx].id}">
     <img
       class="h-96 w-full object-cover
-      {fade ? 'motion-safe:opacity-0 ' : 'motion-safe:opacity-100 '}
+      {doFade ? 'motion-safe:opacity-0 ' : 'motion-safe:opacity-100 '}
        transition-opacity duration-300 ease-in-out"
       src={animes[animeIdx].cover}
       alt={animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
@@ -75,22 +79,22 @@
   <div class="scrim pointer-events-none absolute inset-0" />
   <div
     class="absolute inset-0 flex items-end bg-gradient-to-tr from-base-100/80
-        {fade ? 'motion-safe:!opacity-0' : 'motion-safe:opacity-100'}
+        {doFade ? 'motion-safe:!opacity-0' : 'motion-safe:opacity-100'}
         {textOn
       ? 'motion-safe:opacity-100'
-      : 'motion-safe::pointer-events-none motion-safe:!opacity-0'} 
+      : 'motion-safe:pointer-events-none motion-safe:!opacity-0'} 
         transition-opacity duration-300 ease-in-out"
   >
     <div
       class="flex max-w-lg flex-1 flex-col justify-center gap-y-4 p-4 lg:max-w-xl"
     >
       <h1
-        class="pb-1 text-3xl font-extrabold tracking-tight drop-shadow-lg line-clamp-3 md:text-4xl lg:text-5xl"
+        class="line-clamp-3 pb-1 text-3xl font-extrabold tracking-tight drop-shadow-lg md:text-4xl lg:text-5xl"
       >
         {animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
       </h1>
 
-      <p class="text-md drop-shadow-lg line-clamp-2 md:text-lg lg:text-xl">
+      <p class="text-md line-clamp-2 drop-shadow-lg md:text-lg lg:text-xl">
         {animes[animeIdx].description?.replace(/<[^>]+>/g, '').slice(0, 200) ??
           ''}
       </p>

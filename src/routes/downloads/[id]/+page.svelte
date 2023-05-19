@@ -26,8 +26,18 @@
   let showWatched = true;
   let showImage: boolean;
   let isSub = true;
-  $: reversedEpisodes = [...(data.anime.episodes ?? [])].reverse();
-  $: sortedEpisodes = isAscending ? data.anime.episodes : reversedEpisodes;
+  let heroLoaded = true;
+  let imageLoaded = true;
+  $: reversedEpisodes = [...(data.episodes ?? [])].reverse();
+  $: sortedEpisodes = isAscending ? data.episodes : reversedEpisodes;
+  $: filteredEpisodes = showWatched
+    ? sortedEpisodes
+    : sortedEpisodes.filter(({ id }) => {
+        return (
+          (lastWatched?.find(({ episode }) => episode.id === id)?.percentage ??
+            0) < watchPercentage
+        );
+      });
   $: relations = data.anime.relations.filter(
     a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT'
   );
@@ -39,11 +49,11 @@
     (lastWatched?.[lastWatched.length - 1]?.percentage ?? Infinity) <
     watchPercentage
       ? lastWatched[lastWatched.length - 1].episode
-      : data.anime.episodes.find(
+      : data.episodes.find(
           e =>
             e.number >
             (lastWatched?.[lastWatched.length - 1]?.episode.number ?? Infinity)
-        ) ?? data.anime.episodes[0];
+        ) ?? data.episodes[0];
 
   const maxRelations = 15;
   const watchPercentage = 0.8;
@@ -57,7 +67,10 @@
 >
   <img
     class="h-[38vh] w-full object-cover object-top"
-    src={data.anime.cover ?? data.anime.image}
+    src={heroLoaded
+      ? data.anime.cover ?? data.anime.image
+      : '/assets/loading_failure.jpeg'}
+    on:error={() => (heroLoaded = false)}
     alt="{data.anime.title.english ?? data.anime.title.romaji} Cover"
   />
   <div class="scrim pointer-events-none absolute inset-0" />
@@ -76,10 +89,13 @@
           class="group"
         >
           <img
-            src={data.anime.image}
+            src={imageLoaded
+              ? data.anime.image
+              : '/assets/loading_failure.jpeg'}
             alt={data.anime.title.english ?? data.anime.title.romaji}
+            on:error={() => (imageLoaded = false)}
             style:--anime-color={data.anime.color}
-            class="w-full rounded-lg object-cover shadow-xl ring ring-transparent transition-shadow duration-200
+            class="w-full rounded-lg bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center shadow-xl ring ring-transparent transition-shadow duration-200
               {data.anime.color
               ? 'hover:ring-[var(--anime-color)] group-focus-visible:ring-[var(--anime-color)]'
               : 'hover:ring-accent group-focus-visible:ring-accent'}"
@@ -185,15 +201,9 @@
   <!-- EPISODES -->
   <EpisodeCarousel
     anime={data.anime}
-    episodes={showWatched
-      ? sortedEpisodes
-      : sortedEpisodes.filter(({ id }) => {
-          return (
-            (lastWatched?.find(({ episode }) => episode.id === id)
-              ?.percentage ?? 0) < watchPercentage
-          );
-        })}
+    bind:episodes={filteredEpisodes}
     type={isSub ? 'sub' : 'dub'}
+    href="/downloads/{data.anime.id}"
     bind:showImage
   >
     <div slot="header" class="flex justify-between">

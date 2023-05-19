@@ -16,8 +16,10 @@
   import NavBar from '$lib/components/NavBar.svelte';
   import LocomotiveScroll from 'locomotive-scroll';
   import { watched, watching } from '$lib/model/watch';
-  import { preloadData } from '$app/navigation';
+  import { goto, preloadData } from '$app/navigation';
   import { animeCache } from '$lib/model/cache';
+  import { connections } from '$lib/model/connections';
+  import { downloadedAnimes, downloads } from '$lib/model/downloads';
 
   NProgress.configure({
     // Full list: https://github.com/rstacruz/nprogress#configuration
@@ -49,8 +51,20 @@
       unwatchedSubscriptions.initialize(),
       watching.initialize(),
       watched.initialize(),
-      searchHistory.initialize()
+      searchHistory.initialize(),
+      connections.initialize(),
+      downloads.initialize(),
+      downloadedAnimes.initialize()
     ]);
+
+    const { listen } = await import('@tauri-apps/api/event');
+    listen?.<string>('scheme-request-received', e => {
+      if (e.payload) {
+        goto(e.payload?.replace('layendanimator://', '/') ?? '/', {
+          replaceState: true
+        });
+      }
+    });
 
     if (unsubscribe) clearInterval(unsubscribe);
     unsubscribe = setInterval(() => {
@@ -63,6 +77,7 @@
           preloadData(`/${id}`);
       });
     }, animeCache.ttl || MINUTE * 30);
+    console.log('Subscriptions cache TTL:', animeCache.ttl || MINUTE * 30);
   });
 
   onDestroy(() => {

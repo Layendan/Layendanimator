@@ -16,6 +16,7 @@ function createSubscriptions() {
       update(subscriptions => {
         const result = [anime, ...subscriptions.filter(i => i.id !== anime.id)];
         store?.set('subscriptions', result);
+        store?.save();
         return result;
       });
     },
@@ -61,7 +62,7 @@ async function sendNotification(title: string, episodes: number) {
           : `There are ${episodes} new episodes for ${title}`
     });
   } else {
-    console.log('Permission not granted');
+    console.error('Permission not granted');
   }
 }
 
@@ -82,6 +83,7 @@ function createUnwatchedSubscriptions() {
           ...subscriptions.filter(({ anime: { id } }) => id !== anime.anime.id)
         ];
         store?.set('activeSubscriptions', result);
+        store?.save();
         sendNotification(
           anime.anime.title.english ?? anime.anime.title.native,
           anime.newEpisodes

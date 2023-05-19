@@ -11,14 +11,23 @@ import {
 } from '$lib/model/subscriptions';
 
 async function fetchAnime(_fetch: typeof fetch, id: string): Promise<Anime> {
-  const anime: Anime = await (
-    await _fetch(
-      `https://consumet.app.jet-black.xyz/meta/anilist/info/${id}?provider=${
-        get(source).id
-      }`,
-      { signal: AbortSignal.timeout(15000) }
-    )
-  ).json();
+  const anime: Anime = await _fetch(
+    `https://consumet.app.jet-black.xyz/meta/anilist/info/${id}?provider=${
+      get(source).id
+    }`,
+    { signal: AbortSignal.timeout(15000) }
+  )
+    .then(r => {
+      if (r.status !== 200) {
+        console.error(r);
+        throw error(404, 'Anime not found');
+      }
+      return r.json();
+    })
+    .catch(e => {
+      console.error(e);
+      throw error(404, 'Anime not found');
+    });
 
   if (anime) {
     animeCache.set(id, anime);
@@ -62,6 +71,6 @@ export const load = (async ({ fetch, depends, params, url }) => {
   }
 
   return {
-    anime: anime
+    anime
   };
 }) satisfies PageLoad;

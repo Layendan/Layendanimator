@@ -6,11 +6,13 @@ import {
 import type { Anime } from '$lib/model/Anime';
 import type { PageLoad } from './$types';
 
+const timeout = 15_000;
+
 async function fetchRecentEpisodes(_fetch: typeof fetch) {
   const recent = (
     await _fetch(
       'https://consumet.app.jet-black.xyz/meta/anilist/recent-episodes?perPage=25',
-      { signal: AbortSignal.timeout(15_000) }
+      { signal: AbortSignal.timeout(timeout) }
     ).then(r => r.json())
   ).results as Anime[];
   recentEpisodes.set(0, recent);
@@ -22,7 +24,7 @@ async function fetchTrendingAnime(_fetch: typeof fetch) {
     await _fetch(
       'https://consumet.app.jet-black.xyz/meta/anilist/trending?perPage=25',
       {
-        signal: AbortSignal.timeout(15_000)
+        signal: AbortSignal.timeout(timeout)
       }
     ).then(r => r.json())
   ).results as Anime[];
@@ -33,7 +35,7 @@ async function fetchTrendingAnime(_fetch: typeof fetch) {
 async function fetchPopularAnime(_fetch: typeof fetch) {
   const popular = (
     await _fetch('https://consumet.app.jet-black.xyz/meta/anilist/popular', {
-      signal: AbortSignal.timeout(15_000)
+      signal: AbortSignal.timeout(timeout)
     }).then(r => r.json())
   ).results as Anime[];
   popularAnimes.set(0, popular);
@@ -41,15 +43,21 @@ async function fetchPopularAnime(_fetch: typeof fetch) {
 }
 
 export const load = (async ({ fetch }) => {
-  const [recent, trending, popular] = await Promise.all([
-    recentEpisodes.get(0) ?? fetchRecentEpisodes(fetch),
-    trendingAnimes.get(0) ?? fetchTrendingAnime(fetch),
-    popularAnimes.get(0) ?? fetchPopularAnime(fetch)
-  ]);
-
   return {
-    recent: recent,
-    trending: trending,
-    popular: popular
+    recent: {
+      data: new Promise<Anime[]>(resolve => {
+        resolve(recentEpisodes.get(0) ?? fetchRecentEpisodes(fetch));
+      })
+    },
+    trending: {
+      data: new Promise<Anime[]>(resolve => {
+        resolve(trendingAnimes.get(0) ?? fetchTrendingAnime(fetch));
+      })
+    },
+    popular: {
+      data: new Promise<Anime[]>(resolve => {
+        resolve(popularAnimes.get(0) ?? fetchPopularAnime(fetch));
+      })
+    }
   };
 }) satisfies PageLoad;

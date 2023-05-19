@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "tauri dev",
     "build": "tauri build",
-    "package": "yarn && yarn ffmpeg:build",
+    "package": "yarn && yarn ffmpeg:build && yarn build",
+    "package:dev": "yarn && yarn ffmpeg:build && yarn dev",
     "svelte:dev": "vite dev",
     "svelte:build": "vite build",
     "ffmpeg:build": "(cd ./FFmpeg && ./configure --disable-shared --enable-static --enable-libx264 --enable-gpl --enable-libfdk_aac --enable-libopus --enable-nonfree && make) && (node ffmpegmove.js)",

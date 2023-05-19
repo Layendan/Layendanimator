@@ -26,6 +26,11 @@ jobs:
         with:
           node-version: 18
 
+      - name: webfactory/ssh-agent
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
       - name: Install dependencies
         run: yarn
 
@@ -46,11 +51,6 @@ jobs:
 
       - name: Install frontend dependencies
         run: yarn svelte:build
-
-      - name: webfactory/ssh-agent
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - uses: tauri-apps/tauri-action@dev
         env:

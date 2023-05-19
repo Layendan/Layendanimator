@@ -52,6 +52,9 @@ jobs:
       - name: Install frontend dependencies
         run: yarn svelte:build
 
+      - name: Compile FFmpeg
+        run: yarn ffmpeg:build
+
       - uses: tauri-apps/tauri-action@dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

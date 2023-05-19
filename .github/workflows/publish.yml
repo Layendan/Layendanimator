@@ -52,11 +52,26 @@ jobs:
       - name: Install frontend dependencies
         run: yarn svelte:build
 
-      - name: Download FFmpeg submodule
-        run: git submodule update --init --recursive
+      - name: Download FFmpeg (ubuntu)
+        if: matrix.platform == 'ubuntu-20.04'
+        run: |
+          curl https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-amd64-static.tar.xz -o ffmpeg.tar.xz
+          tar -xf ffmpeg.tar.xz
+          mv ffmpeg-git-*/ffmpeg src-tauri/bin/ffmpeg-x86_64-unknown-linux-gnu
 
-      - name: Compile FFmpeg
-        run: yarn ffmpeg:build
+      - name: Download FFmpeg (osx)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          curl https://evermeet.cx/ffmpeg/get/zip -o ffmpeg.zip
+          unzip ffmpeg.zip
+          mv ffmpeg src-tauri/bin/ffmpeg-x86_64-apple-darwin
+
+      - name: Download FFmpeg (windows)
+        if: matrix.platform == 'windows-latest'
+        run: |
+          curl https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-full.7z -o ffmpeg.7z
+          7z x ffmpeg.7z
+          mv ffmpeg-git-*/bin/ffmpeg.exe src-tauri/bin/ffmpeg-x86_64-pc-windows-msvc.exe
 
       - uses: tauri-apps/tauri-action@dev
         env:

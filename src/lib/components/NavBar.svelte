@@ -10,6 +10,7 @@
   import { searchHistory } from '$lib/model/searchHistory';
   import { goto, invalidateAll } from '$app/navigation';
   import { _toUpperCase } from '../../routes/search/+page';
+  import SourceButton from './SourceButton.svelte';
 
   let value = '';
 </script>
@@ -64,6 +65,7 @@
     </form>
   </div>
   <div class="absolute bottom-2 right-2 top-2 flex gap-2">
+    <SourceButton />
     <a href="/library" class="btn-ghost btn">
       <Fa icon={faBookmark} size="1.2x" />
     </a>

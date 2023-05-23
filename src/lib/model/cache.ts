@@ -33,3 +33,12 @@ export const popularAnimes = new LRUCache<number, Anime[]>({
 });
 
 export const carouselPage = writable(0);
+
+export function clearCache() {
+  recentEpisodes.clear();
+  trendingAnimes.clear();
+  popularAnimes.clear();
+  animeCache.clear();
+  episodeCache.clear();
+  localStorage?.clear();
+}

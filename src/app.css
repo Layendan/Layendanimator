@@ -31,10 +31,10 @@ a {
   .skeleton {
     @apply animate-loading-card;
     background: linear-gradient(
-      100deg,
-      theme(colors.base-200) 8%,
-      theme(colors.base-300) 18%,
-      theme(colors.base-200) 33%
+      95deg,
+      theme(colors.base-300) 8%,
+      theme(colors.base-content / 20%) 18%,
+      theme(colors.base-300) 33%
     );
     background-size: 200% 100%;
   }

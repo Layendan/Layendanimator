@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { invalidate } from '$app/navigation';
+  import { invalidateAll } from '$app/navigation';
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import Carousel from '$lib/components/Carousel.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
@@ -16,7 +16,7 @@
   export let data: PageData;
 
   const MINUTE = 1000 * 60;
-  const interval = setInterval(invalidate, MINUTE * 5);
+  const interval = setInterval(invalidateAll, MINUTE * 5);
   const placeholderNum = 10;
 
   onDestroy(() => {
@@ -29,7 +29,7 @@
   {#await data.trending.data}
     <PlaceholderCarousel />
   {:then trending}
-    <Carousel animes={trending.filter(a => a.cover !== a.image)} />
+    <Carousel animes={trending.filter(a => a.cover && a.cover !== a.image)} />
   {/await}
 
   <!-- Recent episode carouse -->
@@ -54,11 +54,12 @@
           </div>
         {/each}
       {:catch e}
-        Error Loading Recent Episodes: {e}
+        Error Loading Recent Episodes - {e}
       {/await}
     </svelte:fragment>
   </ScrollCarousel>
 
+  <!-- Continue Watching -->
   {#if $watching.length > 0}
     <div class="divider" />
 
@@ -75,6 +76,7 @@
 
   <div class="divider" />
 
+  <!-- Subscriptions -->
   <ScrollCarousel>
     <svelte:fragment slot="title">Subscriptions</svelte:fragment>
 
@@ -82,12 +84,15 @@
       {#each $unwatchedSubscriptions as { anime, newEpisodes } (anime.id)}
         <AnimeCard {anime} bind:numUpdates={newEpisodes} />
       {/each}
+
       {#if $unwatchedSubscriptions.length > 0 && $subscriptions.length > 0}
         <div class="divider divider-horizontal" />
       {/if}
+
       {#each $subscriptions as anime (anime.id)}
         <AnimeCard {anime} />
       {/each}
+
       <!-- Can't use else since it can only check one and not both -->
       {#if $subscriptions.length === 0 && $unwatchedSubscriptions.length === 0}
         <div class="flex items-center justify-center">
@@ -103,6 +108,7 @@
 
   <div class="divider" />
 
+  <!-- Trending -->
   <ScrollCarousel>
     <svelte:fragment slot="title">Trending Animes</svelte:fragment>
 
@@ -131,6 +137,7 @@
 
   <div class="divider" />
 
+  <!-- Popular -->
   <ScrollCarousel>
     <svelte:fragment slot="title">Popular Animes</svelte:fragment>
 

@@ -28,7 +28,7 @@ export default class Semaphore {
   }
 
   /**
-   * Returns a Promise that will eventually return the result of the function passed in
+   * Returns a Promise that will eventually return the result of the function passed in.
    * Use this to limit the number of concurrent function executions
    * @param fnToCall function that has a cap on the number of concurrent executions
    * @param args any arguments to be passed to fnToCall

@@ -45,7 +45,7 @@
 
 {#key data.episodeObject.id}
   <Player
-    sources={data.episode.sources}
+    episodeData={data.episode}
     poster={data.episodeObject.image ?? data.anime.image}
     anime={data.anime}
     episode={data.episodeObject}

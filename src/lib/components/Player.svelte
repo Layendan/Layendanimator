@@ -10,18 +10,14 @@
   import { faMicrochip, faDownload } from '@fortawesome/free-solid-svg-icons';
   import { onMount, createEventDispatcher, onDestroy } from 'svelte';
   import { watched } from '$lib/model/watch';
-  import type { Anime, Episode } from '$lib/model/Anime';
+  import type { Anime, Episode, EpisodeData } from '$lib/model/Anime';
   import { getOS } from '$lib/model/info';
   import { beforeNavigate } from '$app/navigation';
   import Hls from 'hls.js';
   import { downloading, downloads } from '$lib/model/downloads';
   import { settings } from '$lib/model/settings';
 
-  export let sources: {
-    url: string;
-    isM3U8: boolean;
-    quality: string;
-  }[];
+  export let episodeData: EpisodeData;
   export let poster: string;
   export let anime: Anime;
   export let episode: Episode;
@@ -32,14 +28,14 @@
     item => item.episode.number === episode.number
   );
 
-  const defaultIndex = sources.findIndex(
+  const defaultIndex = episodeData.sources.findIndex(
     source => source.quality === 'default'
   );
   let selectedSource = defaultIndex !== -1 ? defaultIndex : 0;
 
-  $: src = sources[selectedSource].isM3U8
-    ? `https://jb-proxy.app.jet-black.xyz/${sources[selectedSource].url}`
-    : sources[selectedSource].url;
+  $: src = episodeData.sources[selectedSource].isM3U8
+    ? `https://jb-proxy.app.jet-black.xyz/${episodeData.sources[selectedSource].url}`
+    : episodeData.sources[selectedSource].url;
 
   const dispatcher = createEventDispatcher();
 
@@ -112,7 +108,7 @@
     {poster}
     controls
     aspect-ratio="16/9"
-    class="mx-auto flex w-screen items-center justify-center object-cover fullscreen:h-screen md:w-[max(calc(800px),70vw)]"
+    class="mx-auto flex w-screen items-center justify-center object-cover fullscreen:h-screen md:w-[max(800px,70vw)]"
     preload="metadata"
     prefer-native-hls
     bind:this={player}
@@ -126,7 +122,11 @@
       }
     }}
   >
-    <media-outlet />
+    <media-outlet>
+      {#each episodeData.subtitles ?? [] as track}
+        <track label={track.lang} kind="captions" src={track.url} />
+      {/each}
+    </media-outlet>
   </media-player>
   <div class="absolute bottom-4 left-4">
     <div class="dropdown-right dropdown-end dropdown">
@@ -140,7 +140,7 @@
         tabindex="0"
         class="dropdown-content rounded-box z-10 ml-2 w-52 bg-base-200 p-2 shadow"
       >
-        {#each sources as source, i}
+        {#each episodeData.sources as source, i}
           <li class="m-1">
             <button
               tabindex="0"
@@ -163,7 +163,7 @@
         downloading.add(
           episode.id,
           anime,
-          sources[selectedSource].quality,
+          episodeData.sources[selectedSource].quality,
           episode.number
         )}
     >

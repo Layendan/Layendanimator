@@ -50,7 +50,7 @@ export const load = (async ({ depends, params, url }) => {
   return {
     anime,
     episodes: anime.episodes.filter(episode =>
-      download.episodes.find(dEpisode => dEpisode.number === episode.number)
+      download.episodes.find(dEpisode => dEpisode.episode === episode.id)
     )
   };
 }) satisfies PageLoad;

@@ -24,7 +24,7 @@ export type Anime = {
     english: string;
     native: string;
   };
-  episodeNumber: number | null;
+  episodeNumber?: number;
   malId: number;
   synonyms: string[];
   isLicensed: boolean;
@@ -112,7 +112,19 @@ export type Episode = {
 
 export type EpisodeData = {
   sources: Source[];
-  download: string | undefined;
+  subtitles?: Subtitle[];
+  intro?: Intro;
+  download?: string;
+};
+
+export type Subtitle = {
+  url: string;
+  lang: string;
+};
+
+export type Intro = {
+  start: number;
+  end: number;
 };
 
 export type Source = {

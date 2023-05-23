@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { invalidateAll } from '$app/navigation';
   import { clearCache } from '$lib/model/cache';
   import { providers, source } from '$lib/model/source';
 </script>
@@ -20,8 +21,9 @@
           class="btn-outline btn-accent btn flex w-full flex-row items-center gap-1 text-base-content"
           disabled={$source.id === provider.id}
           on:click={() => {
-            clearCache();
             source.set(provider);
+            clearCache();
+            invalidateAll();
           }}
         >
           <img

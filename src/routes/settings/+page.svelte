@@ -137,7 +137,7 @@
     <h1
       class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
     >
-      Information
+      App Information
     </h1>
     <div class="ml-2">
       <p>

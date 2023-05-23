@@ -62,9 +62,9 @@ jobs:
       - name: Download FFmpeg (osx)
         if: matrix.platform == 'macos-latest'
         run: |
-          curl -L https://evermeet.cx/ffmpeg/get/zip -o ffmpeg.zip
-          unzip ffmpeg.zip
-          mv ffmpeg src-tauri/bin/ffmpeg-x86_64-apple-darwin
+          curl -L https://evermeet.cx/ffmpeg/get/zip -o src-tauri/bin/ffmpeg.zip
+          unzip src-tauri/bin/ffmpeg.zip
+          mv src-tauri/bin/ffmpeg src-tauri/bin/ffmpeg-x86_64-apple-darwin
 
       - name: Download FFmpeg (windows)
         if: matrix.platform == 'windows-latest'

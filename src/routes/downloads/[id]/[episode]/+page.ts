@@ -13,6 +13,10 @@ async function getDownload(id: string) {
       sources: download.episode.sources.map(source => ({
         ...source,
         url: convertFileSrc(source.url)
+      })),
+      subtitles: download.episode.subtitles?.map(subtitle => ({
+        ...subtitle,
+        url: convertFileSrc(subtitle.url)
       }))
     } as EpisodeData;
   } else {

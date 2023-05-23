@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import type { Store } from 'tauri-plugin-store-api';
-import type { Anime, EpisodeData, Source } from './Anime';
+import type { Anime, EpisodeData, Source, Subtitle } from './Anime';
 import { invalidate, preloadData } from '$app/navigation';
 import { episodeCache } from './cache';
 import Semaphore from './classes/Semaphore';
@@ -25,14 +25,15 @@ function createDownloads() {
       episodeId: string,
       source: Source,
       anime: Anime,
-      episodeNumber: number
+      episodeNumber: number,
+      subtitles?: Subtitle[]
     ) => {
       update(downloads => {
         downloads[episodeId] = {
           animeId: anime.id,
           episode: {
             sources: [source],
-            download: undefined
+            subtitles
           }
         };
         store?.set('downloads', downloads);
@@ -45,7 +46,10 @@ function createDownloads() {
       const { removeFile } = await import('@tauri-apps/api/fs');
       update(downloads => {
         const data = downloads[episodeId];
-        removeFile(data.episode.sources[0].url);
+        data.episode.sources.forEach(source => removeFile(source.url));
+        if (data.episode.subtitles) {
+          data.episode.subtitles.forEach(subtitle => removeFile(subtitle.url));
+        }
         downloadedAnimes.remove(data.animeId, episodeId);
         delete downloads[episodeId];
         store?.set('downloads', downloads);
@@ -57,7 +61,7 @@ function createDownloads() {
       const { removeFile } = await import('@tauri-apps/api/fs');
       update(downloads => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        for (const [_episodeId, val] of Object.entries(downloads)) {
+        for (const [_, val] of Object.entries(downloads)) {
           removeFile(val.episode.sources[0].url);
         }
         store?.set('downloads', {});
@@ -112,6 +116,7 @@ function createDownloadedAnimes() {
               episode: episodeId,
               number: epNum
             });
+            downloads[index].episodes.sort((a, b) => a.number - b.number);
           }
         }
         store?.set('animes', downloads);
@@ -174,15 +179,20 @@ async function sendNotification(title: string, episode: number) {
     });
   } else {
     console.error('Permission not granted');
+    return Promise.reject();
   }
+  return Promise.resolve();
 }
 
 function createDownloading() {
-  const semaphore = new Semaphore(5);
+  const videos = new Semaphore(3);
+  const subtitles = new Semaphore(10);
+
   const dict: {
-    [key: string]: { anime: Anime; quality: string; progress: number };
+    [key: string]: { anime: Anime; quality: string; progress: number | null };
   } = {};
   const { subscribe, set, update } = writable(dict);
+
   const remove = (episodeId: string) => {
     update(downloads => {
       delete downloads[episodeId];
@@ -201,71 +211,118 @@ function createDownloading() {
     ) => {
       try {
         update(downloads => {
-          downloads[episodeId] = { anime, quality, progress: 0 };
+          downloads[episodeId] = { anime, quality, progress: null };
           return downloads;
         });
 
-        await semaphore.callFunction(async () => {
-          await preloadData(`/${anime.id}/${episodeId}`);
-          const cache = episodeCache.get(episodeId);
-          console.log(cache);
-          if (!cache) {
-            throw new Error('Episode not found');
-          }
-          let episodeUrl = cache.sources?.find(s => s.quality === quality)?.url;
-          if (!episodeUrl) {
-            episodeUrl = cache.sources?.[0]?.url;
-            quality = cache.sources?.[0]?.quality;
-          }
-          if (!episodeUrl) {
-            throw new Error('Source not found');
-          }
-          const { Command } = await import('@tauri-apps/api/shell');
-          const { appDataDir, join } = await import('@tauri-apps/api/path');
-          const path = await join(
-            await appDataDir(),
-            'downloads',
-            `${episodeId}.mp4`
-          );
+        await preloadData(`/${anime.id}/${episodeId}`);
+        const cache = episodeCache.get(episodeId);
 
-          // -i {input} -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 {output} -hwaccel auto -y
-          const command = Command.sidecar('bin/ffmpeg', [
-            '-i',
-            episodeUrl,
-            '-bsf:a',
-            'aac_adtstoasc',
-            '-vcodec',
-            'copy',
-            '-c',
-            'copy',
-            '-crf',
-            '50',
-            path,
-            '-hwaccel',
-            'auto',
-            '-y'
-          ]);
-          const output = await command.execute();
-          // stderr is used for logging since stdout is used for video data
-          console.log(output.stderr);
-          console.debug('Downloaded: ', path);
+        console.log(cache);
 
-          if (output.code !== 0) {
-            throw new Error('Download failed');
-          }
+        if (!cache) {
+          throw new Error('Episode not found');
+        }
 
-          downloads.add(
-            episodeId,
-            { url: path, quality, isM3U8: false },
-            anime,
-            episodeNumber
-          );
+        const { Command } = await import('@tauri-apps/api/shell');
+        const { appDataDir, join } = await import('@tauri-apps/api/path');
+        const dataDir = await appDataDir();
 
-          sendNotification(
-            anime.title.english ?? anime.title.romaji,
-            episodeNumber
-          );
-        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const calls: Promise<any>[] = [];
+
+        calls.push(
+          videos.callFunction(async () => {
+            let episodeUrl = cache.sources?.find(
+              s => s.quality === quality
+            )?.url;
+
+            if (!episodeUrl) {
+              episodeUrl = cache.sources?.[0]?.url;
+              quality = cache.sources?.[0]?.quality;
+            }
+
+            if (!episodeUrl) {
+              throw new Error('Source not found');
+            }
+
+            const path = await join(dataDir, 'downloads', `${episodeId}.mp4`);
+
+            // -i {input} -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 {output} -hwaccel auto -y
+            const command = Command.sidecar('bin/ffmpeg', [
+              '-i',
+              episodeUrl,
+              '-bsf:a',
+              'aac_adtstoasc',
+              '-vcodec',
+              'copy',
+              '-c',
+              'copy',
+              '-crf',
+              '50',
+              path,
+              '-hwaccel',
+              'auto',
+              '-y'
+            ]);
+            const output = await command.execute();
+
+            console.debug('Downloaded: ', path);
+
+            if (output.code !== 0) {
+              throw new Error('Download failed');
+            }
+
+            return path;
+          })
+        );
+
+        if (cache.subtitles) {
+          const { writeFile } = await import('@tauri-apps/api/fs');
+          cache.subtitles.forEach(subtitle => {
+            calls.push(
+              subtitles.callFunction(async () => {
+                const path = await join(
+                  dataDir,
+                  'downloads',
+                  `${episodeId}.${subtitle.lang}.vtt`
+                );
+                const response = await fetch(subtitle.url);
+                const text = await response.text();
+                await writeFile(path, text);
+
+                console.debug('Downloaded: ', path);
+
+                return path;
+              })
+            );
+          });
+        }
+
+        const results = await Promise.all<string>(calls);
+
+        console.log(results);
+
+        const path = results.shift();
+        if (!path) {
+          throw new Error('Download failed');
+        }
+
+        downloads.add(
+          episodeId,
+          { url: path, quality, isM3U8: false },
+          anime,
+          episodeNumber,
+          results.map(path => ({
+            url: path,
+            lang: path.split('.').slice(-2, -1)[0]
+          }))
+        );
+
+        sendNotification(
+          anime.title.english ?? anime.title.romaji,
+          episodeNumber
+        );
       } catch (e) {
         console.error(e);
       } finally {

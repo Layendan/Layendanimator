@@ -15,6 +15,15 @@
   import Fa from 'svelte-fa';
 
   const anilistClientId = '4602';
+
+  function clearCache() {
+    recentEpisodes.clear();
+    trendingAnimes.clear();
+    popularAnimes.clear();
+    animeCache.clear();
+    episodeCache.clear();
+    localStorage.clear();
+  }
 </script>
 
 <section>
@@ -34,7 +43,10 @@
           <button
             class="btn-outline btn-accent btn flex w-full flex-row items-center gap-1 text-base-content"
             disabled={$source.id === provider.id}
-            on:click={() => source.set(provider)}
+            on:click={() => {
+              clearCache();
+              source.set(provider);
+            }}
           >
             <img
               src={provider.logo}
@@ -120,16 +132,8 @@
       Data
     </h1>
     <div class="grid grid-cols-1 gap-4">
-      <button
-        class="btn-outline btn-accent btn w-full"
-        on:click={() => {
-          recentEpisodes.clear();
-          trendingAnimes.clear();
-          popularAnimes.clear();
-          animeCache.clear();
-          episodeCache.clear();
-          localStorage.clear();
-        }}>Clear Cache</button
+      <button class="btn-outline btn-accent btn w-full" on:click={clearCache}
+        >Clear Cache</button
       >
       <button
         class="btn-outline btn-accent btn w-full"

@@ -37,6 +37,20 @@ module.exports = {
       );
     })
   ],
+  theme: {
+    extend: {
+      keyframes: {
+        shine: {
+          to: {
+            'background-position-x': '-200%;'
+          }
+        }
+      },
+      animation: {
+        'loading-card': 'shine 1.5s linear infinite'
+      }
+    }
+  },
   daisyui: {
     themes: ['dark']
   }

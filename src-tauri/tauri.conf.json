@@ -16,7 +16,8 @@
 			"protocol": {
 				"all": true,
 				"assetScope": [
-					"**/*.mp4"
+					"**/*.mp4",
+					"**/*.vtt"
 				]
 			},
 			"fs": {

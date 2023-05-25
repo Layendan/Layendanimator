@@ -1,14 +1,17 @@
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import type { Store } from 'tauri-plugin-store-api';
+import type { Subscription } from './subscriptions';
 
 let store: Store | undefined = undefined;
 
 export type SettingsType = {
   deleteOnWatch: boolean;
+  sortSubscriptions: 'lastUpdated' | 'timeAdded' | 'title';
 };
 
 const defaultSettings: SettingsType = {
-  deleteOnWatch: false
+  deleteOnWatch: false,
+  sortSubscriptions: 'timeAdded'
 };
 
 function createSettings() {
@@ -44,3 +47,30 @@ function createSettings() {
 }
 
 export const settings = createSettings();
+
+function sortUpdated(a: Subscription, b: Subscription) {
+  return b.lastUpdated - a.lastUpdated || sortName(a, b);
+}
+
+function sortAdded(a: Subscription, b: Subscription) {
+  return b.added - a.added || sortUpdated(a, b);
+}
+
+function sortName(a: Subscription, b: Subscription) {
+  return (a.title.english ?? a.title.native).localeCompare(
+    b.title.english ?? b.title.native
+  );
+}
+
+export function getSortMethod() {
+  switch (get(settings).sortSubscriptions) {
+    case 'lastUpdated':
+      return sortUpdated;
+    case 'timeAdded':
+      return sortAdded;
+    case 'title':
+      return sortName;
+    default:
+      return sortAdded;
+  }
+}

@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types';
-import type { Anime } from '$lib/model/Anime';
+import type { Anime } from '$lib/model/classes/Anime';
 import { source } from '$lib/model/source';
 import { animeCache } from '$lib/model/cache';
 import { get } from 'svelte/store';
@@ -10,8 +10,8 @@ import {
   unwatchedSubscriptions
 } from '$lib/model/subscriptions';
 
-async function fetchAnime(_fetch: typeof fetch, id: string): Promise<Anime> {
-  const anime: Anime = await _fetch(
+async function fetchAnime(id: string, _fetch: typeof fetch): Promise<Anime> {
+  let anime: Anime = await _fetch(
     `https://consumet.app.jet-black.xyz/meta/anilist/info/${id}?provider=${
       get(source).id
     }`,
@@ -30,6 +30,11 @@ async function fetchAnime(_fetch: typeof fetch, id: string): Promise<Anime> {
     });
 
   if (anime) {
+    anime = {
+      ...anime,
+      episodes: anime.episodes.sort((a, b) => a.number - b.number)
+    };
+
     animeCache.set(id, anime);
   } else {
     throw error(404, 'Anime not found');
@@ -42,22 +47,21 @@ export const load = (async ({ fetch, depends, params, url }) => {
   depends(params.id);
 
   const anime =
-    animeCache.get(params.id) ?? (await fetchAnime(fetch, params.id));
+    animeCache.get(params.id) ?? (await fetchAnime(params.id, fetch));
 
-  const temp = get(subscriptions).find(({ id }) => id === anime.id);
+  const temp = get(subscriptions)[anime.id];
   const sub = temp
     ? {
-        anime: temp,
+        ...temp,
         newEpisodes: 0
       }
-    : get(unwatchedSubscriptions).find(({ anime: { id } }) => id === anime.id);
-  if (sub && sub.anime.episodes.length < anime.episodes.length) {
+    : get(unwatchedSubscriptions)[anime.id];
+  if (sub && sub.episodes.length < anime.episodes.length) {
     subscriptions.remove(anime);
-    unwatchedSubscriptions.add({
-      anime: anime,
-      newEpisodes:
-        anime.episodes.length - sub.anime.episodes.length + sub.newEpisodes
-    });
+    unwatchedSubscriptions.add(
+      anime,
+      anime.episodes.length - sub.episodes.length + sub.newEpisodes
+    );
   }
 
   if (url.searchParams.get('autoplay') === 'true') {
@@ -70,7 +74,5 @@ export const load = (async ({ fetch, depends, params, url }) => {
     );
   }
 
-  return {
-    anime
-  };
+  return anime;
 }) satisfies PageLoad;

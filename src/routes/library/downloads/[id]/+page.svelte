@@ -1,7 +1,4 @@
 <script lang="ts">
-  import AnimeCard from '$lib/components/AnimeCard.svelte';
-  import CharacterCard from '$lib/components/CharacterCard.svelte';
-  import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
   import { fade } from 'svelte/transition';
   import {
     subscriptions,
@@ -20,6 +17,7 @@
   import { watched } from '$lib/model/watch';
 
   export let data: PageData;
+
   let scrollY = 0;
   let descriptionCollapsed = true;
   let isAscending = true;
@@ -38,25 +36,19 @@
             0) < watchPercentage
         );
       });
-  $: relations = data.anime.relations.filter(
-    a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT'
-  );
-  $: subscribed =
-    $subscriptions.some(({ id }) => id === data.anime.id) ||
-    $unwatchedSubscriptions.some(({ anime: { id } }) => id === data.anime.id);
-  $: lastWatched = $watched[data.anime.id];
+  $: subscribed = $subscriptions[data.id] || $unwatchedSubscriptions[data.id];
+  $: lastWatched = $watched[data.id];
+  $: lastEpisode = lastWatched?.[lastWatched.length - 1];
   $: continueWatching =
-    (lastWatched?.[lastWatched.length - 1]?.percentage ?? Infinity) <
-    watchPercentage
-      ? lastWatched[lastWatched.length - 1].episode
+    (lastEpisode?.percentage ?? Infinity) < watchPercentage
+      ? lastEpisode?.episode
       : data.episodes.find(
-          e =>
-            e.number >
-            (lastWatched?.[lastWatched.length - 1]?.episode.number ?? Infinity)
+          e => e.number > (lastEpisode?.episode.number ?? Infinity)
         ) ?? data.episodes[0];
 
-  const maxRelations = 15;
   const watchPercentage = 0.8;
+
+  console.debug(data);
 </script>
 
 <svelte:window bind:scrollY />
@@ -67,11 +59,9 @@
 >
   <img
     class="h-[38vh] w-full object-cover object-top"
-    src={heroLoaded
-      ? data.anime.cover ?? data.anime.image
-      : '/assets/loading_failure.jpeg'}
+    src={heroLoaded ? data.cover ?? data.image : '/assets/loading_failure.jpeg'}
     on:error={() => (heroLoaded = false)}
-    alt="{data.anime.title.english ?? data.anime.title.romaji} Cover"
+    alt="{data.title.english ?? data.title.romaji} Cover"
   />
   <div class="scrim pointer-events-none absolute inset-0" />
 </header>
@@ -83,20 +73,18 @@
     >
       <div class="relative m-0 -mt-[20vh]">
         <a
-          href="https://anilist.co/anime/{data.anime.id}"
+          href="https://anilist.co/anime/{data.id}"
           target="_blank"
           rel="noreferrer"
           class="group"
         >
           <img
-            src={imageLoaded
-              ? data.anime.image
-              : '/assets/loading_failure.jpeg'}
-            alt={data.anime.title.english ?? data.anime.title.romaji}
+            src={imageLoaded ? data.image : '/assets/loading_failure.jpeg'}
+            alt={data.title.english ?? data.title.romaji}
             on:error={() => (imageLoaded = false)}
-            style:--anime-color={data.anime.color}
+            style:--anime-color={data.color}
             class="w-full rounded-lg bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center shadow-xl ring ring-transparent transition-shadow duration-200
-              {data.anime.color
+              {data.color
               ? 'hover:ring-[var(--anime-color)] group-focus-visible:ring-[var(--anime-color)]'
               : 'hover:ring-accent group-focus-visible:ring-accent'}"
           />
@@ -107,10 +95,10 @@
             : 'btn-primary'}"
           on:click={() => {
             if (subscribed) {
-              subscriptions.remove(data.anime);
-              unwatchedSubscriptions.remove(data.anime);
+              subscriptions.remove(data);
+              unwatchedSubscriptions.remove(data);
             } else {
-              subscriptions.add(data.anime);
+              subscriptions.add(data);
             }
           }}
         >
@@ -148,30 +136,29 @@
         <h1
           class="mb-4 text-3xl font-extrabold leading-none tracking-tight transition-[font-size] duration-200 md:text-4xl lg:text-5xl"
         >
-          {data.anime.title.english ?? data.anime.title.romaji}
+          {data.title.english ?? data.title.romaji}
         </h1>
         <ul class="mb-4 flex flex-wrap gap-1">
           <div class="badge badge-accent badge-outline">
-            {data.anime.type.replaceAll('_', ' ')}
+            {data.type.replaceAll('_', ' ')}
           </div>
-          {#if data.anime.isAdult}
+          {#if data.isAdult}
             <div class="badge badge-error badge-outline">18+</div>
           {/if}
           <div class="badge badge-accent badge-outline">
-            {data.anime.status}
+            {data.status}
           </div>
-          {#each data.anime.genres as genre}
+          {#each data.genres as genre}
             <div class="badge badge-accent badge-outline">{genre}</div>
           {/each}
-          {#if data.anime.rating}
+          {#if data.rating}
             <div
               class="badge badge-outline"
-              class:badge-error={data.anime.rating <= 60}
-              class:badge-warning={data.anime.rating > 60 &&
-                data.anime.rating <= 75}
-              class:badge-success={data.anime.rating > 75}
+              class:badge-error={data.rating <= 60}
+              class:badge-warning={data.rating > 60 && data.rating <= 75}
+              class:badge-success={data.rating > 75}
             >
-              {data.anime.rating}%
+              {data.rating}%
             </div>
           {/if}
         </ul>
@@ -180,7 +167,7 @@
           class:line-clamp-[3]={descriptionCollapsed}
           class:lg:line-clamp-[6]={descriptionCollapsed}
         >
-          {@html data.anime.description || '<i>No description available.</i>'}
+          {@html data.description || '<i>No description available.</i>'}
         </p>
         <br />
         <button
@@ -200,10 +187,10 @@
 
   <!-- EPISODES -->
   <EpisodeCarousel
-    anime={data.anime}
+    anime={data}
     bind:episodes={filteredEpisodes}
     type={isSub ? 'sub' : 'dub'}
-    href="/downloads/{data.anime.id}"
+    href="/library/downloads/{data.id}"
     bind:showImage
   >
     <div slot="header" class="flex justify-between">
@@ -213,15 +200,15 @@
         >
           Episodes
         </h1>
-        {#if data.anime.episodes.length > 0}
+        {#if data.episodes.length > 0}
           <a
             class="btn-outline btn-accent btn flex w-fit space-x-2"
-            href="/{data.anime.id}/{continueWatching.id}"
+            href="/{data.id}/{continueWatching.id}"
           >
             <Fa icon={faPlayCircle} size="lg" />
             <!-- Check if not user has watched anime yet -->
             <span>
-              {continueWatching.id === data.anime.episodes[0].id
+              {continueWatching.id === data.episodes[0].id
                 ? lastWatched
                   ? 'Watch Again'
                   : 'Start Watching'
@@ -230,7 +217,7 @@
           </a>
         {/if}
       </div>
-      {#if data.anime.episodes.length > 0}
+      {#if data.episodes.length > 0}
         <div class="mb-4 flex items-center gap-1">
           <div class="dropdown-end dropdown block">
             <!-- svelte-ignore a11y-label-has-associated-control -->
@@ -342,51 +329,4 @@
       {/if}
     </div>
   </EpisodeCarousel>
-
-  {#if data.anime.recommendations.length > 0}
-    <div class="divider" />
-
-    <!-- RECOMMENDATIONS -->
-    <ScrollCarousel>
-      <svelte:fragment slot="title">Recommendations</svelte:fragment>
-      <svelte:fragment slot="content">
-        {#each data.anime.recommendations as anime (anime.id)}
-          <AnimeCard {anime} />
-        {/each}
-      </svelte:fragment>
-    </ScrollCarousel>
-  {/if}
-
-  {#if relations.length > 0}
-    <div class="divider" />
-
-    <!-- RELATED -->
-    <ScrollCarousel>
-      <svelte:fragment slot="title">Related</svelte:fragment>
-      <svelte:fragment slot="content">
-        {#each relations as anime (anime.id)}
-          <AnimeCard
-            {anime}
-            extra={relations.length > maxRelations
-              ? ''
-              : anime.relationType.replaceAll('_', ' ')}
-          />
-        {/each}
-      </svelte:fragment>
-    </ScrollCarousel>
-  {/if}
-
-  {#if data.anime.characters.length > 0}
-    <div class="divider" />
-
-    <!-- CHARACTERS -->
-    <ScrollCarousel>
-      <svelte:fragment slot="title">Characters</svelte:fragment>
-      <svelte:fragment slot="content">
-        {#each data.anime.characters as character (character.id)}
-          <CharacterCard {character} color={data.anime.color} />
-        {/each}
-      </svelte:fragment>
-    </ScrollCarousel>
-  {/if}
 </main>

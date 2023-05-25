@@ -1,6 +1,6 @@
 import { LRUCache } from 'lru-cache';
 import { writable } from 'svelte/store';
-import type { Anime, EpisodeData } from './Anime';
+import type { Anime, EpisodeData } from './classes/Anime';
 
 const MINUTE = 1000 * 60;
 

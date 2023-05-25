@@ -3,7 +3,7 @@ import {
   recentEpisodes,
   trendingAnimes
 } from '$lib/model/cache';
-import type { Anime } from '$lib/model/Anime';
+import type { Anime } from '$lib/model/classes/Anime';
 import type { PageLoad } from './$types';
 
 const timeout = 15_000;
@@ -45,19 +45,13 @@ async function fetchPopularAnime(_fetch: typeof fetch) {
 export const load = (async ({ fetch }) => {
   return {
     recent: {
-      data: new Promise<Anime[]>(resolve => {
-        resolve(recentEpisodes.get(0) ?? fetchRecentEpisodes(fetch));
-      })
+      data: recentEpisodes.get(0) ?? fetchRecentEpisodes(fetch)
     },
     trending: {
-      data: new Promise<Anime[]>(resolve => {
-        resolve(trendingAnimes.get(0) ?? fetchTrendingAnime(fetch));
-      })
+      data: trendingAnimes.get(0) ?? fetchTrendingAnime(fetch)
     },
     popular: {
-      data: new Promise<Anime[]>(resolve => {
-        resolve(popularAnimes.get(0) ?? fetchPopularAnime(fetch));
-      })
+      data: popularAnimes.get(0) ?? fetchPopularAnime(fetch)
     }
   };
 }) satisfies PageLoad;

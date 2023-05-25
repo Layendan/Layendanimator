@@ -3,11 +3,11 @@ import { source } from '$lib/model/source';
 import { animeCache, episodeCache } from '$lib/model/cache';
 import { get } from 'svelte/store';
 import type { PageLoad } from './$types';
-import type { Anime, EpisodeData } from '$lib/model/Anime';
-import { downloads } from '$lib/model/downloads';
+import type { Anime, EpisodeData } from '$lib/model/classes/Anime';
+import { convertDownloads, downloads } from '$lib/model/downloads';
 
 async function fetchAnime(id: string, _fetch: typeof fetch) {
-  const anime = (await _fetch(
+  let anime = (await _fetch(
     `https://consumet.app.jet-black.xyz/meta/anilist/info/${id}?provider=${
       get(source).id
     }`,
@@ -26,6 +26,11 @@ async function fetchAnime(id: string, _fetch: typeof fetch) {
     })) as Anime;
 
   if (anime) {
+    anime = {
+      ...anime,
+      episodes: anime.episodes.sort((a, b) => a.number - b.number)
+    };
+
     animeCache.set(id, anime);
   }
 
@@ -33,7 +38,7 @@ async function fetchAnime(id: string, _fetch: typeof fetch) {
 }
 
 async function fetchEpisode(id: string, isDub: boolean, _fetch: typeof fetch) {
-  const episode: EpisodeData = await _fetch(
+  let episode: EpisodeData = await _fetch(
     isDub
       ? `https://consumet.app.jet-black.xyz/meta/anilist/watch/${id}?provider=${
           get(source).id
@@ -55,6 +60,14 @@ async function fetchEpisode(id: string, isDub: boolean, _fetch: typeof fetch) {
     });
 
   if (episode) {
+    episode = {
+      ...episode,
+      sources: episode.sources.map(source => ({
+        ...source,
+        url: `https://jb-proxy.app.jet-black.xyz/${source.url}`
+      }))
+    };
+
     episodeCache.set(id, episode);
   } else {
     throw error(404, 'Episode sources not found');
@@ -63,23 +76,12 @@ async function fetchEpisode(id: string, isDub: boolean, _fetch: typeof fetch) {
   return episode;
 }
 
-async function getDownload(id: string) {
-  const download = get(downloads)[id];
+async function getDownload(animeId: string, episodeId: string) {
+  const download = get(downloads)[animeId]?.episodes?.[episodeId];
   if (download) {
-    const { convertFileSrc } = await import('@tauri-apps/api/tauri');
-    return {
-      ...download.episode,
-      sources: download.episode.sources.map(source => ({
-        ...source,
-        url: convertFileSrc(source.url)
-      })),
-      subtitles: download.episode.subtitles?.map(subtitle => ({
-        ...subtitle,
-        url: convertFileSrc(subtitle.url)
-      }))
-    } as EpisodeData;
+    return await convertDownloads(download);
   } else {
-    return null;
+    return undefined;
   }
 }
 
@@ -92,7 +94,7 @@ export const load = (async ({ fetch, depends, params, url }) => {
   const anime =
     animeCache.get(params.id) ?? (await fetchAnime(params.id, fetch));
   const episode =
-    (await getDownload(params.episode)) ??
+    (await getDownload(params.id, params.episode)) ??
     (isDub
       ? episodeCache.get(`${params.episode}/dub`)
       : episodeCache.get(params.episode)) ??

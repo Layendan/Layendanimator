@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { invalidateAll } from '$app/navigation';
+  import { goto, invalidateAll } from '$app/navigation';
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import Carousel from '$lib/components/Carousel.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
@@ -8,10 +8,11 @@
     unwatchedSubscriptions
   } from '$lib/model/subscriptions';
   import { watching } from '$lib/model/watch';
-  import { onDestroy } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import type { PageData } from './$types';
   import PlaceholderAnimeCard from '$lib/components/PlaceholderAnimeCard.svelte';
   import PlaceholderCarousel from '$lib/components/PlaceholderCarousel.svelte';
+  import { getSortMethod, settings } from '$lib/model/settings';
 
   export let data: PageData;
 
@@ -19,9 +20,17 @@
   const interval = setInterval(invalidateAll, MINUTE * 5);
   const placeholderNum = 10;
 
+  onMount(() => {
+    if (!navigator?.onLine) {
+      goto('/library/downloads', { replaceState: true });
+    }
+  });
+
   onDestroy(() => {
     clearInterval(interval);
   });
+
+  $: sortMethod = ($settings.sortSubscriptions, getSortMethod());
 </script>
 
 <main class="relative w-full">
@@ -60,14 +69,14 @@
   </ScrollCarousel>
 
   <!-- Continue Watching -->
-  {#if $watching.length > 0}
+  {#if Object.entries($watching).length > 0}
     <div class="divider" />
 
     <ScrollCarousel>
       <svelte:fragment slot="title">Continue Watching</svelte:fragment>
 
       <svelte:fragment slot="content">
-        {#each $watching.slice(0, 10) as { anime, episode } (anime.id)}
+        {#each Object.values($watching).slice(0, 10) as { anime, episode } (anime.id)}
           <AnimeCard {anime} extra={`Episode ${episode}`} deleteable />
         {/each}
       </svelte:fragment>
@@ -81,20 +90,20 @@
     <svelte:fragment slot="title">Subscriptions</svelte:fragment>
 
     <svelte:fragment slot="content">
-      {#each $unwatchedSubscriptions as { anime, newEpisodes } (anime.id)}
-        <AnimeCard {anime} bind:numUpdates={newEpisodes} />
+      {#each Object.values($unwatchedSubscriptions).sort(sortMethod) as anime (anime.id)}
+        <AnimeCard {anime} bind:numUpdates={anime.newEpisodes} />
       {/each}
 
-      {#if $unwatchedSubscriptions.length > 0 && $subscriptions.length > 0}
+      {#if Object.entries($unwatchedSubscriptions).length > 0 && Object.entries($subscriptions).length > 0}
         <div class="divider divider-horizontal" />
       {/if}
 
-      {#each $subscriptions as anime (anime.id)}
+      {#each Object.values($subscriptions).sort(sortMethod) as anime (anime.id)}
         <AnimeCard {anime} />
       {/each}
 
       <!-- Can't use else since it can only check one and not both -->
-      {#if $subscriptions.length === 0 && $unwatchedSubscriptions.length === 0}
+      {#if Object.entries($subscriptions).length === 0 && Object.entries($unwatchedSubscriptions).length === 0}
         <div class="flex items-center justify-center">
           <p
             class="text-center text-xl font-semibold text-base-content text-opacity-70"

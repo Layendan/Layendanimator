@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
-  import type { Character } from '../model/Anime';
+  import type { Character } from '../model/classes/Anime';
 
   export let character: Character;
   export let color: string | undefined = undefined;

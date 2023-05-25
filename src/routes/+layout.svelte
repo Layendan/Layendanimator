@@ -2,7 +2,6 @@
   import '../app.css';
   import '../nprogress.css';
 
-  // import { invalidateAll } from '$app/navigation';
   import { navigating } from '$app/stores';
   import { onDestroy, onMount } from 'svelte';
   import { source } from '$lib/model/source';
@@ -16,10 +15,10 @@
   import NavBar from '$lib/components/NavBar.svelte';
   import LocomotiveScroll from 'locomotive-scroll';
   import { watched, watching } from '$lib/model/watch';
-  import { goto, preloadData } from '$app/navigation';
-  import { animeCache } from '$lib/model/cache';
+  import { goto, invalidateAll, preloadData } from '$app/navigation';
+  import { animeCache, clearCache } from '$lib/model/cache';
   import { connections } from '$lib/model/connections';
-  import { downloadedAnimes, downloads } from '$lib/model/downloads';
+  import { downloads } from '$lib/model/downloads';
 
   NProgress.configure({
     // Full list: https://github.com/rstacruz/nprogress#configuration
@@ -53,8 +52,7 @@
       watched.initialize(),
       searchHistory.initialize(),
       connections.initialize(),
-      downloads.initialize(),
-      downloadedAnimes.initialize()
+      downloads.initialize()
     ]);
 
     const { listen } = await import('@tauri-apps/api/event');
@@ -68,13 +66,15 @@
 
     if (unsubscribe) clearInterval(unsubscribe);
     unsubscribe = setInterval(() => {
-      $unwatchedSubscriptions.forEach(({ anime: { id, status } }) => {
+      Object.values($unwatchedSubscriptions).forEach(({ id, status }) => {
         if (status !== 'Completed' && status !== 'Cancelled')
-          preloadData(`/${id}`);
+          unwatchedSubscriptions.updateDate(id);
+        preloadData(`/${id}`);
       });
-      $subscriptions.forEach(({ id, status }) => {
+      Object.values($subscriptions).forEach(({ id, status }) => {
         if (status !== 'Completed' && status !== 'Cancelled')
-          preloadData(`/${id}`);
+          subscriptions.updateDate(id);
+        preloadData(`/${id}`);
       });
     }, animeCache.ttl || MINUTE * 30);
     console.log('Subscriptions cache TTL:', animeCache.ttl || MINUTE * 30);
@@ -89,8 +89,8 @@
   on:keydown={e => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
       e.preventDefault();
-      window.location.reload();
-      // invalidateAll();
+      clearCache();
+      invalidateAll();
     }
   }}
 />

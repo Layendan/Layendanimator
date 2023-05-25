@@ -10,7 +10,7 @@
   import { faMicrochip, faDownload } from '@fortawesome/free-solid-svg-icons';
   import { onMount, createEventDispatcher, onDestroy } from 'svelte';
   import { watched } from '$lib/model/watch';
-  import type { Anime, Episode, EpisodeData } from '$lib/model/Anime';
+  import type { Anime, Episode, EpisodeData } from '$lib/model/classes/Anime';
   import { getOS } from '$lib/model/info';
   import { beforeNavigate } from '$app/navigation';
   import Hls from 'hls.js';
@@ -33,10 +33,6 @@
   );
   let selectedSource = defaultIndex !== -1 ? defaultIndex : 0;
 
-  $: src = episodeData.sources[selectedSource].isM3U8
-    ? `https://jb-proxy.app.jet-black.xyz/${episodeData.sources[selectedSource].url}`
-    : episodeData.sources[selectedSource].url;
-
   const dispatcher = createEventDispatcher();
 
   function requestNextEpisode() {
@@ -46,7 +42,7 @@
       state &&
       state.currentTime / state.duration >= 0.8
     ) {
-      downloads.remove(episode.id);
+      downloads.remove(anime.id, episode.id);
     }
     dispatcher('requestNextEpisode');
   }
@@ -104,7 +100,7 @@
 <div class="relative -m-4 mb-4 h-auto w-screen bg-black">
   <!-- svelte-ignore a11y-autofocus -->
   <media-player
-    {src}
+    src={episodeData.sources[selectedSource].url}
     {poster}
     controls
     aspect-ratio="16/9"
@@ -155,7 +151,7 @@
       </ul>
     </div>
   </div>
-  {#if !$downloading[episode.id] && !$downloads[episode.id]}
+  {#if !$downloading[episode.id] && !$downloads[anime.id]?.episodes?.[episode.id]}
     <!-- ffmpeg -i "link" -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 "output" -->
     <button
       class="btn-ghost btn absolute bottom-4 right-4"

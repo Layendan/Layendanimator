@@ -13,23 +13,23 @@ export type Provider = {
   isNSFW: boolean;
 };
 
-export const defaultProviders: Provider[] = [
-  {
+export const defaultProviders: { [key: string]: Provider } = {
+  gogoanime: {
     name: 'Gogoanime',
     id: 'gogoanime',
     logo: 'https://play-lh.googleusercontent.com/MaGEiAEhNHAJXcXKzqTNgxqRmhuKB1rCUgb15UrN_mWUNRnLpO5T1qja64oRasO7mn0',
     isNSFW: false
   },
-  {
+  zoro: {
     name: 'Zoro',
     id: 'zoro',
     logo: 'https://is3-ssl.mzstatic.com/image/thumb/Purple112/v4/7e/91/00/7e9100ee-2b62-0942-4cdc-e9b93252ce1c/source/512x512bb.jpg',
     isNSFW: false
   }
-];
+};
 
 function createSource() {
-  const { subscribe, set } = writable<Provider>(defaultProviders[0]);
+  const { subscribe, set } = writable<Provider>(defaultProviders.gogoanime);
   return {
     subscribe,
     set: async (source: Provider) => {
@@ -43,7 +43,7 @@ function createSource() {
       if (data) {
         set(data);
       } else {
-        await store?.set('source', defaultProviders[0]);
+        await store?.set('source', defaultProviders.gogoanime);
       }
     }
   };
@@ -52,38 +52,41 @@ function createSource() {
 export const source = createSource();
 
 function createProviders() {
-  const { subscribe, set, update } = writable<Provider[]>(defaultProviders);
+  const { subscribe, set, update } =
+    writable<typeof defaultProviders>(defaultProviders);
   return {
     subscribe,
-    set: (providers: Provider[]) => {
+    set: (providers: typeof defaultProviders) => {
       set(providers);
       store?.set('providers', providers);
     },
     add: (provider: Provider) => {
       update(providers => {
-        const result = [
-          provider,
-          ...providers.filter(i => i.id !== provider.id)
-        ];
-        store?.set('providers', result);
-        return result;
+        providers[provider.id] ??= provider;
+        store?.set('providers', providers);
+        return providers;
       });
     },
     remove(provider: Provider) {
       update(providers => {
-        const result = providers.filter(i => i.id !== provider.id);
-        store?.set('providers', result);
-        return result;
+        delete providers[provider.id];
+        store?.set('providers', providers);
+        return providers;
       });
+    },
+    clear() {
+      set(defaultProviders);
+      source.set(defaultProviders.gogoanime);
+      store?.set('providers', defaultProviders);
     },
     initialize: async () => {
       const StoreImport = (await import('tauri-plugin-store-api')).Store;
       store ??= new StoreImport('.settings.dat');
-      const data = await store.get<Provider[]>('providers');
+      const data = await store.get<typeof defaultProviders>('providers');
       if (data) {
         set(data);
       } else {
-        await store.set('providers', defaultProviders[0]);
+        await store.set('providers', defaultProviders);
       }
     }
   };

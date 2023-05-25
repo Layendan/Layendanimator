@@ -7,11 +7,11 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-export default class Semaphore {
+export default class Semaphore<T> {
   private currentRequests: {
-    resolve: (value: unknown) => void;
+    resolve: (value: T) => void;
     reject: (reason?: unknown) => void;
-    fnToCall: (...args: unknown[]) => Promise<unknown>;
+    fnToCall: (...args: unknown[]) => Promise<T>;
     args: unknown[];
   }[];
   private runningRequests: number;
@@ -35,10 +35,10 @@ export default class Semaphore {
    * @returns Promise that will resolve with the resolved value as if the function passed in was directly called
    */
   callFunction(
-    fnToCall: (...args: unknown[]) => Promise<unknown>,
+    fnToCall: (...args: unknown[]) => Promise<T>,
     ...args: unknown[]
   ) {
-    return new Promise((resolve, reject) => {
+    return new Promise<T>((resolve, reject) => {
       this.currentRequests.push({
         resolve,
         reject,

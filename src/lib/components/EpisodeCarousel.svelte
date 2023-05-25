@@ -1,6 +1,6 @@
 <script lang="ts">
   import { afterNavigate } from '$app/navigation';
-  import type { Anime, Episode as EpisodeType } from '$lib/model/Anime';
+  import type { Anime, Episode as EpisodeType } from '$lib/model/classes/Anime';
   import Content from './Content.svelte';
   import EpisodeCard from './EpisodeCard.svelte';
 
@@ -129,7 +129,7 @@
   }
 
   .useGrid {
-    @apply grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-x-4 gap-y-8 pt-4;
+    @apply grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] justify-items-center gap-x-4 gap-y-8 pt-4;
   }
 
   ::-webkit-scrollbar {

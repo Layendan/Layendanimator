@@ -11,6 +11,7 @@
   import { goto, invalidateAll } from '$app/navigation';
   import { _toUpperCase } from '../../routes/search/+page';
   import SourceButton from './SourceButton.svelte';
+  import { clearCache } from '$lib/model/cache';
 
   let value = '';
 </script>
@@ -36,8 +37,8 @@
         <button
           class="btn-ghost btn-sm btn"
           on:click={() => {
+            clearCache();
             invalidateAll();
-            // window.location.reload();
           }}
         >
           <Fa icon={faRotateRight} size="1.2x" />
@@ -65,7 +66,9 @@
     </form>
   </div>
   <div class="absolute bottom-2 right-2 top-2 flex gap-2">
-    <SourceButton />
+    {#if window?.__TAURI__}
+      <SourceButton />
+    {/if}
     <a href="/library" class="btn-ghost btn">
       <Fa icon={faBookmark} size="1.2x" />
     </a>

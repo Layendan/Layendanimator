@@ -1,9 +1,6 @@
 <script lang="ts">
-  import AnimeCard from '$lib/components/AnimeCard.svelte';
-  import CharacterCard from '$lib/components/CharacterCard.svelte';
   import Player from '$lib/components/Player.svelte';
   import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
-  import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
   import { afterNavigate, goto } from '$app/navigation';
   import { fade } from 'svelte/transition';
   import type { PageData } from './$types';
@@ -24,17 +21,8 @@
   // For some reason filteredEpisode is undefined when the page loads
   $: selectedTab = filteredEpisodes?.length > 0 ? 'episodes' : 'wiki';
 
-  const filteredTypes = ['MANGA', 'NOVEL', 'ONE_SHOT'];
-  $: relations = data.anime.relations.filter(
-    ({ type }) => !filteredTypes.includes(type)
-  );
-
-  const maxRelations = 15;
-
   afterNavigate(() => {
-    if (
-      $unwatchedSubscriptions.find(({ anime: { id } }) => id === data.anime.id)
-    ) {
+    if ($unwatchedSubscriptions[data.anime.id]) {
       unwatchedSubscriptions.remove(data.anime);
       subscriptions.add(data.anime);
     }
@@ -160,53 +148,6 @@
         Show {descriptionCollapsed ? 'more' : 'less'}
       </p>
     </section>
-
-    {#if data.anime.recommendations.length > 0}
-      <div class="divider" />
-
-      <!-- RECOMMENDATIONS -->
-      <ScrollCarousel>
-        <svelte:fragment slot="title">Recommendations</svelte:fragment>
-        <svelte:fragment slot="content">
-          {#each data.anime.recommendations as anime (anime.id)}
-            <AnimeCard {anime} />
-          {/each}
-        </svelte:fragment>
-      </ScrollCarousel>
-    {/if}
-
-    {#if relations.length > 0}
-      <div class="divider" />
-
-      <!-- RELATED -->
-      <ScrollCarousel>
-        <svelte:fragment slot="title">Related</svelte:fragment>
-        <svelte:fragment slot="content">
-          {#each relations as anime (anime.id)}
-            <AnimeCard
-              {anime}
-              extra={relations.length > maxRelations
-                ? ''
-                : anime.relationType.replaceAll('_', ' ')}
-            />
-          {/each}
-        </svelte:fragment>
-      </ScrollCarousel>
-    {/if}
-
-    {#if data.anime.characters.length > 0}
-      <div class="divider" />
-
-      <!-- CHARACTERS -->
-      <ScrollCarousel>
-        <svelte:fragment slot="title">Characters</svelte:fragment>
-        <svelte:fragment slot="content">
-          {#each data.anime.characters as character (character.id)}
-            <CharacterCard {character} color={data.anime.color} />
-          {/each}
-        </svelte:fragment>
-      </ScrollCarousel>
-    {/if}
   </main>
 {:else}
   You shouldn't be here

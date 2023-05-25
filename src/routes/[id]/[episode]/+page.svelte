@@ -32,9 +32,7 @@
   const maxRelations = 15;
 
   afterNavigate(() => {
-    if (
-      $unwatchedSubscriptions.find(({ anime: { id } }) => id === data.anime.id)
-    ) {
+    if ($unwatchedSubscriptions[data.anime.id]) {
       unwatchedSubscriptions.remove(data.anime);
       subscriptions.add(data.anime);
     }

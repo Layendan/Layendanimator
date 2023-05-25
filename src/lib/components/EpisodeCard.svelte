@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
-  import type { Anime, Episode } from '$lib/model/Anime';
+  import type { Anime, Episode } from '$lib/model/classes/Anime';
   import { watched } from '$lib/model/watch';
   import { unwatchedSubscriptions } from '$lib/model/subscriptions';
   import Fa from 'svelte-fa';
@@ -24,18 +24,26 @@
 
   $: isNewEpisode =
     anime.episodes.length - episode.number <
-    ($unwatchedSubscriptions?.find(({ anime: { id } }) => id === anime.id)
-      ?.newEpisodes ?? 0);
+    ($unwatchedSubscriptions?.[anime.id]?.newEpisodes ?? 0);
 
   let downloadState: 'idle' | 'downloading' | 'downloaded' = 'idle';
 
-  $: if ($downloading[episode.id] && !$downloads[episode.id]) {
+  $: if (
+    $downloading[episode.id] &&
+    !$downloads[anime.id]?.episodes?.[episode.id]
+  ) {
     downloadState = 'downloading';
   }
-  $: if ($downloads[episode.id] && !$downloading[episode.id]) {
+  $: if (
+    $downloads[anime.id]?.episodes?.[episode.id] &&
+    !$downloading[episode.id]
+  ) {
     downloadState = 'downloaded';
   }
-  $: if (!$downloads[episode.id] && !$downloading[episode.id]) {
+  $: if (
+    !$downloads[anime.id]?.episodes?.[episode.id] &&
+    !$downloading[episode.id]
+  ) {
     downloadState = 'idle';
   }
 
@@ -45,7 +53,7 @@
         downloading.add(episode.id, anime, '1080p', episode.number);
         break;
       case 'downloaded':
-        downloads.remove(episode.id);
+        downloads.remove(anime.id, episode.id);
         break;
       default:
         break;
@@ -117,19 +125,25 @@
           </h2>
         {/if}
       </div>
-      <button
-        class="btn-ghost btn-sm btn"
-        class:no-animation={downloadState === 'downloading'}
-        on:click|stopPropagation|preventDefault={download}
-      >
-        {#if downloadState === 'downloading'}
-          <Fa icon={faSpinner} size="1.5x" class="animate-spin text-warning" />
-        {:else if downloadState === 'downloaded'}
-          <Fa icon={faCheck} size="1.5x" class="text-success" />
-        {:else}
-          <Fa icon={faDownload} size="1.5x" />
-        {/if}
-      </button>
+      {#if window?.__TAURI__}
+        <button
+          class="btn-ghost btn-sm btn"
+          class:no-animation={downloadState === 'downloading'}
+          on:click|stopPropagation|preventDefault={download}
+        >
+          {#if downloadState === 'downloading'}
+            <Fa
+              icon={faSpinner}
+              size="1.5x"
+              class="animate-spin text-warning"
+            />
+          {:else if downloadState === 'downloaded'}
+            <Fa icon={faCheck} size="1.5x" class="text-success" />
+          {:else}
+            <Fa icon={faDownload} size="1.5x" />
+          {/if}
+        </button>
+      {/if}
     </div>
     {#if !showImage}
       <div class="absolute bottom-1 left-0 right-0 mx-1 select-none">

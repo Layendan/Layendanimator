@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
-import type { Anime } from '$lib/model/Anime';
+import type { Anime } from '$lib/model/classes/Anime';
 
 export function _toUpperCase(value: string): string {
   return value.replace(/\b\w/g, c => c.toUpperCase());

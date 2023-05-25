@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy } from 'svelte';
   import { preloadData } from '$app/navigation';
-  import type { Anime } from '$lib/model/Anime';
+  import type { Anime } from '$lib/model/classes/Anime';
   import {
     faArrowLeft,
     faArrowRight,
@@ -14,7 +14,7 @@
   export let animes: Anime[];
   export let fadeSpeed = 300;
   export let transitionTime = 10_000;
-  export let animeIdx = $carouselPage;
+  export let animeIdx = $carouselPage % (animes.length - 1);
   export let display: 'rails' | 'arrows' = 'arrows';
   let tempId = animeIdx;
 

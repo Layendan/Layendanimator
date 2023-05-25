@@ -1,48 +1,44 @@
 import { writable } from 'svelte/store';
 import type { Store } from 'tauri-plugin-store-api';
-import type { Anime, Episode } from './Anime';
+import type { Anime, Episode } from './classes/Anime';
 
 let store: Store | undefined = undefined;
 
 function createWatching() {
-  const { subscribe, set, update } = writable<
-    { anime: Anime; episode: number }[]
-  >([]);
+  const dict: { [key: string]: { anime: Anime; episode: number } } = {};
+  const { subscribe, set, update } = writable<typeof dict>(dict);
   return {
     subscribe,
-    set: (subscriptions: { anime: Anime; episode: number }[]) => {
+    set: (subscriptions: typeof dict) => {
       set(subscriptions);
       store?.set('watching', subscriptions);
     },
     add: (anime: Anime, episode: number) => {
       update(subscriptions => {
-        const result = [
-          { anime, episode },
-          ...subscriptions.filter(({ anime: { id } }) => id !== anime.id)
-        ];
-        store?.set('watching', result);
-        return result;
+        subscriptions[anime.id] = { anime, episode };
+        store?.set('watching', subscriptions);
+        return subscriptions;
       });
     },
     remove: (anime: Anime) => {
       update(subscriptions => {
-        const result = subscriptions.filter(
-          ({ anime: { id } }) => id !== anime.id
-        );
-        store?.set('watching', result);
-        return result;
+        delete subscriptions[anime.id];
+        store?.set('watching', subscriptions);
+        return subscriptions;
       });
+    },
+    clear: () => {
+      set({});
+      store?.set('watching', {});
     },
     initialize: async () => {
       const StoreImport = (await import('tauri-plugin-store-api')).Store;
       store ??= new StoreImport('.subscriptions.dat');
-      const data = await store.get<{ anime: Anime; episode: number }[]>(
-        'watching'
-      );
+      const data = await store.get<typeof dict>('watching');
       if (data) {
         set(data);
       } else {
-        await store.set('watching', []);
+        await store.set('watching', {});
       }
     }
   };

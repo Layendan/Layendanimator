@@ -40,15 +40,6 @@
     doFade = false;
   }
 
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
-      clearInterval(interval);
-      interval = setInterval(next, transitionTime);
-    } else {
-      clearInterval(interval);
-    }
-  });
-
   $: preloadData(`/${animes[animeIdx].id}`);
 
   onDestroy(() => {
@@ -61,6 +52,17 @@
 </script>
 
 <svelte:window bind:scrollY />
+
+<svelte:document
+  on:visibilitychange={() => {
+    if (document.visibilityState === 'visible') {
+      clearInterval(interval);
+      interval = setInterval(next, transitionTime);
+    } else {
+      clearInterval(interval);
+    }
+  }}
+/>
 
 <header
   in:fade

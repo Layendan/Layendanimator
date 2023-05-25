@@ -8,7 +8,6 @@
     getArch,
     getOS,
     checkUpdate,
-    installUpdate,
     deleteAllData
   } from '$lib/model/info';
   import {
@@ -21,12 +20,6 @@
   const anilistClientId = '4602';
 
   let update = checkUpdate();
-  $: update &&
-    (async () => {
-      if ((await update).shouldUpdate) {
-        await installUpdate();
-      }
-    })();
 </script>
 
 <section>

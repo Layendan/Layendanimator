@@ -24,7 +24,6 @@ export type Anime = {
     english: string;
     native: string;
   };
-  episodeNumber?: number;
   malId: number;
   synonyms: string[];
   isLicensed: boolean;
@@ -132,3 +131,5 @@ export type Source = {
   isM3U8: boolean;
   quality: string;
 };
+
+export type RecentAnime = Anime & { episodeNumber: number };

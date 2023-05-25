@@ -1,6 +1,6 @@
 import { LRUCache } from 'lru-cache';
 import { writable } from 'svelte/store';
-import type { Anime, EpisodeData } from './classes/Anime';
+import type { Anime, EpisodeData, RecentAnime } from './classes/Anime';
 
 const MINUTE = 1000 * 60;
 
@@ -15,7 +15,7 @@ export const episodeCache = new LRUCache<string, EpisodeData>({
 });
 
 // Only used for ttl, but didn't want to install another package
-export const recentEpisodes = new LRUCache<number, Anime[]>({
+export const recentEpisodes = new LRUCache<number, RecentAnime[]>({
   max: 1,
   ttl: MINUTE * 15
 });

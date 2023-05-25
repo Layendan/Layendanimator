@@ -26,12 +26,16 @@ export async function getArch(): Promise<Arch | 'Unknown'> {
 
 export async function checkUpdate(): Promise<UpdateResult> {
   const { checkUpdate } = await import('@tauri-apps/api/updater');
-  return checkUpdate?.();
+  const result = await checkUpdate();
+  if (result.shouldUpdate) {
+    await installUpdate();
+  }
+  return result;
 }
 
 export async function installUpdate(): Promise<void> {
   const { installUpdate } = await import('@tauri-apps/api/updater');
-  return installUpdate?.();
+  return installUpdate();
 }
 
 export function deleteAllData() {

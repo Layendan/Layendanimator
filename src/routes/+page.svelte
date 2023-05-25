@@ -18,11 +18,13 @@
 
   const MINUTE = 1000 * 60;
   const interval = setInterval(invalidateAll, MINUTE * 5);
-  const placeholderNum = 10;
+  const placeholderNum = 25;
 
   onMount(() => {
     if (!navigator?.onLine) {
-      goto('/library/downloads', { replaceState: true });
+      goto(window?.__TAURI__ ? '/library/downloads' : '/library', {
+        replaceState: true
+      });
     }
   });
 
@@ -38,12 +40,20 @@
   {#await data.trending.data}
     <PlaceholderCarousel />
   {:then trending}
-    <Carousel animes={trending.filter(a => a.cover && a.cover !== a.image)} />
+    <Carousel
+      animes={trending.slice(0, 25).filter(a => a.cover && a.cover !== a.image)}
+    />
   {/await}
 
   <!-- Recent episode carouse -->
   <ScrollCarousel>
-    <svelte:fragment slot="title">Recent Episodes</svelte:fragment>
+    <a
+      slot="title"
+      class="btn-ghost btn -m-2 h-max p-2 text-3xl font-extrabold normal-case leading-none tracking-tight md:text-4xl lg:text-5xl"
+      href="/recent"
+    >
+      Recent Episodes
+    </a>
 
     <svelte:fragment slot="content">
       {#await data.recent.data}
@@ -51,7 +61,7 @@
           <PlaceholderAnimeCard />
         {/each}
       {:then recent}
-        {#each recent as anime (`${anime.id}/${anime.episodeNumber}`)}
+        {#each recent.slice(0, 25) as anime (`${anime.id}/${anime.episodeNumber}`)}
           <AnimeCard {anime} extra={`Episode ${anime.episodeNumber}`} />
         {:else}
           <div class="flex items-center justify-center">
@@ -73,7 +83,13 @@
     <div class="divider" />
 
     <ScrollCarousel>
-      <svelte:fragment slot="title">Continue Watching</svelte:fragment>
+      <a
+        slot="title"
+        class="btn-ghost btn -m-2 h-max p-2 text-3xl font-extrabold normal-case leading-none tracking-tight md:text-4xl lg:text-5xl"
+        href="/library/recent"
+      >
+        Continue Watching
+      </a>
 
       <svelte:fragment slot="content">
         {#each Object.values($watching).slice(0, 10) as { anime, episode } (anime.id)}
@@ -87,7 +103,13 @@
 
   <!-- Subscriptions -->
   <ScrollCarousel>
-    <svelte:fragment slot="title">Subscriptions</svelte:fragment>
+    <a
+      slot="title"
+      class="btn-ghost btn -m-2 h-max p-2 text-3xl font-extrabold normal-case leading-none tracking-tight md:text-4xl lg:text-5xl"
+      href="/library/subscriptions"
+    >
+      Subscriptions
+    </a>
 
     <svelte:fragment slot="content">
       {#each Object.values($unwatchedSubscriptions).sort(sortMethod) as anime (anime.id)}
@@ -119,7 +141,13 @@
 
   <!-- Trending -->
   <ScrollCarousel>
-    <svelte:fragment slot="title">Trending Animes</svelte:fragment>
+    <a
+      slot="title"
+      class="btn-ghost btn -m-2 h-max p-2 text-3xl font-extrabold normal-case leading-none tracking-tight md:text-4xl lg:text-5xl"
+      href="/trending"
+    >
+      Trending Animes
+    </a>
 
     <svelte:fragment slot="content">
       {#await data.trending.data}
@@ -127,7 +155,7 @@
           <PlaceholderAnimeCard />
         {/each}
       {:then trending}
-        {#each trending as anime (anime.id)}
+        {#each trending.slice(0, 25) as anime (anime.id)}
           <AnimeCard {anime} />
         {:else}
           <div class="flex items-center justify-center">
@@ -148,7 +176,13 @@
 
   <!-- Popular -->
   <ScrollCarousel>
-    <svelte:fragment slot="title">Popular Animes</svelte:fragment>
+    <a
+      slot="title"
+      class="btn-ghost btn -m-2 h-max p-2 text-3xl font-extrabold normal-case leading-none tracking-tight md:text-4xl lg:text-5xl"
+      href="/popular"
+    >
+      Popular Animes
+    </a>
 
     <svelte:fragment slot="content">
       {#await data.popular.data}
@@ -156,7 +190,7 @@
           <PlaceholderAnimeCard />
         {/each}
       {:then popular}
-        {#each popular as anime (anime.id)}
+        {#each popular.slice(0, 25) as anime (anime.id)}
           <AnimeCard {anime} />
         {:else}
           <div class="flex items-center justify-center">

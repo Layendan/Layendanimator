@@ -15,11 +15,30 @@
     unwatchedSubscriptions
   } from '$lib/model/subscriptions';
   import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
+  import type { UnlistenFn } from '@tauri-apps/api/event';
+  import type { UpdateStatus } from '@tauri-apps/api/updater';
+  import { onDestroy, onMount } from 'svelte';
   import Fa from 'svelte-fa';
 
   const anilistClientId = '4602';
 
-  let update = checkUpdate();
+  let update: UpdateStatus = 'PENDING';
+  let unlisten: UnlistenFn;
+
+  onMount(async () => {
+    if (window?.__TAURI__) {
+      const { onUpdaterEvent } = await import('@tauri-apps/api/updater');
+
+      unlisten = await onUpdaterEvent(({ error, status }) => {
+        console.debug('Updater event', error, status);
+        update = status;
+      });
+
+      await checkUpdate();
+    }
+  });
+
+  onDestroy(() => unlisten?.());
 </script>
 
 <section>
@@ -199,19 +218,19 @@
           {#await getVersion() then version}
             {version}
             <i class="text-sm">
-              {#await update}
-                (Checking for Updates)
-              {:then update}
-                {update.manifest?.version === version
-                  ? '(Up to Date)'
-                  : '(Update Available)'}
-              {:catch}
+              {#if update === 'PENDING'}
+                (Update Check Pending)
+              {:else if update === 'ERROR'}
                 (Update Check Failed)
-              {/await}
+              {:else if update === 'UPTODATE'}
+                (Up to Date)
+              {:else if update === 'DONE'}
+                (Update Available)
+              {/if}
             </i>
             <button
               class="btn-outline btn-accent btn-sm btn ml-2"
-              on:click={() => (update = checkUpdate())}
+              on:click={checkUpdate}
             >
               Check For Updates
             </button>

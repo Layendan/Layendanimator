@@ -21,6 +21,7 @@
   export let poster: string;
   export let anime: Anime;
   export let episode: Episode;
+  export let disableRemotePlayback = false;
 
   let player: MediaPlayerElement | undefined = undefined;
 
@@ -36,7 +37,7 @@
   const dispatcher = createEventDispatcher();
 
   function requestNextEpisode() {
-    const state = document.querySelector('media-player')?.state;
+    const state = player?.state;
     if (
       $settings.deleteOnWatch &&
       state &&
@@ -107,6 +108,7 @@
     class="mx-auto flex w-screen items-center justify-center object-cover fullscreen:h-screen md:w-[max(800px,70vw)]"
     preload="metadata"
     prefer-native-hls
+    {disableRemotePlayback}
     bind:this={player}
     on:ended={requestNextEpisode}
     on:play|once={() => {
@@ -140,7 +142,7 @@
           <li class="m-1">
             <button
               tabindex="0"
-              class="btn-outline btn-accent btn w-full items-center"
+              class="btn-accent btn-outline btn w-full items-center"
               disabled={selectedSource === i}
               on:click={() => (selectedSource = i)}
             >

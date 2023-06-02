@@ -92,8 +92,14 @@
       </a>
 
       <svelte:fragment slot="content">
-        {#each Object.values($watching).slice(0, 10) as { anime, episode } (anime.id)}
-          <AnimeCard {anime} extra={`Episode ${episode}`} deleteable />
+        {#each Object.values($watching)
+          .sort((a, b) => b.watchTime - a.watchTime)
+          .slice(0, 10) as anime (anime.id)}
+          <AnimeCard
+            {anime}
+            extra={`Episode ${anime.watchEpisode}`}
+            deleteable
+          />
         {/each}
       </svelte:fragment>
     </ScrollCarousel>

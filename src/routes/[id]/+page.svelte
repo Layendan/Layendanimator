@@ -14,10 +14,12 @@
     faArrowDown,
     faFilter,
     faPlayCircle,
-    faLanguage
+    faLanguage,
+    faDownload
   } from '@fortawesome/free-solid-svg-icons';
   import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
   import { watched } from '$lib/model/watch';
+  import { downloading } from '$lib/model/downloads';
 
   export let data: PageData;
 
@@ -53,7 +55,7 @@
   style="transform: translate3d(0, {scrollY <= 0 ? 0 : scrollY / 1.5}px, 0);"
 >
   <img
-    class="h-[38vh] w-full object-cover object-top"
+    class="skeleton h-[38vh] w-full object-cover object-top"
     src={data.cover ?? data.image}
     alt="{data.title.english ?? data.title.romaji} Cover"
   />
@@ -76,7 +78,7 @@
             src={data.image}
             alt={data.title.english ?? data.title.romaji}
             style:--anime-color={data.color}
-            class="w-full rounded-lg object-cover shadow-xl ring ring-transparent transition-shadow duration-200
+            class="w-full rounded-lg bg-base-200 object-cover shadow-xl ring ring-transparent transition-shadow duration-200
               {data.color
               ? 'hover:ring-[var(--anime-color)] group-focus-visible:ring-[var(--anime-color)]'
               : 'hover:ring-accent group-focus-visible:ring-accent'}"
@@ -201,7 +203,7 @@
         </h1>
         {#if data.episodes.length > 0}
           <a
-            class="btn-outline btn-accent btn flex w-fit space-x-2"
+            class="btn-accent btn-outline btn flex w-fit space-x-2"
             href="/{data.id}/{continueWatching?.id ?? data.episodes[0].id}"
           >
             <Fa icon={faPlayCircle} size="lg" />
@@ -218,10 +220,21 @@
       </div>
       {#if data.episodes.length > 0}
         <div class="mb-4 flex items-center gap-1">
+          {#if window?.__TAURI__}
+            <button
+              class="btn-accent btn-outline btn"
+              on:click={() =>
+                data.episodes.forEach(episode =>
+                  downloading.add(episode.id, data, '1080p', episode.number)
+                )}
+            >
+              <Fa icon={faDownload} />
+            </button>
+          {/if}
           <div class="dropdown-end dropdown block">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-            <label tabindex="0" class="btn-outline btn-accent btn w-fit">
+            <label tabindex="0" class="btn-accent btn-outline btn w-fit">
               <Fa icon={faLanguage} />
             </label>
             <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -266,7 +279,7 @@
           <div class="dropdown-end dropdown block">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-            <label tabindex="0" class="btn-outline btn-accent btn w-fit">
+            <label tabindex="0" class="btn-accent btn-outline btn w-fit">
               <Fa icon={faFilter} />
             </label>
             <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -276,7 +289,7 @@
             >
               <li class="m-1">
                 <button
-                  class="btn-outline btn-accent btn flex w-full flex-row items-center gap-1 text-base-content"
+                  class="btn-accent btn-outline btn flex w-full flex-row items-center gap-1 text-base-content"
                   disabled={isAscending}
                   on:click={() => (isAscending = true)}
                 >
@@ -286,7 +299,7 @@
               </li>
               <li class="m-1">
                 <button
-                  class="btn-outline btn-accent btn flex w-full flex-row items-center gap-1 text-base-content"
+                  class="btn-accent btn-outline btn flex w-full flex-row items-center gap-1 text-base-content"
                   disabled={!isAscending}
                   on:click={() => (isAscending = false)}
                 >
@@ -296,7 +309,7 @@
               </li>
               <li class="m-1">
                 <button
-                  class="btn-outline btn-accent btn flex w-full flex-row items-center gap-2 text-base-content"
+                  class="btn-accent btn-outline btn flex w-full flex-row items-center gap-2 text-base-content"
                   on:click={() => (showWatched = !showWatched)}
                 >
                   <input
@@ -310,7 +323,7 @@
               </li>
               <li class="m-1">
                 <button
-                  class="btn-outline btn-accent btn flex w-full flex-row items-center gap-2 text-base-content"
+                  class="btn-accent btn-outline btn flex w-full flex-row items-center gap-2 text-base-content"
                   on:click={() => (showImage = !showImage)}
                 >
                   <input

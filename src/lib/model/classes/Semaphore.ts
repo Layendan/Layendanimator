@@ -16,15 +16,18 @@ export default class Semaphore<T> {
   }[];
   private runningRequests: number;
   private maxConcurrentRequests: number;
+  private pauseTime: number;
 
   /**
    * Creates a semaphore that limits the number of concurrent Promises being handled
    * @param maxConcurrentRequests max number of concurrent promises being handled at any time
+   * @param pauseTime time to wait between each function call in milliseconds
    */
-  constructor(maxConcurrentRequests = 1) {
+  constructor(maxConcurrentRequests = 1, pauseTime = 0) {
     this.currentRequests = [];
     this.runningRequests = 0;
     this.maxConcurrentRequests = maxConcurrentRequests;
+    this.pauseTime = pauseTime;
   }
 
   /**
@@ -68,7 +71,9 @@ export default class Semaphore<T> {
         .catch(err => reject(err))
         .finally(() => {
           this.runningRequests--;
-          this.tryNext();
+          new Promise(resolve => setTimeout(resolve, this.pauseTime)).then(() =>
+            this.tryNext()
+          );
         });
     }
   }

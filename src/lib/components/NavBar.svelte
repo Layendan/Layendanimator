@@ -69,10 +69,10 @@
     {#if window?.__TAURI__}
       <SourceButton />
     {/if}
-    <a href="/library" class="btn-ghost btn">
+    <a href="/library" class="btn-ghost btn" aria-label="Library">
       <Fa icon={faBookmark} size="1.2x" />
     </a>
-    <a href="/settings" class="btn-ghost btn">
+    <a href="/settings" class="btn-ghost btn" aria-label="Settings">
       <Fa icon={faCog} size="1.2x" />
     </a>
   </div>

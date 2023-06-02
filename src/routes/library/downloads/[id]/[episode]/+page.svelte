@@ -37,6 +37,7 @@
     poster={data.episodeObject.image ?? data.anime.image}
     anime={data.anime}
     episode={data.episodeObject}
+    disableRemotePlayback
     on:requestNextEpisode={() => {
       if (data.nextEpisode)
         goto(`/${data.anime.id}/${data.nextEpisode.id}`, {

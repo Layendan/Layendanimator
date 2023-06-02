@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import type { Store } from 'tauri-plugin-store-api';
 import type { Anime, EpisodeData } from './classes/Anime';
 import { invalidate, preloadData } from '$app/navigation';
@@ -115,8 +115,8 @@ async function sendNotification(title: string, episode: number) {
 
 function createDownloading() {
   const videos = new Semaphore<string>(5);
-  const subtitles = new Semaphore<string>(10);
-  const images = new Semaphore<string>(10);
+  const subtitles = new Semaphore<string>(10, 1000);
+  const images = new Semaphore<string>(10, 1000);
 
   const dict: {
     [key: string]: { anime: Anime; quality: string; progress: number | null };
@@ -139,6 +139,8 @@ function createDownloading() {
       quality: string,
       episodeNumber: number
     ) => {
+      if (get(downloads)[anime.id]?.episodes[episodeId]) return;
+
       try {
         update(downloads => {
           downloads[episodeId] = { anime, quality, progress: null };

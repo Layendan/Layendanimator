@@ -4,8 +4,10 @@ import type { Anime, Episode } from './classes/Anime';
 
 let store: Store | undefined = undefined;
 
+type WatchingAnime = Anime & { watchEpisode: number; watchTime: number };
+
 function createWatching() {
-  const dict: { [key: string]: { anime: Anime; episode: number } } = {};
+  const dict: { [key: string]: WatchingAnime } = {};
   const { subscribe, set, update } = writable<typeof dict>(dict);
   return {
     subscribe,
@@ -15,7 +17,16 @@ function createWatching() {
     },
     add: (anime: Anime, episode: number) => {
       update(subscriptions => {
-        subscriptions[anime.id] = { anime, episode };
+        if (subscriptions[anime.id]) {
+          subscriptions[anime.id].watchEpisode = episode;
+          subscriptions[anime.id].watchTime = Date.now();
+        } else {
+          subscriptions[anime.id] = {
+            ...anime,
+            watchEpisode: episode,
+            watchTime: Date.now()
+          };
+        }
         store?.set('watching', subscriptions);
         return subscriptions;
       });
@@ -53,7 +64,7 @@ export type WatchType = {
 };
 
 function createWatched() {
-  const dict: { [key: string]: WatchType[] } = {};
+  const dict: { [animeId: string]: WatchType[] } = {};
   const { subscribe, set, update } = writable(dict);
   return {
     subscribe,
@@ -61,31 +72,31 @@ function createWatched() {
       set(map);
       store?.set('watched', map);
     },
-    add: (key: string, data: WatchType) => {
+    add: (animeId: string, data: WatchType) => {
       update(map => {
         const temp = [
-          ...(map[key] ?? []).filter(
+          ...(map[animeId] ?? []).filter(
             ({ episode: { id } }) => id !== data.episode.id
           ),
           data
         ];
         temp.sort((a, b) => a.episode.number - b.episode.number);
-        map[key] = temp;
+        map[animeId] = temp;
         store?.set('watched', map);
         store?.save();
         return map;
       });
     },
-    remove: (key: string) => {
+    removeAnime: (animeId: string) => {
       update(map => {
-        delete map[key];
+        delete map[animeId];
         store?.set('watched', map);
         return map;
       });
     },
-    removeEpisode: (key: string, episodeId: string) => {
+    removeEpisode: (animeId: string, episodeId: string) => {
       update(map => {
-        map[key] = (map[key] ?? []).filter(
+        map[animeId] = (map[animeId] ?? []).filter(
           ({ episode: { id } }) => id !== episodeId
         );
         store?.set('watched', map);

@@ -14,31 +14,11 @@
     subscriptions,
     unwatchedSubscriptions
   } from '$lib/model/subscriptions';
+  import { watched } from '$lib/model/watch';
   import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
-  import type { UnlistenFn } from '@tauri-apps/api/event';
-  import type { UpdateStatus } from '@tauri-apps/api/updater';
-  import { onDestroy, onMount } from 'svelte';
   import Fa from 'svelte-fa';
 
   const anilistClientId = '4602';
-
-  let update: UpdateStatus = 'PENDING';
-  let unlisten: UnlistenFn;
-
-  onMount(async () => {
-    if (window?.__TAURI__) {
-      const { onUpdaterEvent } = await import('@tauri-apps/api/updater');
-
-      unlisten = await onUpdaterEvent(({ error, status }) => {
-        console.debug('Updater event', error, status);
-        update = status;
-      });
-
-      await checkUpdate();
-    }
-  });
-
-  onDestroy(() => unlisten?.());
 </script>
 
 <section>
@@ -114,11 +94,11 @@
       Data
     </h1>
     <div class="grid grid-cols-1 gap-4">
-      <button class="btn-outline btn-accent btn w-full" on:click={clearCache}>
+      <button class="btn-accent btn-outline btn w-full" on:click={clearCache}>
         Clear Cache
       </button>
       <button
-        class="btn-outline btn-accent btn w-full"
+        class="btn-accent btn-outline btn w-full"
         on:click={() => {
           unwatchedSubscriptions.clear();
           subscriptions.clear();
@@ -126,15 +106,23 @@
       >
         Clear Subscriptions
       </button>
+      <button
+        class="btn-accent btn-outline btn w-full"
+        on:click={() => {
+          watched.clear();
+        }}
+      >
+        Clear Watch History
+      </button>
       {#if window?.__TAURI__}
         <button
-          class="btn-outline btn-accent btn w-full"
+          class="btn-accent btn-outline btn w-full"
           on:click={() => connections.clear()}
         >
           Clear Connections
         </button>
         <button
-          class="btn-outline btn-accent btn w-full"
+          class="btn-accent btn-outline btn w-full"
           on:click={async () => {
             const { open } = await import('@tauri-apps/api/shell');
             const { join, appDataDir } = await import('@tauri-apps/api/path');
@@ -144,7 +132,7 @@
           Open Downloads Folder
         </button>
         <button
-          class="btn-outline btn-accent btn w-full"
+          class="btn-accent btn-outline btn w-full"
           on:click={async () => {
             const { isPermissionGranted, requestPermission, sendNotification } =
               await import('@tauri-apps/api/notification');
@@ -217,19 +205,8 @@
           <b>App Version:</b>
           {#await getVersion() then version}
             {version}
-            <i class="text-sm">
-              {#if update === 'PENDING'}
-                (Update Check Pending)
-              {:else if update === 'ERROR'}
-                (Update Check Failed)
-              {:else if update === 'UPTODATE'}
-                (Up to Date)
-              {:else if update === 'DONE'}
-                (Update Available)
-              {/if}
-            </i>
             <button
-              class="btn-outline btn-accent btn-sm btn ml-2"
+              class="btn-accent btn-outline btn-sm btn ml-2"
               on:click={checkUpdate}
             >
               Check For Updates

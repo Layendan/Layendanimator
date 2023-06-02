@@ -81,7 +81,7 @@
         src={imageLoaded ? episode.image : '/assets/loading_failure.jpeg'}
         alt={episode.title ?? `Episode ${episode.number}`}
         on:error={() => (imageLoaded = false)}
-        class="card-body relative m-0 aspect-video h-full w-full rounded-md bg-accent bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center p-0"
+        class="card-body relative m-0 aspect-video h-full w-full rounded-md bg-base-300 bg-cover bg-center bg-no-repeat object-cover object-center p-0"
       />
       <div style:--anime-color={anime.color} class="relative mx-1 select-none">
         <div

@@ -58,7 +58,7 @@
   style="transform: translate3d(0, {scrollY <= 0 ? 0 : scrollY / 1.5}px, 0);"
 >
   <img
-    class="h-[38vh] w-full object-cover object-top"
+    class="skeleton h-[38vh] w-full object-cover object-top"
     src={heroLoaded ? data.cover ?? data.image : '/assets/loading_failure.jpeg'}
     on:error={() => (heroLoaded = false)}
     alt="{data.title.english ?? data.title.romaji} Cover"
@@ -83,7 +83,7 @@
             alt={data.title.english ?? data.title.romaji}
             on:error={() => (imageLoaded = false)}
             style:--anime-color={data.color}
-            class="w-full rounded-lg bg-[url('/assets/loading_failure.jpeg')] bg-cover bg-center bg-no-repeat object-cover object-center shadow-xl ring ring-transparent transition-shadow duration-200
+            class="w-full rounded-lg bg-base-200 bg-cover bg-center bg-no-repeat object-cover object-center shadow-xl ring ring-transparent transition-shadow duration-200
               {data.color
               ? 'hover:ring-[var(--anime-color)] group-focus-visible:ring-[var(--anime-color)]'
               : 'hover:ring-accent group-focus-visible:ring-accent'}"
@@ -202,7 +202,7 @@
         </h1>
         {#if data.episodes.length > 0}
           <a
-            class="btn-outline btn-accent btn flex w-fit space-x-2"
+            class="btn-accent btn-outline btn flex w-fit space-x-2"
             href="/{data.id}/{continueWatching.id}"
           >
             <Fa icon={faPlayCircle} size="lg" />
@@ -222,7 +222,7 @@
           <div class="dropdown-end dropdown block">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-            <label tabindex="0" class="btn-outline btn-accent btn w-fit">
+            <label tabindex="0" class="btn-accent btn-outline btn w-fit">
               <Fa icon={faLanguage} />
             </label>
             <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -267,7 +267,7 @@
           <div class="dropdown-end dropdown block">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-            <label tabindex="0" class="btn-outline btn-accent btn w-fit">
+            <label tabindex="0" class="btn-accent btn-outline btn w-fit">
               <Fa icon={faFilter} />
             </label>
             <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -277,7 +277,7 @@
             >
               <li class="m-1">
                 <button
-                  class="btn-outline btn-accent btn flex w-full flex-row items-center gap-1 text-base-content"
+                  class="btn-accent btn-outline btn flex w-full flex-row items-center gap-1 text-base-content"
                   disabled={isAscending}
                   on:click={() => (isAscending = true)}
                 >
@@ -287,7 +287,7 @@
               </li>
               <li class="m-1">
                 <button
-                  class="btn-outline btn-accent btn flex w-full flex-row items-center gap-1 text-base-content"
+                  class="btn-accent btn-outline btn flex w-full flex-row items-center gap-1 text-base-content"
                   disabled={!isAscending}
                   on:click={() => (isAscending = false)}
                 >
@@ -297,7 +297,7 @@
               </li>
               <li class="m-1">
                 <button
-                  class="btn-outline btn-accent btn flex w-full flex-row items-center gap-2 text-base-content"
+                  class="btn-accent btn-outline btn flex w-full flex-row items-center gap-2 text-base-content"
                   on:click={() => (showWatched = !showWatched)}
                 >
                   <input
@@ -311,7 +311,7 @@
               </li>
               <li class="m-1">
                 <button
-                  class="btn-outline btn-accent btn flex w-full flex-row items-center gap-2 text-base-content"
+                  class="btn-accent btn-outline btn flex w-full flex-row items-center gap-2 text-base-content"
                   on:click={() => (showImage = !showImage)}
                 >
                   <input

@@ -125,6 +125,7 @@
           class="h-6 w-6 rounded-lg {i === tempId
             ? 'bg-accent'
             : 'bg-accent/10'}"
+          aria-label="Select {anime.title.english ?? anime.title.romaji}"
           on:click={() => set(i)}
         />
       {/each}
@@ -137,10 +138,18 @@
         : 'motion-safe::pointer-events-none motion-safe:!opacity-0'}"
     >
       <div class="flex">
-        <button class="btn-ghost btn-square btn-sm btn" on:click={previous}>
+        <button
+          class="btn-ghost btn-square btn-sm btn"
+          aria-label="Previous Featured Anime"
+          on:click={previous}
+        >
           <Fa icon={faArrowLeft} size="1.2x" />
         </button>
-        <button class="btn-ghost btn-square btn-sm btn" on:click={next}>
+        <button
+          class="btn-ghost btn-square btn-sm btn"
+          aria-label="Next Featured Anime"
+          on:click={next}
+        >
           <Fa icon={faArrowRight} size="1.2x" />
         </button>
       </div>

@@ -7,7 +7,7 @@
 <div class="dropdown block">
   <!-- svelte-ignore a11y-label-has-associated-control -->
   <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-  <label tabindex="0" class="btn-outline btn-accent btn w-fit">Sources</label>
+  <label tabindex="0" class="btn-accent btn-outline btn w-fit">Sources</label>
   <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
   <ul
     tabindex="0"
@@ -16,7 +16,8 @@
     {#each Object.values($providers) as provider}
       <li class="m-1">
         <button
-          class="btn-outline btn-accent btn flex w-full flex-row items-center gap-1 text-base-content"
+          class="btn-outline btn flex w-full flex-row items-center gap-1 text-base-content
+          {$source.id === provider.id ? 'btn-disabled' : 'btn-accent '}"
           disabled={$source.id === provider.id}
           on:click={() => {
             source.set(provider);

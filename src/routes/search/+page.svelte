@@ -1,11 +1,11 @@
 <script lang="ts">
   import AnimeCard from '$lib/components/AnimeCard.svelte';
-  import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
+  import GridContent from '$lib/components/GridContent.svelte';
   import type { PageData } from './$types';
   export let data: PageData;
 </script>
 
-<ScrollCarousel>
+<GridContent>
   <svelte:fragment slot="title">{data.query}</svelte:fragment>
 
   <svelte:fragment slot="content">
@@ -21,4 +21,4 @@
       </div>
     {/each}
   </svelte:fragment>
-</ScrollCarousel>
+</GridContent>

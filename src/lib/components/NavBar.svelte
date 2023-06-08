@@ -19,6 +19,12 @@
 <div
   class="navbar sticky left-0 right-0 top-0 z-50 bg-base-100 bg-opacity-80 backdrop-blur-xl backdrop-filter"
 >
+  <a
+    class="center btn-primary btn absolute left-2 hidden justify-center opacity-0 focus-visible:block"
+    href="#main"
+  >
+    Go to main content
+  </a>
   <div class="navbar-start flex gap-2">
     {#if window?.__TAURI__}
       <div class="flex gap-1">
@@ -69,11 +75,15 @@
     {#if window?.__TAURI__}
       <SourceButton />
     {/if}
-    <a href="/library" class="btn-ghost btn" aria-label="Library">
-      <Fa icon={faBookmark} size="1.2x" />
-    </a>
-    <a href="/settings" class="btn-ghost btn" aria-label="Settings">
-      <Fa icon={faCog} size="1.2x" />
-    </a>
+    <div class="tooltip tooltip-left" data-tip="Library">
+      <a href="/library" class="btn-ghost btn" aria-label="Library">
+        <Fa icon={faBookmark} size="1.2x" />
+      </a>
+    </div>
+    <div class="tooltip tooltip-left" data-tip="Settings">
+      <a href="/settings" class="btn-ghost btn" aria-label="Settings">
+        <Fa icon={faCog} size="1.2x" />
+      </a>
+    </div>
   </div>
 </div>

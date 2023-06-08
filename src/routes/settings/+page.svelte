@@ -10,6 +10,7 @@
     checkUpdate,
     deleteAllData
   } from '$lib/model/info';
+  import { providers } from '$lib/model/source';
   import {
     subscriptions,
     unwatchedSubscriptions
@@ -113,6 +114,14 @@
         }}
       >
         Clear Watch History
+      </button>
+      <button
+        class="btn-accent btn-outline btn w-full"
+        on:click={() => {
+          providers.clear();
+        }}
+      >
+        Clear Sources
       </button>
       {#if window?.__TAURI__}
         <button

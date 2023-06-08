@@ -2,19 +2,18 @@
   import 'vidstack/styles/base.css';
   import 'vidstack/styles/ui/buttons.css';
   import 'vidstack/styles/ui/sliders.css';
-  import 'vidstack/define/media-player.js';
+  import 'vidstack/styles/defaults.css';
+  import 'vidstack/styles/community-skin/video.css';
   import { defineCustomElements } from 'vidstack/elements';
   import type { HLSProvider, MediaPlayerElement } from 'vidstack';
 
-  import Fa from 'svelte-fa';
-  import { faMicrochip, faDownload } from '@fortawesome/free-solid-svg-icons';
   import { onMount, createEventDispatcher, onDestroy } from 'svelte';
   import { watched } from '$lib/model/watch';
   import type { Anime, Episode, EpisodeData } from '$lib/model/classes/Anime';
   import { getOS } from '$lib/model/info';
   import { beforeNavigate } from '$app/navigation';
   import Hls from 'hls.js';
-  import { downloading, downloads } from '$lib/model/downloads';
+  import { downloads } from '$lib/model/downloads';
   import { settings } from '$lib/model/settings';
 
   export let episodeData: EpisodeData;
@@ -28,11 +27,6 @@
   $: watchedObject = $watched[anime.id]?.find(
     item => item.episode.number === episode.number
   );
-
-  const defaultIndex = episodeData.sources.findIndex(
-    source => source.quality === 'default'
-  );
-  let selectedSource = defaultIndex !== -1 ? defaultIndex : 0;
 
   const dispatcher = createEventDispatcher();
 
@@ -72,6 +66,7 @@
         appWindow?.setFullscreen(isFullscreen);
       });
     }
+    player?.enterFullscreen();
   });
 
   function updateWatched() {
@@ -101,13 +96,13 @@
 <div class="relative -m-4 mb-4 h-auto w-screen bg-black">
   <!-- svelte-ignore a11y-autofocus -->
   <media-player
-    src={episodeData.sources[selectedSource].url}
     {poster}
-    controls
+    title={episode.title}
     aspect-ratio="16/9"
     class="mx-auto flex w-screen items-center justify-center object-cover fullscreen:h-screen md:w-[max(800px,70vw)]"
     preload="metadata"
-    prefer-native-hls
+    autoplay
+    autofocus
     {disableRemotePlayback}
     bind:this={player}
     on:ended={requestNextEpisode}
@@ -120,52 +115,20 @@
       }
     }}
   >
+    <media-poster alt={episode.description} />
     <media-outlet>
+      {#each episodeData.sources as source}
+        <source src={source.url} />
+      {/each}
       {#each episodeData.subtitles ?? [] as track}
-        <track label={track.lang} kind="captions" src={track.url} />
+        <track
+          label={track.lang}
+          kind="captions"
+          src={track.url}
+          default={track.lang.toLowerCase() === 'english'}
+        />
       {/each}
     </media-outlet>
+    <media-community-skin />
   </media-player>
-  <div class="absolute bottom-4 left-4">
-    <div class="dropdown-right dropdown-end dropdown">
-      <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-      <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label tabindex="0" class="btn-ghost btn">
-        <Fa icon={faMicrochip} size="1.5x" />
-      </label>
-      <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-      <ul
-        tabindex="0"
-        class="dropdown-content rounded-box z-10 ml-2 w-52 bg-base-200 p-2 shadow"
-      >
-        {#each episodeData.sources as source, i}
-          <li class="m-1">
-            <button
-              tabindex="0"
-              class="btn-accent btn-outline btn w-full items-center"
-              disabled={selectedSource === i}
-              on:click={() => (selectedSource = i)}
-            >
-              {source.quality}
-            </button>
-          </li>
-        {/each}
-      </ul>
-    </div>
-  </div>
-  {#if !$downloading[episode.id] && !$downloads[anime.id]?.episodes?.[episode.id]}
-    <!-- ffmpeg -i "link" -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 "output" -->
-    <button
-      class="btn-ghost btn absolute bottom-4 right-4"
-      on:click={() =>
-        downloading.add(
-          episode.id,
-          anime,
-          episodeData.sources[selectedSource].quality,
-          episode.number
-        )}
-    >
-      <Fa icon={faDownload} size="1.5x" />
-    </button>
-  {/if}
 </div>

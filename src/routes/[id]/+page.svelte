@@ -289,7 +289,8 @@
             >
               <li class="m-1">
                 <button
-                  class="btn-accent btn-outline btn flex w-full flex-row items-center gap-1 text-base-content"
+                  class="btn-outline btn flex w-full flex-row items-center gap-1 text-base-content
+                  {isAscending ? 'btn-disabled' : 'btn-accent '}"
                   disabled={isAscending}
                   on:click={() => (isAscending = true)}
                 >
@@ -299,7 +300,8 @@
               </li>
               <li class="m-1">
                 <button
-                  class="btn-accent btn-outline btn flex w-full flex-row items-center gap-1 text-base-content"
+                  class="btn-outline btn flex w-full flex-row items-center gap-1 text-base-content
+                  {!isAscending ? 'btn-disabled' : 'btn-accent '}"
                   disabled={!isAscending}
                   on:click={() => (isAscending = false)}
                 >

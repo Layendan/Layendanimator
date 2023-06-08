@@ -9,7 +9,18 @@ let store: Store | undefined = undefined;
 export type Provider = {
   name: string;
   id: string;
+  path: string;
   logo: string;
+  scripts: {
+    search: string;
+    fetchTrendingAnime: string;
+    fetchPopularAnime: string;
+    fetchAnimeInfo: string;
+    fetchAiringSchedule: string;
+    fetchEpisodeSources: string;
+  };
+  languages: string[];
+  status: 'working' | 'broken' | 'unknown';
   isNSFW: boolean;
 };
 
@@ -17,13 +28,35 @@ export const defaultProviders: { [key: string]: Provider } = {
   gogoanime: {
     name: 'Gogoanime',
     id: 'gogoanime',
+    path: '/sources/gogoanime.js',
     logo: 'https://play-lh.googleusercontent.com/MaGEiAEhNHAJXcXKzqTNgxqRmhuKB1rCUgb15UrN_mWUNRnLpO5T1qja64oRasO7mn0',
+    scripts: {
+      search: '',
+      fetchTrendingAnime: '',
+      fetchPopularAnime: '',
+      fetchAnimeInfo: '',
+      fetchAiringSchedule: '',
+      fetchEpisodeSources: ''
+    },
+    languages: ['en'],
+    status: 'working',
     isNSFW: false
   },
   zoro: {
     name: 'Zoro',
     id: 'zoro',
+    path: '/sources/zoro.js',
     logo: 'https://is3-ssl.mzstatic.com/image/thumb/Purple112/v4/7e/91/00/7e9100ee-2b62-0942-4cdc-e9b93252ce1c/source/512x512bb.jpg',
+    scripts: {
+      search: '',
+      fetchTrendingAnime: '',
+      fetchPopularAnime: '',
+      fetchAnimeInfo: '',
+      fetchAiringSchedule: '',
+      fetchEpisodeSources: ''
+    },
+    languages: ['en'],
+    status: 'working',
     isNSFW: false
   }
 };

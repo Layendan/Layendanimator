@@ -13,6 +13,7 @@
   $: sortMethod = ($settings.sortSubscriptions, getSortMethod());
 </script>
 
+<!-- Downloads -->
 {#if window?.__TAURI__}
   <ScrollCarousel>
     <a
@@ -45,6 +46,7 @@
   <div class="divider" />
 {/if}
 
+<!-- Recently Watched -->
 <ScrollCarousel>
   <a
     slot="title"
@@ -71,6 +73,7 @@
 
 <div class="divider" />
 
+<!-- Subscriptions -->
 <ScrollCarousel>
   <a
     slot="title"
@@ -81,16 +84,27 @@
   </a>
 
   <svelte:fragment slot="content">
-    {#each [...Object.values($unwatchedSubscriptions).sort(sortMethod), ...Object.values($subscriptions).sort(sortMethod)] as anime (anime.id)}
+    {#each Object.values($unwatchedSubscriptions).sort(sortMethod) as anime (anime.id)}
+      <AnimeCard {anime} bind:numUpdates={anime.newEpisodes} />
+    {/each}
+
+    {#if Object.entries($unwatchedSubscriptions).length > 0 && Object.entries($subscriptions).length > 0}
+      <div class="divider divider-horizontal" />
+    {/if}
+
+    {#each Object.values($subscriptions).sort(sortMethod) as anime (anime.id)}
       <AnimeCard {anime} />
-    {:else}
+    {/each}
+
+    <!-- Can't use else since it can only check one and not both -->
+    {#if Object.entries($subscriptions).length === 0 && Object.entries($unwatchedSubscriptions).length === 0}
       <div class="flex items-center justify-center">
         <p
-          class="text-xl font-semibold text-center text-base-content text-opacity-70"
+          class="text-center text-xl font-semibold text-base-content text-opacity-70"
         >
-          No Subscriptions
+          No Subscriptions Added
         </p>
       </div>
-    {/each}
+    {/if}
   </svelte:fragment>
 </ScrollCarousel>

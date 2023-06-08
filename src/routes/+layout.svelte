@@ -97,6 +97,6 @@
 
 <NavBar />
 
-<main class="m-4 mb-20" bind:this={main}>
+<main class="m-4 mb-20" id="main" bind:this={main}>
   <slot />
 </main>

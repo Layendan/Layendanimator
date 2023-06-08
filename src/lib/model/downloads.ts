@@ -100,11 +100,11 @@ async function sendNotification(title: string, episode: number) {
     await import('@tauri-apps/api/notification');
   if (await isPermissionGranted()) {
     sendNotification({
-      title: `Downloaded episode ${episode} of ${title}`
+      title: `Downloaded Episode ${episode} of ${title}`
     });
   } else if ((await requestPermission()) === 'granted') {
     sendNotification({
-      title: `Downloaded episode ${episode} of ${title}`
+      title: `Downloaded Episode ${episode} of ${title}`
     });
   } else {
     console.error('Permission not granted');

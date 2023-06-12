@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
   import type { Anime, Episode } from '$lib/model/classes/Anime';
-  import { watched } from '$lib/model/watch';
+  import { watching } from '$lib/model/watch';
   import { unwatchedSubscriptions } from '$lib/model/subscriptions';
   import Fa from 'svelte-fa';
   import {
@@ -18,12 +18,10 @@
   export let type: 'sub' | 'dub' = 'sub';
   export let href = `/${anime.id}/${episode.id}?dub=${type === 'dub'}`;
 
-  $: watchedObject = $watched[anime.id]?.find(
-    ({ episode: { id } }) => id === episode.id
-  );
+  $: watchedObject = $watching[anime.id]?.watchedEpisodes[episode.id];
 
   $: isNewEpisode =
-    anime.episodes.length - episode.number <
+    Math.max(anime.episodes.length - episode.number, 0) <
     ($unwatchedSubscriptions?.[anime.id]?.newEpisodes ?? 0);
 
   let downloadState: 'idle' | 'downloading' | 'downloaded' = 'idle';
@@ -67,6 +65,7 @@
   in:fade
   {href}
   id={episode.id}
+  style:--anime-color={anime.color ?? 'hsl(var(--a))'}
   class="group-one indicator flex w-[210px] flex-col gap-2 focus-visible:outline-transparent"
   data-sveltekit-replacestate={replaceState ? '' : 'off'}
   on:contextmenu={e => {
@@ -83,11 +82,10 @@
         on:error={() => (imageLoaded = false)}
         class="card-body relative m-0 aspect-video h-full w-full rounded-md bg-base-300 bg-cover bg-center bg-no-repeat object-cover object-center p-0"
       />
-      <div style:--anime-color={anime.color} class="relative mx-1 select-none">
+      <div class="relative mx-1 select-none">
         <div
           style="width: {(watchedObject?.percentage ?? 0) * 100}%;"
-          class="absolute bottom-1 left-0 right-0 h-1 rounded-md shadow-lg shadow-black
-          {anime.color ? 'bg-[var(--anime-color)]' : 'bg-accent'}"
+          class="absolute bottom-1 left-0 right-0 h-1 rounded-md bg-[var(--anime-color)] shadow-lg shadow-black"
         />
       </div>
       {#if isNewEpisode}
@@ -96,7 +94,6 @@
     </div>
   {/if}
   <div
-    style:--anime-color={anime.color}
     class="relative flex h-full flex-col gap-1"
     class:noImageDesc={!showImage}
     class:pb-6={watchedObject?.percentage && !showImage}
@@ -110,10 +107,7 @@
         hover:text-opacity-100 group-one-focus-visible:text-opacity-100"
       >
         <h3
-          class="text-md line-clamp-2 whitespace-normal font-bold leading-tight transition-colors duration-200
-          {anime.color
-            ? 'group-hover:text-[var(--anime-color)] group-one-focus-visible:text-[var(--anime-color)]'
-            : 'group-hover:text-accent group-one-focus-visible:text-accent'}"
+          class="text-md line-clamp-2 whitespace-normal font-bold leading-tight transition-colors duration-200 group-hover:text-[var(--anime-color)] group-one-focus-visible:text-[var(--anime-color)]"
         >
           {episode.title || `Episode ${episode.number}`}
         </h3>
@@ -149,8 +143,7 @@
       <div class="absolute bottom-1 left-0 right-0 mx-1 select-none">
         <div
           style="width: {(watchedObject?.percentage ?? 0) * 100}%;"
-          class="h-1 rounded-md
-          {anime.color ? 'bg-[var(--anime-color)]' : 'bg-accent'}"
+          class="h-1 rounded-md bg-[var(--anime-color)]"
         />
       </div>
     {/if}

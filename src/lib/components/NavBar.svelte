@@ -1,19 +1,9 @@
 <script lang="ts">
   import Fa from 'svelte-fa';
-  import {
-    faArrowLeft,
-    faArrowRight,
-    faRotateRight,
-    faBookmark,
-    faCog
-  } from '@fortawesome/free-solid-svg-icons';
-  import { searchHistory } from '$lib/model/searchHistory';
-  import { goto, invalidateAll } from '$app/navigation';
-  import { _toUpperCase } from '../../routes/search/+page';
+  import { faBookmark, faCog } from '@fortawesome/free-solid-svg-icons';
   import SourceButton from './SourceButton.svelte';
-  import { clearCache } from '$lib/model/cache';
-
-  let value = '';
+  import SearchBar from './SearchBar.svelte';
+  import NavigationComponents from './NavigationComponents.svelte';
 </script>
 
 <div
@@ -25,62 +15,30 @@
   >
     Go to main content
   </a>
+
   <div class="navbar-start flex gap-2">
-    {#if window?.__TAURI__}
-      <div class="flex gap-1">
-        <button
-          class="btn-ghost btn-sm btn"
-          on:click={() => window.history.back()}
-        >
-          <Fa icon={faArrowLeft} size="1.2x" />
-        </button>
-        <button
-          class="btn-ghost btn-sm btn"
-          on:click={() => window.history.forward()}
-        >
-          <Fa icon={faArrowRight} size="1.2x" />
-        </button>
-        <button
-          class="btn-ghost btn-sm btn"
-          on:click={() => {
-            clearCache();
-            invalidateAll();
-          }}
-        >
-          <Fa icon={faRotateRight} size="1.2x" />
-        </button>
-      </div>
-    {/if}
-    <a href="/" class="btn-ghost btn text-xl normal-case">Layendanimator</a>
-    <form
-      on:submit|preventDefault={() => {
-        const query = _toUpperCase(value.trim());
-        if (!query) return;
-        searchHistory.add(query);
-        goto(`/search?q=${query}`);
-      }}
-      class="flex h-12 w-full items-center justify-center"
-    >
-      <input
-        type="search"
-        placeholder="Search an anime"
-        class="h-full flex-1 rounded-md bg-base-200 px-2 text-base shadow-md ring-2 ring-base-200 transition-shadow duration-200 focus:outline-none focus:ring-accent"
-        autocomplete="off"
-        autocapitalize="words"
-        bind:value
-      />
-    </form>
+    <NavigationComponents />
+
+    <a href="/" class="btn-ghost btn text-xl normal-case" aria-label="Home">
+      Layendanimator
+    </a>
+
+    <SearchBar />
   </div>
+
   <div class="absolute bottom-2 right-2 top-2 flex gap-2">
-    {#if window?.__TAURI__}
-      <SourceButton />
-    {/if}
-    <div class="tooltip tooltip-left" data-tip="Library">
+    <SourceButton />
+
+    <div class="tooltip tooltip-bottom" data-tip="Library">
       <a href="/library" class="btn-ghost btn" aria-label="Library">
         <Fa icon={faBookmark} size="1.2x" />
       </a>
     </div>
-    <div class="tooltip tooltip-left" data-tip="Settings">
+
+    <div
+      class="tooltip tooltip-bottom before:left-[calc(50%-0.5rem)]"
+      data-tip="Settings"
+    >
       <a href="/settings" class="btn-ghost btn" aria-label="Settings">
         <Fa icon={faCog} size="1.2x" />
       </a>

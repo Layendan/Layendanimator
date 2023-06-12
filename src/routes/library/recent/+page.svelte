@@ -11,7 +11,7 @@
     {#each Object.values($watching)
       .sort((a, b) => b.watchTime - a.watchTime)
       .slice(0, 10) as anime (anime.id)}
-      <AnimeCard {anime} extra={`Episode ${anime.watchEpisode}`} />
+      <AnimeCard {anime} extra={`Episode ${anime.watchEpisode.number}`} />
     {:else}
       <p class="text-xl font-semibold text-base-content text-opacity-70">
         No Recent Animes

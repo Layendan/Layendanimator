@@ -8,7 +8,7 @@
   import type { HLSProvider, MediaPlayerElement } from 'vidstack';
 
   import { onMount, createEventDispatcher, onDestroy } from 'svelte';
-  import { watched } from '$lib/model/watch';
+  import { watching } from '$lib/model/watch';
   import type { Anime, Episode, EpisodeData } from '$lib/model/classes/Anime';
   import { getOS } from '$lib/model/info';
   import { beforeNavigate } from '$app/navigation';
@@ -24,22 +24,27 @@
 
   let player: MediaPlayerElement | undefined = undefined;
 
-  $: watchedObject = $watched[anime.id]?.find(
-    item => item.episode.number === episode.number
-  );
+  $: watchedObject = $watching[anime.id]?.watchedEpisodes[episode.id];
 
   const dispatcher = createEventDispatcher();
 
   function requestNextEpisode() {
     const state = player?.state;
-    if (
-      $settings.deleteOnWatch &&
-      state &&
-      state.currentTime / state.duration >= 0.8
-    ) {
-      downloads.remove(anime.id, episode.id);
+    dispatcher('requestNextEpisode', () => {
+      if (
+        $settings.deleteOnWatch &&
+        state &&
+        state.currentTime / state.duration >= 0.8
+      )
+        downloads.remove(anime.id, episode.id);
+    });
+  }
+
+  function keyNext(event: KeyboardEvent) {
+    if (event.shiftKey && event.key === 'N') {
+      event.preventDefault();
+      requestNextEpisode();
     }
-    dispatcher('requestNextEpisode');
   }
 
   onMount(async () => {
@@ -70,9 +75,9 @@
   });
 
   function updateWatched() {
-    const state = document.querySelector('media-player')?.state;
+    const state = player?.state;
     if (state) {
-      watched.add(anime.id, {
+      watching.watch(anime, {
         episode,
         time: state.currentTime || (watchedObject?.time ?? 0),
         percentage: Math.min(
@@ -93,20 +98,22 @@
   beforeNavigate(updateWatched);
 </script>
 
+<svelte:window on:keydown={keyNext} />
+
 <div class="relative -m-4 mb-4 h-auto w-screen bg-black">
-  <!-- svelte-ignore a11y-autofocus -->
   <media-player
     {poster}
     title={episode.title}
     aspect-ratio="16/9"
-    class="mx-auto flex w-screen items-center justify-center object-cover fullscreen:h-screen md:w-[max(800px,70vw)]"
+    style:--video-brand={anime.color ?? '#f5f5f5'}
+    class="mx-auto flex aspect-video w-screen items-center justify-center border-none object-cover md:w-[max(800px,70vw)]"
     preload="metadata"
     autoplay
-    autofocus
     {disableRemotePlayback}
     bind:this={player}
     on:ended={requestNextEpisode}
-    on:play|once={() => {
+    on:pause={updateWatched}
+    on:autoplay|once={() => {
       if (player) {
         player.currentTime =
           (watchedObject?.time ?? 0) < (player.state.duration || anime.duration)

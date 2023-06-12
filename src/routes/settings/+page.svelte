@@ -15,7 +15,7 @@
     subscriptions,
     unwatchedSubscriptions
   } from '$lib/model/subscriptions';
-  import { watched } from '$lib/model/watch';
+  import { watching } from '$lib/model/watch';
   import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
   import Fa from 'svelte-fa';
 
@@ -110,7 +110,7 @@
       <button
         class="btn-accent btn-outline btn w-full"
         on:click={() => {
-          watched.clear();
+          watching.clear();
         }}
       >
         Clear Watch History

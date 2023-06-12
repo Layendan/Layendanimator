@@ -10,7 +10,7 @@ export type SettingsType = {
 };
 
 const defaultSettings: SettingsType = {
-  deleteOnWatch: false,
+  deleteOnWatch: true,
   sortSubscriptions: 'timeAdded'
 };
 

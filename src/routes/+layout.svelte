@@ -13,8 +13,7 @@
 
   import NProgress from 'nprogress';
   import NavBar from '$lib/components/NavBar.svelte';
-  import LocomotiveScroll from 'locomotive-scroll';
-  import { watched, watching } from '$lib/model/watch';
+  import { watching } from '$lib/model/watch';
   import { goto, invalidateAll, preloadData } from '$app/navigation';
   import { animeCache, clearCache } from '$lib/model/cache';
   import { connections } from '$lib/model/connections';
@@ -39,17 +38,11 @@
 
   let main: HTMLElement;
   onMount(async () => {
-    new LocomotiveScroll({
-      el: main,
-      multiplier: 2
-    });
-
     await Promise.allSettled([
       source.initialize(),
       subscriptions.initialize(),
       unwatchedSubscriptions.initialize(),
       watching.initialize(),
-      watched.initialize(),
       searchHistory.initialize(),
       connections.initialize(),
       downloads.initialize()

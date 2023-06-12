@@ -20,6 +20,10 @@
       new Date((anime.nextAiringEpisode?.timeUntilAiring ?? 0) * 1000).valueOf()
   );
   $: useGrid = episodes.length > gridLength || !showImage;
+  $: days = Math.floor((nextEpisodeDate.valueOf() - Date.now()) / 86400000);
+  $: hours = Math.floor(
+    (((nextEpisodeDate.valueOf() - Date.now()) / 86400000) % 1) * 24
+  );
 
   afterNavigate(() => {
     if (focus) {
@@ -71,10 +75,10 @@
           Episode {anime.nextAiringEpisode.episode} airing in
         </p>
         <h2 class="text-lg font-bold">
-          {Math.floor((nextEpisodeDate.valueOf() - Date.now()) / 86400000)} Days,
-          {Math.floor(
-            (((nextEpisodeDate.valueOf() - Date.now()) / 86400000) % 1) * 24
-          )} Hours
+          {days}
+          {days === 1 ? 'Day' : 'Days'},
+          {hours}
+          {hours === 1 ? 'Hour' : 'Hours'}
         </h2>
         <p class="text-sm text-base-content text-opacity-80">
           {new Date(anime.nextAiringEpisode.airingTime * 1000).toLocaleString(
@@ -100,10 +104,10 @@
         Episode {anime.nextAiringEpisode.episode} airing in
       </p>
       <h2 class="text-lg font-bold">
-        {Math.floor((nextEpisodeDate.valueOf() - Date.now()) / 86400000)} Days,
-        {Math.floor(
-          (((nextEpisodeDate.valueOf() - Date.now()) / 86400000) % 1) * 24
-        )} Hours
+        {days}
+        {days === 1 ? 'Day' : 'Days'},
+        {hours}
+        {hours === 1 ? 'Hour' : 'Hours'}
       </h2>
       <p class="text-sm text-base-content text-opacity-80">
         {new Date(anime.nextAiringEpisode.airingTime * 1000).toLocaleString(

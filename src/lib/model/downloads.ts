@@ -52,9 +52,10 @@ function createDownloads() {
     remove: (animeId: string, episodeId: string) => {
       update(downloads => {
         const data = downloads[animeId];
+
+        if (data === undefined) return downloads;
+
         deleteFiles([
-          data.anime.image,
-          data.anime.cover,
           ...data.anime.episodes.map(episode => episode.image),
           ...data.episodes[episodeId].sources.map(source => source.url),
           ...(data.episodes[episodeId].subtitles?.map(
@@ -66,6 +67,7 @@ function createDownloads() {
         );
         delete downloads[animeId].episodes[episodeId];
         if (Object.keys(downloads[animeId].episodes).length === 0) {
+          deleteFiles([data.anime.image, data.anime.cover]);
           delete downloads[animeId];
         }
         invalidate(`/downloads/${animeId}`);

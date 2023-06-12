@@ -97,7 +97,7 @@
           .slice(0, 10) as anime (anime.id)}
           <AnimeCard
             {anime}
-            extra={`Episode ${anime.watchEpisode}`}
+            extra={`Episode ${anime.watchEpisode.number}`}
             deleteable
           />
         {/each}

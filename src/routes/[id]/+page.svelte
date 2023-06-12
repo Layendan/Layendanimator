@@ -18,7 +18,7 @@
     faDownload
   } from '@fortawesome/free-solid-svg-icons';
   import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
-  import { watched } from '$lib/model/watch';
+  import { watching } from '$lib/model/watch';
   import { downloading } from '$lib/model/downloads';
 
   export let data: PageData;
@@ -35,14 +35,13 @@
     a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT'
   );
   $: subscribed = $subscriptions[data.id] || $unwatchedSubscriptions[data.id];
-  $: lastWatched = $watched[data.id];
-  $: lastEpisode = lastWatched?.[lastWatched.length - 1];
-  $: continueWatching =
-    (lastEpisode?.percentage ?? Infinity) < watchPercentage
-      ? lastEpisode?.episode
-      : data.episodes.find(
-          e => e.number > (lastEpisode?.episode.number ?? Infinity)
-        ) ?? data.episodes[0];
+  $: lastWatched = $watching[data.id];
+  $: lastEpisode = data.episodes.at(-1);
+  $: hasLastEpisode = lastWatched?.watchEpisode?.id === lastEpisode?.id;
+  $: lastEpisodeFinished =
+    lastEpisode &&
+    (lastWatched?.watchedEpisodes[lastEpisode.id]?.percentage ?? 0) >=
+      watchPercentage;
 
   const maxRelations = 15;
   const watchPercentage = 0.8;
@@ -187,8 +186,8 @@
       ? sortedEpisodes
       : sortedEpisodes.filter(({ id }) => {
           return (
-            (lastWatched.find(last => last.episode.id === id)?.percentage ??
-              0) < watchPercentage
+            (lastWatched?.watchedEpisodes[id]?.percentage ?? 0) <
+            watchPercentage
           );
         })}
     type={isSub ? 'sub' : 'dub'}
@@ -204,16 +203,18 @@
         {#if data.episodes.length > 0}
           <a
             class="btn-accent btn-outline btn flex w-fit space-x-2"
-            href="/{data.id}/{continueWatching?.id ?? data.episodes[0].id}"
+            href="/{data.id}/{hasLastEpisode && lastEpisodeFinished
+              ? data.episodes[0].id
+              : lastWatched?.watchEpisode?.id ?? data.episodes[0].id}"
           >
             <Fa icon={faPlayCircle} size="lg" />
             <!-- Check if not user has watched anime yet -->
             <span>
-              {continueWatching.id === data.episodes[0].id
-                ? lastWatched
+              {lastWatched?.watchEpisode
+                ? hasLastEpisode && lastEpisodeFinished
                   ? 'Watch Again'
-                  : 'Start Watching'
-                : 'Continue Watching'}
+                  : 'Continue Watching'
+                : 'Start Watching'}
             </span>
           </a>
         {/if}

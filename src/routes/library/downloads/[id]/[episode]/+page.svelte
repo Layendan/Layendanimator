@@ -27,7 +27,7 @@
       subscriptions.add(data.anime);
     }
 
-    watching.add(data.anime, data.episodeObject.number);
+    watching.add(data.anime, data.episodeObject);
   });
 </script>
 
@@ -38,12 +38,14 @@
     anime={data.anime}
     episode={data.episodeObject}
     disableRemotePlayback
-    on:requestNextEpisode={() => {
+    on:requestNextEpisode={async ({ detail }) => {
       if (data.nextEpisode)
-        goto(`/${data.anime.id}/${data.nextEpisode.id}`, {
+        await goto(`/${data.anime.id}/${data.nextEpisode.id}`, {
           replaceState: true
         });
       else window.history.back();
+
+      detail();
     }}
   />
 {/key}

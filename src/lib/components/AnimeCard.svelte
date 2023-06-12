@@ -30,7 +30,8 @@
     {/if}
     {#if deleteable}
       <button
-        on:click|stopPropagation|preventDefault={() => watching.remove(anime)}
+        on:click|stopPropagation|preventDefault={() =>
+          watching.remove(anime.id)}
         class="badge badge-error indicator-item opacity-0 transition-opacity duration-200 focus-visible:opacity-100 group-one-hover:opacity-100"
       >
         <Fa icon={faX} size="0.8x" />
@@ -56,11 +57,8 @@
   </div>
 
   <h3
-    style:--anime-color={anime.color}
-    class="line-clamp-2 w-fit whitespace-normal text-sm font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200 hover:text-opacity-100 group-focus-visible:text-opacity-100 2xl:text-base
-      {anime.color
-      ? 'hover:text-[var(--anime-color)] group-focus-visible:text-[var(--anime-color)]'
-      : 'hover:text-accent group-focus-visible:text-accent'}"
+    style:--anime-color={anime.color ?? 'hsl(var(--a))'}
+    class="line-clamp-2 w-fit whitespace-normal text-sm font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200 hover:text-[var(--anime-color)] hover:text-opacity-100 group-focus-visible:text-[var(--anime-color)] group-focus-visible:text-opacity-100 2xl:text-base"
   >
     {anime.title.english ?? anime.title.romaji}
   </h3>

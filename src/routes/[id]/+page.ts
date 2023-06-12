@@ -4,7 +4,7 @@ import { source } from '$lib/model/source';
 import { animeCache } from '$lib/model/cache';
 import { get } from 'svelte/store';
 import { redirect, error } from '@sveltejs/kit';
-import { watched } from '$lib/model/watch';
+import { watching } from '$lib/model/watch';
 import {
   subscriptions,
   unwatchedSubscriptions
@@ -65,13 +65,21 @@ export const load = (async ({ fetch, depends, params, url }) => {
   }
 
   if (url.searchParams.get('autoplay') === 'true') {
-    const data = get(watched)[params.id];
-    throw redirect(
-      302,
-      `/${params.id}/${
-        data?.[data.length - 1].episode.id ?? anime.episodes[0].id
-      }`
-    );
+    const data = get(watching)[params.id];
+    const watchPercentage = 0.8;
+    const hasLastEpisode = data?.watchEpisode?.id === anime.episodes.at(-1)?.id;
+    const lastEpisodeFinished =
+      !!anime.episodes.at(-1) &&
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      (data?.watchedEpisodes[anime.episodes.at(-1)!.id]?.percentage ?? 0) >=
+        watchPercentage;
+    const href = `/${params.id}/${
+      hasLastEpisode && lastEpisodeFinished
+        ? anime.episodes[0].id
+        : data?.watchEpisode?.id ?? anime.episodes[0].id
+    }`;
+
+    throw redirect(302, href);
   }
 
   return anime;

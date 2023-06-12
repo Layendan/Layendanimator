@@ -7,7 +7,7 @@ import { searchHistory } from './searchHistory';
 import { settings } from './settings';
 import { providers } from './source';
 import { subscriptions, unwatchedSubscriptions } from './subscriptions';
-import { watching, watched } from './watch';
+import { watching } from './watch';
 
 export async function getVersion(): Promise<string | 'Unknown'> {
   const { getVersion } = await import('@tauri-apps/api/app');
@@ -47,6 +47,5 @@ export function deleteAllData() {
   subscriptions.clear();
   unwatchedSubscriptions.clear();
   watching.clear();
-  watched.clear();
   clearCache();
 }

@@ -58,7 +58,7 @@
 
   <svelte:fragment slot="content">
     {#each Object.values($watching).sort((a, b) => b.watchTime - a.watchTime) as anime (anime.id)}
-      <AnimeCard {anime} extra={`Episode ${anime.watchEpisode}`} />
+      <AnimeCard {anime} extra={`Episode ${anime.watchEpisode.number}`} />
     {:else}
       <div class="flex items-center justify-center">
         <p

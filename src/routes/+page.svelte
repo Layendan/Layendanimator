@@ -95,11 +95,7 @@
         {#each Object.values($watching)
           .sort((a, b) => b.watchTime - a.watchTime)
           .slice(0, 10) as anime (anime.id)}
-          <AnimeCard
-            {anime}
-            extra={`Episode ${anime.watchEpisode.number}`}
-            deleteable
-          />
+          <AnimeCard {anime} extra={`Episode ${anime.watchEpisode.number}`} />
         {/each}
       </svelte:fragment>
     </ScrollCarousel>

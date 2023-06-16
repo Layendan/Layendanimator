@@ -1,40 +1,93 @@
 <script lang="ts">
   import Content from '$lib/components/Content.svelte';
-  import { clearCache } from '$lib/model/cache';
   import { connections } from '$lib/model/connections';
-  import { downloads } from '$lib/model/downloads';
-  import {
-    getVersion,
-    getArch,
-    getOS,
-    checkUpdate,
-    deleteAllData
-  } from '$lib/model/info';
-  import { providers } from '$lib/model/source';
-  import {
-    subscriptions,
-    unwatchedSubscriptions
-  } from '$lib/model/subscriptions';
-  import { watching } from '$lib/model/watch';
+  import { getVersion, getArch, getOS, checkUpdate } from '$lib/model/info';
+  import { settings, tauriData, webData } from '$lib/model/settings';
   import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
   import Fa from 'svelte-fa';
 
   const anilistClientId = '4602';
+
+  let selected = $settings.sortSubscriptions;
 </script>
 
 <section>
+  <Content>
+    <h1
+      class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
+    >
+      Settings
+    </h1>
+
+    <div class="grid w-fit grid-cols-2 items-center gap-4">
+      <!-- Delete on Watch -->
+      <label for="deleteOnWatch" class="text-lg font-medium">
+        Delete Download on Watch
+      </label>
+      <input
+        type="checkbox"
+        id="deleteOnWatch"
+        class="toggle-accent toggle"
+        checked={$settings.deleteOnWatch}
+        on:change={() => ($settings.deleteOnWatch = !$settings.deleteOnWatch)}
+      />
+
+      <!-- Subscription Sorting Algorithm -->
+      <label for="subSort" class="text-lg font-medium">
+        Subscriptions Anime Sorting
+      </label>
+      <select
+        id="subSort"
+        class="select-bordered select-accent select [font-weight:unset]"
+        bind:value={selected}
+        on:change={() => ($settings.sortSubscriptions = selected)}
+      >
+        <option value="lastUpdated">Last Updated</option>
+        <option value="timeAdded">Time Added</option>
+        <option value="title">Title</option>
+      </select>
+    </div>
+  </Content>
+
+  <div class="divider" />
+
+  <Content>
+    <h1
+      class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
+    >
+      Themes
+    </h1>
+
+    <i>Coming Soon...</i>
+  </Content>
+
+  <div class="divider" />
+
   {#if window?.__TAURI__}
+    <Content>
+      <h1
+        class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
+      >
+        Sources
+      </h1>
+
+      <i>Coming Soon...</i>
+    </Content>
+
+    <div class="divider" />
+
     <Content>
       <h1
         class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
       >
         Connections
       </h1>
-      <div class="flex space-x-6">
+
+      <div class="flex gap-x-6">
         <a
           href="https://anilist.co/api/v2/oauth/authorize?client_id={anilistClientId}&response_type=token"
           target="_blank"
-          rel="noopener noreferrer"
+          rel="noopener noreferrer nofollow"
           class="rounded-lg ring ring-transparent transition-shadow duration-200 ease-in-out hover:ring-accent"
         >
           <svg
@@ -68,18 +121,19 @@
     >
       Links
     </h1>
+
     <div class="flex space-x-6">
       <a
         href="https://github.com/Layendan/NineAnimator-Tauri"
         target="_blank"
-        rel="noopener noreferrer"
+        rel="noopener noreferrer nofollow"
       >
         <Fa icon={faGithub} size="3x" />
       </a>
       <a
         href="https://discord.gg/dzTVzeW"
         target="_blank"
-        rel="noopener noreferrer"
+        rel="noopener noreferrer nofollow"
       >
         <Fa icon={faDiscord} size="3x" />
       </a>
@@ -94,108 +148,22 @@
     >
       Data
     </h1>
+
     <div class="grid grid-cols-1 gap-4">
-      <button class="btn-accent btn-outline btn w-full" on:click={clearCache}>
-        Clear Cache
-      </button>
-      <button
-        class="btn-accent btn-outline btn w-full"
-        on:click={() => {
-          unwatchedSubscriptions.clear();
-          subscriptions.clear();
-        }}
-      >
-        Clear Subscriptions
-      </button>
-      <button
-        class="btn-accent btn-outline btn w-full"
-        on:click={() => {
-          watching.clear();
-        }}
-      >
-        Clear Watch History
-      </button>
-      <button
-        class="btn-accent btn-outline btn w-full"
-        on:click={() => {
-          providers.clear();
-        }}
-      >
-        Clear Sources
-      </button>
+      {#each webData as { label, action }}
+        <button class="btn-accent btn-outline btn w-full" on:click={action}>
+          {label}
+        </button>
+      {/each}
       {#if window?.__TAURI__}
-        <button
-          class="btn-accent btn-outline btn w-full"
-          on:click={() => connections.clear()}
-        >
-          Clear Connections
-        </button>
-        <button
-          class="btn-accent btn-outline btn w-full"
-          on:click={async () => {
-            const { open } = await import('@tauri-apps/api/shell');
-            const { join, appDataDir } = await import('@tauri-apps/api/path');
-            await open(await join(await appDataDir(), 'downloads'));
-          }}
-        >
-          Open Downloads Folder
-        </button>
-        <button
-          class="btn-accent btn-outline btn w-full"
-          on:click={async () => {
-            const { isPermissionGranted, requestPermission, sendNotification } =
-              await import('@tauri-apps/api/notification');
-            if (await isPermissionGranted()) {
-              sendNotification({
-                title: 'Test Notification',
-                body: 'This is a test notification'
-              });
-            } else if ((await requestPermission()) === 'granted') {
-              sendNotification({
-                title: 'Test Notification',
-                body: 'This is a test notification'
-              });
-            } else {
-              console.error('Notification permission not granted');
-            }
-          }}
-        >
-          Send Test Notification
-        </button>
-        <button
-          class="btn-outline btn-error btn w-full"
-          on:click={async () => {
-            const { confirm } = await import('@tauri-apps/api/dialog');
-            const confirmed = await confirm(
-              'This action cannot be reverted. Are you sure?',
-              {
-                title: 'Delete All Downloads',
-                type: 'warning',
-                okLabel: "Yes, I'm Sure"
-              }
-            );
-            if (confirmed) downloads.clear();
-          }}
-        >
-          Delete Downloads
-        </button>
-        <button
-          class="btn-outline btn-error btn w-full"
-          on:click={async () => {
-            const { confirm } = await import('@tauri-apps/api/dialog');
-            const confirmed = await confirm(
-              'This action cannot be reverted. Are you sure?',
-              {
-                title: 'Delete All Data',
-                type: 'warning',
-                okLabel: "Yes, I'm Sure"
-              }
-            );
-            if (confirmed) deleteAllData();
-          }}
-        >
-          Delete All Data
-        </button>
+        {#each tauriData as { label, danger, action }}
+          <button
+            class="btn-outline btn w-full {danger ? 'btn-error' : 'btn-accent'}"
+            on:click={action}
+          >
+            {label}
+          </button>
+        {/each}
       {/if}
     </div>
   </Content>
@@ -209,6 +177,7 @@
       >
         App Information
       </h1>
+
       <div class="ml-2">
         <p>
           <b>App Version:</b>

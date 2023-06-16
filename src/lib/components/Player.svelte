@@ -65,13 +65,13 @@
     });
     const os = await getOS();
     if (os !== 'Darwin' && os !== 'Unknown') {
-      player?.addEventListener('fullscreen-change', async event => {
+      player?.addEventListener('fullscreen-change', async ({ detail }) => {
         const { appWindow } = await import('@tauri-apps/api/window');
-        const isFullscreen = event.detail;
-        appWindow?.setFullscreen(isFullscreen);
+        appWindow?.setFullscreen(detail);
       });
     }
     player?.enterFullscreen();
+    player?.focus();
   });
 
   function updateWatched() {

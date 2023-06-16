@@ -85,7 +85,7 @@
       <div class="relative mx-1 select-none">
         <div
           style="width: {(watchedObject?.percentage ?? 0) * 100}%;"
-          class="absolute bottom-1 left-0 right-0 h-1 rounded-md bg-[var(--anime-color)] shadow-lg shadow-black"
+          class="absolute bottom-1 left-0 right-0 h-1 rounded-md bg-[--anime-color] shadow-lg shadow-black"
         />
       </div>
       {#if isNewEpisode}
@@ -107,7 +107,7 @@
         hover:text-opacity-100 group-one-focus-visible:text-opacity-100"
       >
         <h3
-          class="text-md line-clamp-2 whitespace-normal font-bold leading-tight transition-colors duration-200 group-hover:text-[var(--anime-color)] group-one-focus-visible:text-[var(--anime-color)]"
+          class="text-md line-clamp-2 whitespace-normal font-bold leading-tight transition-colors duration-200 group-hover:text-[--anime-color] group-one-focus-visible:text-[--anime-color]"
         >
           {episode.title || `Episode ${episode.number}`}
         </h3>
@@ -143,7 +143,7 @@
       <div class="absolute bottom-1 left-0 right-0 mx-1 select-none">
         <div
           style="width: {(watchedObject?.percentage ?? 0) * 100}%;"
-          class="h-1 rounded-md bg-[var(--anime-color)]"
+          class="h-1 rounded-md bg-[--anime-color]"
         />
       </div>
     {/if}

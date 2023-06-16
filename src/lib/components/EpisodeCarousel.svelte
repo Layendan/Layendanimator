@@ -24,6 +24,10 @@
   $: hours = Math.floor(
     (((nextEpisodeDate.valueOf() - Date.now()) / 86400000) % 1) * 24
   );
+  $: minutes = Math.floor(
+    (((((nextEpisodeDate.valueOf() - Date.now()) / 86400000) % 1) * 24) % 1) *
+      60
+  );
 
   afterNavigate(() => {
     if (focus) {
@@ -75,10 +79,15 @@
           Episode {anime.nextAiringEpisode.episode} airing in
         </p>
         <h2 class="text-lg font-bold">
-          {days}
-          {days === 1 ? 'Day' : 'Days'},
-          {hours}
-          {hours === 1 ? 'Hour' : 'Hours'}
+          {#if days === 0 && hours === 0}
+            {minutes}
+            {minutes === 1 ? 'Minute' : 'Minutes'}
+          {:else}
+            {days}
+            {days === 1 ? 'Day' : 'Days'},
+            {hours}
+            {hours === 1 ? 'Hour' : 'Hours'}
+          {/if}
         </h2>
         <p class="text-sm text-base-content text-opacity-80">
           {new Date(anime.nextAiringEpisode.airingTime * 1000).toLocaleString(
@@ -104,10 +113,15 @@
         Episode {anime.nextAiringEpisode.episode} airing in
       </p>
       <h2 class="text-lg font-bold">
-        {days}
-        {days === 1 ? 'Day' : 'Days'},
-        {hours}
-        {hours === 1 ? 'Hour' : 'Hours'}
+        {#if days === 0 && hours === 0}
+          {minutes}
+          {minutes === 1 ? 'Minute' : 'Minutes'}
+        {:else}
+          {days}
+          {days === 1 ? 'Day' : 'Days'},
+          {hours}
+          {hours === 1 ? 'Hour' : 'Hours'}
+        {/if}
       </h2>
       <p class="text-sm text-base-content text-opacity-80">
         {new Date(anime.nextAiringEpisode.airingTime * 1000).toLocaleString(

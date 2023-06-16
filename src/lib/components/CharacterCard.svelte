@@ -10,7 +10,7 @@
   in:fade
   href="https://anilist.co/character/{character.id}"
   target="_blank"
-  rel="noreferrer"
+  rel="noopener noreferrer nofollow"
   class="group-one flex w-32 flex-col items-center gap-2 focus-visible:outline-transparent"
   style:--anime-color={color}
 >
@@ -18,7 +18,7 @@
     <div
       class="w-28 rounded-full ring ring-transparent transition-shadow duration-200
       {color
-        ? 'hover:ring-[var(--anime-color)] group-one-focus-visible:ring-[var(--anime-color)]'
+        ? 'hover:ring-[--anime-color] group-one-focus-visible:ring-[--anime-color]'
         : 'hover:ring-accent group-one-focus-visible:ring-accent'}"
     >
       <img src={character.image} alt={character.name.full} />
@@ -30,7 +30,7 @@
     <h3
       class="text-md line-clamp-2 whitespace-normal font-bold leading-tight transition-colors duration-200
       {color
-        ? 'group-hover:text-[var(--anime-color)] group-one-focus-visible:text-[var(--anime-color)]'
+        ? 'group-hover:text-[--anime-color] group-one-focus-visible:text-[--anime-color]'
         : 'group-hover:text-accent group-one-focus-visible:text-accent'}"
     >
       {character.name.full}

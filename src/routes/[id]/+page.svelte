@@ -70,7 +70,7 @@
         <a
           href="https://anilist.co/anime/{data.id}"
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer nofollow"
           class="group"
         >
           <img
@@ -79,7 +79,7 @@
             style:--anime-color={data.color}
             class="w-full rounded-lg bg-base-200 object-cover shadow-xl ring ring-transparent transition-shadow duration-200
               {data.color
-              ? 'hover:ring-[var(--anime-color)] group-focus-visible:ring-[var(--anime-color)]'
+              ? 'hover:ring-[--anime-color] group-focus-visible:ring-[--anime-color]'
               : 'hover:ring-accent group-focus-visible:ring-accent'}"
           />
         </a>

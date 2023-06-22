@@ -55,23 +55,23 @@
         (provider as HLSProvider).library = Hls;
       }
     });
-    player?.onAttach(() => {
+    player?.onAttach(async () => {
+      const os = await getOS();
+      if (os !== 'Darwin' && os !== 'Unknown') {
+        player?.addEventListener('fullscreen-change', async ({ detail }) => {
+          const { appWindow } = await import('@tauri-apps/api/window');
+          appWindow?.setFullscreen(detail);
+        });
+      }
       if (player) {
         player.currentTime =
           (watchedObject?.time ?? 0) < (player.state.duration || anime.duration)
             ? watchedObject?.time ?? 0
             : 0;
+        player.enterFullscreen();
+        player.focus();
       }
     });
-    const os = await getOS();
-    if (os !== 'Darwin' && os !== 'Unknown') {
-      player?.addEventListener('fullscreen-change', async ({ detail }) => {
-        const { appWindow } = await import('@tauri-apps/api/window');
-        appWindow?.setFullscreen(detail);
-      });
-    }
-    player?.enterFullscreen();
-    player?.focus();
   });
 
   function updateWatched() {
@@ -105,7 +105,7 @@
     {poster}
     title={episode.title}
     aspect-ratio="16/9"
-    style:--video-brand={anime.color ?? '#f5f5f5'}
+    style:--video-brand={anime.color ?? 'hsl(var(--a))'}
     class="mx-auto flex aspect-video w-screen items-center justify-center border-none object-cover md:w-[max(800px,70vw)]"
     preload="metadata"
     autoplay
@@ -115,10 +115,9 @@
     on:pause={updateWatched}
     on:autoplay|once={() => {
       if (player) {
+        const time = watchedObject?.time ?? 0;
         player.currentTime =
-          (watchedObject?.time ?? 0) < (player.state.duration || anime.duration)
-            ? watchedObject?.time ?? 0
-            : 0;
+          time < (player.state.duration || anime.duration) ? time : 0;
       }
     }}
   >

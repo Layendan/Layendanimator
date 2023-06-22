@@ -11,13 +11,13 @@
     unwatchedSubscriptions
   } from '$lib/model/subscriptions';
   import { watching } from '$lib/model/watch';
+  import AnimeInfo from '$lib/components/AnimeInfo.svelte';
 
   export let data: PageData;
 
   $: filteredEpisodes = data.anime.episodes.filter(
     ({ number }) => number > (data.episodeObject.number ?? Infinity)
   );
-  let descriptionCollapsed = true;
   // For some reason filteredEpisode is undefined when the page loads
   $: selectedTab = filteredEpisodes?.length > 0 ? 'episodes' : 'wiki';
 
@@ -96,61 +96,7 @@
       <div class="divider" />
     {/if}
 
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <section
-      class="card max-w-full bg-base-200 bg-opacity-80 bg-clip-padding p-8 shadow-xl backdrop-blur-xl backdrop-filter transition-colors duration-200"
-      class:hover:bg-base-300={descriptionCollapsed}
-      class:cursor-pointer={descriptionCollapsed}
-      on:click={() => (descriptionCollapsed = false)}
-    >
-      <h1
-        class="mb-4 text-3xl font-extrabold leading-none tracking-tight transition-[font-size] duration-200 md:text-4xl lg:text-5xl"
-      >
-        {data.anime.title.english ?? data.anime.title.romaji}
-      </h1>
-      <ul class="mb-4 flex flex-wrap gap-1">
-        <div class="badge badge-accent badge-outline">
-          {data.anime.type.replaceAll('_', ' ')}
-        </div>
-        {#if data.anime.isAdult}
-          <div class="badge badge-error badge-outline">18+</div>
-        {/if}
-        <div class="badge badge-accent badge-outline">
-          {data.anime.status}
-        </div>
-        {#each data.anime.genres as genre}
-          <div class="badge badge-accent badge-outline">{genre}</div>
-        {/each}
-        {#if data.anime.rating}
-          <div
-            class="badge badge-outline"
-            class:badge-error={data.anime.rating <= 60}
-            class:badge-warning={data.anime.rating > 60 &&
-              data.anime.rating <= 75}
-            class:badge-success={data.anime.rating > 75}
-          >
-            {data.anime.rating}%
-          </div>
-        {/if}
-      </ul>
-      <p
-        class="h-min w-fit"
-        class:line-clamp-[2]={descriptionCollapsed}
-        class:lg:line-clamp-[4]={descriptionCollapsed}
-      >
-        {@html data.anime.description}
-      </p>
-      <br />
-      <p
-        class="cursor-pointer font-semibold"
-        on:click={e => {
-          descriptionCollapsed = !descriptionCollapsed;
-          e.stopPropagation();
-        }}
-      >
-        Show {descriptionCollapsed ? 'more' : 'less'}
-      </p>
-    </section>
+    <AnimeInfo anime={data.anime} />
   </main>
 {:else}
   You shouldn't be here

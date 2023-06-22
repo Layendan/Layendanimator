@@ -69,7 +69,7 @@
   class="group-one indicator flex w-[210px] flex-col gap-2 focus-visible:outline-transparent"
   data-sveltekit-replacestate={replaceState ? '' : 'off'}
   on:contextmenu={e => {
-    console.log(e);
+    console.debug(e);
   }}
 >
   {#if showImage}

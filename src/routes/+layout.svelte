@@ -18,6 +18,8 @@
   import { animeCache, clearCache } from '$lib/model/cache';
   import { connections } from '$lib/model/connections';
   import { downloads } from '$lib/model/downloads';
+  import type { UnlistenFn } from '@tauri-apps/api/event';
+  import NotificationPile from '$lib/components/NotificationPile.svelte';
 
   NProgress.configure({
     // Full list: https://github.com/rstacruz/nprogress#configuration
@@ -27,6 +29,7 @@
 
   const MINUTE = 1000 * 60;
   let unsubscribe: NodeJS.Timer | undefined = undefined;
+  let tauriUnsubscribe: UnlistenFn;
 
   $: {
     if ($navigating) {
@@ -49,7 +52,7 @@
     ]);
 
     const { listen } = await import('@tauri-apps/api/event');
-    listen?.<string>('scheme-request-received', e => {
+    tauriUnsubscribe = await listen?.<string>('scheme-request-received', e => {
       if (e.payload) {
         goto(e.payload?.replace('layendanimator://', '/') ?? '/', {
           replaceState: true
@@ -70,11 +73,12 @@
         preloadData(`/${id}`);
       });
     }, animeCache.ttl || MINUTE * 30);
-    console.log('Subscriptions cache TTL:', animeCache.ttl || MINUTE * 30);
+    console.debug('Subscriptions cache TTL:', animeCache.ttl || MINUTE * 30);
   });
 
   onDestroy(() => {
     if (unsubscribe) clearInterval(unsubscribe);
+    tauriUnsubscribe();
   });
 </script>
 
@@ -93,3 +97,5 @@
 <main class="m-4 mb-20" id="main" bind:this={main}>
   <slot />
 </main>
+
+<NotificationPile />

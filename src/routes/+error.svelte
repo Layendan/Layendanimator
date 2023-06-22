@@ -1,7 +1,13 @@
 <script>
   import { page } from '$app/stores';
+  import { notifications } from '$lib/model/notifications';
 
   console.error(`${$page.status}: ${$page.error?.message}`);
+  notifications.addNotification({
+    title: `${$page.status}: ${$page.error?.message}`,
+    message: 'Check console for more information.',
+    type: 'error'
+  });
 </script>
 
 <h1

@@ -122,8 +122,8 @@ $completedAt: FuzzyDateInput
       })
     });
 
-    console.log(response);
-    console.log(await response.json());
+    console.debug(response);
+    console.debug(await response.json());
   }
 
   async updateProgress(animeId: string, progress: number): Promise<void> {
@@ -156,8 +156,8 @@ $completedAt: FuzzyDateInput
       })
     });
 
-    console.log(response);
-    console.log(await response.json());
+    console.debug(response);
+    console.debug(await response.json());
   }
 }
 

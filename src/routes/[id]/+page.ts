@@ -9,6 +9,7 @@ import {
   subscriptions,
   unwatchedSubscriptions
 } from '$lib/model/subscriptions';
+import { notifications } from '$lib/model/notifications';
 
 async function fetchAnime(id: string, _fetch: typeof fetch): Promise<Anime> {
   let anime: Anime = await _fetch(
@@ -20,12 +21,22 @@ async function fetchAnime(id: string, _fetch: typeof fetch): Promise<Anime> {
     .then(r => {
       if (r.status !== 200) {
         console.error(r);
+        notifications.addNotification({
+          title: 'Anime not found',
+          message: `The anime with id ${id} was not found.`,
+          type: 'error'
+        });
         throw error(404, 'Anime not found');
       }
       return r.json();
     })
     .catch(e => {
       console.error(e);
+      notifications.addNotification({
+        title: 'Anime not found',
+        message: `The anime with id ${id} was not found.`,
+        type: 'error'
+      });
       throw error(404, 'Anime not found');
     });
 
@@ -37,6 +48,11 @@ async function fetchAnime(id: string, _fetch: typeof fetch): Promise<Anime> {
 
     animeCache.set(id, anime);
   } else {
+    notifications.addNotification({
+      title: 'Anime not found',
+      message: `The anime with id ${id} was not found.`,
+      type: 'error'
+    });
     throw error(404, 'Anime not found');
   }
 

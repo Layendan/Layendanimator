@@ -11,17 +11,20 @@ import { deleteAllData } from './info';
 import { downloads } from './downloads';
 import { connections } from './connections';
 import { providers } from './source';
+import { notifications } from './notifications';
 
 let store: Store | undefined = undefined;
 
 export type SettingsType = {
   deleteOnWatch: boolean;
+  notifications: boolean;
   sortSubscriptions: 'lastUpdated' | 'timeAdded' | 'title';
   theme: 'system' | 'light' | 'dark' | string;
 };
 
 const defaultSettings: SettingsType = {
   deleteOnWatch: true,
+  notifications: true,
   sortSubscriptions: 'timeAdded',
   theme: 'system'
 };
@@ -147,6 +150,12 @@ export const tauriData: {
         });
       } else {
         console.error('Notification permission not granted');
+        notifications.addNotification({
+          title: 'Permission not granted',
+          message:
+            'Please enable notifications to receive download notifications',
+          type: 'error'
+        });
       }
     }
   },

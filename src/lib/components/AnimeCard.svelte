@@ -1,13 +1,9 @@
 <script lang="ts">
   import type { Anime } from '$lib/model/classes/Anime';
-  import { watching } from '$lib/model/watch';
-  import { faX } from '@fortawesome/free-solid-svg-icons';
-  import Fa from 'svelte-fa';
   import { fade } from 'svelte/transition';
 
   export let anime: Anime;
   export let numUpdates = 0;
-  export let deleteable = false;
   export let extra = '';
   export let href = `/${anime.id}`;
 
@@ -28,15 +24,6 @@
         <div class="badge badge-error indicator-item 2xl:font-bold">
           {numUpdates}
         </div>
-      {/if}
-      {#if deleteable}
-        <button
-          on:click|stopPropagation|preventDefault={() =>
-            watching.remove(anime.id)}
-          class="badge badge-error indicator-item opacity-0 transition-opacity duration-200 focus-visible:opacity-100 group-one-hover:opacity-100"
-        >
-          <Fa icon={faX} size="0.8x" />
-        </button>
       {/if}
       <img
         src={imageLoaded ? anime.image : '/assets/loading_failure.jpeg'}

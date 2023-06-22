@@ -32,6 +32,18 @@
         on:change={() => ($settings.deleteOnWatch = !$settings.deleteOnWatch)}
       />
 
+      <!-- In-App Notifications -->
+      <label for="notifications" class="text-lg font-medium">
+        In-App Notifications
+      </label>
+      <input
+        type="checkbox"
+        id="notifications"
+        class="toggle-accent toggle"
+        checked={$settings.notifications}
+        on:change={() => ($settings.notifications = !$settings.notifications)}
+      />
+
       <!-- Subscription Sorting Algorithm -->
       <label for="subSort" class="text-lg font-medium">
         Subscriptions Anime Sorting
@@ -42,9 +54,9 @@
         bind:value={selected}
         on:change={() => ($settings.sortSubscriptions = selected)}
       >
-        <option value="lastUpdated">Last Updated</option>
         <option value="timeAdded">Time Added</option>
         <option value="title">Title</option>
+        <option value="lastUpdated">Last Checked for Updates</option>
       </select>
     </div>
   </Content>

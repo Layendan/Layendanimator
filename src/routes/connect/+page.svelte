@@ -2,6 +2,7 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { connections } from '$lib/model/connections';
+  import { notifications } from '$lib/model/notifications';
 
   function redirect() {
     goto('/settings', { replaceState: true });
@@ -16,12 +17,17 @@
     switch (source) {
       default:
         connections.add(source, authToken);
-        console.log('Added Connection', source, authToken);
+        console.debug('Added Connection', source, authToken);
         redirect();
         break;
     }
   } else {
     console.error('Invalid connection attempt');
+    notifications.addNotification({
+      title: 'Invalid connection attempt',
+      message: 'Check console for more information.',
+      type: 'error'
+    });
     redirect();
   }
 </script>

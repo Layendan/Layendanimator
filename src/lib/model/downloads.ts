@@ -4,6 +4,7 @@ import type { Anime, EpisodeData } from './classes/Anime';
 import { invalidate, preloadData } from '$app/navigation';
 import { episodeCache } from './cache';
 import Semaphore from './classes/Semaphore';
+import { notifications } from './notifications';
 
 let store: Store | undefined = undefined;
 
@@ -110,6 +111,11 @@ async function sendNotification(title: string, episode: number) {
     });
   } else {
     console.error('Permission not granted');
+    notifications.addNotification({
+      title: 'Permission not granted',
+      message: 'Please enable notifications to receive download notifications',
+      type: 'error'
+    });
     return Promise.reject();
   }
   return Promise.resolve();
@@ -143,6 +149,13 @@ function createDownloading() {
     ) => {
       if (get(downloads)[anime.id]?.episodes[episodeId]) return;
 
+      const notificationId = notifications.addNotification({
+        title: `Downloading Episode ${episodeNumber} of ${
+          anime.title.english ?? anime.title.romaji
+        }`,
+        message: `Quality: ${quality}`
+      });
+
       try {
         update(downloads => {
           downloads[episodeId] = { anime, quality, progress: null };
@@ -152,7 +165,7 @@ function createDownloading() {
         await preloadData(`/${anime.id}/${episodeId}`);
         const cache = episodeCache.get(episodeId);
 
-        console.log(cache);
+        console.debug(cache);
 
         if (!cache) {
           throw new Error('Episode not found');
@@ -181,6 +194,13 @@ function createDownloading() {
 
           if (!episodeUrl) {
             console.error('Source not found');
+            notifications.addNotification({
+              title: 'Source not found',
+              message: `Could not find source for ${
+                anime.title.english ?? anime.title.romaji
+              } Episode ${episodeNumber}`,
+              type: 'error'
+            });
             return Promise.reject();
           }
 
@@ -213,6 +233,13 @@ function createDownloading() {
 
           if (output.code !== 0) {
             console.error(output);
+            notifications.addNotification({
+              title: 'Download failed',
+              message: `Could not download ${
+                anime.title.english ?? anime.title.romaji
+              } Episode ${episodeNumber}`,
+              type: 'error'
+            });
             return Promise.reject();
           }
 
@@ -237,6 +264,11 @@ function createDownloading() {
 
                 if (!response.ok) {
                   console.error(response);
+                  notifications.addNotification({
+                    title: 'Subtitle download failed',
+                    message: `Could not download the ${subtitle.lang} subtitle for ${anime.title} Episode ${episodeNumber}`,
+                    type: 'error'
+                  });
                   return Promise.reject();
                 }
 
@@ -267,6 +299,13 @@ function createDownloading() {
 
             if (!response.ok) {
               console.error(response);
+              notifications.addNotification({
+                title: 'Image download failed',
+                message: `Could not download the image for ${
+                  anime.title.english ?? anime.title.romaji
+                }`,
+                type: 'error'
+              });
               return Promise.reject();
             }
 
@@ -303,6 +342,13 @@ function createDownloading() {
 
             if (!response.ok) {
               console.error(response);
+              notifications.addNotification({
+                title: 'Episode image download failed',
+                message: `Could not download the image for ${
+                  anime.title.english ?? anime.title.romaji
+                } Episode ${episodeNumber}`,
+                type: 'error'
+              });
               return Promise.reject();
             }
 
@@ -332,6 +378,13 @@ function createDownloading() {
 
               if (!response.ok) {
                 console.error(response);
+                notifications.addNotification({
+                  title: 'Cover image download failed',
+                  message: `Could not download the cover image for ${
+                    anime.title.english ?? anime.title.romaji
+                  }`,
+                  type: 'error'
+                });
                 return Promise.reject();
               }
 
@@ -349,9 +402,9 @@ function createDownloading() {
         const captionResults = await Promise.all<string>(calls);
         const imageResults = await Promise.allSettled<string>(imageCalls);
 
-        console.log(videoPath);
-        console.log(captionResults);
-        console.log(imageResults);
+        console.debug(videoPath);
+        console.debug(captionResults);
+        console.debug(imageResults);
 
         if (!videoPath) {
           throw new Error('Download failed');
@@ -400,10 +453,25 @@ function createDownloading() {
           anime.title.english ?? anime.title.romaji,
           episodeNumber
         );
+        notifications.addNotification({
+          title: 'Download complete',
+          message: `Downloaded ${
+            anime.title.english ?? anime.title.romaji
+          } Episode ${episodeNumber}`,
+          type: 'success'
+        });
       } catch (e) {
         console.error(e);
+        notifications.addNotification({
+          title: 'Download failed',
+          message: `Could not download ${
+            anime.title.english ?? anime.title.romaji
+          } Episode ${episodeNumber}`,
+          type: 'error'
+        });
       } finally {
         remove(episodeId);
+        notifications.removeNotification(notificationId);
       }
     },
     remove,

@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import type { Store } from 'tauri-plugin-store-api';
 import type { Anime } from './classes/Anime';
+import { notifications } from './notifications';
 
 let store: Store | undefined = undefined;
 
@@ -81,6 +82,11 @@ async function sendNotification(title: string, episodes: number) {
     });
   } else {
     console.error('Permission not granted');
+    notifications.addNotification({
+      title: 'Permission not granted',
+      message: 'Please enable notifications to receive download notifications',
+      type: 'error'
+    });
   }
 }
 

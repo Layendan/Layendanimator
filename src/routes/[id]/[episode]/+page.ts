@@ -5,6 +5,7 @@ import { get } from 'svelte/store';
 import type { PageLoad } from './$types';
 import type { Anime, EpisodeData } from '$lib/model/classes/Anime';
 import { convertDownloads, downloads } from '$lib/model/downloads';
+import { notifications } from '$lib/model/notifications';
 
 async function fetchAnime(id: string, _fetch: typeof fetch) {
   let anime = (await _fetch(
@@ -16,12 +17,22 @@ async function fetchAnime(id: string, _fetch: typeof fetch) {
     .then(r => {
       if (r.status !== 200) {
         console.error(r);
+        notifications.addNotification({
+          title: 'Anime not found',
+          message: `The anime with id ${id} was not found.`,
+          type: 'error'
+        });
         throw error(404, 'Anime not found');
       }
       return r.json();
     })
     .catch(e => {
       console.error(e);
+      notifications.addNotification({
+        title: 'Anime not found',
+        message: `The anime with id ${id} was not found.`,
+        type: 'error'
+      });
       throw error(404, 'Anime not found');
     })) as Anime;
 
@@ -50,12 +61,22 @@ async function fetchEpisode(id: string, isDub: boolean, _fetch: typeof fetch) {
     .then(r => {
       if (r.status !== 200) {
         console.error(r);
+        notifications.addNotification({
+          title: 'Episode sources not found',
+          message: `The episode with id ${id} was not found.`,
+          type: 'error'
+        });
         throw error(404, 'Episode sources not found');
       }
       return r.json();
     })
     .catch(e => {
       console.error(e);
+      notifications.addNotification({
+        title: 'Episode sources not found',
+        message: `The episode with id ${id} was not found.`,
+        type: 'error'
+      });
       throw error(404, 'Episode sources not found');
     });
 
@@ -70,6 +91,11 @@ async function fetchEpisode(id: string, isDub: boolean, _fetch: typeof fetch) {
 
     episodeCache.set(id, episode);
   } else {
+    notifications.addNotification({
+      title: 'Episode sources not found',
+      message: `The episode with id ${id} was not found.`,
+      type: 'error'
+    });
     throw error(404, 'Episode sources not found');
   }
 
@@ -103,6 +129,11 @@ export const load = (async ({ fetch, depends, params, url }) => {
   const episodeObject = anime.episodes.find(item => item.id === params.episode);
 
   if (!episodeObject) {
+    notifications.addNotification({
+      title: 'Episode data not found',
+      message: `The episode with id ${params.episode} was not found.`,
+      type: 'error'
+    });
     throw error(404, 'Episode data not found');
   }
 

@@ -72,7 +72,6 @@
     anime={data.anime}
     episodes={data.anime.episodes}
     replaceState
-    focus={data.episodeObject.id}
     href="/downloads/{data.anime.id}"
   >
     <svelte:fragment slot="title">Next episodes</svelte:fragment>

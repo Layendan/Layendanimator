@@ -11,6 +11,13 @@
 
   $: clicked = ($notifications.length === 0, false);
   $: stacked = $notifications.length > 1 && !clicked;
+
+  $: if ($notifications[0]) {
+    setTimeout(
+      () => notifications.removeNotification($notifications[0].id),
+      $notifications[0].dismissAfter ?? 5000
+    );
+  }
 </script>
 
 <button
@@ -21,7 +28,7 @@
   {#each $notifications as notification (notification.id)}
     {#if notification.show}
       <button
-        class="alert my-1 h-min shadow-md"
+        class="alert relative my-1 h-min shadow-md"
         class:alert-info={notification.type === 'info'}
         class:alert-success={notification.type === 'success'}
         class:alert-warning={notification.type === 'warning'}
@@ -47,6 +54,14 @@
         {/if}
         <h2>{notification.title}</h2>
         <p class="text-xs">{notification.message}</p>
+        {#if notification.progress > 0}
+          <progress
+            class="progress absolute bottom-2 left-4 right-4 h-1 w-[calc(100%-2rem)]"
+            max="100"
+            value={notification.progress}
+            in:fade
+          />
+        {/if}
       </button>
     {/if}
   {/each}

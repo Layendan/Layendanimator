@@ -53,7 +53,10 @@ function createSettings() {
       store ??= new StoreImport('.settings.dat');
       const data = await store.get<SettingsType>('settings');
       if (data) {
-        set(data);
+        set({
+          ...defaultSettings,
+          ...data
+        });
       } else {
         await store.set('settings', defaultSettings);
       }

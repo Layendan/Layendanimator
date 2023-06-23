@@ -117,7 +117,10 @@ function createProviders() {
       store ??= new StoreImport('.settings.dat');
       const data = await store.get<typeof defaultProviders>('providers');
       if (data) {
-        set(data);
+        set({
+          ...defaultProviders,
+          ...data
+        });
       } else {
         await store.set('providers', defaultProviders);
       }

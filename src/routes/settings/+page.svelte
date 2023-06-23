@@ -1,5 +1,6 @@
 <script lang="ts">
   import Content from '$lib/components/Content.svelte';
+  import Theme from '$lib/components/Theme.svelte';
   import { connections } from '$lib/model/connections';
   import { getVersion, getArch, getOS, checkUpdate } from '$lib/model/info';
   import { settings, tauriData, webData } from '$lib/model/settings';
@@ -29,6 +30,7 @@
         id="deleteOnWatch"
         class="toggle-accent toggle"
         checked={$settings.deleteOnWatch}
+        disabled={!window?.__TAURI__}
         on:change={() => ($settings.deleteOnWatch = !$settings.deleteOnWatch)}
       />
 
@@ -41,6 +43,7 @@
         id="notifications"
         class="toggle-accent toggle"
         checked={$settings.notifications}
+        disabled={!window?.__TAURI__}
         on:change={() => ($settings.notifications = !$settings.notifications)}
       />
 
@@ -51,6 +54,7 @@
       <select
         id="subSort"
         class="select-bordered select-accent select [font-weight:unset]"
+        disabled={!window?.__TAURI__}
         bind:value={selected}
         on:change={() => ($settings.sortSubscriptions = selected)}
       >
@@ -70,7 +74,11 @@
       Themes
     </h1>
 
-    <i>Coming Soon...</i>
+    <span class="inline-flex gap-4">
+      <Theme theme="light" />
+      <Theme theme="dark" />
+      <Theme theme="system" />
+    </span>
   </Content>
 
   <div class="divider" />

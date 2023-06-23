@@ -6,12 +6,18 @@
   let descriptionCollapsed = true;
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
   class="card block h-min w-auto bg-base-200 bg-opacity-80 p-4 shadow-xl backdrop-blur-xl backdrop-filter transition-colors duration-200"
   class:hover:bg-base-300={descriptionCollapsed}
   class:cursor-pointer={descriptionCollapsed}
+  role="button"
+  tabindex="-1"
   on:click={() => (descriptionCollapsed = false)}
+  on:keydown={e => {
+    if (e.key === 'Enter') {
+      descriptionCollapsed = false;
+    }
+  }}
 >
   <h1
     class="mb-4 text-3xl font-extrabold leading-none tracking-tight transition-[font-size] duration-200 md:text-4xl lg:text-5xl"
@@ -56,9 +62,8 @@
   <br />
   <button
     class="cursor-pointer font-semibold"
-    on:click={e => {
+    on:click|stopPropagation={() => {
       descriptionCollapsed = !descriptionCollapsed;
-      e.stopPropagation();
     }}
   >
     Show {descriptionCollapsed ? 'more' : 'less'}

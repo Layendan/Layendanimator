@@ -20,6 +20,8 @@
   import { downloads } from '$lib/model/downloads';
   import type { UnlistenFn } from '@tauri-apps/api/event';
   import NotificationPile from '$lib/components/NotificationPile.svelte';
+  import { settings } from '$lib/model/settings';
+  import { notifications } from '$lib/model/notifications';
 
   NProgress.configure({
     // Full list: https://github.com/rstacruz/nprogress#configuration
@@ -80,6 +82,26 @@
     if (unsubscribe) clearInterval(unsubscribe);
     tauriUnsubscribe();
   });
+
+  $: if ($settings?.theme) {
+    console.log('Theme:', $settings.theme);
+    const attr = document.createAttribute('data-theme');
+    attr.value = $settings.theme;
+    if ($settings.theme === 'dark' || $settings.theme === 'light') {
+      document.documentElement.attributes.setNamedItem(attr);
+    } else if ($settings.theme === 'system') {
+      const attributes = document.documentElement.attributes;
+      if (attributes.getNamedItem('data-theme'))
+        attributes.removeNamedItem('data-theme');
+    } else {
+      notifications.addNotification({
+        title: 'Unknown theme',
+        message: `Unknown theme: ${$settings.theme}`,
+        type: 'error'
+      });
+      console.error('Unknown theme:', $settings.theme);
+    }
+  }
 </script>
 
 <svelte:body

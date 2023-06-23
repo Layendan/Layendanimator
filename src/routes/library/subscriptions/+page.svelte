@@ -37,3 +37,15 @@
     </svelte:fragment>
   </GridContent>
 {/if}
+
+{#if Object.entries($unwatchedSubscriptions).length === 0 && Object.entries($subscriptions).length === 0}
+  <GridContent>
+    <svelte:fragment slot="title">Subscriptions</svelte:fragment>
+
+    <svelte:fragment slot="content">
+      <p class="text-xl font-semibold text-base-content text-opacity-70">
+        No Subscriptions Added
+      </p>
+    </svelte:fragment>
+  </GridContent>
+{/if}

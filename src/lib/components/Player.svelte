@@ -56,12 +56,16 @@
       }
     });
     player?.onAttach(async () => {
-      const os = await getOS();
-      if (os !== 'Darwin' && os !== 'Unknown') {
-        player?.addEventListener('fullscreen-change', async ({ detail }) => {
-          const { appWindow } = await import('@tauri-apps/api/window');
-          appWindow?.setFullscreen(detail);
-        });
+      try {
+        const os = await getOS();
+        if (os !== 'Darwin' && os !== 'Unknown') {
+          player?.addEventListener('fullscreen-change', async ({ detail }) => {
+            const { appWindow } = await import('@tauri-apps/api/window');
+            appWindow?.setFullscreen(detail);
+          });
+        }
+      } catch (e) {
+        console.error(e);
       }
       if (player) {
         player.currentTime =

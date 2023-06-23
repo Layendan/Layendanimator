@@ -13,7 +13,6 @@
   let hasMore: boolean = data.data.length % perPage === 0;
 
   async function update() {
-    console.debug('Updating...');
     isUpdating = true;
     page += 1;
     const result = await data.update(page, perPage);
@@ -29,7 +28,6 @@
       hasMore = false;
     }
     isUpdating = false;
-    console.debug('Updated!');
   }
 </script>
 

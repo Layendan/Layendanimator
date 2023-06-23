@@ -14,7 +14,6 @@
   let hasMore: boolean = animes.length % perPage === 0;
 
   async function update() {
-    console.debug('Updating...');
     isUpdating = true;
     page += 1;
     const result = await dataUpdate(page, perPage);
@@ -27,7 +26,6 @@
       hasMore = false;
     }
     isUpdating = false;
-    console.debug('Updated!');
   }
 </script>
 

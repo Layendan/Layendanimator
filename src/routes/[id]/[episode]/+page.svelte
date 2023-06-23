@@ -81,7 +81,6 @@
     anime={data.anime}
     episodes={data.anime.episodes}
     replaceState
-    focus={data.episodeObject.id}
   >
     <svelte:fragment slot="title">Next episodes</svelte:fragment>
   </EpisodeCarousel>

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { afterNavigate } from '$app/navigation';
   import type { Anime, Episode as EpisodeType } from '$lib/model/classes/Anime';
   import Content from './Content.svelte';
   import EpisodeCard from './EpisodeCard.svelte';
@@ -12,7 +11,6 @@
   export let showImage = episodes.length <= imageLength;
   export let replaceState = false;
   export let type: 'sub' | 'dub' = 'sub';
-  export let focus: string | undefined = undefined;
   export let href: string | undefined = undefined;
 
   $: nextEpisodeDate = new Date(
@@ -28,19 +26,6 @@
     (((((nextEpisodeDate.valueOf() - Date.now()) / 86400000) % 1) * 24) % 1) *
       60
   );
-
-  afterNavigate(() => {
-    if (focus) {
-      const element = document.getElementById(focus);
-      if (element && !useGrid) {
-        element.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-          inline: 'center'
-        });
-      }
-    }
-  });
 </script>
 
 <Content>

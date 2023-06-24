@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import Semaphore from './classes/Semaphore';
 
 export type Notification = {
   id: number;
@@ -14,31 +15,35 @@ export type Notification = {
 };
 
 function createNotifications() {
+  const mutex = new Semaphore<number>(1, 100);
+
   const { subscribe, set, update } = writable<Notification[]>([]);
   return {
     subscribe,
-    addNotification: (
+    addNotification: async (
       notification: Pick<Notification, 'title' | 'message'> &
         Partial<Omit<Notification, 'id' | 'createdAt' | 'updatedAt'>>
     ) => {
-      const date = new Date();
-      const id = date.getTime();
-      update(n => [
-        ...n,
-        {
-          id,
-          title: notification.title,
-          message: notification.message,
-          type: notification.type ?? 'info',
-          duration: notification.duration ?? 0,
-          dismissable: notification.dismissable ?? true,
-          dismissAfter: notification.dismissAfter ?? 5000,
-          show: notification.show ?? true,
-          createdAt: date,
-          updatedAt: date
-        }
-      ]);
-      return id;
+      return await mutex.callFunction(async () => {
+        const date = new Date();
+        const id = date.getTime();
+        update(n => [
+          ...n,
+          {
+            id,
+            title: notification.title,
+            message: notification.message,
+            type: notification.type ?? 'info',
+            progress: notification.progress ?? 0,
+            dismissable: notification.dismissable ?? true,
+            dismissAfter: notification.dismissAfter ?? 5000,
+            show: notification.show ?? true,
+            createdAt: date,
+            updatedAt: date
+          }
+        ]);
+        return id;
+      });
     },
     removeNotification: (id: number) => {
       update(n => n.filter(notification => notification.id !== id));

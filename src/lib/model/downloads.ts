@@ -149,11 +149,12 @@ function createDownloading() {
     ) => {
       if (get(downloads)[anime.id]?.episodes[episodeId]) return;
 
-      const notificationId = notifications.addNotification({
+      const notificationIdPromise = notifications.addNotification({
         title: `Downloading Episode ${episodeNumber} of ${
           anime.title.english ?? anime.title.romaji
         }`,
-        message: `Quality: ${quality}`
+        message: `Quality: ${quality}`,
+        dismissAfter: 2000
       });
 
       try {
@@ -184,7 +185,7 @@ function createDownloading() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const imageCalls: Promise<any>[] = [];
 
-        const video = videos.callFunction(async () => {
+        const video = await videos.callFunction(async () => {
           let episodeUrl = cache.sources?.find(s => s.quality === quality)?.url;
 
           if (!episodeUrl) {
@@ -398,15 +399,14 @@ function createDownloading() {
           );
         }
 
-        const videoPath = await video;
         const captionResults = await Promise.all<string>(calls);
         const imageResults = await Promise.allSettled<string>(imageCalls);
 
-        console.debug(videoPath);
+        console.debug(video);
         console.debug(captionResults);
         console.debug(imageResults);
 
-        if (!videoPath) {
+        if (!video) {
           throw new Error('Download failed');
         }
 
@@ -435,7 +435,7 @@ function createDownloading() {
         const episodeObj: EpisodeData = {
           sources: [
             {
-              url: videoPath,
+              url: video,
               quality,
               isM3U8: false
             }
@@ -471,7 +471,7 @@ function createDownloading() {
         });
       } finally {
         remove(episodeId);
-        notifications.removeNotification(notificationId);
+        notifications.removeNotification(await notificationIdPromise);
       }
     },
     remove,

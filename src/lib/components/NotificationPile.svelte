@@ -7,36 +7,30 @@
     faTimesCircle
   } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
-  import { fade } from 'svelte/transition';
-
-  $: clicked = ($notifications.length === 0, false);
-  $: stacked = $notifications.length > 1 && !clicked;
+  import { fade, fly } from 'svelte/transition';
 
   $: if ($notifications[0]) {
-    setTimeout(
-      () => notifications.removeNotification($notifications[0].id),
-      $notifications[0].dismissAfter ?? 5000
-    );
+    const id = $notifications[0].id;
+    setTimeout(() => {
+      if ($notifications[0].id === id)
+        notifications.removeNotification($notifications[0].id);
+    }, $notifications[0].dismissAfter ?? 5000);
   }
 </script>
 
-<button
-  class="fixed left-4 right-4 top-16 z-50"
-  class:stack={stacked}
-  on:click={() => (clicked = true)}
->
+<div class="stack fixed left-4 right-4 top-16 z-50">
   {#each $notifications as notification (notification.id)}
     {#if notification.show}
       <button
-        class="alert relative my-1 h-min shadow-md"
+        class="alert relative my-1 h-min shadow-md transition-[width_height] duration-300 ease-in-out"
         class:alert-info={notification.type === 'info'}
         class:alert-success={notification.type === 'success'}
         class:alert-warning={notification.type === 'warning'}
         class:alert-error={notification.type === 'error'}
-        class:select-none={stacked}
-        transition:fade
+        in:fly={{ y: 10 }}
+        out:fly={{ y: -10 }}
         on:click={() => {
-          if (!stacked) notifications.removeNotification(notification.id);
+          notifications.removeNotification(notification.id);
         }}
       >
         {#if notification.type === 'info'}
@@ -65,4 +59,4 @@
       </button>
     {/if}
   {/each}
-</button>
+</div>

@@ -21,7 +21,7 @@
   import type { UnlistenFn } from '@tauri-apps/api/event';
   import NotificationPile from '$lib/components/NotificationPile.svelte';
   import { settings } from '$lib/model/settings';
-  import { notifications } from '$lib/model/notifications';
+  import { toStyleString } from '$lib/model/theme';
 
   NProgress.configure({
     // Full list: https://github.com/rstacruz/nprogress#configuration
@@ -48,6 +48,7 @@
       subscriptions.initialize(),
       unwatchedSubscriptions.initialize(),
       watching.initialize(),
+      settings.initialize(),
       searchHistory.initialize(),
       connections.initialize(),
       downloads.initialize()
@@ -84,22 +85,36 @@
   });
 
   $: if ($settings?.theme) {
-    console.log('Theme:', $settings.theme);
+    console.debug('Theme:', $settings.theme);
     const attr = document.createAttribute('data-theme');
-    attr.value = $settings.theme;
-    if ($settings.theme === 'dark' || $settings.theme === 'light') {
+    attr.value = $settings.theme.name;
+
+    Object.keys($settings.themes).forEach(key => {
+      document
+        .querySelectorAll(`head > style#${key}`)
+        ?.forEach(style => style.remove());
+    });
+
+    if ($settings.theme.name === 'dark' || $settings.theme.name === 'light') {
       document.documentElement.attributes.setNamedItem(attr);
-    } else if ($settings.theme === 'system') {
+    } else if ($settings.theme.name === 'system') {
       const attributes = document.documentElement.attributes;
       if (attributes.getNamedItem('data-theme'))
         attributes.removeNamedItem('data-theme');
     } else {
-      notifications.addNotification({
-        title: 'Unknown theme',
-        message: `Unknown theme: ${$settings.theme}`,
-        type: 'error'
-      });
-      console.error('Unknown theme:', $settings.theme);
+      const attributes = document.documentElement.attributes;
+      if (attributes.getNamedItem('data-theme'))
+        attributes.removeNamedItem('data-theme');
+
+      if ($settings.theme.css) {
+        const style = document.createElement('style');
+        style.id = $settings.theme.name;
+        style.innerHTML = `:root { ${toStyleString(
+          $settings.theme.css,
+          $settings.theme.colorScheme
+        )} }`;
+        document.head.appendChild(style);
+      }
     }
   }
 </script>

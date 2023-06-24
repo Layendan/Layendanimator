@@ -12,6 +12,7 @@ import { downloads } from './downloads';
 import { connections } from './connections';
 import { providers } from './source';
 import { notifications } from './notifications';
+import { defaultThemes, type Theme } from './theme';
 
 let store: Store | undefined = undefined;
 
@@ -19,14 +20,18 @@ export type SettingsType = {
   deleteOnWatch: boolean;
   notifications: boolean;
   sortSubscriptions: 'lastUpdated' | 'timeAdded' | 'title';
-  theme: 'system' | 'light' | 'dark' | string;
+  theme: Theme;
+  themes: {
+    [key: string]: Theme;
+  };
 };
 
 const defaultSettings: SettingsType = {
   deleteOnWatch: true,
   notifications: true,
   sortSubscriptions: 'timeAdded',
-  theme: 'system'
+  theme: defaultThemes.system,
+  themes: defaultThemes
 };
 
 function createSettings() {
@@ -158,6 +163,29 @@ export const tauriData: {
           message:
             'Please enable notifications to receive download notifications',
           type: 'error'
+        });
+      }
+    }
+  },
+  {
+    label: 'Delete Themes',
+    danger: true,
+    action: async () => {
+      const { confirm } = await import('@tauri-apps/api/dialog');
+      const confirmed = await confirm(
+        'This action cannot be reverted. Are you sure?',
+        {
+          title: 'Delete All Themes',
+          type: 'warning',
+          okLabel: "Yes, I'm Sure"
+        }
+      );
+      if (confirmed) {
+        settings.update(settings => {
+          const newSettings = { ...settings };
+          newSettings.theme = defaultThemes.system;
+          newSettings.themes = defaultThemes;
+          return newSettings;
         });
       }
     }

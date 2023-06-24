@@ -1,6 +1,7 @@
 <script lang="ts">
   import Content from '$lib/components/Content.svelte';
-  import Theme from '$lib/components/Theme.svelte';
+  import ThemeButton from '$lib/components/ThemeButton.svelte';
+  import ThemeCreator from '$lib/components/ThemeCreator.svelte';
   import { connections } from '$lib/model/connections';
   import { getVersion, getArch, getOS, checkUpdate } from '$lib/model/info';
   import { settings, tauriData, webData } from '$lib/model/settings';
@@ -13,77 +14,81 @@
 </script>
 
 <section>
-  <Content>
-    <h1
-      class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
-    >
-      Settings
-    </h1>
-
-    <div class="grid w-fit grid-cols-2 items-center gap-4">
-      <!-- Delete on Watch -->
-      <label for="deleteOnWatch" class="text-lg font-medium">
-        Delete Download on Watch
-      </label>
-      <input
-        type="checkbox"
-        id="deleteOnWatch"
-        class="toggle-accent toggle"
-        checked={$settings.deleteOnWatch}
-        disabled={!window?.__TAURI__}
-        on:change={() => ($settings.deleteOnWatch = !$settings.deleteOnWatch)}
-      />
-
-      <!-- In-App Notifications -->
-      <label for="notifications" class="text-lg font-medium">
-        In-App Notifications
-      </label>
-      <input
-        type="checkbox"
-        id="notifications"
-        class="toggle-accent toggle"
-        checked={$settings.notifications}
-        disabled={!window?.__TAURI__}
-        on:change={() => ($settings.notifications = !$settings.notifications)}
-      />
-
-      <!-- Subscription Sorting Algorithm -->
-      <label for="subSort" class="text-lg font-medium">
-        Subscriptions Anime Sorting
-      </label>
-      <select
-        id="subSort"
-        class="select-bordered select-accent select [font-weight:unset]"
-        disabled={!window?.__TAURI__}
-        bind:value={selected}
-        on:change={() => ($settings.sortSubscriptions = selected)}
-      >
-        <option value="timeAdded">Time Added</option>
-        <option value="title">Title</option>
-        <option value="lastUpdated">Last Checked for Updates</option>
-      </select>
-    </div>
-  </Content>
-
-  <div class="divider" />
-
-  <Content>
-    <h1
-      class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
-    >
-      Themes
-    </h1>
-
-    <span class="inline-flex gap-4">
-      <Theme theme="light" />
-      <Theme theme="dark" />
-      <Theme theme="system" />
-    </span>
-  </Content>
-
-  <div class="divider" />
-
   {#if window?.__TAURI__}
+    <Content>
+      <h1
+        class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
+      >
+        Settings
+      </h1>
+
+      <div class="grid w-fit grid-cols-2 items-center gap-4">
+        <!-- Delete on Watch -->
+        <label for="deleteOnWatch" class="text-lg font-medium">
+          Delete Download on Watch
+        </label>
+        <input
+          type="checkbox"
+          id="deleteOnWatch"
+          class="toggle-accent toggle"
+          checked={$settings.deleteOnWatch}
+          disabled={!window?.__TAURI__}
+          on:change={() => ($settings.deleteOnWatch = !$settings.deleteOnWatch)}
+        />
+
+        <!-- In-App Notifications -->
+        <label for="notifications" class="text-lg font-medium">
+          In-App Notifications
+        </label>
+        <input
+          type="checkbox"
+          id="notifications"
+          class="toggle-accent toggle"
+          checked={$settings.notifications}
+          disabled={!window?.__TAURI__}
+          on:change={() => ($settings.notifications = !$settings.notifications)}
+        />
+
+        <!-- Subscription Sorting Algorithm -->
+        <label for="subSort" class="text-lg font-medium">
+          Subscriptions Anime Sorting
+        </label>
+        <select
+          id="subSort"
+          class="select-bordered select-accent select select-sm [font-weight:unset]"
+          disabled={!window?.__TAURI__}
+          bind:value={selected}
+          on:change={() => ($settings.sortSubscriptions = selected)}
+        >
+          <option value="timeAdded">Time Added</option>
+          <option value="title">Title</option>
+          <option value="lastUpdated">Last Checked for Updates</option>
+        </select>
+      </div>
+    </Content>
+
+    <div class="divider" />
+
+    <Content>
+      <h1
+        class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
+      >
+        Themes
+      </h1>
+
+      <span class="mb-4 inline-flex flex-wrap gap-4">
+        {#each Object.values($settings.themes).sort((a, b) => a.id - b.id) as theme (theme.name)}
+          <ThemeButton {theme} />
+        {/each}
+      </span>
+
+      <div class="ml-auto mr-2">
+        <ThemeCreator />
+      </div>
+    </Content>
+
+    <div class="divider" />
+
     <Content>
       <h1
         class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"

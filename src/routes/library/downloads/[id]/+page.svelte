@@ -78,8 +78,11 @@
         {#if data.episodes.length > 0}
           <a
             class="btn-accent btn-outline btn flex w-fit space-x-2"
-            href="/library/downloads/{data.id}/{hasLastEpisode &&
-            lastEpisodeFinished
+            href="/library/downloads/{data.id}/{(hasLastEpisode &&
+              lastEpisodeFinished) ||
+            !data.episodes.find(
+              ({ id }) => id === lastWatched?.watchEpisode?.id
+            )
               ? data.episodes[0].id
               : lastWatched?.watchEpisode?.id ?? data.episodes[0].id}"
           >

@@ -62,7 +62,7 @@
 </script>
 
 <a
-  in:fade
+  in:fade|global
   {href}
   id={episode.id}
   style:--anime-color={anime.color ?? 'hsl(var(--a))'}

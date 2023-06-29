@@ -12,7 +12,7 @@
 
 {#if anime.id}
   <a
-    in:fade
+    in:fade|global
     {href}
     id={anime.id}
     class="group indicator flex w-[210px] flex-col gap-2 focus-visible:outline-transparent"

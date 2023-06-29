@@ -76,7 +76,7 @@
         Themes
       </h1>
 
-      <span class="mb-4 inline-flex flex-wrap gap-4">
+      <span class="mb-4 inline-flex w-full flex-wrap gap-4">
         {#each Object.values($settings.themes).sort((a, b) => a.id - b.id) as theme (theme.name)}
           <ThemeButton {theme} />
         {/each}

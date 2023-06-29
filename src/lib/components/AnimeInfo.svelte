@@ -7,7 +7,7 @@
 </script>
 
 <div
-  class="card block h-min w-auto bg-base-200 bg-opacity-80 p-4 shadow-xl backdrop-blur-xl backdrop-filter transition-colors duration-200"
+  class="card block h-min w-auto max-w-full bg-base-200 bg-opacity-80 bg-clip-padding p-8 shadow-xl backdrop-blur-xl backdrop-filter transition-colors duration-200"
   class:hover:bg-base-300={descriptionCollapsed}
   class:cursor-pointer={descriptionCollapsed}
   role="button"
@@ -20,7 +20,7 @@
   }}
 >
   <h1
-    class="mb-4 text-3xl font-extrabold leading-none tracking-tight transition-[font-size] duration-200 md:text-4xl lg:text-5xl"
+    class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
   >
     {anime.title.english ?? anime.title.romaji}
   </h1>
@@ -55,7 +55,7 @@
   <p
     class="h-min w-fit"
     class:line-clamp-[3]={descriptionCollapsed}
-    class:lg:line-clamp-[6]={descriptionCollapsed}
+    class:lg:line-clamp-[5]={descriptionCollapsed}
   >
     {@html anime.description || '<i>No description available.</i>'}
   </p>

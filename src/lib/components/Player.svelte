@@ -76,6 +76,8 @@
         player.focus();
       }
     });
+
+    console.debug(anime, episodeData, episode);
   });
 
   function updateWatched() {
@@ -96,7 +98,11 @@
 
   onDestroy(() => {
     clearInterval(interval);
-    player?.destroy();
+    if (player) {
+      player.exitFullscreen();
+      player.exitPictureInPicture();
+      player.destroy();
+    }
   });
 
   beforeNavigate(updateWatched);

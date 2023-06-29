@@ -43,8 +43,12 @@ export type Theme = {
   css?: CSS;
 };
 
+function stringifyHSL(hsl: HSL): string {
+  return `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+}
+
 function generateForegroundColorFrom(input: HSL, percentage = 0.8): HSL {
-  const stringified = `hsl(${input.h}, ${input.s}%, ${input.l}%)`;
+  const stringified = stringifyHSL(input);
   const hsl = colord(stringified)
     .mix(colord(stringified).isDark() ? '#ffffff' : '#000000', percentage)
     .toHsl();
@@ -53,20 +57,24 @@ function generateForegroundColorFrom(input: HSL, percentage = 0.8): HSL {
 }
 
 function generateDarkenColorFrom(input: HSL, percentage = 0.07): HSL {
-  const stringified = `hsl(${input.h}, ${input.s}%, ${input.l}%)`;
+  const stringified = stringifyHSL(input);
   const hsl = colord(stringified).darken(percentage).toHsl();
   return hsl;
 }
 
+function isDark(input: HSL): boolean {
+  const stringified = stringifyHSL(input);
+  return colord(stringified).isDark();
+}
+
 export function createTheme(
   name: string,
-  colorScheme: 'light' | 'dark',
   css: Partial<CSS> & Pick<CSS, 'p' | 's' | 'a' | 'n' | 'b1'>
 ): Theme {
   return {
     name,
     id: Date.now(),
-    colorScheme,
+    colorScheme: isDark(css.b1) ? 'dark' : 'light',
     css: {
       ...css,
       pf: css.pf ?? generateDarkenColorFrom(css.p),

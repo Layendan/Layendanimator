@@ -6,7 +6,6 @@
   let modal: HTMLDialogElement;
 
   let name = '';
-  let isDark = true;
   let primary = '';
   let secondary = '';
   let accent = '';
@@ -46,7 +45,7 @@
         return;
       }
 
-      const theme = createTheme(themeName, isDark ? 'dark' : 'light', {
+      const theme = createTheme(themeName, {
         p: hexToHSL(primary),
         s: hexToHSL(secondary),
         a: hexToHSL(accent),
@@ -57,11 +56,10 @@
         wa: warning ? hexToHSL(warning) : undefined,
         er: error ? hexToHSL(error) : undefined
       });
-      $settings.themes[theme.name] = theme;
+      $settings.themes[themeName] = theme;
       $settings.theme = theme;
 
       name = '';
-      isDark = true;
       primary = '';
       secondary = '';
       accent = '';
@@ -86,13 +84,6 @@
         class="input-bordered input w-full max-w-xs capitalize"
         bind:value={name}
       />
-
-      <div class="form-control mt-1">
-        <label class="label cursor-pointer">
-          <span class="label-text">Dark Theme</span>
-          <input type="checkbox" bind:checked={isDark} class="checkbox" />
-        </label>
-      </div>
 
       <label class="label" for="primary">
         <span class="label-text">Primary Color</span>

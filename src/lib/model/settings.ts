@@ -165,6 +165,10 @@ export const tauriData: {
           type: 'error'
         });
       }
+      notifications.addNotification({
+        title: 'Test Notification',
+        message: 'This is a test notification'
+      });
     }
   },
   {

@@ -40,7 +40,7 @@
 
 {#if theme.name === 'system'}
   <button
-    class="grid overflow-hidden rounded-lg border-2 outline outline-2 outline-offset-2 outline-transparent
+    class="grid w-max overflow-hidden rounded-lg border-2 outline outline-2 outline-offset-2 outline-transparent
     {$settings.theme.name === theme.name
       ? 'border-accent/80 hover:border-accent/100 focus-visible:border-accent/100'
       : 'border-base-content/20 hover:border-base-content/40 focus-visible:border-base-content/40'}"
@@ -57,24 +57,24 @@
           class="col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 bg-base-100 p-2"
         >
           <div class="font-bold capitalize">{theme.name}</div>
-          <div class="flex flex-wrap gap-1">
+          <div class="flex justify-around gap-1">
             <div
-              class="flex aspect-square w-5 items-center justify-center rounded bg-primary lg:w-6"
+              class="flex aspect-square w-6 items-center justify-center rounded bg-primary"
             >
               <div class="text-sm font-bold text-primary-content">A</div>
             </div>
             <div
-              class="flex aspect-square w-5 items-center justify-center rounded bg-secondary lg:w-6"
+              class="flex aspect-square w-6 items-center justify-center rounded bg-secondary"
             >
               <div class="text-sm font-bold text-secondary-content">A</div>
             </div>
             <div
-              class="flex aspect-square w-5 items-center justify-center rounded bg-accent lg:w-6"
+              class="flex aspect-square w-6 items-center justify-center rounded bg-accent"
             >
               <div class="text-sm font-bold text-accent-content">A</div>
             </div>
             <div
-              class="flex aspect-square w-5 items-center justify-center rounded bg-neutral lg:w-6"
+              class="flex aspect-square w-6 items-center justify-center rounded bg-neutral"
             >
               <div class="text-sm font-bold text-neutral-content">A</div>
             </div>
@@ -120,24 +120,24 @@
             class="col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 bg-base-100 p-2"
           >
             <div class="font-bold capitalize">{theme.name}</div>
-            <div class="flex flex-wrap gap-1">
+            <div class="flex justify-around gap-1">
               <div
-                class="flex aspect-square w-5 items-center justify-center rounded bg-primary lg:w-6"
+                class="flex aspect-square w-6 items-center justify-center rounded bg-primary"
               >
                 <div class="text-sm font-bold text-primary-content">A</div>
               </div>
               <div
-                class="flex aspect-square w-5 items-center justify-center rounded bg-secondary lg:w-6"
+                class="flex aspect-square w-6 items-center justify-center rounded bg-secondary"
               >
                 <div class="text-sm font-bold text-secondary-content">A</div>
               </div>
               <div
-                class="flex aspect-square w-5 items-center justify-center rounded bg-accent lg:w-6"
+                class="flex aspect-square w-6 items-center justify-center rounded bg-accent"
               >
                 <div class="text-sm font-bold text-accent-content">A</div>
               </div>
               <div
-                class="flex aspect-square w-5 items-center justify-center rounded bg-neutral lg:w-6"
+                class="flex aspect-square w-6 items-center justify-center rounded bg-neutral"
               >
                 <div class="text-sm font-bold text-neutral-content">A</div>
               </div>
@@ -166,24 +166,24 @@
           class="col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 bg-base-100 p-2"
         >
           <div class="font-bold capitalize">{theme.name}</div>
-          <div class="flex flex-wrap gap-1">
+          <div class="flex justify-around gap-1">
             <div
-              class="flex aspect-square w-5 items-center justify-center rounded bg-primary lg:w-6"
+              class="flex aspect-square w-6 items-center justify-center rounded bg-primary"
             >
               <div class="text-sm font-bold text-primary-content">A</div>
             </div>
             <div
-              class="flex aspect-square w-5 items-center justify-center rounded bg-secondary lg:w-6"
+              class="flex aspect-square w-6 items-center justify-center rounded bg-secondary"
             >
               <div class="text-sm font-bold text-secondary-content">A</div>
             </div>
             <div
-              class="flex aspect-square w-5 items-center justify-center rounded bg-accent lg:w-6"
+              class="flex aspect-square w-6 items-center justify-center rounded bg-accent"
             >
               <div class="text-sm font-bold text-accent-content">A</div>
             </div>
             <div
-              class="flex aspect-square w-5 items-center justify-center rounded bg-neutral lg:w-6"
+              class="flex aspect-square w-6 items-center justify-center rounded bg-neutral"
             >
               <div class="text-sm font-bold text-neutral-content">A</div>
             </div>

@@ -1,7 +1,6 @@
 <script lang="ts">
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import GridContent from '$lib/components/GridContent.svelte';
-  import PlaceholderAnimeCard from '$lib/components/PlaceholderAnimeCard.svelte';
   import type { Anime } from '$lib/model/classes/Anime';
   import InfiniteScroll from 'svelte-infinite-scroll';
 
@@ -33,15 +32,9 @@
   <svelte:fragment slot="title"><slot /></svelte:fragment>
 
   <svelte:fragment slot="content">
-    {#await animes}
-      {#each new Array(25) as _}
-        <PlaceholderAnimeCard />
-      {/each}
-    {:then results}
-      {#each results as anime (anime.id)}
-        <AnimeCard {anime} />
-      {/each}
-    {/await}
+    {#each animes as anime (anime.id)}
+      <AnimeCard {anime} />
+    {/each}
   </svelte:fragment>
 </GridContent>
 

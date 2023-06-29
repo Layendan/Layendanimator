@@ -29,8 +29,8 @@
           class:alert-success={notification.type === 'success'}
           class:alert-warning={notification.type === 'warning'}
           class:alert-error={notification.type === 'error'}
-          in:fly={{ y: 10 }}
-          out:fly={{ y: -10 }}
+          in:fly|global={{ y: 10 }}
+          out:fly|global={{ y: -10 }}
           on:click={() => {
             notifications.removeNotification(notification.id);
           }}

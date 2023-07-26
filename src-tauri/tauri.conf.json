@@ -8,7 +8,7 @@
 	},
 	"package": {
 		"productName": "Layendanimator",
-		"version": "0.1.13"
+		"version": "0.1.14"
 	},
 	"tauri": {
 		"allowlist": {
@@ -43,11 +43,7 @@
 			"http": {
 				"request": true,
 				"scope": [
-					"https://**/*.mp4",
-					"https://**/*.vtt",
-					"https://**/*.png",
-					"https://**/*.jpeg",
-					"https://**/*.jpg"
+					"https://**/*"
 				]
 			}
 		},
@@ -88,7 +84,7 @@
 			}
 		},
 		"security": {
-			"csp": "asset: https://asset.localhost assets://*"
+			"csp": "img-src 'self' https://* data: asset: https://asset.localhost; media-src 'self' https://* asset: blob: https://asset.localhost; worker-src 'self' blob:; script-src 'unsafe-eval';"
 		},
 		"updater": {
 			"active": true,
@@ -109,9 +105,12 @@
 				"label": "main",
 				"minWidth": 800,
 				"width": 800,
-				"visible": true,
+				"visible": false,
 				"acceptFirstMouse": true,
-				"decorations": true
+				"decorations": true,
+				"skipTaskbar": true,
+				"contentProtected": false,
+				"additionalBrowserArgs": "--enable-features=OverlayScrollbar --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection"
 			}
 		]
 	}

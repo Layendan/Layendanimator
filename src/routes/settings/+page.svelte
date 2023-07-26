@@ -1,14 +1,18 @@
 <script lang="ts">
   import Content from '$lib/components/Content.svelte';
+  import ProviderCreator from '$lib/components/ProviderCreator.svelte';
+  import SourceInfoButton from '$lib/components/SourceInfoButton.svelte';
   import ThemeButton from '$lib/components/ThemeButton.svelte';
   import ThemeCreator from '$lib/components/ThemeCreator.svelte';
-  import { connections } from '$lib/model/connections';
+  import { animeCache } from '$lib/model/cache';
   import { getVersion, getArch, getOS, checkUpdate } from '$lib/model/info';
   import { settings, tauriData, webData } from '$lib/model/settings';
+  import { providers } from '$lib/model/source';
   import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
+  import { faCloudArrowDown } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
 
-  const anilistClientId = '4602';
+  // const anilistClientId = '4602';
 
   let selected = $settings.sortSubscriptions;
 </script>
@@ -22,46 +26,86 @@
         Settings
       </h1>
 
-      <div class="grid w-fit grid-cols-2 items-center gap-4">
+      <div>
         <!-- Delete on Watch -->
-        <label for="deleteOnWatch" class="text-lg font-medium">
-          Delete Download on Watch
+        <label class="label w-fit" for="deleteOnWatch">
+          <span class="label-text">Delete Download on Watch</span>
         </label>
         <input
           type="checkbox"
           id="deleteOnWatch"
-          class="toggle-accent toggle"
+          class="toggle toggle-accent"
           checked={$settings.deleteOnWatch}
-          disabled={!window?.__TAURI__}
           on:change={() => ($settings.deleteOnWatch = !$settings.deleteOnWatch)}
         />
 
         <!-- In-App Notifications -->
-        <label for="notifications" class="text-lg font-medium">
-          In-App Notifications
+        <label class="label w-fit" for="notifications">
+          <span class="label-text">In-App Notifications</span>
         </label>
         <input
           type="checkbox"
           id="notifications"
-          class="toggle-accent toggle"
+          class="toggle toggle-accent"
           checked={$settings.notifications}
-          disabled={!window?.__TAURI__}
           on:change={() => ($settings.notifications = !$settings.notifications)}
         />
 
+        <!-- Sub or Dub -->
+        <label class="label w-fit" for="isSub">
+          <span class="label-text">Fetch Sub Episodes</span>
+        </label>
+        <input
+          type="checkbox"
+          id="isSub"
+          class="toggle toggle-accent"
+          checked={$settings.isSubtitles}
+          on:change={() => {
+            $settings.isSubtitles = !$settings.isSubtitles;
+            animeCache.clear();
+          }}
+        />
+
+        <!-- Fetch Filler -->
+        <label class="label w-fit" for="fetchFiller">
+          <span class="label-text">Fetch Filler Episodes</span>
+        </label>
+        <input
+          type="checkbox"
+          id="fetchFiller"
+          class="toggle toggle-accent"
+          checked={$settings.filler}
+          on:change={() => ($settings.filler = !$settings.filler)}
+        />
+
+        <!-- Parallax -->
+        <label class="label w-fit" for="parallax">
+          <span class="label-text">
+            Cover Parallax
+            <i class="text-xs">(disable for performance)</i>
+          </span>
+        </label>
+        <input
+          type="checkbox"
+          id="parallax"
+          class="toggle toggle-accent"
+          checked={$settings.parallax}
+          on:change={() => ($settings.parallax = !$settings.parallax)}
+        />
+
         <!-- Subscription Sorting Algorithm -->
-        <label for="subSort" class="text-lg font-medium">
-          Subscriptions Anime Sorting
+        <label class="label w-fit" for="subSort">
+          <span class="label-text">Subscriptions Anime Sorting</span>
         </label>
         <select
           id="subSort"
-          class="select-bordered select-accent select select-sm [font-weight:unset]"
-          disabled={!window?.__TAURI__}
+          class="select select-bordered select-accent select-sm [font-weight:unset]"
           bind:value={selected}
           on:change={() => ($settings.sortSubscriptions = selected)}
         >
           <option value="timeAdded">Time Added</option>
           <option value="title">Title</option>
+          <option value="nextEpisode">Time Until Next Episode</option>
           <option value="lastUpdated">Last Checked for Updates</option>
         </select>
       </div>
@@ -70,33 +114,41 @@
     <div class="divider" />
 
     <Content>
-      <h1
-        class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
-      >
-        Themes
-      </h1>
+      <div class="mb-4 flex items-center gap-1">
+        <h1
+          class="mr-3 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
+        >
+          Sources
+        </h1>
+
+        <ProviderCreator />
+      </div>
+
+      <span class="mb-4 inline-flex w-full flex-wrap gap-4">
+        {#each Object.values($providers) as source (source.id)}
+          <SourceInfoButton {source} />
+        {/each}
+      </span>
+    </Content>
+
+    <div class="divider" />
+
+    <Content>
+      <div class="mb-4 flex items-center gap-1">
+        <h1
+          class="mr-3 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
+        >
+          Themes
+        </h1>
+
+        <ThemeCreator />
+      </div>
 
       <span class="mb-4 inline-flex w-full flex-wrap gap-4">
         {#each Object.values($settings.themes).sort((a, b) => a.id - b.id) as theme (theme.name)}
           <ThemeButton {theme} />
         {/each}
       </span>
-
-      <div class="ml-auto mr-2">
-        <ThemeCreator />
-      </div>
-    </Content>
-
-    <div class="divider" />
-
-    <Content>
-      <h1
-        class="mb-4 text-3xl font-extrabold leading-none tracking-tight md:text-4xl lg:text-5xl"
-      >
-        Sources
-      </h1>
-
-      <i>Coming Soon...</i>
     </Content>
 
     <div class="divider" />
@@ -109,7 +161,9 @@
       </h1>
 
       <div class="flex gap-x-6">
-        <a
+        Coming Soon...
+
+        <!-- <a
           href="https://anilist.co/api/v2/oauth/authorize?client_id={anilistClientId}&response_type=token"
           target="_blank"
           rel="noopener noreferrer nofollow"
@@ -133,7 +187,7 @@
               fill="#fefefe"
             />
           </svg>
-        </a>
+        </a> -->
       </div>
     </Content>
 
@@ -176,14 +230,15 @@
 
     <div class="grid grid-cols-1 gap-4">
       {#each webData as { label, action }}
-        <button class="btn-accent btn-outline btn w-full" on:click={action}>
+        <button class="btn btn-outline w-full" on:click={action}>
           {label}
         </button>
       {/each}
       {#if window?.__TAURI__}
         {#each tauriData as { label, danger, action }}
           <button
-            class="btn-outline btn w-full {danger ? 'btn-error' : 'btn-accent'}"
+            class="btn btn-outline w-full"
+            class:btn-error={danger}
             on:click={action}
           >
             {label}
@@ -209,9 +264,10 @@
           {#await getVersion() then version}
             {version}
             <button
-              class="btn-accent btn-outline btn-sm btn ml-2"
+              class="btn btn-accent btn-outline btn-sm ml-2"
               on:click={checkUpdate}
             >
+              <Fa icon={faCloudArrowDown} />
               Check For Updates
             </button>
           {/await}

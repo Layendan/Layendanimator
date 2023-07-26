@@ -1,15 +1,16 @@
 <script lang="ts">
+  import { sanitize } from 'isomorphic-dompurify';
   import type { Anime } from '$lib/model/classes/Anime';
 
   export let anime: Anime;
 
-  let descriptionCollapsed = true;
+  $: descriptionCollapsed = (anime.id, true);
 </script>
 
 <div
   class="card block h-min w-auto max-w-full bg-base-200 bg-opacity-80 bg-clip-padding p-8 shadow-xl backdrop-blur-xl backdrop-filter transition-colors duration-200"
   class:hover:bg-base-300={descriptionCollapsed}
-  class:cursor-pointer={descriptionCollapsed}
+  class:cursor-default={!descriptionCollapsed}
   role="button"
   tabindex="-1"
   on:click={() => (descriptionCollapsed = false)}
@@ -26,24 +27,24 @@
   </h1>
   <ul class="mb-4 flex flex-wrap gap-1">
     {#if anime.type}
-      <div class="badge badge-accent badge-outline">
+      <div class="badge">
         {anime.type.replaceAll('_', ' ')}
       </div>
     {/if}
     {#if anime.isAdult}
-      <div class="badge badge-error badge-outline">18+</div>
+      <div class="badge badge-error">18+</div>
     {/if}
     {#if anime.status}
-      <div class="badge badge-accent badge-outline">
+      <div class="badge">
         {anime.status}
       </div>
     {/if}
     {#each anime.genres as genre}
-      <div class="badge badge-accent badge-outline">{genre}</div>
+      <div class="badge">{genre}</div>
     {/each}
     {#if anime.rating}
       <div
-        class="badge badge-outline"
+        class="badge"
         class:badge-error={anime.rating <= 60}
         class:badge-warning={anime.rating > 60 && anime.rating <= 75}
         class:badge-success={anime.rating > 75}
@@ -57,7 +58,7 @@
     class:line-clamp-[3]={descriptionCollapsed}
     class:lg:line-clamp-[5]={descriptionCollapsed}
   >
-    {@html anime.description || '<i>No description available.</i>'}
+    {@html sanitize(anime.description || '<i>No description available.</i>')}
   </p>
   <br />
   <button

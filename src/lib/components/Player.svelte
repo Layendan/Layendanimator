@@ -5,13 +5,16 @@
   import 'vidstack/styles/defaults.css';
   import 'vidstack/styles/community-skin/video.css';
   import { defineCustomElements } from 'vidstack/elements';
-  import type { HLSProvider, MediaPlayerElement } from 'vidstack';
-
+  import type {
+    HLSProvider,
+    MediaPlayerElement,
+    MediaProviderChangeEvent
+  } from 'vidstack';
   import { onMount, createEventDispatcher, onDestroy } from 'svelte';
   import { watching } from '$lib/model/watch';
   import type { Anime, Episode, EpisodeData } from '$lib/model/classes/Anime';
   import { getOS } from '$lib/model/info';
-  import { beforeNavigate } from '$app/navigation';
+  import { beforeNavigate, invalidate } from '$app/navigation';
   import Hls from 'hls.js';
   import { downloads } from '$lib/model/downloads';
   import { settings } from '$lib/model/settings';
@@ -24,19 +27,22 @@
 
   let player: MediaPlayerElement | undefined = undefined;
 
-  $: watchedObject = $watching[anime.id]?.watchedEpisodes[episode.id];
+  $: watchedObject =
+    $watching[`${anime.source.id}/${anime.id}`]?.watchedEpisodes[episode.id];
+  $: state = player?.state;
 
   const dispatcher = createEventDispatcher();
 
   function requestNextEpisode() {
-    const state = player?.state;
+    player?.exitFullscreen();
+    player?.exitPictureInPicture();
     dispatcher('requestNextEpisode', () => {
       if (
         $settings.deleteOnWatch &&
         state &&
         state.currentTime / state.duration >= 0.8
       )
-        downloads.remove(anime.id, episode.id);
+        downloads.remove(anime, episode.id);
     });
   }
 
@@ -47,22 +53,28 @@
     }
   }
 
+  function providerChange(event: MediaProviderChangeEvent) {
+    const provider = event.detail;
+    if (provider && provider.type === 'hls') {
+      (provider as HLSProvider).library = Hls;
+    }
+  }
+
   onMount(async () => {
     await defineCustomElements();
-    player?.addEventListener('provider-change', event => {
-      const provider = event.detail;
-      if (provider && provider.type === 'hls') {
-        (provider as HLSProvider).library = Hls;
-      }
-    });
     player?.onAttach(async () => {
       try {
-        const os = await getOS();
-        if (os !== 'Darwin' && os !== 'Unknown') {
-          player?.addEventListener('fullscreen-change', async ({ detail }) => {
-            const { appWindow } = await import('@tauri-apps/api/window');
-            appWindow?.setFullscreen(detail);
-          });
+        if (window.__TAURI__) {
+          const os = await getOS();
+          if (os !== 'Darwin' && os !== 'Unknown') {
+            player?.addEventListener(
+              'fullscreen-change',
+              async ({ detail }) => {
+                const { appWindow } = await import('@tauri-apps/api/window');
+                appWindow?.setFullscreen(detail);
+              }
+            );
+          }
         }
       } catch (e) {
         console.error(e);
@@ -98,11 +110,7 @@
 
   onDestroy(() => {
     clearInterval(interval);
-    if (player) {
-      player.exitFullscreen();
-      player.exitPictureInPicture();
-      player.destroy();
-    }
+    if (player) player.destroy();
   });
 
   beforeNavigate(updateWatched);
@@ -113,7 +121,7 @@
 <div class="relative -m-4 mb-4 h-auto w-screen bg-black">
   <media-player
     {poster}
-    title={episode.title}
+    title={episode.title ?? `Episode ${episode.number}`}
     aspect-ratio="16/9"
     style:--video-brand={anime.color ?? 'hsl(var(--a))'}
     class="mx-auto flex aspect-video w-screen items-center justify-center border-none object-cover md:w-[max(800px,70vw)]"
@@ -121,8 +129,11 @@
     autoplay
     {disableRemotePlayback}
     bind:this={player}
+    on:provider-change={providerChange}
     on:ended={requestNextEpisode}
     on:pause={updateWatched}
+    on:error={() => invalidate(`${anime.source}/${anime.id}/${episode.id}`)}
+    on:hls-error={() => invalidate(`${anime.source}/${anime.id}/${episode.id}`)}
     on:autoplay|once={() => {
       if (player) {
         const time = watchedObject?.time ?? 0;

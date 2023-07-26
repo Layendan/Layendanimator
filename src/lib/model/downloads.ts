@@ -1,10 +1,12 @@
-import { writable, get } from 'svelte/store';
-import type { Store } from 'tauri-plugin-store-api';
-import type { Anime, EpisodeData } from './classes/Anime';
 import { invalidate, preloadData } from '$app/navigation';
+import Hls from 'hls.js';
+import { get, writable } from 'svelte/store';
+import type { Store } from 'tauri-plugin-store-api';
 import { episodeCache } from './cache';
+import type { Anime, EpisodeData } from './classes/Anime';
 import Semaphore from './classes/Semaphore';
 import { notifications } from './notifications';
+import type { Provider } from './source';
 
 let store: Store | undefined = undefined;
 
@@ -26,7 +28,8 @@ function createDownloads() {
     },
     add: (anime: Anime, episodeId: string, episode: EpisodeData) => {
       update(downloads => {
-        const episodes = downloads[anime.id]?.anime.episodes ?? [];
+        const episodes =
+          downloads[`${anime.source.id}/${anime.id}`]?.anime.episodes ?? [];
         if (!episodes.find(({ id }) => id === episodeId)) {
           const episode = anime.episodes.find(({ id }) => id === episodeId);
           if (episode) {
@@ -34,25 +37,26 @@ function createDownloads() {
           }
         }
 
-        downloads[anime.id] = {
+        downloads[`${anime.source.id}/${anime.id}`] = {
           anime: {
             ...anime,
             episodes: episodes.sort((a, b) => a.number - b.number)
           },
           episodes: {
-            ...downloads[anime.id]?.episodes,
+            ...downloads[`${anime.source.id}/${anime.id}`]?.episodes,
             [episodeId]: episode
           }
         };
-        invalidate(`/downloads/${anime.id}`);
+        invalidate(`/downloads/${anime.source.id}/${anime.id}/${episodeId}`);
+        invalidate(`/downloads/${anime.source.id}/${anime.id}`);
         store?.set('downloads', downloads);
         store?.save();
         return downloads;
       });
     },
-    remove: (animeId: string, episodeId: string) => {
+    remove: (anime: Anime, episodeId: string) => {
       update(downloads => {
-        const data = downloads[animeId];
+        const data = downloads[`${anime.source.id}/${anime.id}`];
 
         if (data === undefined) return downloads;
 
@@ -63,15 +67,19 @@ function createDownloads() {
             subtitle => subtitle.url
           ) ?? [])
         ]);
-        downloads[animeId].anime.episodes = data.anime.episodes.filter(
-          episode => episode.id !== episodeId
-        );
-        delete downloads[animeId].episodes[episodeId];
-        if (Object.keys(downloads[animeId].episodes).length === 0) {
+        downloads[`${anime.source.id}/${anime.id}`].anime.episodes =
+          data.anime.episodes.filter(episode => episode.id !== episodeId);
+        delete downloads[`${anime.source.id}/${anime.id}`].episodes[episodeId];
+        if (
+          Object.keys(downloads[`${anime.source.id}/${anime.id}`].episodes)
+            .length === 0
+        ) {
           deleteFiles([data.anime.image, data.anime.cover]);
-          delete downloads[animeId];
+          delete downloads[`${anime.source.id}/${anime.id}`];
         }
-        invalidate(`/downloads/${animeId}`);
+        episodeCache.delete(`${anime.source.id}/${episodeId}`);
+        invalidate(`/downloads/${anime.source.id}/${anime.id}/${episodeId}`);
+        invalidate(`/downloads/${anime.source.id}/${anime.id}`);
         store?.set('downloads', downloads);
         store?.save();
         return downloads;
@@ -80,6 +88,7 @@ function createDownloads() {
     clear: () => {
       deleteDir();
       set({});
+      episodeCache.clear();
       store?.set('downloads', {});
       store?.save();
     },
@@ -131,9 +140,9 @@ function createDownloading() {
   } = {};
   const { subscribe, set, update } = writable(dict);
 
-  const remove = (episodeId: string) => {
+  const remove = (id: string) => {
     update(downloads => {
-      delete downloads[episodeId];
+      delete downloads[id];
       return downloads;
     });
   };
@@ -147,37 +156,30 @@ function createDownloading() {
       quality: string,
       episodeNumber: number
     ) => {
-      if (get(downloads)[anime.id]?.episodes[episodeId]) return;
+      if (get(downloads)[`${anime.source.id}/${anime.id}`]?.episodes[episodeId])
+        return;
 
-      const notificationIdPromise = notifications.addNotification({
-        title: `Downloading Episode ${episodeNumber} of ${
-          anime.title.english ?? anime.title.romaji
-        }`,
-        message: `Quality: ${quality}`,
-        dismissAfter: 2000
-      });
+      const id = `${anime.source.id}/${anime.id}/${episodeId}`;
+
+      if (get(downloading)[id]) return;
 
       try {
         update(downloads => {
-          downloads[episodeId] = { anime, quality, progress: null };
+          downloads[id] = { anime, quality, progress: null };
           return downloads;
         });
 
-        await preloadData(`/${anime.id}/${episodeId}`);
-        const cache = episodeCache.get(episodeId);
-
-        console.debug(cache);
-
-        if (!cache) {
-          throw new Error('Episode not found');
-        }
-
-        const { Command } = await import('@tauri-apps/api/shell');
-        const { appDataDir, join } = await import('@tauri-apps/api/path');
-        const { writeBinaryFile, writeFile } = await import(
-          '@tauri-apps/api/fs'
-        );
-        const { fetch, ResponseType } = await import('@tauri-apps/api/http');
+        const [
+          { Command },
+          { appDataDir, join },
+          { writeBinaryFile, writeFile },
+          { fetch, ResponseType }
+        ] = await Promise.all([
+          import('@tauri-apps/api/shell'),
+          import('@tauri-apps/api/path'),
+          import('@tauri-apps/api/fs'),
+          import('@tauri-apps/api/http')
+        ]);
         const dataDir = await appDataDir();
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -186,6 +188,13 @@ function createDownloading() {
         const imageCalls: Promise<any>[] = [];
 
         const video = await videos.callFunction(async () => {
+          await preloadData(`/${id}`);
+          const cache = episodeCache.get(`${anime.source.id}/${episodeId}`);
+
+          if (!cache) {
+            throw new Error('Episode not found');
+          }
+
           let episodeUrl = cache.sources?.find(s => s.quality === quality)?.url;
 
           if (!episodeUrl) {
@@ -205,10 +214,23 @@ function createDownloading() {
             return Promise.reject();
           }
 
+          const videoElement = document.createElement('video');
+          let duration = 0;
+          if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(episodeUrl);
+            hls.attachMedia(videoElement);
+            hls.once(Hls.Events.LEVEL_LOADED, (_, data) => {
+              duration = data.details.totalduration;
+              hls.destroy();
+              videoElement.remove();
+            });
+          }
+
           const path = await join(
             dataDir,
             'downloads',
-            `${anime.id}.${episodeId}.mp4`
+            `${anime.source.id}.${anime.id}.${episodeId}.mp4`
           );
 
           // -i {input} -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 {output} -hwaccel auto -y
@@ -226,8 +248,31 @@ function createDownloading() {
             path,
             '-hwaccel',
             'auto',
+            '-progress',
+            '-',
+            '-nostats',
             '-y'
           ]);
+
+          command.stdout.on('data', data => {
+            const str = data.toString();
+            const match = str.match(/time=(\d+):(\d+):(\d+)/);
+            if (match) {
+              const [, hours, minutes, seconds] = match;
+              const totalSeconds =
+                parseInt(hours) * 3600 +
+                parseInt(minutes) * 60 +
+                parseInt(seconds);
+              update(downloads => {
+                downloads[id].progress = Math.min(
+                  totalSeconds / (duration || anime.duration * 60),
+                  1
+                );
+                return downloads;
+              });
+            }
+          });
+
           const output = await command.execute();
 
           console.debug('Downloaded: ', path);
@@ -245,7 +290,14 @@ function createDownloading() {
           }
 
           return path;
-        });
+        }, id);
+
+        await preloadData(`/${id}`);
+        const cache = episodeCache.get(`${anime.source.id}/${episodeId}`);
+
+        if (!cache) {
+          throw new Error('Episode not found');
+        }
 
         if (cache.subtitles) {
           cache.subtitles.forEach(subtitle => {
@@ -254,7 +306,7 @@ function createDownloading() {
                 const path = await join(
                   dataDir,
                   'downloads',
-                  `${anime.id}.${episodeId}.${subtitle.lang}.vtt`
+                  `${anime.source.id}.${anime.id}.${episodeId}.${subtitle.lang}.vtt`
                 );
 
                 const response = await fetch<string>(subtitle.url, {
@@ -279,7 +331,7 @@ function createDownloading() {
                 console.debug('Downloaded: ', path);
 
                 return path;
-              })
+              }, id)
             );
           });
         }
@@ -289,7 +341,7 @@ function createDownloading() {
             const path = await join(
               dataDir,
               'downloads',
-              `${anime.id}.${anime.image.split('.').pop()}`
+              `${anime.source.id}.${anime.id}.${anime.image.split('.').pop()}`
             );
 
             const response = await fetch<Uint8Array>(anime.image, {
@@ -316,7 +368,7 @@ function createDownloading() {
             console.debug('Downloaded: ', path);
 
             return path;
-          })
+          }, id)
         );
 
         imageCalls.push(
@@ -332,7 +384,9 @@ function createDownloading() {
             const path = await join(
               dataDir,
               'downloads',
-              `${anime.id}.${episodeId}.${episodeImage.split('.').pop()}`
+              `${anime.source.id}.${anime.id}.${episodeId}.${episodeImage
+                .split('.')
+                .pop()}`
             );
 
             const response = await fetch<Uint8Array>(episodeImage, {
@@ -359,7 +413,7 @@ function createDownloading() {
             console.debug('Downloaded: ', path);
 
             return path;
-          })
+          }, id)
         );
 
         if (anime.cover) {
@@ -368,7 +422,9 @@ function createDownloading() {
               const path = await join(
                 dataDir,
                 'downloads',
-                `${anime.id}.cover.${anime.cover.split('.').pop()}`
+                `${anime.source.id}.${anime.id}.cover.${anime.cover
+                  .split('.')
+                  .pop()}`
               );
 
               const response = await fetch<Uint8Array>(anime.cover, {
@@ -395,7 +451,7 @@ function createDownloading() {
               console.debug('Downloaded: ', path);
 
               return path;
-            })
+            }, id)
           );
         }
 
@@ -470,11 +526,18 @@ function createDownloading() {
           type: 'error'
         });
       } finally {
-        remove(episodeId);
-        notifications.removeNotification(await notificationIdPromise);
+        remove(id);
       }
     },
     remove,
+    cancel: (id: string) => {
+      videos.removeFunction(id);
+      subtitles.removeFunction(id);
+      images.removeFunction(id);
+
+      remove(id);
+      // TODO: Cancel Children
+    },
     clear: () => {
       set({});
     }
@@ -499,6 +562,20 @@ export async function convertAnime(anime: Anime): Promise<Anime> {
       image: ep.image.startsWith('http') ? ep.image : convertFileSrc(ep.image)
     }))
   };
+}
+
+export async function getDownload(
+  animeId: string,
+  episodeId: string,
+  source: Provider
+) {
+  const download =
+    get(downloads)[`${source.id}/${animeId}`]?.episodes?.[episodeId];
+  if (download) {
+    return await convertDownloads(download);
+  } else {
+    return undefined;
+  }
 }
 
 export async function convertDownloads(
@@ -528,8 +605,10 @@ async function deleteFiles(files: string[]) {
 }
 
 async function deleteDir() {
-  const { removeDir, createDir } = await import('@tauri-apps/api/fs');
-  const { appDataDir, join } = await import('@tauri-apps/api/path');
+  const [{ removeDir, createDir }, { appDataDir, join }] = await Promise.all([
+    import('@tauri-apps/api/fs'),
+    import('@tauri-apps/api/path')
+  ]);
 
   const path = await join(await appDataDir(), 'downloads');
 

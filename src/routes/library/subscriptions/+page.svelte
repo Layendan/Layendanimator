@@ -12,13 +12,11 @@
 
 {#if Object.entries($unwatchedSubscriptions).length > 0}
   <GridContent>
-    <svelte:fragment slot="title">New Subscription Episodes</svelte:fragment>
+    <svelte:fragment slot="title">New Updates</svelte:fragment>
 
-    <svelte:fragment slot="content">
-      {#each Object.values($unwatchedSubscriptions).sort(sortMethod) as anime (anime.id)}
-        <AnimeCard {anime} bind:numUpdates={anime.newEpisodes} />
-      {/each}
-    </svelte:fragment>
+    {#each Object.entries($unwatchedSubscriptions).sort(sortMethod) as [id, anime] (id)}
+      <AnimeCard {anime} bind:numUpdates={anime.newEpisodes} />
+    {/each}
   </GridContent>
 {/if}
 
@@ -30,11 +28,9 @@
   <GridContent>
     <svelte:fragment slot="title">Subscriptions</svelte:fragment>
 
-    <svelte:fragment slot="content">
-      {#each Object.values($subscriptions).sort(sortMethod) as anime (anime.id)}
-        <AnimeCard {anime} />
-      {/each}
-    </svelte:fragment>
+    {#each Object.entries($subscriptions).sort(sortMethod) as [id, anime] (id)}
+      <AnimeCard {anime} />
+    {/each}
   </GridContent>
 {/if}
 
@@ -42,10 +38,8 @@
   <GridContent>
     <svelte:fragment slot="title">Subscriptions</svelte:fragment>
 
-    <svelte:fragment slot="content">
-      <p class="text-xl font-semibold text-base-content text-opacity-70">
-        No Subscriptions Added
-      </p>
-    </svelte:fragment>
+    <p class="text-xl font-semibold text-base-content text-opacity-70">
+      No Subscriptions Added
+    </p>
   </GridContent>
 {/if}

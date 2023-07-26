@@ -11,8 +11,8 @@
     </h1>
   </slot>
   <div
-    class="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] justify-items-center gap-8 p-4 pb-0"
+    class="grid grid-cols-[repeat(auto-fill,minmax(168px,1fr))] justify-items-center gap-8 p-4 pb-0 lg:grid-cols-[repeat(auto-fill,minmax(210px,1fr))]"
   >
-    <slot name="content" />
+    <slot />
   </div>
 </Content>

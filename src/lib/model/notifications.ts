@@ -43,7 +43,7 @@ function createNotifications() {
           }
         ]);
         return id;
-      });
+      }, '');
     },
     removeNotification: (id: number) => {
       update(n => n.filter(notification => notification.id !== id));

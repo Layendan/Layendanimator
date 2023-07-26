@@ -11,17 +11,17 @@
 
 {#if window?.__TAURI__}
   <div class="flex gap-1">
-    <button class="btn-ghost btn-sm btn" on:click={() => window.history.back()}>
+    <button class="btn btn-ghost btn-sm" on:click={() => window.history.back()}>
       <Fa icon={faArrowLeft} size="1.2x" />
     </button>
     <button
-      class="btn-ghost btn-sm btn"
+      class="btn btn-ghost btn-sm"
       on:click={() => window.history.forward()}
     >
       <Fa icon={faArrowRight} size="1.2x" />
     </button>
     <button
-      class="btn-ghost btn-sm btn"
+      class="btn btn-ghost btn-sm"
       on:click={() => {
         clearCache();
         invalidateAll();

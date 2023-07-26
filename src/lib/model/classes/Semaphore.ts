@@ -12,6 +12,7 @@ export default class Semaphore<T> {
     resolve: (value: T) => void;
     reject: (reason?: unknown) => void;
     fnToCall: (...args: unknown[]) => Promise<T>;
+    id: string;
     args: unknown[];
   }[];
   private runningRequests: number;
@@ -30,6 +31,10 @@ export default class Semaphore<T> {
     this.pauseTime = pauseTime;
   }
 
+  removeFunction(id: string) {
+    this.currentRequests = this.currentRequests.filter(req => req.id !== id);
+  }
+
   /**
    * Returns a Promise that will eventually return the result of the function passed in.
    * Use this to limit the number of concurrent function executions
@@ -39,6 +44,7 @@ export default class Semaphore<T> {
    */
   callFunction(
     fnToCall: (...args: unknown[]) => Promise<T>,
+    id: string,
     ...args: unknown[]
   ) {
     return new Promise<T>((resolve, reject) => {
@@ -46,6 +52,7 @@ export default class Semaphore<T> {
         resolve,
         reject,
         fnToCall,
+        id,
         args
       });
       this.tryNext();

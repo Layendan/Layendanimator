@@ -18,7 +18,7 @@ function createSubscriptions() {
     },
     add: (anime: Anime) => {
       update(subscriptions => {
-        subscriptions[anime.id] = {
+        subscriptions[`${anime.source.id}/${anime.id}`] = {
           ...anime,
           lastUpdated: Date.now(),
           added: Date.now()
@@ -28,16 +28,20 @@ function createSubscriptions() {
         return subscriptions;
       });
     },
-    updateDate: (id: string) => {
+    updateDate: (anime: Anime) => {
       update(subscriptions => {
-        subscriptions[id].lastUpdated = Date.now();
+        subscriptions[`${anime.source.id}/${anime.id}`] = {
+          ...subscriptions[`${anime.source.id}/${anime.id}`],
+          ...anime,
+          lastUpdated: Date.now()
+        };
         store?.set('subscriptions', subscriptions);
         return subscriptions;
       });
     },
     remove: (anime: Anime) => {
       update(subscriptions => {
-        delete subscriptions[anime.id];
+        delete subscriptions[`${anime.source.id}/${anime.id}`];
         store?.set('subscriptions', subscriptions);
         return subscriptions;
       });
@@ -103,7 +107,7 @@ function createUnwatchedSubscriptions() {
     },
     add: (anime: Anime, newEpisodes: number) => {
       update(subscriptions => {
-        subscriptions[anime.id] = {
+        subscriptions[`${anime.source.id}/${anime.id}`] = {
           ...anime,
           lastUpdated: Date.now(),
           added: Date.now(),
@@ -118,16 +122,20 @@ function createUnwatchedSubscriptions() {
         return subscriptions;
       });
     },
-    updateDate: (id: string) => {
+    updateDate: (anime: Anime) => {
       update(subscriptions => {
-        subscriptions[id].lastUpdated = Date.now();
+        subscriptions[`${anime.source.id}/${anime.id}`] = {
+          ...subscriptions[`${anime.source.id}/${anime.id}`],
+          ...anime,
+          lastUpdated: Date.now()
+        };
         store?.set('activeSubscriptions', subscriptions);
         return subscriptions;
       });
     },
     remove: (anime: Anime) => {
       update(subscriptions => {
-        delete subscriptions[anime.id];
+        delete subscriptions[`${anime.source.id}/${anime.id}`];
         store?.set('activeSubscriptions', subscriptions);
         return subscriptions;
       });

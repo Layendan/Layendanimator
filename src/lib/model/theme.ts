@@ -52,7 +52,6 @@ function generateForegroundColorFrom(input: HSL, percentage = 0.8): HSL {
   const hsl = colord(stringified)
     .mix(colord(stringified).isDark() ? '#ffffff' : '#000000', percentage)
     .toHsl();
-  console.debug('generateForegroundColorFrom', input, hsl);
   return hsl;
 }
 
@@ -172,6 +171,10 @@ export function hslToHex(hsl: HSL): string {
   return colord(hsl).toHex();
 }
 
+export function encodeName(name: string): string {
+  return name.toLowerCase().replace(/ /g, '-');
+}
+
 export const defaultThemes: { [key: string]: Theme } = {
   light: {
     name: 'light',
@@ -189,3 +192,5 @@ export const defaultThemes: { [key: string]: Theme } = {
     colorScheme: 'light'
   }
 };
+
+Object.freeze(defaultThemes);

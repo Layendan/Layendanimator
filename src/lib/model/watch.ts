@@ -20,11 +20,11 @@ function createWatching() {
   const { subscribe, set, update } = writable<typeof dict>(dict);
   function add(anime: Anime, episode: Episode) {
     update(subscriptions => {
-      if (subscriptions[anime.id]) {
-        subscriptions[anime.id].watchEpisode = episode;
-        subscriptions[anime.id].watchTime = Date.now();
+      if (subscriptions[`${anime.source.id}/${anime.id}`]) {
+        subscriptions[`${anime.source.id}/${anime.id}`].watchEpisode = episode;
+        subscriptions[`${anime.source.id}/${anime.id}`].watchTime = Date.now();
       } else {
-        subscriptions[anime.id] = {
+        subscriptions[`${anime.source.id}/${anime.id}`] = {
           ...anime,
           watchEpisode: episode,
           watchTime: Date.now(),
@@ -50,24 +50,62 @@ function createWatching() {
     add,
     watch: (anime: Anime, data: WatchType) => {
       update(subscriptions => {
-        if (!subscriptions[anime.id]) {
+        if (!subscriptions[`${anime.source.id}/${anime.id}`]) {
           add(anime, data.episode);
         }
-        subscriptions[anime.id].watchedEpisodes[data.episode.id] = data;
+        subscriptions[`${anime.source.id}/${anime.id}`] = {
+          ...subscriptions[`${anime.source.id}/${anime.id}`],
+          ...anime
+        };
+        subscriptions[`${anime.source.id}/${anime.id}`].watchedEpisodes[
+          data.episode.id
+        ] = data;
         store?.set('watching', subscriptions);
         return subscriptions;
       });
     },
-    remove: (animeId: string) => {
+    watchAll(anime: Anime, episodes: Episode[]) {
       update(subscriptions => {
-        delete subscriptions[animeId];
+        if (!subscriptions[`${anime.source.id}/${anime.id}`]) {
+          add(anime, episodes[0]);
+        }
+        subscriptions[`${anime.source.id}/${anime.id}`] = {
+          ...subscriptions[`${anime.source.id}/${anime.id}`],
+          ...anime
+        };
+        const data =
+          subscriptions[`${anime.source.id}/${anime.id}`].watchedEpisodes;
+        episodes.forEach(episode => {
+          data[episode.id] = {
+            episode,
+            time: 0,
+            percentage: 1
+          };
+        });
         store?.set('watching', subscriptions);
         return subscriptions;
       });
     },
-    removeEpisode: (animeId: string, episodeId: string) => {
+    remove: (anime: Anime) => {
       update(subscriptions => {
-        delete subscriptions[animeId]?.watchedEpisodes[episodeId];
+        delete subscriptions[`${anime.source.id}/${anime.id}`];
+        store?.set('watching', subscriptions);
+        return subscriptions;
+      });
+    },
+    removeEpisode: (anime: Anime, episodeId: string) => {
+      update(subscriptions => {
+        delete subscriptions[`${anime.source.id}/${anime.id}`]?.watchedEpisodes[
+          episodeId
+        ];
+        if (
+          Object.entries(
+            subscriptions[`${anime.source.id}/${anime.id}`]?.watchedEpisodes ??
+              {}
+          ).length === 0
+        ) {
+          delete subscriptions[`${anime.source.id}/${anime.id}`];
+        }
         store?.set('watching', subscriptions);
         return subscriptions;
       });

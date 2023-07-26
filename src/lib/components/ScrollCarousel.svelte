@@ -11,9 +11,9 @@
     </h1>
   </slot>
   <div
-    class="relative inline-flex w-auto gap-6 overflow-x-scroll overscroll-x-contain whitespace-nowrap p-4 pb-6"
+    class="relative inline-flex w-auto gap-6 overflow-x-scroll overscroll-x-contain scroll-smooth whitespace-nowrap p-4 pb-6 motion-reduce:scroll-auto"
   >
-    <slot name="content" />
+    <slot />
   </div>
 </Content>
 

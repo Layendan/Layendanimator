@@ -7,12 +7,13 @@
 
   export let anime: Anime;
 
-  $: subscribed = $subscriptions[anime.id] || $unwatchedSubscriptions[anime.id];
+  $: id = `${anime.source.id}/${anime.id}`;
+  $: subscribed = $subscriptions[id] || $unwatchedSubscriptions[id];
 </script>
 
 <button
   class="btn mt-4 w-full shadow-xl backdrop-blur-xl {subscribed
-    ? 'btn-outline btn-error'
+    ? 'btn-error btn-outline'
     : 'btn-primary'}"
   on:click={() => {
     if (subscribed) {

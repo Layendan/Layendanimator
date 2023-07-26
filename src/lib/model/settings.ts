@@ -1,38 +1,50 @@
 import { get, writable } from 'svelte/store';
 import type { Store } from 'tauri-plugin-store-api';
-import {
-  unwatchedSubscriptions,
-  type Subscription,
-  subscriptions
-} from './subscriptions';
 import { clearCache } from './cache';
-import { watching } from './watch';
-import { deleteAllData } from './info';
-import { downloads } from './downloads';
 import { connections } from './connections';
-import { providers } from './source';
+import { downloads } from './downloads';
+import { deleteAllData } from './info';
 import { notifications } from './notifications';
+import { searchHistory } from './searchHistory';
+import { providers } from './source';
+import {
+  subscriptions,
+  unwatchedSubscriptions,
+  type Subscription
+} from './subscriptions';
 import { defaultThemes, type Theme } from './theme';
+import { watching } from './watch';
 
 let store: Store | undefined = undefined;
 
 export type SettingsType = {
   deleteOnWatch: boolean;
   notifications: boolean;
-  sortSubscriptions: 'lastUpdated' | 'timeAdded' | 'title';
+  isSubtitles: boolean;
+  filler: boolean;
+  parallax: boolean;
+  sortSubscriptions: 'lastUpdated' | 'timeAdded' | 'title' | 'nextEpisode';
   theme: Theme;
   themes: {
     [key: string]: Theme;
   };
+  version: string;
 };
 
 const defaultSettings: SettingsType = {
   deleteOnWatch: true,
   notifications: true,
+  isSubtitles: true,
+  filler: true,
+  parallax: true,
   sortSubscriptions: 'timeAdded',
   theme: defaultThemes.system,
-  themes: defaultThemes
+  themes: defaultThemes,
+  version: '0.0.0'
 };
+
+// Prevent modification of default settings
+Object.freeze(defaultSettings);
 
 function createSettings() {
   const { subscribe, set, update } = writable<SettingsType>(defaultSettings);
@@ -71,17 +83,39 @@ function createSettings() {
 
 export const settings = createSettings();
 
-function sortUpdated(a: Subscription, b: Subscription) {
-  return b.lastUpdated - a.lastUpdated || sortName(a, b);
+function sortUpdated(
+  [keya, a]: [string, Subscription],
+  [keyb, b]: [string, Subscription]
+) {
+  return b.lastUpdated - a.lastUpdated || sortName([keya, a], [keyb, b]);
 }
 
-function sortAdded(a: Subscription, b: Subscription) {
-  return b.added - a.added || sortUpdated(a, b);
+function sortAdded(
+  [keya, a]: [string, Subscription],
+  [keyb, b]: [string, Subscription]
+) {
+  return b.added - a.added || sortUpdated([keya, a], [keyb, b]);
 }
 
-function sortName(a: Subscription, b: Subscription) {
-  return (a.title.english ?? a.title.native).localeCompare(
-    b.title.english ?? b.title.native
+function sortNextEpisode(
+  [keya, a]: [string, Subscription],
+  [keyb, b]: [string, Subscription]
+) {
+  return (
+    (a.nextAiringEpisode?.airingTime ?? Infinity) -
+      (b.nextAiringEpisode?.airingTime ?? Infinity) ||
+    sortAdded([keya, a], [keyb, b])
+  );
+}
+
+function sortName(
+  [keya, a]: [string, Subscription],
+  [keyb, b]: [string, Subscription]
+) {
+  return (
+    (a.title.english ?? a.title.native).localeCompare(
+      b.title.english ?? b.title.native
+    ) || keya.localeCompare(keyb)
   );
 }
 
@@ -93,6 +127,8 @@ export function getSortMethod() {
       return sortAdded;
     case 'title':
       return sortName;
+    case 'nextEpisode':
+      return sortNextEpisode;
     default:
       return sortAdded;
   }
@@ -113,6 +149,10 @@ export const webData: { label: string; action: () => void }[] = [
   {
     label: 'Clear Watch History',
     action: watching.clear
+  },
+  {
+    label: 'Clear Search History',
+    action: searchHistory.clear
   }
 ];
 
@@ -135,9 +175,11 @@ export const tauriData: {
     label: 'Open Downloads Folder',
     danger: false,
     action: async () => {
-      const { open } = await import('@tauri-apps/api/shell');
-      const { join, appDataDir } = await import('@tauri-apps/api/path');
-      await open(await join(await appDataDir(), 'downloads'));
+      const [{ open }, { join, appDataDir }] = await Promise.all([
+        import('@tauri-apps/api/shell'),
+        import('@tauri-apps/api/path')
+      ]);
+      open(await join(await appDataDir(), 'downloads'));
     }
   },
   {

@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Anime } from '$lib/model/classes/Anime';
+  import { encodeAnimeLink } from '$lib/model/source';
 
   export let anime: Anime;
 
@@ -7,7 +8,7 @@
 </script>
 
 <a
-  href="https://anilist.co/anime/{anime.id}"
+  href={encodeAnimeLink(anime)}
   target="_blank"
   rel="noopener noreferrer nofollow"
   class="group"

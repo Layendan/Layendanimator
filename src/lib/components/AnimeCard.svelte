@@ -1,13 +1,16 @@
 <script lang="ts">
   import type { Anime } from '$lib/model/classes/Anime';
   import { fade } from 'svelte/transition';
+  import AnimeContextMenu from './AnimeContextMenu.svelte';
 
   export let anime: Anime;
   export let numUpdates = 0;
   export let extra = '';
-  export let href = `/${anime.id}`;
+  export let href = `/${anime.source.id}/${anime.id}`;
 
   let imageLoaded = true;
+
+  let element: HTMLElement;
 </script>
 
 {#if anime.id}
@@ -15,19 +18,21 @@
     in:fade|global
     {href}
     id={anime.id}
-    class="group indicator flex w-[210px] flex-col gap-2 focus-visible:outline-transparent"
+    style:--anime-color={anime.color ?? 'hsl(var(--a))'}
+    class="group indicator flex w-[168px] flex-col gap-2 focus-visible:outline-transparent lg:w-[210px]"
   >
     <div
-      class="group-one card relative m-0 aspect-[0.7/1] h-[300px] w-[210px] rounded-md bg-base-300 p-0 transition-transform duration-200 hover:-translate3d-y-1 group-focus-visible:-translate3d-y-1"
+      class="group-one card relative m-0 aspect-[0.7/1] h-[240px] w-[168px] rounded-md bg-base-300 p-0 ring ring-transparent ring-offset-2 ring-offset-transparent transition-all duration-200 hover:-translate3d-y-1 group-focus-visible:ring-[--anime-color] group-focus-visible:ring-offset-base-200 lg:h-[300px] lg:w-[210px]"
     >
       {#if numUpdates > 0}
-        <div class="badge badge-error indicator-item 2xl:font-bold">
+        <div class="badge indicator-item badge-error 2xl:font-bold">
           {numUpdates}
         </div>
       {/if}
       <img
         src={imageLoaded ? anime.image : '/assets/loading_failure.jpeg'}
         alt={anime.title.english ?? anime.title.romaji}
+        bind:this={element}
         on:error={() => (imageLoaded = false)}
         class="card-body relative m-0 h-full w-full rounded-md bg-base-300 bg-cover bg-center bg-no-repeat object-cover object-center p-0"
       />
@@ -45,10 +50,11 @@
     </div>
 
     <h3
-      style:--anime-color={anime.color ?? 'hsl(var(--a))'}
       class="line-clamp-2 w-fit whitespace-normal text-sm font-bold leading-tight text-base-content text-opacity-80 transition-colors duration-200 hover:text-[--anime-color] hover:text-opacity-100 group-focus-visible:text-[--anime-color] group-focus-visible:text-opacity-100 2xl:text-base"
     >
       {anime.title.english ?? anime.title.romaji}
     </h3>
   </a>
+
+  <AnimeContextMenu {anime} {element} />
 {/if}

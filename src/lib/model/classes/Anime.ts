@@ -1,3 +1,5 @@
+import type { Provider } from '../source';
+
 type Status =
   | 'Ongoing'
   | 'Completed'
@@ -19,6 +21,7 @@ type Type =
 
 export type Anime = {
   id: string;
+  source: Provider;
   title: {
     romaji: string;
     english: string;

@@ -2,9 +2,9 @@
   import '../app.css';
   import '../nprogress.css';
 
-  import { navigating } from '$app/stores';
+  import { navigating, page } from '$app/stores';
   import { onDestroy, onMount } from 'svelte';
-  import { source } from '$lib/model/source';
+  import { providers, source } from '$lib/model/source';
   import {
     subscriptions,
     unwatchedSubscriptions
@@ -12,16 +12,19 @@
   import { searchHistory } from '$lib/model/searchHistory';
 
   import NProgress from 'nprogress';
-  import NavBar from '$lib/components/NavBar.svelte';
   import { watching } from '$lib/model/watch';
-  import { goto, invalidateAll, preloadData } from '$app/navigation';
-  import { animeCache, clearCache } from '$lib/model/cache';
+  import { goto, preloadData } from '$app/navigation';
+  import { animeCache } from '$lib/model/cache';
   import { connections } from '$lib/model/connections';
   import { downloads } from '$lib/model/downloads';
   import type { UnlistenFn } from '@tauri-apps/api/event';
-  import NotificationPile from '$lib/components/NotificationPile.svelte';
   import { settings } from '$lib/model/settings';
-  import { toStyleString } from '$lib/model/theme';
+  import { encodeName, toStyleString } from '$lib/model/theme';
+  import NotificationPile from '$lib/components/NotificationPile.svelte';
+  import { invalidateAll } from '$app/navigation';
+  import { clearCache } from '$lib/model/cache';
+  import { getOS } from '$lib/model/info';
+  import NavBar from '$lib/components/NavBar.svelte';
 
   NProgress.configure({
     // Full list: https://github.com/rstacruz/nprogress#configuration
@@ -41,10 +44,12 @@
     }
   }
 
-  let main: HTMLElement;
+  let isMac = navigator?.platform?.includes('Mac') ?? false;
+
   onMount(async () => {
     await Promise.allSettled([
       source.initialize(),
+      providers.initialize(),
       subscriptions.initialize(),
       unwatchedSubscriptions.initialize(),
       watching.initialize(),
@@ -54,26 +59,46 @@
       downloads.initialize()
     ]);
 
-    const { listen } = await import('@tauri-apps/api/event');
-    tauriUnsubscribe = await listen?.<string>('scheme-request-received', e => {
-      if (e.payload) {
-        goto(e.payload?.replace('layendanimator://', '/') ?? '/', {
-          replaceState: true
-        });
-      }
-    });
+    const [{ listen }, { appWindow }] = await Promise.all([
+      import('@tauri-apps/api/event'),
+      import('@tauri-apps/api/window')
+    ]);
+
+    tauriUnsubscribe = (
+      await Promise.all([
+        listen?.<string>('scheme-request-received', e => {
+          if (e.payload) {
+            goto(
+              e.payload?.replace('layendanimator://', '/') ?? `/${$source.id}`,
+              {
+                replaceState: true
+              }
+            );
+          }
+        }),
+        appWindow.show(),
+        appWindow.setSkipTaskbar(false)
+      ])
+    )[0];
+
+    try {
+      isMac = (await getOS()) === 'Darwin';
+    } catch {
+      // Deprecated, would rather not use
+      isMac = navigator.platform.includes('Mac');
+    }
 
     if (unsubscribe) clearInterval(unsubscribe);
     unsubscribe = setInterval(() => {
-      Object.values($unwatchedSubscriptions).forEach(({ id, status }) => {
-        if (status !== 'Completed' && status !== 'Cancelled')
-          unwatchedSubscriptions.updateDate(id);
-        preloadData(`/${id}`);
+      Object.values($unwatchedSubscriptions).forEach(anime => {
+        if (anime.status !== 'Completed' && anime.status !== 'Cancelled')
+          unwatchedSubscriptions.updateDate(anime);
+        preloadData(`/${anime.source.id}/${anime.id}`);
       });
-      Object.values($subscriptions).forEach(({ id, status }) => {
-        if (status !== 'Completed' && status !== 'Cancelled')
-          subscriptions.updateDate(id);
-        preloadData(`/${id}`);
+      Object.values($subscriptions).forEach(anime => {
+        if (anime.status !== 'Completed' && anime.status !== 'Cancelled')
+          subscriptions.updateDate(anime);
+        preloadData(`/${anime.source.id}/${anime.id}`);
       });
     }, animeCache.ttl || MINUTE * 30);
     console.debug('Subscriptions cache TTL:', animeCache.ttl || MINUTE * 30);
@@ -91,7 +116,7 @@
 
     Object.keys($settings.themes).forEach(key => {
       document
-        .querySelectorAll(`head > style#${key}`)
+        .querySelectorAll(`head > style#${encodeName(key)}`)
         ?.forEach(style => style.remove());
     });
 
@@ -108,7 +133,7 @@
 
       if ($settings.theme.css) {
         const style = document.createElement('style');
-        style.id = $settings.theme.name;
+        style.id = encodeName($settings.theme.name);
         style.innerHTML = `:root { ${toStyleString(
           $settings.theme.css,
           $settings.theme.colorScheme
@@ -119,19 +144,21 @@
   }
 </script>
 
-<svelte:body
+<svelte:window
   on:keydown={e => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+    if ((isMac ? e.metaKey : e.ctrlKey) && e.key === 'r') {
       e.preventDefault();
       clearCache();
       invalidateAll();
+      if (e.shiftKey) location.reload();
     }
   }}
+  on:contextmenu|preventDefault
 />
 
-<NavBar />
+<NavBar source={$providers[$page.params.source] ?? $source} />
 
-<main class="m-4 mb-20" id="main" bind:this={main}>
+<main class="m-4" id="main">
   <slot />
 </main>
 

@@ -34,22 +34,20 @@
 <GridContent>
   <svelte:fragment slot="title">Recent Episodes</svelte:fragment>
 
-  <svelte:fragment slot="content">
-    {#await data.data}
-      {#each new Array(25) as _}
-        <PlaceholderAnimeCard />
-      {/each}
-    {:then results}
-      {#each results as anime (`${anime.id}/${anime.episodeNumber}`)}
-        <AnimeCard {anime} extra={`Episode ${anime.episodeNumber}`} />
-      {/each}
-    {/await}
-  </svelte:fragment>
+  {#await data.data}
+    {#each new Array(25) as { }}
+      <PlaceholderAnimeCard />
+    {/each}
+  {:then results}
+    {#each results as anime (`${anime.id}/${anime.episodeNumber}`)}
+      <AnimeCard {anime} extra={`Episode ${anime.episodeNumber}`} />
+    {/each}
+  {/await}
 </GridContent>
 
 {#if hasMore}
   <div class="divider divider-vertical mt-8">
-    <button class="btn-ghost btn text-2xl font-bold" on:click={update}>
+    <button class="btn btn-ghost text-2xl font-bold" on:click={update}>
       Scroll For More
     </button>
   </div>

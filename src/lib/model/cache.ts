@@ -14,25 +14,30 @@ export const episodeCache = new LRUCache<string, EpisodeData>({
   ttl: MINUTE * 30
 });
 
-// Only used for ttl, but didn't want to install another package
-export const recentEpisodes = new LRUCache<number, RecentAnime[]>({
-  max: 1,
+export const recentEpisodes = new LRUCache<string, RecentAnime[]>({
+  max: 100,
   ttl: MINUTE * 15
 });
 
-// Only used for ttl, but didn't want to install another package
-export const trendingAnimes = new LRUCache<number, Anime[]>({
-  max: 1,
-  ttl: MINUTE * 30
+export const trendingAnimes = new LRUCache<string, Anime[]>({
+  max: 100,
+  ttl: MINUTE * 15
 });
 
-// Only used for ttl, but didn't want to install another package
-export const popularAnimes = new LRUCache<number, Anime[]>({
-  max: 1,
+export const popularAnimes = new LRUCache<string, Anime[]>({
+  max: 100,
   ttl: MINUTE * 60 * 24
 });
 
-export const carouselPage = writable(0);
+const carouselDict: {
+  [key: string]: number;
+} = {};
+export const carouselPage = writable<typeof carouselDict>(carouselDict);
+
+const searchDict: {
+  [key: string]: LRUCache<string, Anime[]>;
+} = {};
+export const searchCache = writable<typeof searchDict>(searchDict);
 
 export function clearCache() {
   recentEpisodes.clear();
@@ -40,5 +45,7 @@ export function clearCache() {
   popularAnimes.clear();
   animeCache.clear();
   episodeCache.clear();
+  carouselPage.set(carouselDict);
+  searchCache.set(searchDict);
   localStorage?.clear();
 }

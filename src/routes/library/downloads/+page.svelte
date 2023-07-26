@@ -8,17 +8,18 @@
 <GridContent>
   <svelte:fragment slot="title">Downloaded Animes</svelte:fragment>
 
-  <svelte:fragment slot="content">
-    {#each Object.values($downloads) as { anime } (anime.id)}
-      {#await convertAnime(anime)}
-        <PlaceholderAnimeCard />
-      {:then anime}
-        <AnimeCard {anime} href="/library/downloads/{anime.id}" />
-      {/await}
-    {:else}
-      <p class="text-xl font-semibold text-base-content text-opacity-70">
-        No Downloads
-      </p>
-    {/each}
-  </svelte:fragment>
+  {#each Object.entries($downloads) as [id, { anime }] (id)}
+    {#await convertAnime(anime)}
+      <PlaceholderAnimeCard />
+    {:then anime}
+      <AnimeCard
+        {anime}
+        href="/library/downloads/{anime.source.id}/{anime.id}"
+      />
+    {/await}
+  {:else}
+    <p class="text-xl font-semibold text-base-content text-opacity-70">
+      No Downloads
+    </p>
+  {/each}
 </GridContent>

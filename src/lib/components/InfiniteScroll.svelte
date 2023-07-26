@@ -31,16 +31,14 @@
 <GridContent>
   <svelte:fragment slot="title"><slot /></svelte:fragment>
 
-  <svelte:fragment slot="content">
-    {#each animes as anime (anime.id)}
-      <AnimeCard {anime} />
-    {/each}
-  </svelte:fragment>
+  {#each animes as anime (anime.id)}
+    <AnimeCard {anime} />
+  {/each}
 </GridContent>
 
 {#if hasMore}
   <div class="divider divider-vertical mt-8">
-    <button class="btn-ghost btn text-2xl font-bold" on:click={update}>
+    <button class="btn btn-ghost text-2xl font-bold" on:click={update}>
       Scroll For More
     </button>
   </div>

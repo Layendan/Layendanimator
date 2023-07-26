@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { sanitize } from 'isomorphic-dompurify';
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import CharacterCard from '$lib/components/CharacterCard.svelte';
   import Player from '$lib/components/Player.svelte';
@@ -32,7 +33,7 @@
   const maxRelations = 15;
 
   afterNavigate(() => {
-    if ($unwatchedSubscriptions[data.anime.id]) {
+    if ($unwatchedSubscriptions[`${data.anime.source.id}/${data.anime.id}`]) {
       unwatchedSubscriptions.remove(data.anime);
       subscriptions.add(data.anime);
     }
@@ -48,18 +49,22 @@
     anime={data.anime}
     episode={data.episodeObject}
     on:requestNextEpisode={async ({ detail }) => {
-      if (data.nextEpisode)
-        await goto(`/${data.anime.id}/${data.nextEpisode.id}`, {
-          replaceState: true
-        });
-      else window.history.back();
+      await (data.nextEpisode
+        ? goto(
+            `/${data.anime.source.id}/${data.anime.id}/${data.nextEpisode.id}`,
+            {
+              replaceState: true
+            }
+          )
+        : // Maybe Replace State?
+          goto(`/${data.anime.source.id}/${data.anime.id}`));
 
       detail();
     }}
   />
 {/key}
 
-<div class="tabs tabs-boxed mx-auto mb-4 w-fit gap-1 bg-opacity-80 p-4 px-8">
+<div class="tabs-boxed tabs mx-auto mb-4 w-fit gap-1 bg-opacity-80 p-4 px-8">
   <button
     class="tab"
     class:tab-active={selectedTab === 'episodes'}
@@ -96,7 +101,7 @@
           {data.episodeObject.title}
         </h1>
         <p class="h-min w-fit">
-          {@html data.episodeObject.description}
+          {@html sanitize(data.episodeObject.description)}
         </p>
       </section>
 
@@ -111,11 +116,9 @@
       <!-- RECOMMENDATIONS -->
       <ScrollCarousel>
         <svelte:fragment slot="title">Recommendations</svelte:fragment>
-        <svelte:fragment slot="content">
-          {#each data.anime.recommendations as anime (anime.id)}
-            <AnimeCard {anime} />
-          {/each}
-        </svelte:fragment>
+        {#each data.anime.recommendations as anime (anime.id)}
+          <AnimeCard {anime} />
+        {/each}
       </ScrollCarousel>
     {/if}
 
@@ -125,16 +128,14 @@
       <!-- RELATED -->
       <ScrollCarousel>
         <svelte:fragment slot="title">Related</svelte:fragment>
-        <svelte:fragment slot="content">
-          {#each relations as anime (anime.id)}
-            <AnimeCard
-              {anime}
-              extra={relations.length > maxRelations
-                ? ''
-                : anime.relationType.replaceAll('_', ' ')}
-            />
-          {/each}
-        </svelte:fragment>
+        {#each relations as anime (anime.id)}
+          <AnimeCard
+            {anime}
+            extra={relations.length > maxRelations
+              ? ''
+              : anime.relationType.replaceAll('_', ' ')}
+          />
+        {/each}
       </ScrollCarousel>
     {/if}
 
@@ -144,11 +145,9 @@
       <!-- CHARACTERS -->
       <ScrollCarousel>
         <svelte:fragment slot="title">Characters</svelte:fragment>
-        <svelte:fragment slot="content">
-          {#each data.anime.characters as character (character.id)}
-            <CharacterCard {character} color={data.anime.color} />
-          {/each}
-        </svelte:fragment>
+        {#each data.anime.characters as character (character.id)}
+          <CharacterCard {character} color={data.anime.color} />
+        {/each}
       </ScrollCarousel>
     {/if}
   </main>

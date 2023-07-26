@@ -1,40 +1,55 @@
 <script lang="ts">
-  import { invalidateAll } from '$app/navigation';
-  import { clearCache } from '$lib/model/cache';
-  import { providers, source } from '$lib/model/source';
+  import { goto } from '$app/navigation';
+  import { providers, type Provider, source } from '$lib/model/source';
+  import SourceButtonButton from './SourceButtonButton.svelte';
+
+  export let currentSrc: Provider;
+
+  function blur() {
+    (document.activeElement as HTMLElement | undefined)?.blur();
+  }
 </script>
 
 {#if window?.__TAURI__}
-  <div class="dropdown block">
+  <button
+    tabindex="-1"
+    class="dropdown"
+    on:keydown={e => e.key === 'Escape' && blur()}
+  >
     <!-- svelte-ignore a11y-label-has-associated-control -->
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-    <label tabindex="0" class="btn-accent btn-outline btn w-fit">Sources</label>
+    <label tabindex="0" class="btn btn-ghost w-52 bg-base-200 bg-opacity-30">
+      <img
+        src={currentSrc.logo}
+        alt={currentSrc.name}
+        class="h-5 w-5 rounded-md"
+      />
+      Change Source
+    </label>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <ul
       tabindex="0"
-      class="dropdown-content rounded-box z-10 mt-2 w-52 rounded-t-none bg-base-100 bg-opacity-80 bg-clip-padding p-2 shadow-xl backdrop-blur-xl backdrop-filter"
+      class="dropdown-content rounded-box z-10 mt-3 w-72 bg-base-100 p-4 shadow-xl"
     >
-      {#each Object.values($providers) as provider}
-        <li class="m-1">
-          <button
-            class="btn-outline btn flex w-full flex-row items-center gap-1 text-base-content
-          {$source.id === provider.id ? 'btn-disabled' : 'btn-accent '}"
-            disabled={$source.id === provider.id}
-            on:click={() => {
-              source.set(provider);
-              clearCache();
-              invalidateAll();
-            }}
-          >
-            <img
-              src={provider.logo}
-              alt={provider.name}
-              class="h-5 w-5 rounded-md"
-            />
-            {provider.name}
-          </button>
-        </li>
-      {/each}
+      <div class="max-h-96 overflow-y-scroll overscroll-contain">
+        {#each Object.values($providers) as provider (provider.id)}
+          <li class="m-1">
+            <SourceButtonButton {provider} />
+
+            <div class="divider my-1" />
+          </li>
+        {/each}
+      </div>
+
+      <button
+        class="btn btn-primary btn-block mt-1"
+        on:click={() =>
+          window.location.pathname === `/${$source.id}`
+            ? blur()
+            : goto(`/${$source.id}`)}
+      >
+        Done
+      </button>
     </ul>
-  </div>
+  </button>
 {/if}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { preloadData } from '$app/navigation';
   import type { Anime } from '$lib/model/classes/Anime';
   import {
@@ -10,13 +10,17 @@
   import Fa from 'svelte-fa';
   import { carouselPage } from '$lib/model/cache';
   import { fade } from 'svelte/transition';
+  import type { Provider } from '$lib/model/source';
+  import AnimeContextMenu from './AnimeContextMenu.svelte';
+  import { settings } from '$lib/model/settings';
 
   export let animes: Anime[];
+  export let source: Provider;
   export let fadeSpeed = 300;
   export let transitionTime = 10_000;
-  export let animeIdx = $carouselPage % (animes.length - 1);
   export let display: 'rails' | 'arrows' = 'arrows';
-  let tempId = animeIdx;
+  $: animeIdx = ($carouselPage[source.id] ?? 0) % (animes.length - 1);
+  $: tempId = animeIdx;
 
   let doFade = false;
   let interval = setInterval(next, transitionTime);
@@ -40,15 +44,25 @@
     doFade = false;
   }
 
-  $: preloadData(`/${animes[animeIdx].id}`);
+  $: preloadData(
+    `/${animes[animeIdx].source.id}/${animes[animeIdx].id}?preload=true`
+  );
 
   onDestroy(() => {
-    $carouselPage = animeIdx;
+    $carouselPage[source.id] = animeIdx;
     clearInterval(interval);
   });
 
   let scrollY = 0;
   $: textOn = scrollY <= 0;
+
+  let element: HTMLElement;
+
+  onMount(() =>
+    element.addEventListener('focusin', () =>
+      window.scroll({ top: 0, left: 0, behavior: 'smooth' })
+    )
+  );
 </script>
 
 <svelte:window bind:scrollY />
@@ -66,21 +80,21 @@
 
 <header
   in:fade
-  class="relative -m-4 mb-4 motion-reduce:!translate3d-y-0"
-  style="transform: translate3d(0, {scrollY <= 0 ? 0 : scrollY / 1.5}px, 0);"
+  bind:this={element}
+  class="relative -m-4 mb-4 h-[60vh] w-screen ease-in-out motion-reduce:!translate3d-y-0"
+  class:!translate3d-y-0={!$settings.parallax}
+  style="transform: translate3d(0, {Math.max(scrollY / 1.5, 0)}px, 0);"
 >
-  <a href="/{animes[animeIdx].id}">
-    <img
-      class="h-96 w-full object-cover
+  <img
+    class="h-[60vh] w-full object-cover
       {doFade ? 'motion-safe:opacity-0 ' : 'motion-safe:opacity-100 '}
        transition-opacity duration-300 ease-in-out"
-      src={animes[animeIdx].cover}
-      alt={animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
-    />
-  </a>
+    src={animes[animeIdx].cover}
+    alt={animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
+  />
   <div class="scrim pointer-events-none absolute inset-0" />
   <div
-    class="absolute inset-0 flex items-end bg-gradient-to-tr from-base-100/80
+    class="absolute inset-0 flex items-end bg-gradient-to-tr from-base-100/50
         {doFade ? 'motion-safe:!opacity-0' : 'motion-safe:opacity-100'}
         {textOn
       ? 'motion-safe:opacity-100'
@@ -103,13 +117,19 @@
 
       <div class="flex gap-x-2">
         <a
-          class="btn-primary btn flex gap-x-2 px-8"
-          href="/{animes[animeIdx].id}?autoplay=true"
+          class="btn btn-primary flex gap-x-2 px-8"
+          href="/{animes[animeIdx].source.id}/{animes[animeIdx]
+            .id}?autoplay=true"
         >
           <Fa icon={faPlayCircle} size="lg" />
-          Play
+          Watch
         </a>
-        <a class="btn-outline btn" href="/{animes[animeIdx].id}"> Details </a>
+        <a
+          class="btn btn-outline"
+          href="/{animes[animeIdx].source.id}/{animes[animeIdx].id}"
+        >
+          Details
+        </a>
       </div>
     </div>
   </div>
@@ -139,14 +159,14 @@
     >
       <div class="flex">
         <button
-          class="btn-ghost btn-square btn-sm btn"
+          class="btn btn-square btn-ghost btn-sm"
           aria-label="Previous Featured Anime"
           on:click={previous}
         >
           <Fa icon={faArrowLeft} size="1.2x" />
         </button>
         <button
-          class="btn-ghost btn-square btn-sm btn"
+          class="btn btn-square btn-ghost btn-sm"
           aria-label="Next Featured Anime"
           on:click={next}
         >
@@ -159,3 +179,7 @@
     </div>
   {/if}
 </header>
+
+{#key tempId}
+  <AnimeContextMenu anime={animes[animeIdx]} {element} />
+{/key}

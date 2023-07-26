@@ -1,7 +1,13 @@
 <script lang="ts">
   import { notifications } from '$lib/model/notifications';
   import { settings } from '$lib/model/settings';
-  import { createTheme, getHSL, hexToHSL, hslToHex } from '$lib/model/theme';
+  import {
+    createTheme,
+    getHSL,
+    hexToHSL,
+    hslToHex,
+    type Theme
+  } from '$lib/model/theme';
 
   let modal: HTMLDialogElement;
 
@@ -15,9 +21,59 @@
   let success = '';
   let warning = '';
   let error = '';
+
+  async function createThemeFromFile() {
+    try {
+      const [{ open }, { downloadDir }, { readTextFile }] = await Promise.all([
+        import('@tauri-apps/api/dialog'),
+        import('@tauri-apps/api/path'),
+        import('@tauri-apps/api/fs')
+      ]);
+
+      const filePath = await open({
+        title: 'Export Theme',
+        filters: [{ name: 'JSON', extensions: ['json'] }],
+        multiple: false,
+        defaultPath: await downloadDir()
+      });
+
+      if (!filePath || Array.isArray(filePath)) return;
+
+      const text = await readTextFile(filePath);
+
+      const theme: Theme = await JSON.parse(text);
+
+      if (!theme.name || !theme.css) {
+        throw new Error('Invalid theme');
+      }
+
+      if ($settings.themes[theme.name]) {
+        throw new Error('Theme already exists');
+      }
+
+      const newTheme = createTheme(theme.name, theme.css);
+
+      $settings.themes[theme.name] = newTheme;
+      $settings.theme = newTheme;
+
+      notifications.addNotification({
+        title: 'Imported Successful',
+        message: `Successfully imported ${theme.name} from ${filePath}`,
+        type: 'success'
+      });
+
+      modal.close();
+    } catch (e) {
+      notifications.addNotification({
+        title: 'Import Failed',
+        message: e as string,
+        type: 'error'
+      });
+    }
+  }
 </script>
 
-<button class="btn-primary btn my-auto" on:click={() => modal?.showModal()}>
+<button class="btn btn-primary my-auto" on:click={() => modal?.showModal()}>
   Create New Theme
 </button>
 <dialog id="theme-dialog" class="modal" bind:this={modal}>
@@ -71,8 +127,8 @@
       error = '';
     }}
   >
-    <h1 class="mb-4 text-2xl font-bold">Create A New Theme</h1>
-    <div class="form-control w-full max-w-xs">
+    <h1 class="mb-4 text-2xl font-bold">Create a New Theme</h1>
+    <div class="form-control w-full">
       <label class="label" for="name">
         <span class="label-text">Theme Name</span>
       </label>
@@ -81,7 +137,7 @@
         id="name"
         placeholder="My Theme"
         required
-        class="input-bordered input w-full max-w-xs capitalize"
+        class="input input-bordered w-full capitalize transition-colors duration-200"
         bind:value={name}
       />
 
@@ -99,7 +155,7 @@
         style:--p={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(primary)
           ? getHSL(hexToHSL(primary))
           : 'var(--primary)'}
-        class="input-bordered input-primary input input-sm w-full max-w-xs uppercase"
+        class="input input-bordered input-primary input-sm w-full uppercase transition-colors duration-200"
         bind:value={primary}
       />
 
@@ -117,7 +173,7 @@
         style:--s={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(secondary)
           ? getHSL(hexToHSL(secondary))
           : 'var(--secondary)'}
-        class="input-bordered input-secondary input input-sm w-full max-w-xs uppercase"
+        class="input input-bordered input-secondary input-sm w-full uppercase transition-colors duration-200"
         bind:value={secondary}
       />
 
@@ -135,7 +191,7 @@
         style:--a={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(accent)
           ? getHSL(hexToHSL(accent))
           : 'var(--accent)'}
-        class="input-bordered input-accent input input-sm w-full max-w-xs uppercase"
+        class="input input-bordered input-accent input-sm w-full uppercase transition-colors duration-200"
         bind:value={accent}
       />
 
@@ -153,7 +209,7 @@
         style:--p={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(neutral)
           ? getHSL(hexToHSL(neutral))
           : 'var(--neutral)'}
-        class="input-primary input input-sm w-full max-w-xs uppercase"
+        class="input input-primary input-sm w-full uppercase transition-colors duration-200"
         bind:value={neutral}
       />
 
@@ -171,7 +227,7 @@
         style:--p={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(bg)
           ? getHSL(hexToHSL(bg))
           : 'var(--bg)'}
-        class="input-primary input input-sm w-full max-w-xs uppercase"
+        class="input input-primary input-sm w-full uppercase transition-colors duration-200"
         bind:value={bg}
       />
 
@@ -190,7 +246,7 @@
         style:--in={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(info)
           ? getHSL(hexToHSL(info))
           : 'var(--info)'}
-        class="input-info input input-sm w-full max-w-xs uppercase"
+        class="input input-info input-sm w-full uppercase transition-colors duration-200"
         bind:value={info}
       />
 
@@ -209,7 +265,7 @@
         style:--su={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(success)
           ? getHSL(hexToHSL(success))
           : 'var(--success)'}
-        class="input-success input input-sm w-full max-w-xs uppercase"
+        class="input input-success input-sm w-full uppercase transition-colors duration-200"
         bind:value={success}
       />
 
@@ -228,7 +284,7 @@
         style:--wa={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(warning)
           ? getHSL(hexToHSL(warning))
           : 'var(--warning)'}
-        class="input-warning input input-sm w-full max-w-xs uppercase"
+        class="input input-warning input-sm w-full uppercase transition-colors duration-200"
         bind:value={warning}
       />
 
@@ -247,12 +303,18 @@
         style:--er={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(error)
           ? getHSL(hexToHSL(error))
           : 'var(--error)'}
-        class="input-error input input-sm w-full max-w-xs uppercase"
+        class="input input-error input-sm w-full uppercase transition-colors duration-200"
         bind:value={error}
       />
     </div>
     <div class="modal-action">
-      <button class="btn">create theme</button>
+      <button class="btn btn-secondary">create theme</button>
+      <button
+        class="btn"
+        on:click|preventDefault|stopPropagation={createThemeFromFile}
+      >
+        Add From File
+      </button>
     </div>
   </form>
   <form method="dialog" class="modal-backdrop">

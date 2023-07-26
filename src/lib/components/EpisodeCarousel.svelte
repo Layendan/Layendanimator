@@ -10,7 +10,6 @@
   export let episodes: EpisodeType[];
   export let showImage = episodes.length <= imageLength;
   export let replaceState = false;
-  export let type: 'sub' | 'dub' = 'sub';
   export let href: string | undefined = undefined;
 
   $: nextEpisodeDate = new Date(
@@ -43,10 +42,9 @@
         {episode}
         {showImage}
         {replaceState}
-        {type}
         href={href
-          ? `${href}/${episode.id}?dub=${type === 'dub'}`
-          : `/${anime.id}/${episode.id}?dub=${type === 'dub'}`}
+          ? `${href}/${episode.id}`
+          : `/${anime.source.id}/${anime.id}/${episode.id}`}
       />
     {:else}
       <div class="flex items-center justify-center">

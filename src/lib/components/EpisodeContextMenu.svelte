@@ -162,7 +162,7 @@
             on:click|stopPropagation={() =>
               downloading.add(episode.id, anime, '1080p', episode.number)}
           >
-            <Fa icon={faDownload} class="text-success" />
+            <Fa icon={faDownload} />
             Download Episode
           </button>
         </li>

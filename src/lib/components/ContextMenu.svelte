@@ -6,6 +6,7 @@
   export let x: number;
   export let y: number;
   export let id: string;
+  export let global = true;
 
   // whenever x and y is changed, restrict box to be within bounds
   $: (x || y) &&
@@ -39,7 +40,7 @@
     dispatch('clickoutside');
   }
 
-  $: menuEl && document.body.append(menuEl);
+  $: menuEl && global && document.body.append(menuEl);
 
   onDestroy(() => {
     menuEl?.remove();
@@ -49,6 +50,12 @@
 <svelte:body on:click={onPageClick} />
 
 <svelte:window on:scroll={onScroll} />
+
+<svelte:document
+  on:visibilitychange={() => {
+    if (document.visibilityState === 'hidden') dispatch('clickoutside');
+  }}
+/>
 
 <div
   transition:fade={{ duration: 100 }}

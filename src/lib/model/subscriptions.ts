@@ -65,24 +65,18 @@ function createSubscriptions() {
 
 export const subscriptions = createSubscriptions();
 
-async function sendNotification(title: string, episodes: number) {
+async function sendNotification(title: string, body: string) {
   const { isPermissionGranted, requestPermission, sendNotification } =
     await import('@tauri-apps/api/notification');
   if (await isPermissionGranted()) {
     sendNotification({
-      title: `New Episodes for ${title}`,
-      body:
-        episodes === 1
-          ? `There is 1 new episode for ${title}`
-          : `There are ${episodes} new episodes for ${title}`
+      title,
+      body
     });
   } else if ((await requestPermission()) === 'granted') {
     sendNotification({
-      title: `New Episodes for ${title}`,
-      body:
-        episodes === 1
-          ? `There is 1 new episode for ${title}`
-          : `There are ${episodes} new episodes for ${title}`
+      title,
+      body
     });
   } else {
     console.error('Permission not granted');
@@ -115,10 +109,19 @@ function createUnwatchedSubscriptions() {
         };
         store?.set('activeSubscriptions', subscriptions);
         store?.save();
-        sendNotification(
-          anime.title.english ?? anime.title.native,
-          newEpisodes
-        );
+
+        const animeTitle = anime.title.english ?? anime.title.native;
+        const message =
+          newEpisodes === 1
+            ? `There is 1 new episode for ${animeTitle}`
+            : `There are ${newEpisodes} new episodes for ${animeTitle}`;
+        const title = `New Episodes for ${animeTitle}`;
+
+        notifications.addNotification({
+          title,
+          message
+        });
+        sendNotification(title, message);
         return subscriptions;
       });
     },

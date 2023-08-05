@@ -18,6 +18,7 @@
   import Hls from 'hls.js';
   import { downloads } from '$lib/model/downloads';
   import { settings } from '$lib/model/settings';
+  import PlayerContextMenu from './PlayerContextMenu.svelte';
 
   export let episodeData: EpisodeData;
   export let poster: string;
@@ -157,5 +158,11 @@
       {/each}
     </media-outlet>
     <media-community-skin />
+    <PlayerContextMenu
+      {anime}
+      {episode}
+      element={player}
+      {requestNextEpisode}
+    />
   </media-player>
 </div>

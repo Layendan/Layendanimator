@@ -1,10 +1,12 @@
 <script lang="ts">
   import type { Anime } from '$lib/model/classes/Anime';
   import { encodeAnimeLink } from '$lib/model/source';
+  import AnimeContextMenu from './AnimeContextMenu.svelte';
 
   export let anime: Anime;
 
   let imageLoaded = true;
+  let element: HTMLImageElement;
 </script>
 
 <a
@@ -22,5 +24,8 @@
               {anime.color
       ? 'hover:ring-[--anime-color] group-focus-visible:ring-[--anime-color]'
       : 'hover:ring-accent group-focus-visible:ring-accent'}"
+    bind:this={element}
   />
 </a>
+
+<AnimeContextMenu {anime} {element} />

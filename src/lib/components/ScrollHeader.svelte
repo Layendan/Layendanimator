@@ -17,13 +17,16 @@
   class:!translate3d-y-0={!$settings.parallax}
   in:fade={{ duration: 200 }}
 >
-  <img
-    class="skeleton h-[38vh] w-full object-cover object-top"
-    src={heroLoaded
-      ? anime.cover ?? anime.image
-      : '/assets/loading_failure.jpeg'}
-    on:error={() => (heroLoaded = false)}
-    alt="{anime.title.english ?? anime.title.romaji} Cover"
-  />
+  {#key anime.id}
+    <img
+      class="skeleton h-[38vh] w-full object-cover object-top"
+      src={heroLoaded
+        ? anime.cover ?? anime.image
+        : '/assets/loading_failure.jpeg'}
+      on:error={() => (heroLoaded = false)}
+      in:fade
+      alt="{anime.title.english ?? anime.title.romaji} Cover"
+    />
+  {/key}
   <div class="scrim pointer-events-none absolute inset-0" />
 </header>

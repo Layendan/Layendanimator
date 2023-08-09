@@ -58,7 +58,7 @@
 />
 
 <div
-  transition:fade={{ duration: 100 }}
+  transition:fade={{ duration: 200 }}
   bind:this={menuEl}
   style="top: {y}px; left: {x}px;"
   class="menu rounded-box menu-sm fixed z-50 w-52 border-2 border-solid border-neutral/20 bg-base-200 shadow-lg"

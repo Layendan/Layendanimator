@@ -32,7 +32,7 @@
 
     if (showMenu) {
       showMenu = false;
-      await new Promise(res => setTimeout(res, 100));
+      await new Promise(res => setTimeout(res, 200));
     }
 
     pos = { x: e.clientX, y: e.clientY };

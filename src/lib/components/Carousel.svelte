@@ -85,13 +85,16 @@
   class:!translate3d-y-0={!$settings.parallax}
   style="transform: translate3d(0, {Math.max(scrollY / 1.5, 0)}px, 0);"
 >
-  <img
-    class="h-[60vh] w-full object-cover
+  {#key animeIdx}
+    <img
+      class="skeleton h-[60vh] w-full object-cover
       {doFade ? 'motion-safe:opacity-0 ' : 'motion-safe:opacity-100 '}
        transition-opacity duration-300 ease-in-out"
-    src={animes[animeIdx].cover}
-    alt={animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
-  />
+      in:fade
+      src={animes[animeIdx].cover}
+      alt={animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
+    />
+  {/key}
   <div class="scrim pointer-events-none absolute inset-0" />
   <div
     class="absolute inset-0 flex items-end bg-gradient-to-tr from-base-100/50

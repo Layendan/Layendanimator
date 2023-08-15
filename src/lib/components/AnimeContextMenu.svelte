@@ -16,7 +16,9 @@
     faPlayCircle,
     faPlusCircle,
     faShare,
-    faTrash
+    faTrash,
+    faCloudDownload,
+    faArrowRotateRight
   } from '@fortawesome/free-solid-svg-icons';
   import { preloadData } from '$app/navigation';
   import { animeCache } from '$lib/model/cache';
@@ -65,14 +67,14 @@
 
     <li>
       <a href={`/${anime.source.id}/${anime.id}?autoplay=true`}>
-        <Fa icon={faPlayCircle} class="text-accent" />
+        <Fa icon={faPlayCircle} class="h-3 w-3 text-accent" />
         Watch
       </a>
     </li>
 
     <li>
       <a href={`/${anime.source.id}/${anime.id}`}>
-        <Fa icon={faInfoCircle} />
+        <Fa icon={faInfoCircle} class="h-3 w-3" />
         Details
       </a>
     </li>
@@ -84,7 +86,7 @@
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Fa icon={faExternalLink} />
+          <Fa icon={faExternalLink} class="h-3 w-3" />
           Open in Browser
         </a>
       </li>
@@ -102,7 +104,7 @@
               });
           }}
         >
-          <Fa icon={faShare} />
+          <Fa icon={faShare} class="h-3 w-3" />
           Share
         </button>
       </li>
@@ -113,8 +115,35 @@
     {#if $subscriptions[`${anime.source.id}/${anime.id}`]}
       <li>
         <button on:click|stopPropagation={() => subscriptions.remove(anime)}>
-          <Fa icon={faMinusCircle} />
+          <Fa icon={faMinusCircle} class="h-3 w-3" />
           Remove Subscription
+        </button>
+      </li>
+
+      <li>
+        <button
+          on:click|stopPropagation={async () => {
+            try {
+              animeCache.delete(`${anime.source.id}/${anime.id}`);
+              await preloadData(`/${anime.source.id}/${anime.id}`);
+              notifications.addNotification({
+                title: 'Updated',
+                message: `Anime info updated for ${
+                  anime.title.english ?? anime.title.romaji
+                }`
+              });
+            } catch (e) {
+              console.error(e);
+              notifications.addNotification({
+                title: 'Error',
+                message: 'Could not update anime info',
+                type: 'error'
+              });
+            }
+          }}
+        >
+          <Fa icon={faArrowRotateRight} class="h-3 w-3" />
+          Check For Updates
         </button>
       </li>
     {:else if $unwatchedSubscriptions[`${anime.source.id}/${anime.id}`]}
@@ -122,8 +151,35 @@
         <button
           on:click|stopPropagation={() => unwatchedSubscriptions.remove(anime)}
         >
-          <Fa icon={faMinusCircle} />
+          <Fa icon={faMinusCircle} class="h-3 w-3" />
           Remove Subscription
+        </button>
+      </li>
+
+      <li>
+        <button
+          on:click|stopPropagation={async () => {
+            try {
+              animeCache.delete(`${anime.source.id}/${anime.id}`);
+              await preloadData(`/${anime.source.id}/${anime.id}`);
+              notifications.addNotification({
+                title: 'Updated',
+                message: `Anime info updated for ${
+                  anime.title.english ?? anime.title.romaji
+                }`
+              });
+            } catch (e) {
+              console.error(e);
+              notifications.addNotification({
+                title: 'Error',
+                message: 'Could not update anime info',
+                type: 'error'
+              });
+            }
+          }}
+        >
+          <Fa icon={faArrowRotateRight} class="h-3 w-3" />
+          Check For Updates
         </button>
       </li>
     {:else}
@@ -140,7 +196,7 @@
             subscriptions.add(res);
           }}
         >
-          <Fa icon={faPlusCircle} class="text-success" />
+          <Fa icon={faPlusCircle} class="h-3 w-3 text-success" />
           Add Subscription
         </button>
       </li>
@@ -151,8 +207,38 @@
 
       <li>
         <button on:click|stopPropagation={() => watching.remove(anime)}>
-          <Fa icon={faTrash} />
+          <Fa icon={faTrash} class="h-3 w-3" />
           Clear Watch History
+        </button>
+      </li>
+
+      <li>
+        <button
+          on:click|stopPropagation={async () => {
+            try {
+              await preloadData(`/${anime.source.id}/${anime.id}`);
+              const res = animeCache.get(`${anime.source.id}/${anime.id}`);
+              if (!res) throw new Error('Could not find anime');
+
+              watching.updateAnime(res);
+              notifications.addNotification({
+                title: 'Updated',
+                message: `Anime info updated for ${
+                  res.title.english ?? res.title.romaji
+                }`
+              });
+            } catch (e) {
+              console.error(e);
+              notifications.addNotification({
+                title: 'Error',
+                message: 'Could not update anime info',
+                type: 'error'
+              });
+            }
+          }}
+        >
+          <Fa icon={faCloudDownload} class="-mx-[2px] h-4 w-4" />
+          Update Watch Info
         </button>
       </li>
     {/if}
@@ -180,7 +266,7 @@
             );
           }}
         >
-          <Fa icon={faDownload} />
+          <Fa icon={faDownload} class="h-3 w-3" />
           Download Episodes
         </button>
       </li>
@@ -203,7 +289,7 @@
               ).forEach(episode => downloads.remove(anime, episode));
           }}
         >
-          <Fa icon={faTrash} class="text-error" />
+          <Fa icon={faTrash} class="h-3 w-3 text-error" />
           Remove Downloads
         </button>
       </li>

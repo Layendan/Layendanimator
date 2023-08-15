@@ -8,7 +8,7 @@ module.exports = {
     require('daisyui'),
     require('vidstack/tailwind.cjs'),
     require('tailwindcss-scoped-groups')({
-      groups: ['one']
+      groups: ['one', 'two']
     }),
     plugin(function ({ matchUtilities, theme }) {
       // https://stackoverflow.com/a/73165741

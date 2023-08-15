@@ -4,6 +4,9 @@
 
   export let character: Character;
   export let color: string | undefined = undefined;
+
+  let imageLoaded = true;
+  let showSkeleton = true;
 </script>
 
 <a
@@ -21,7 +24,13 @@
         ? 'hover:ring-[--anime-color] group-one-focus-visible:ring-[--anime-color]'
         : 'hover:ring-accent group-one-focus-visible:ring-accent'}"
     >
-      <img src={character.image} alt={character.name.full} />
+      <img
+        src={imageLoaded ? character.image : '/assets/loading_failure.jpeg'}
+        alt={character.name.full}
+        on:error|once={() => (imageLoaded = false)}
+        on:load|once={() => (showSkeleton = false)}
+        class:skeleton={showSkeleton}
+      />
     </div>
   </div>
   <div

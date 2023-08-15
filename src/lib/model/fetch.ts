@@ -122,8 +122,8 @@ export async function fetchAnime(id: string, source: Provider): Promise<Anime> {
       } else
         subscriptions.updateDate({
           ...anime,
-          nextAiringEpisode: sub.nextAiringEpisode,
-          status: sub.status
+          nextAiringEpisode: sub.nextAiringEpisode ?? anime.nextAiringEpisode,
+          status: sub.status ?? anime.status
         });
     } else if (unwatched) {
       if (unwatched.episodes.length < anime.episodes.length)
@@ -136,8 +136,9 @@ export async function fetchAnime(id: string, source: Provider): Promise<Anime> {
       else
         unwatchedSubscriptions.updateDate({
           ...anime,
-          nextAiringEpisode: unwatched.nextAiringEpisode,
-          status: unwatched.status
+          nextAiringEpisode:
+            unwatched.nextAiringEpisode ?? anime.nextAiringEpisode,
+          status: unwatched.status ?? anime.status
         });
     }
 

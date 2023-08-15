@@ -11,8 +11,11 @@
   import { getSortMethod, settings } from '$lib/model/settings';
   import { animeCache } from '$lib/model/cache';
   import { fade } from 'svelte/transition';
+  import Semaphore from '$lib/model/classes/Semaphore';
 
   $: sortMethod = ($settings.sortSubscriptions, getSortMethod());
+
+  const semaphore = new Semaphore(5, 1000);
 
   let loading = false;
 </script>
@@ -47,7 +50,10 @@
           );
           await Promise.allSettled(
             totalSubs.map(anime => {
-              return preloadData(`/${anime.source.id}/${anime.id}`);
+              return semaphore.callFunction(
+                () => preloadData(`/${anime.source.id}/${anime.id}`),
+                `${anime.source.id}/${anime.id}`
+              );
             })
           );
           loading = false;

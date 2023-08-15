@@ -9,6 +9,7 @@
   export let href = `/${anime.source.id}/${anime.id}`;
 
   let imageLoaded = true;
+  let showSkeleton = true;
 
   let element: HTMLElement;
 </script>
@@ -33,8 +34,10 @@
         src={imageLoaded ? anime.image : '/assets/loading_failure.jpeg'}
         alt={anime.title.english ?? anime.title.romaji}
         bind:this={element}
-        on:error={() => (imageLoaded = false)}
+        on:error|once={() => (imageLoaded = false)}
+        on:load|once={() => (showSkeleton = false)}
         class="card-body relative m-0 h-full w-full rounded-md bg-base-300 bg-cover bg-center bg-no-repeat object-cover object-center p-0"
+        class:skeleton={showSkeleton}
       />
       {#if !!extra}
         <div

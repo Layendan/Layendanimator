@@ -63,6 +63,14 @@
       window.scroll({ top: 0, left: 0, behavior: 'smooth' })
     )
   );
+
+  let imageLoaded = true;
+  let showSkeleton = true;
+
+  $: if (animeIdx) {
+    imageLoaded = true;
+    showSkeleton = true;
+  }
 </script>
 
 <svelte:window bind:scrollY />
@@ -81,18 +89,23 @@
 <header
   in:fade
   bind:this={element}
-  class="relative -m-4 mb-4 h-[60vh] w-screen ease-in-out motion-reduce:!translate3d-y-0"
+  class="relative -m-4 mb-4 h-[60vh] w-screen ease-in-out will-change-transform motion-reduce:!translate3d-y-0"
   class:!translate3d-y-0={!$settings.parallax}
   style="transform: translate3d(0, {Math.max(scrollY / 1.5, 0)}px, 0);"
 >
   {#key animeIdx}
     <img
-      class="skeleton h-[60vh] w-full object-cover
-      {doFade ? 'motion-safe:opacity-0 ' : 'motion-safe:opacity-100 '}
-       transition-opacity duration-300 ease-in-out"
       in:fade
-      src={animes[animeIdx].cover}
+      src={imageLoaded
+        ? animes[animeIdx].cover
+        : '/assets/loading_failure.jpeg'}
       alt={animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
+      on:error|once={() => (imageLoaded = false)}
+      on:load|once={() => (showSkeleton = false)}
+      class="h-[60vh] w-full object-cover
+    {doFade ? 'motion-safe:opacity-0 ' : 'motion-safe:opacity-100 '}
+     transition-opacity duration-300 ease-in-out"
+      class:skeleton={showSkeleton}
     />
   {/key}
   <div class="scrim pointer-events-none absolute inset-0" />

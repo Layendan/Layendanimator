@@ -86,6 +86,20 @@ function createWatching() {
         return subscriptions;
       });
     },
+    updateAnime: (anime: Anime) => {
+      update(subscriptions => {
+        if (!subscriptions[`${anime.source.id}/${anime.id}`]) {
+          add(anime, anime.episodes[0]);
+        } else {
+          subscriptions[`${anime.source.id}/${anime.id}`] = {
+            ...subscriptions[`${anime.source.id}/${anime.id}`],
+            ...anime
+          };
+        }
+        store?.set('watching', subscriptions);
+        return subscriptions;
+      });
+    },
     remove: (anime: Anime) => {
       update(subscriptions => {
         delete subscriptions[`${anime.source.id}/${anime.id}`];

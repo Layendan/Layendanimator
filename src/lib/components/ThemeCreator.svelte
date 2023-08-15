@@ -10,6 +10,7 @@
   } from '$lib/model/theme';
 
   let modal: HTMLDialogElement;
+  let hidden = true;
 
   let name = '';
   let primary = '';
@@ -73,10 +74,21 @@
   }
 </script>
 
-<button class="btn btn-primary my-auto" on:click={() => modal?.showModal()}>
+<button
+  class="btn btn-primary my-auto"
+  on:click={() => {
+    modal.showModal();
+    hidden = false;
+  }}
+>
   Create New Theme
 </button>
-<dialog id="theme-dialog" class="modal" bind:this={modal}>
+<dialog
+  id="theme-dialog"
+  class="modal"
+  bind:this={modal}
+  on:close={() => (hidden = true)}
+>
   <form
     method="dialog"
     class="modal-box"
@@ -139,6 +151,7 @@
         required
         class="input input-bordered w-full capitalize transition-colors duration-200"
         bind:value={name}
+        tabindex={hidden ? -1 : 0}
       />
 
       <label class="label" for="primary">
@@ -157,6 +170,7 @@
           : 'var(--primary)'}
         class="input input-bordered input-primary input-sm w-full uppercase transition-colors duration-200"
         bind:value={primary}
+        tabindex={hidden ? -1 : 0}
       />
 
       <label class="label" for="secondary">
@@ -175,6 +189,7 @@
           : 'var(--secondary)'}
         class="input input-bordered input-secondary input-sm w-full uppercase transition-colors duration-200"
         bind:value={secondary}
+        tabindex={hidden ? -1 : 0}
       />
 
       <label class="label" for="accent">
@@ -193,6 +208,7 @@
           : 'var(--accent)'}
         class="input input-bordered input-accent input-sm w-full uppercase transition-colors duration-200"
         bind:value={accent}
+        tabindex={hidden ? -1 : 0}
       />
 
       <label class="label" for="neutral">
@@ -211,6 +227,7 @@
           : 'var(--neutral)'}
         class="input input-primary input-sm w-full uppercase transition-colors duration-200"
         bind:value={neutral}
+        tabindex={hidden ? -1 : 0}
       />
 
       <label class="label" for="bg">
@@ -229,6 +246,7 @@
           : 'var(--bg)'}
         class="input input-primary input-sm w-full uppercase transition-colors duration-200"
         bind:value={bg}
+        tabindex={hidden ? -1 : 0}
       />
 
       <label class="label" for="info">
@@ -248,6 +266,7 @@
           : 'var(--info)'}
         class="input input-info input-sm w-full uppercase transition-colors duration-200"
         bind:value={info}
+        tabindex={hidden ? -1 : 0}
       />
 
       <label class="label" for="success">
@@ -267,6 +286,7 @@
           : 'var(--success)'}
         class="input input-success input-sm w-full uppercase transition-colors duration-200"
         bind:value={success}
+        tabindex={hidden ? -1 : 0}
       />
 
       <label class="label" for="warning">
@@ -286,6 +306,7 @@
           : 'var(--warning)'}
         class="input input-warning input-sm w-full uppercase transition-colors duration-200"
         bind:value={warning}
+        tabindex={hidden ? -1 : 0}
       />
 
       <label class="label" for="error">
@@ -305,19 +326,23 @@
           : 'var(--error)'}
         class="input input-error input-sm w-full uppercase transition-colors duration-200"
         bind:value={error}
+        tabindex={hidden ? -1 : 0}
       />
     </div>
     <div class="modal-action">
-      <button class="btn btn-secondary">create theme</button>
+      <button class="btn btn-secondary" tabindex={hidden ? -1 : 0}>
+        create theme
+      </button>
       <button
         class="btn"
         on:click|preventDefault|stopPropagation={createThemeFromFile}
+        tabindex={hidden ? -1 : 0}
       >
         Add From File
       </button>
     </div>
   </form>
   <form method="dialog" class="modal-backdrop">
-    <button>close</button>
+    <button tabindex="-1">close</button>
   </form>
 </dialog>

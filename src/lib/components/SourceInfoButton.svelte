@@ -15,6 +15,7 @@
   export let source: Provider;
 
   let modal: HTMLDialogElement;
+  let hidden = true;
 
   let name = source.name;
   let url = source.url;
@@ -29,13 +30,20 @@
 <button
   class="btn"
   id="{encodeName(source.id)}-info"
-  on:click={() => modal.showModal()}
+  on:click={() => {
+    modal.showModal();
+    hidden = false;
+  }}
   bind:this={element}
 >
   <img src={source.logo} alt={source.name} class="mr-2 h-6 w-6 rounded-md" />
   {source.name}
 </button>
-<dialog bind:this={modal} class="modal modal-bottom">
+<dialog
+  bind:this={modal}
+  class="modal modal-bottom"
+  on:close={() => (hidden = true)}
+>
   <form
     method="dialog"
     class="modal-box"
@@ -92,6 +100,7 @@
             target="_blank"
             rel="noopener noreferrer"
             class="btn btn-sm"
+            tabindex={hidden ? -1 : 0}
           >
             {name}
           </a>
@@ -110,6 +119,7 @@
         disabled={!!defaultProviders[source.id]}
         class="input input-bordered w-full"
         bind:value={name}
+        tabindex={hidden ? -1 : 0}
       />
 
       <label class="label" for="updateUrl">
@@ -122,6 +132,7 @@
         disabled={!!defaultProviders[source.id]}
         class="input input-bordered w-full"
         bind:value={updateUrl}
+        tabindex={hidden ? -1 : 0}
       />
 
       <label class="label" for="url">
@@ -134,6 +145,7 @@
         disabled={!!defaultProviders[source.id]}
         class="input input-bordered w-full"
         bind:value={url}
+        tabindex={hidden ? -1 : 0}
       />
 
       <label class="label" for="icon">
@@ -146,6 +158,7 @@
         disabled={!!defaultProviders[source.id]}
         class="input input-bordered w-full"
         bind:value={logo}
+        tabindex={hidden ? -1 : 0}
       />
 
       <label class="label" for="description">
@@ -157,6 +170,7 @@
         disabled={!!defaultProviders[source.id]}
         class="textarea textarea-bordered w-full resize-none"
         bind:value={description}
+        tabindex={hidden ? -1 : 0}
       />
 
       <label class="label" for="version">
@@ -169,6 +183,7 @@
         disabled={!!defaultProviders[source.id]}
         class="input input-bordered w-full"
         bind:value={version}
+        tabindex={hidden ? -1 : 0}
       />
 
       {#if source.updateUrl}
@@ -178,6 +193,7 @@
         <button
           class="btn btn-primary btn-outline w-fit"
           on:click|preventDefault|stopPropagation={() => checkUpdate(source)}
+          tabindex={hidden ? -1 : 0}
         >
           <Fa icon={faCloudArrowDown} />
           Check for Updates
@@ -208,6 +224,7 @@
                 });
               }
             }}
+            tabindex={hidden ? -1 : 0}
           >
             Delete Source
           </button>
@@ -216,7 +233,7 @@
     </div>
   </form>
   <form method="dialog" class="modal-backdrop">
-    <button>close</button>
+    <button tabindex="-1">close</button>
   </form>
 </dialog>
 

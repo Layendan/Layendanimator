@@ -4,7 +4,10 @@
   import { watching } from '$lib/model/watch';
   import { unwatchedSubscriptions } from '$lib/model/subscriptions';
   import Fa from 'svelte-fa';
-  import { faCheck, faDownload } from '@fortawesome/free-solid-svg-icons';
+  import {
+    faDownload,
+    faFileCircleCheck
+  } from '@fortawesome/free-solid-svg-icons';
   import { downloads, downloading } from '$lib/model/downloads';
   import EpisodeContextMenu from './EpisodeContextMenu.svelte';
   import { page } from '$app/stores';
@@ -55,6 +58,7 @@
   }
 
   let imageLoaded = true;
+  let showSkeleton = true;
 
   let image: HTMLElement;
   let background: HTMLElement;
@@ -66,19 +70,23 @@
   id={episode.id}
   bind:this={background}
   style:--anime-color={anime.color ?? 'hsl(var(--a))'}
-  class="group-one indicator flex w-[210px] select-none flex-col gap-2 focus-visible:outline-transparent"
+  class="group-one indicator flex w-[168px] select-none flex-col gap-2 focus-visible:outline-transparent lg:w-[210px]"
+  class:w-[210px]={!showImage}
   data-sveltekit-replacestate={replaceState ? '' : 'off'}
 >
   {#if showImage}
     <div
-      class="card indicator relative m-0 aspect-video h-auto w-[210px] rounded-md bg-base-300 p-0 ring ring-transparent ring-offset-2 ring-offset-transparent transition-all duration-200 hover:-translate3d-y-1 group-one-focus-visible:ring-[--anime-color] group-one-focus-visible:ring-offset-base-200"
+      class="card indicator relative m-0 h-[94px] w-[168px] rounded-md bg-base-300 p-0 ring ring-transparent ring-offset-2 ring-offset-transparent transition-all duration-200 hover:-translate3d-y-1 group-one-focus-visible:ring-[--anime-color] group-one-focus-visible:ring-offset-base-200 lg:h-[118px] lg:w-[210px]"
+      class:w-[210px]={!showImage}
     >
       <img
         src={imageLoaded ? episode.image : '/assets/loading_failure.jpeg'}
         alt={episode.title ?? `Episode ${episode.number}`}
-        on:error={() => (imageLoaded = false)}
+        on:error|once={() => (imageLoaded = false)}
+        on:load|once={() => (showSkeleton = false)}
         bind:this={image}
-        class="card-body relative m-0 aspect-video h-full w-full rounded-md bg-base-300 bg-cover bg-center bg-no-repeat object-cover object-center p-0"
+        class="card-body relative m-0 aspect-video h-full w-full rounded-md object-cover object-center p-0"
+        class:skeleton={showSkeleton}
       />
       <div class="pointer-events-none relative mx-1">
         <div
@@ -105,7 +113,7 @@
         hover:text-opacity-100 group-one-focus-visible:text-opacity-100"
       >
         <h3
-          class="text-md line-clamp-2 whitespace-normal font-bold leading-tight transition-colors duration-200 group-hover:text-[--anime-color] group-one-focus-visible:text-[--anime-color]"
+          class="text-md line-clamp-2 overflow-hidden overflow-ellipsis whitespace-normal font-bold leading-tight transition-colors duration-200 group-hover:text-[--anime-color] group-one-focus-visible:text-[--anime-color]"
         >
           {episode.title || `Episode ${episode.number}`}
         </h3>
@@ -119,7 +127,7 @@
       </div>
       {#if window?.__TAURI__ && !$page.params.episode}
         <button
-          class="btn btn-ghost btn-sm aspect-video h-fit"
+          class="group-two btn btn-ghost btn-sm aspect-video h-fit"
           class:no-animation={downloadState === 'downloading'}
           on:click|stopPropagation|preventDefault={download}
         >
@@ -137,9 +145,17 @@
               <span class="loading loading-ring" />
             {/if}
           {:else if downloadState === 'downloaded'}
-            <Fa icon={faCheck} size="1.5x" class="text-success" />
+            <Fa
+              icon={faFileCircleCheck}
+              size="1.5x"
+              class="text-success text-opacity-40 transition-colors group-two-hover:text-opacity-100 group-two-focus-visible:text-opacity-100"
+            />
           {:else}
-            <Fa icon={faDownload} size="1.5x" />
+            <Fa
+              icon={faDownload}
+              size="1.5x"
+              class="text-base-content text-opacity-40 transition-colors group-two-hover:text-opacity-100 group-two-focus-visible:text-opacity-100"
+            />
           {/if}
         </button>
       {/if}

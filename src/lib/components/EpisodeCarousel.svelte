@@ -124,7 +124,7 @@
   {/if}
 </Content>
 
-<style lang="postcss">
+<style>
   .scroll {
     @apply inline-flex w-auto gap-6 overflow-x-scroll overscroll-x-contain whitespace-nowrap p-4 pb-6;
   }

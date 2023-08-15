@@ -13,6 +13,7 @@
   let modal: HTMLDialogElement;
 
   let url = '';
+  let hidden = true;
 
   async function createSourceUrl() {
     // Fetch url and parse it to add to sources
@@ -106,10 +107,16 @@
   }
 </script>
 
-<button class="btn btn-primary" on:click={() => modal.showModal()}>
+<button
+  class="btn btn-primary"
+  on:click={() => {
+    modal.showModal();
+    hidden = false;
+  }}
+>
   Add New Source
 </button>
-<dialog bind:this={modal} class="modal">
+<dialog bind:this={modal} class="modal" on:close={() => (hidden = true)}>
   <form method="dialog" class="modal-box" on:submit={createSourceUrl}>
     <h1 class="mb-4 text-2xl font-bold">Add a New Source</h1>
     <div class="form-control w-full">
@@ -124,12 +131,16 @@
         required
         class="input input-bordered input-primary w-full"
         bind:value={url}
+        tabindex={hidden ? -1 : 0}
       />
       <div class="modal-action">
-        <button class="btn btn-secondary">Add Source</button>
+        <button class="btn btn-secondary" tabindex={hidden ? -1 : 0}>
+          Add Source
+        </button>
         <button
           class="btn"
           on:click|preventDefault|stopPropagation={createSourceFile}
+          tabindex={hidden ? -1 : 0}
         >
           Add From File
         </button>
@@ -137,6 +148,6 @@
     </div>
   </form>
   <form method="dialog" class="modal-backdrop">
-    <button>close</button>
+    <button tabindex="-1">close</button>
   </form>
 </dialog>

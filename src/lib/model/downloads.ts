@@ -172,13 +172,15 @@ function createDownloading() {
         const [
           { Command },
           { appDataDir, join },
-          { writeBinaryFile, writeFile },
-          { fetch, ResponseType }
+          { writeBinaryFile, writeFile, removeFile },
+          { fetch, ResponseType },
+          { once }
         ] = await Promise.all([
           import('@tauri-apps/api/shell'),
           import('@tauri-apps/api/path'),
           import('@tauri-apps/api/fs'),
-          import('@tauri-apps/api/http')
+          import('@tauri-apps/api/http'),
+          import('@tauri-apps/api/event')
         ]);
         const dataDir = await appDataDir();
 
@@ -273,23 +275,26 @@ function createDownloading() {
             }
           });
 
-          const output = await command.execute();
+          const child = await command.spawn();
+          const unlisten = await once(`download-cancel-${id}`, () => {
+            console.debug('Killed: ', path);
+            command.emit('error', 'Killed');
+            child.kill();
+          });
 
-          console.debug('Downloaded: ', path);
-
-          if (output.code !== 0) {
-            console.error(output);
-            notifications.addNotification({
-              title: 'Download failed',
-              message: `Could not download ${
-                anime.title.english ?? anime.title.romaji
-              } Episode ${episodeNumber}`,
-              type: 'error'
-            });
-            return Promise.reject();
+          try {
+            await new Promise((resolve, reject) =>
+              command.once('close', resolve).once('error', reject)
+            );
+            console.debug('Downloaded: ', path);
+            return path;
+          } catch (e) {
+            console.error(e);
+            removeFile(path);
+            return Promise.reject(e);
+          } finally {
+            unlisten();
           }
-
-          return path;
         }, id);
 
         await preloadData(`/${id}`);
@@ -518,6 +523,9 @@ function createDownloading() {
         });
       } catch (e) {
         console.error(e);
+
+        if ((e as string) === 'Killed') return;
+
         notifications.addNotification({
           title: 'Download failed',
           message: `Could not download ${
@@ -530,13 +538,15 @@ function createDownloading() {
       }
     },
     remove,
-    cancel: (id: string) => {
+    cancel: async (id: string) => {
       videos.removeFunction(id);
       subtitles.removeFunction(id);
       images.removeFunction(id);
 
       remove(id);
-      // TODO: Cancel Children
+      const { emit } = await import('@tauri-apps/api/event');
+      console.debug(`download-cancel-${id}`);
+      emit(`download-cancel-${id}`);
     },
     clear: () => {
       set({});

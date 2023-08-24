@@ -278,7 +278,7 @@ function createDownloading() {
           });
 
           const child = await command.spawn();
-          const unlisten = await once(`download-cancel-${id}`, () => {
+          const unlisten = await once(`download-cancel-${encodeId(id)}`, () => {
             console.debug('Killed: ', path);
             command.emit('error', 'Killed');
             child.kill();
@@ -548,8 +548,7 @@ function createDownloading() {
 
       remove(id);
       const { emit } = await import('@tauri-apps/api/event');
-      console.debug(`download-cancel-${id}`);
-      emit(`download-cancel-${id}`);
+      emit(`download-cancel-${encodeId(id)}`);
     },
     clear: () => {
       set({});
@@ -627,4 +626,8 @@ async function deleteDir() {
 
   await removeDir(path, { recursive: true });
   await createDir(path, { recursive: true });
+}
+
+function encodeId(id: string) {
+  return id.replaceAll(/[^a-zA-Z0-9-/:_]/g, '-');
 }

@@ -5,7 +5,7 @@ import { LRUCache } from 'lru-cache';
 import { get, writable } from 'svelte/store';
 import type { Store } from 'tauri-plugin-store-api';
 import { searchCache } from './cache';
-import type { Anime, Episode, RecentAnime } from './classes/Anime';
+import type { Anime, Episode, EpisodeData, RecentAnime } from './classes/Anime';
 import { notifications } from './notifications';
 
 /**
@@ -105,8 +105,8 @@ export const defaultProviders: { [key: string]: Provider } = {
         const res = await fetch(
           `https://api.consumet.org/meta/anilist/watch/${id}?provider=gogoanime`
         );
-        const anime: Anime = await res.json();
-        return anime;
+        const episodes: EpisodeData = await res.json();
+        return episodes;
       }).toString()
     },
     shareLinks: {
@@ -128,11 +128,11 @@ export const defaultProviders: { [key: string]: Provider } = {
     version: '1.0.0'
   },
   zoro: {
-    name: 'Zoro',
+    name: 'AniWatch',
     id: 'zoro',
-    url: 'https://zoro.to/',
+    url: 'https://aniwatch.to/',
     updateUrl: '',
-    logo: 'https://is3-ssl.mzstatic.com/image/thumb/Purple112/v4/7e/91/00/7e9100ee-2b62-0942-4cdc-e9b93252ce1c/source/512x512bb.jpg',
+    logo: '/assets/aniwatch-logo.png',
     description:
       'Watch anime online in high quality for free with English subbed, dubbed. Update daily, No tracking, No paying, No registration required.',
     scripts: {
@@ -190,18 +190,30 @@ export const defaultProviders: { [key: string]: Provider } = {
         const res = await fetch(
           `https://api.consumet.org/meta/anilist/watch/${id}?provider=zoro`
         );
-        const anime: Anime = await res.json();
-        return anime;
+        const episode: EpisodeData = await res.json();
+        return {
+          ...episode,
+          sources: episode.sources.map(source => ({
+            ...source,
+            url: `https://jb-proxy.app.jet-black.xyz/${source.url}`
+          }))
+        };
       }).toString()
     },
     shareLinks: {
       anime: 'https://anilist.co/anime/{id}'
     },
+    externalLinks: [
+      ['Website', 'https://aniwatch.to/home#'],
+      ['Discord', 'https://discord.gg/aniwatch'],
+      ['Reddit', 'https://www.reddit.com/r/AniWatchZone/'],
+      ['Twitter', 'https://twitter.com/AniWatchGo']
+    ],
     languages: ['english'],
-    tags: ['anime', 'dubbed', 'subbed', 'zoro'],
-    status: 'broken',
+    tags: ['anime', 'dubbed', 'subbed', 'zoro', 'aniwatch'],
+    status: 'working',
     isNSFW: false,
-    version: '1.0.0'
+    version: '1.0.1'
   }
 };
 

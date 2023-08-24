@@ -1,10 +1,11 @@
-import { invalidate, preloadData } from '$app/navigation';
+import { invalidate } from '$app/navigation';
 import Hls from 'hls.js';
 import { get, writable } from 'svelte/store';
 import type { Store } from 'tauri-plugin-store-api';
 import { episodeCache } from './cache';
 import type { Anime, EpisodeData } from './classes/Anime';
 import Semaphore from './classes/Semaphore';
+import { fetchEpisode } from './fetch';
 import { notifications } from './notifications';
 import type { Provider } from './source';
 
@@ -190,8 +191,9 @@ function createDownloading() {
         const imageCalls: Promise<any>[] = [];
 
         const video = await videos.callFunction(async () => {
-          await preloadData(`/${id}`);
-          const cache = episodeCache.get(`${anime.source.id}/${episodeId}`);
+          const cache =
+            episodeCache.get(`${anime.source.id}/${episodeId}`) ??
+            (await fetchEpisode(episodeId, anime.source));
 
           if (!cache) {
             throw new Error('Episode not found');
@@ -297,8 +299,9 @@ function createDownloading() {
           }
         }, id);
 
-        await preloadData(`/${id}`);
-        const cache = episodeCache.get(`${anime.source.id}/${episodeId}`);
+        const cache =
+          episodeCache.get(`${anime.source.id}/${episodeId}`) ??
+          (await fetchEpisode(episodeId, anime.source));
 
         if (!cache) {
           throw new Error('Episode not found');

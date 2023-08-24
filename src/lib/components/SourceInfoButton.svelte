@@ -1,16 +1,16 @@
 <script lang="ts">
   import { notifications } from '$lib/model/notifications';
   import {
-    providers,
+    checkUpdate,
     source as currentSource,
-    type Provider,
     defaultProviders,
-    checkUpdate
+    providers,
+    type Provider
   } from '$lib/model/source';
   import { encodeName } from '$lib/model/theme';
+  import { faCloudArrowDown } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
   import SourceContextMenu from './SourceContextMenu.svelte';
-  import { faCloudArrowDown } from '@fortawesome/free-solid-svg-icons';
 
   export let source: Provider;
 

@@ -1,12 +1,12 @@
-import { get, writable } from 'svelte/store';
-import type { Store } from 'tauri-plugin-store-api';
-import type { Anime, Episode, RecentAnime } from './classes/Anime';
-import { searchCache } from './cache';
-import { LRUCache } from 'lru-cache';
 import { goto } from '$app/navigation';
 import { page } from '$app/stores';
-import { notifications } from './notifications';
 import { ResponseType } from '@tauri-apps/api/http';
+import { LRUCache } from 'lru-cache';
+import { get, writable } from 'svelte/store';
+import type { Store } from 'tauri-plugin-store-api';
+import { searchCache } from './cache';
+import type { Anime, Episode, RecentAnime } from './classes/Anime';
+import { notifications } from './notifications';
 
 /**
  * IDK why but for some reason only this store breaks building, maybe because of settings?
@@ -52,9 +52,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       'Watch anime online in high quality for free with English subbed, dubbed. Update daily, No tracking, No paying, No registration required.',
     scripts: {
       search: (async (query: string, page = 1, perPage = 25) => {
-        const url = new URL(
-          `https://consumet.app.jet-black.xyz/meta/anilist/${query}`
-        );
+        const url = new URL(`https://api.consumet.org/meta/anilist/${query}`);
         url.searchParams.set('page', String(page));
         url.searchParams.set('perPage', String(perPage));
 
@@ -65,7 +63,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchTrendingAnime: (async (page = 1, perPage = 25) => {
         const trending = (
           await fetch(
-            `https://consumet.app.jet-black.xyz/meta/anilist/trending?page=${page}&perPage=${perPage}`
+            `https://api.consumet.org/meta/anilist/trending?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return trending;
@@ -73,7 +71,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchPopularAnime: (async (page = 1, perPage = 25) => {
         const popular = (
           await fetch(
-            `https://consumet.app.jet-black.xyz/meta/anilist/popular?page=${page}&perPage=${perPage}`
+            `https://api.consumet.org/meta/anilist/popular?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return popular;
@@ -81,7 +79,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
         const recent = (
           await fetch(
-            `https://consumet.app.jet-black.xyz/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+            `https://api.consumet.org/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as RecentAnime[];
         return recent;
@@ -92,9 +90,7 @@ export const defaultProviders: { [key: string]: Provider } = {
         isSub: boolean,
         isFiller: boolean
       ) => {
-        const url = new URL(
-          `https://consumet.app.jet-black.xyz/meta/anilist/info/${id}`
-        );
+        const url = new URL(`https://api.consumet.org/meta/anilist/info/${id}`);
         url.searchParams.set('provider', 'gogoanime');
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
@@ -107,7 +103,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(
-          `https://consumet.app.jet-black.xyz/meta/anilist/watch/${id}?provider=gogoanime`
+          `https://api.consumet.org/meta/anilist/watch/${id}?provider=gogoanime`
         );
         const anime: Anime = await res.json();
         return anime;
@@ -141,9 +137,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       'Watch anime online in high quality for free with English subbed, dubbed. Update daily, No tracking, No paying, No registration required.',
     scripts: {
       search: (async (query: string, page = 1, perPage = 25) => {
-        const url = new URL(
-          `https://consumet.app.jet-black.xyz/meta/anilist/${query}`
-        );
+        const url = new URL(`https://api.consumet.org/meta/anilist/${query}`);
         url.searchParams.set('page', String(page));
         url.searchParams.set('perPage', String(perPage));
 
@@ -154,7 +148,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchTrendingAnime: (async (page = 1, perPage = 25) => {
         const trending = (
           await fetch(
-            `https://consumet.app.jet-black.xyz/meta/anilist/trending?page=${page}&perPage=${perPage}`
+            `https://api.consumet.org/meta/anilist/trending?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return trending;
@@ -162,7 +156,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchPopularAnime: (async (page = 1, perPage = 25) => {
         const popular = (
           await fetch(
-            `https://consumet.app.jet-black.xyz/meta/anilist/popular?page=${page}&perPage=${perPage}`
+            `https://api.consumet.org/meta/anilist/popular?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return popular;
@@ -170,7 +164,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
         const recent = (
           await fetch(
-            `https://consumet.app.jet-black.xyz/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+            `https://api.consumet.org/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as RecentAnime[];
         return recent;
@@ -181,9 +175,7 @@ export const defaultProviders: { [key: string]: Provider } = {
         isSub: boolean,
         isFiller: boolean
       ) => {
-        const url = new URL(
-          `https://consumet.app.jet-black.xyz/meta/anilist/info/${id}`
-        );
+        const url = new URL(`https://api.consumet.org/meta/anilist/info/${id}`);
         url.searchParams.set('provider', 'zoro');
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
@@ -196,7 +188,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(
-          `https://consumet.app.jet-black.xyz/meta/anilist/watch/${id}?provider=zoro`
+          `https://api.consumet.org/meta/anilist/watch/${id}?provider=zoro`
         );
         const anime: Anime = await res.json();
         return anime;

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { settings } from '$lib/model/settings';
-  import { toStyleString, type Theme, encodeName } from '$lib/model/theme';
+  import { encodeName, toStyleString, type Theme } from '$lib/model/theme';
   import type { UnlistenFn } from '@tauri-apps/api/event';
   import type { Theme as TauriTheme } from '@tauri-apps/api/window';
   import { onDestroy, onMount } from 'svelte';

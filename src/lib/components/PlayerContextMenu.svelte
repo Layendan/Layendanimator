@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { Anime, Episode } from '$lib/model/classes/Anime';
   import { currentContextMenu } from '$lib/model/contextmenu';
-  import Fa from 'svelte-fa';
-  import ContextMenu from './ContextMenu.svelte';
+  import { notifications } from '$lib/model/notifications';
+  import { encodeEpisodeLink } from '$lib/model/source';
   import {
     faArrowAltCircleRight,
     faBackward,
@@ -17,11 +17,11 @@
     faPlayCircle,
     faShare
   } from '@fortawesome/free-solid-svg-icons';
-  import { encodeEpisodeLink } from '$lib/model/source';
-  import type { MediaPlayerElement } from 'vidstack';
   import { onDestroy, onMount } from 'svelte';
+  import Fa from 'svelte-fa';
+  import type { MediaPlayerElement } from 'vidstack';
   import { defineCustomElements } from 'vidstack/elements';
-  import { notifications } from '$lib/model/notifications';
+  import ContextMenu from './ContextMenu.svelte';
 
   export let anime: Anime;
   export let episode: Episode;

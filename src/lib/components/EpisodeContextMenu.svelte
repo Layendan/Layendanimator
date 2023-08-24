@@ -1,9 +1,10 @@
 <script lang="ts">
+  import { page } from '$app/stores';
   import type { Anime, Episode } from '$lib/model/classes/Anime';
   import { currentContextMenu } from '$lib/model/contextmenu';
+  import { downloading, downloads } from '$lib/model/downloads';
+  import { encodeEpisodeLink } from '$lib/model/source';
   import { watching } from '$lib/model/watch';
-  import Fa from 'svelte-fa';
-  import ContextMenu from './ContextMenu.svelte';
   import {
     faDownload,
     faExternalLink,
@@ -15,9 +16,8 @@
     faStopCircle,
     faTrash
   } from '@fortawesome/free-solid-svg-icons';
-  import { page } from '$app/stores';
-  import { downloading, downloads } from '$lib/model/downloads';
-  import { encodeEpisodeLink } from '$lib/model/source';
+  import Fa from 'svelte-fa';
+  import ContextMenu from './ContextMenu.svelte';
 
   export let anime: Anime;
   export let episode: Episode;

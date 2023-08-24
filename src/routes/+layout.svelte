@@ -3,28 +3,26 @@
   import '../nprogress.css';
 
   import { navigating, page } from '$app/stores';
-  import { onDestroy, onMount } from 'svelte';
+  import { searchHistory } from '$lib/model/searchHistory';
   import { providers, source } from '$lib/model/source';
   import {
     subscriptions,
     unwatchedSubscriptions
   } from '$lib/model/subscriptions';
-  import { searchHistory } from '$lib/model/searchHistory';
+  import { onDestroy, onMount } from 'svelte';
 
-  import NProgress from 'nprogress';
-  import { watching } from '$lib/model/watch';
-  import { goto, preloadData } from '$app/navigation';
-  import { animeCache } from '$lib/model/cache';
+  import { goto, invalidateAll, preloadData } from '$app/navigation';
+  import NavBar from '$lib/components/NavBar.svelte';
+  import NotificationPile from '$lib/components/NotificationPile.svelte';
+  import { animeCache, clearCache } from '$lib/model/cache';
   import { connections } from '$lib/model/connections';
   import { downloads } from '$lib/model/downloads';
-  import type { UnlistenFn } from '@tauri-apps/api/event';
+  import { getOS } from '$lib/model/info';
   import { settings } from '$lib/model/settings';
   import { encodeName, toStyleString } from '$lib/model/theme';
-  import NotificationPile from '$lib/components/NotificationPile.svelte';
-  import { invalidateAll } from '$app/navigation';
-  import { clearCache } from '$lib/model/cache';
-  import { getOS } from '$lib/model/info';
-  import NavBar from '$lib/components/NavBar.svelte';
+  import { watching } from '$lib/model/watch';
+  import type { UnlistenFn } from '@tauri-apps/api/event';
+  import NProgress from 'nprogress';
 
   NProgress.configure({
     // Full list: https://github.com/rstacruz/nprogress#configuration
@@ -89,18 +87,21 @@
     }
 
     if (unsubscribe) clearInterval(unsubscribe);
-    unsubscribe = setInterval(() => {
-      Object.values($unwatchedSubscriptions).forEach(anime => {
-        if (anime.status !== 'Completed' && anime.status !== 'Cancelled')
-          unwatchedSubscriptions.updateDate(anime);
-        preloadData(`/${anime.source.id}/${anime.id}`);
-      });
-      Object.values($subscriptions).forEach(anime => {
-        if (anime.status !== 'Completed' && anime.status !== 'Cancelled')
-          subscriptions.updateDate(anime);
-        preloadData(`/${anime.source.id}/${anime.id}`);
-      });
-    }, animeCache.ttl || MINUTE * 30);
+    unsubscribe = setInterval(
+      () => {
+        Object.values($unwatchedSubscriptions).forEach(anime => {
+          if (anime.status !== 'Completed' && anime.status !== 'Cancelled')
+            unwatchedSubscriptions.updateDate(anime);
+          preloadData(`/${anime.source.id}/${anime.id}`);
+        });
+        Object.values($subscriptions).forEach(anime => {
+          if (anime.status !== 'Completed' && anime.status !== 'Cancelled')
+            subscriptions.updateDate(anime);
+          preloadData(`/${anime.source.id}/${anime.id}`);
+        });
+      },
+      animeCache.ttl || MINUTE * 30
+    );
     console.debug('Subscriptions cache TTL:', animeCache.ttl || MINUTE * 30);
   });
 

@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition';
+  import { page } from '$app/stores';
   import type { Anime, Episode } from '$lib/model/classes/Anime';
-  import { watching } from '$lib/model/watch';
+  import { downloading, downloads } from '$lib/model/downloads';
   import { unwatchedSubscriptions } from '$lib/model/subscriptions';
-  import Fa from 'svelte-fa';
+  import { watching } from '$lib/model/watch';
   import {
     faDownload,
     faFileCircleCheck
   } from '@fortawesome/free-solid-svg-icons';
-  import { downloads, downloading } from '$lib/model/downloads';
+  import Fa from 'svelte-fa';
+  import { fade } from 'svelte/transition';
   import EpisodeContextMenu from './EpisodeContextMenu.svelte';
-  import { page } from '$app/stores';
 
   export let anime: Anime;
   export let episode: Episode;

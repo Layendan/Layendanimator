@@ -1,6 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import { providers, type Provider, source } from '$lib/model/source';
+  import { providers, source, type Provider } from '$lib/model/source';
   import SourceButtonButton from './SourceButtonButton.svelte';
 
   export let currentSrc: Provider;

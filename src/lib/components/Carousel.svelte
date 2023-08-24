@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { onDestroy, onMount } from 'svelte';
   import { preloadData } from '$app/navigation';
+  import { carouselPage } from '$lib/model/cache';
   import type { Anime } from '$lib/model/classes/Anime';
+  import { settings } from '$lib/model/settings';
+  import type { Provider } from '$lib/model/source';
   import {
     faArrowLeft,
     faArrowRight,
     faPlayCircle
   } from '@fortawesome/free-solid-svg-icons';
+  import { onDestroy, onMount } from 'svelte';
   import Fa from 'svelte-fa';
-  import { carouselPage } from '$lib/model/cache';
   import { fade } from 'svelte/transition';
-  import type { Provider } from '$lib/model/source';
   import AnimeContextMenu from './AnimeContextMenu.svelte';
-  import { settings } from '$lib/model/settings';
 
   export let animes: Anime[];
   export let source: Provider;
@@ -45,7 +45,7 @@
   }
 
   $: preloadData(
-    `/${animes[animeIdx].source.id}/${animes[animeIdx].id}?preload=true`
+    `/${animes[animeIdx].source.id}/${animes[animeIdx].id}?autoplay=true`
   );
 
   onDestroy(() => {

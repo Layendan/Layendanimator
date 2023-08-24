@@ -1,7 +1,15 @@
 <script lang="ts">
+  import { goto } from '$app/navigation';
   import { currentContextMenu } from '$lib/model/contextmenu';
-  import Fa from 'svelte-fa';
-  import ContextMenu from './ContextMenu.svelte';
+  import { notifications } from '$lib/model/notifications';
+  import {
+    checkUpdate,
+    defaultProviders,
+    providers,
+    source,
+    type Provider
+  } from '$lib/model/source';
+  import { encodeName } from '$lib/model/theme';
   import {
     faArrowRight,
     faCloudArrowDown,
@@ -9,16 +17,8 @@
     faShare,
     faTrash
   } from '@fortawesome/free-solid-svg-icons';
-  import { notifications } from '$lib/model/notifications';
-  import {
-    providers,
-    type Provider,
-    source,
-    defaultProviders,
-    checkUpdate
-  } from '$lib/model/source';
-  import { goto } from '$app/navigation';
-  import { encodeName } from '$lib/model/theme';
+  import Fa from 'svelte-fa';
+  import ContextMenu from './ContextMenu.svelte';
 
   export let provider: Provider;
   export let element: HTMLElement;

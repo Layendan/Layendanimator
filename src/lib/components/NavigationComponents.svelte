@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Fa from 'svelte-fa';
+  import { invalidateAll } from '$app/navigation';
+  import { clearCache } from '$lib/model/cache';
   import {
     faArrowLeft,
     faArrowRight,
     faRotateRight
   } from '@fortawesome/free-solid-svg-icons';
-  import { invalidateAll } from '$app/navigation';
-  import { clearCache } from '$lib/model/cache';
+  import Fa from 'svelte-fa';
 </script>
 
 {#if window?.__TAURI__}

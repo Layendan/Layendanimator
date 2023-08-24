@@ -1,21 +1,21 @@
 <script lang="ts">
-  import { sanitize } from 'isomorphic-dompurify';
-  import AnimeCard from '$lib/components/AnimeCard.svelte';
-  import CharacterCard from '$lib/components/CharacterCard.svelte';
-  import Player from '$lib/components/Player.svelte';
-  import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
-  import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
   import { afterNavigate, goto } from '$app/navigation';
-  import { fade } from 'svelte/transition';
-  import type { PageData } from './$types';
-  import { faInfoCircle, faTv } from '@fortawesome/free-solid-svg-icons';
-  import Fa from 'svelte-fa';
+  import AnimeCard from '$lib/components/AnimeCard.svelte';
+  import AnimeInfo from '$lib/components/AnimeInfo.svelte';
+  import CharacterCard from '$lib/components/CharacterCard.svelte';
+  import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
+  import Player from '$lib/components/Player.svelte';
+  import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
   import {
     subscriptions,
     unwatchedSubscriptions
   } from '$lib/model/subscriptions';
   import { watching } from '$lib/model/watch';
-  import AnimeInfo from '$lib/components/AnimeInfo.svelte';
+  import { faInfoCircle, faTv } from '@fortawesome/free-solid-svg-icons';
+  import { sanitize } from 'isomorphic-dompurify';
+  import Fa from 'svelte-fa';
+  import { fade } from 'svelte/transition';
+  import type { PageData } from './$types';
 
   export let data: PageData;
 

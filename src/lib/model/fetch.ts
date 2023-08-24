@@ -162,11 +162,11 @@ export async function fetchEpisode(id: string, source: Provider) {
     episodeCache.set(`${source.id}/${id}`, episode);
   } else {
     notifications.addNotification({
-      title: 'Episode sources not found',
+      title: 'Episode could not be found',
       message: `The episode with id ${id} was not found.`,
       type: 'error'
     });
-    throw error(404, 'Episode sources not found');
+    throw error(404, 'Episode not found');
   }
 
   return episode;
@@ -242,9 +242,12 @@ export async function safeEval<T>(
 
     worker.postMessage([code, ...(settings?.args ?? [])]);
 
-    setTimeout(function () {
-      worker.terminate();
-      reject(new Error('The worker timed out.'));
-    }, settings?.timeout ?? timeout);
+    setTimeout(
+      function () {
+        worker.terminate();
+        reject(new Error('The worker timed out.'));
+      },
+      settings?.timeout ?? timeout
+    );
   });
 }

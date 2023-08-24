@@ -1,9 +1,9 @@
 <script lang="ts">
+  import type { Anime } from '$lib/model/classes/Anime';
   import { fade } from 'svelte/transition';
   import AnimeInfo from './AnimeInfo.svelte';
   import ExternalAnimeCard from './ExternalAnimeCard.svelte';
   import SubscribeButton from './SubscribeButton.svelte';
-  import type { Anime } from '$lib/model/classes/Anime';
 
   export let anime: Anime;
 </script>

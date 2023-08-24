@@ -1,10 +1,10 @@
 <script lang="ts">
   import { notifications } from '$lib/model/notifications';
   import {
-    providers,
     source as currentSource,
-    type Provider,
-    isProvider
+    isProvider,
+    providers,
+    type Provider
   } from '$lib/model/source';
   import { encodeName } from '$lib/model/theme';
   import { ResponseType } from '@tauri-apps/api/http';

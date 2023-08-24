@@ -1,14 +1,18 @@
 <script lang="ts">
   import type { Anime } from '$lib/model/classes/Anime';
   import { currentContextMenu } from '$lib/model/contextmenu';
+  import { downloading, downloads } from '$lib/model/downloads';
+  import { fetchAnime } from '$lib/model/fetch';
+  import { notifications } from '$lib/model/notifications';
+  import { encodeAnimeLink } from '$lib/model/source';
   import {
     subscriptions,
     unwatchedSubscriptions
   } from '$lib/model/subscriptions';
   import { watching } from '$lib/model/watch';
-  import Fa from 'svelte-fa';
-  import ContextMenu from './ContextMenu.svelte';
   import {
+    faArrowRotateRight,
+    faCloudDownload,
     faDownload,
     faExternalLink,
     faInfoCircle,
@@ -16,15 +20,10 @@
     faPlayCircle,
     faPlusCircle,
     faShare,
-    faTrash,
-    faCloudDownload,
-    faArrowRotateRight
+    faTrash
   } from '@fortawesome/free-solid-svg-icons';
-  import { preloadData } from '$app/navigation';
-  import { animeCache } from '$lib/model/cache';
-  import { downloading, downloads } from '$lib/model/downloads';
-  import { encodeAnimeLink } from '$lib/model/source';
-  import { notifications } from '$lib/model/notifications';
+  import Fa from 'svelte-fa';
+  import ContextMenu from './ContextMenu.svelte';
 
   export let anime: Anime;
   export let element: HTMLElement;
@@ -124,8 +123,7 @@
         <button
           on:click|stopPropagation={async () => {
             try {
-              animeCache.delete(`${anime.source.id}/${anime.id}`);
-              await preloadData(`/${anime.source.id}/${anime.id}`);
+              await fetchAnime(anime.id, anime.source);
               notifications.addNotification({
                 title: 'Updated',
                 message: `Anime info updated for ${
@@ -160,8 +158,7 @@
         <button
           on:click|stopPropagation={async () => {
             try {
-              animeCache.delete(`${anime.source.id}/${anime.id}`);
-              await preloadData(`/${anime.source.id}/${anime.id}`);
+              await fetchAnime(anime.id, anime.source);
               notifications.addNotification({
                 title: 'Updated',
                 message: `Anime info updated for ${
@@ -187,8 +184,7 @@
         <button
           on:click|stopPropagation={async () => {
             subscriptions.add(anime);
-            await preloadData(`${anime.source.id}/${anime.id}`);
-            const res = animeCache.get(`${anime.source.id}/${anime.id}`);
+            const res = await fetchAnime(anime.id, anime.source);
             if (!res) {
               subscriptions.remove(anime);
               return;
@@ -216,8 +212,7 @@
         <button
           on:click|stopPropagation={async () => {
             try {
-              await preloadData(`/${anime.source.id}/${anime.id}`);
-              const res = animeCache.get(`${anime.source.id}/${anime.id}`);
+              const res = await fetchAnime(anime.id, anime.source);
               if (!res) throw new Error('Could not find anime');
 
               watching.updateAnime(res);
@@ -249,8 +244,7 @@
       <li>
         <button
           on:click|stopPropagation={async () => {
-            await preloadData(`${anime.source.id}/${anime.id}`);
-            const res = animeCache.get(`${anime.source.id}/${anime.id}`);
+            const res = await fetchAnime(anime.id, anime.source);
             if (!res) return;
 
             notifications.addNotification({

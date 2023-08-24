@@ -1,15 +1,15 @@
 <script lang="ts">
   import { currentContextMenu } from '$lib/model/contextmenu';
-  import Fa from 'svelte-fa';
-  import ContextMenu from './ContextMenu.svelte';
+  import { notifications } from '$lib/model/notifications';
+  import { settings } from '$lib/model/settings';
+  import { encodeName, type Theme } from '$lib/model/theme';
   import {
     faArrowRight,
     faShare,
     faTrash
   } from '@fortawesome/free-solid-svg-icons';
-  import { notifications } from '$lib/model/notifications';
-  import { encodeName, type Theme } from '$lib/model/theme';
-  import { settings } from '$lib/model/settings';
+  import Fa from 'svelte-fa';
+  import ContextMenu from './ContextMenu.svelte';
 
   export let theme: Theme;
   export let element: HTMLElement;

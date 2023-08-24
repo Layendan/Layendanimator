@@ -1,23 +1,23 @@
 <script lang="ts">
-  import 'vidstack/styles/base.css';
-  import 'vidstack/styles/ui/buttons.css';
-  import 'vidstack/styles/ui/sliders.css';
-  import 'vidstack/styles/defaults.css';
-  import 'vidstack/styles/community-skin/video.css';
-  import { defineCustomElements } from 'vidstack/elements';
+  import { beforeNavigate, invalidate } from '$app/navigation';
+  import type { Anime, Episode, EpisodeData } from '$lib/model/classes/Anime';
+  import { downloads } from '$lib/model/downloads';
+  import { getOS } from '$lib/model/info';
+  import { settings } from '$lib/model/settings';
+  import { watching } from '$lib/model/watch';
+  import Hls from 'hls.js';
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import type {
     HLSProvider,
     MediaPlayerElement,
     MediaProviderChangeEvent
   } from 'vidstack';
-  import { onMount, createEventDispatcher, onDestroy } from 'svelte';
-  import { watching } from '$lib/model/watch';
-  import type { Anime, Episode, EpisodeData } from '$lib/model/classes/Anime';
-  import { getOS } from '$lib/model/info';
-  import { beforeNavigate, invalidate } from '$app/navigation';
-  import Hls from 'hls.js';
-  import { downloads } from '$lib/model/downloads';
-  import { settings } from '$lib/model/settings';
+  import { defineCustomElements } from 'vidstack/elements';
+  import 'vidstack/styles/base.css';
+  import 'vidstack/styles/community-skin/video.css';
+  import 'vidstack/styles/defaults.css';
+  import 'vidstack/styles/ui/buttons.css';
+  import 'vidstack/styles/ui/sliders.css';
   import PlayerContextMenu from './PlayerContextMenu.svelte';
 
   export let episodeData: EpisodeData;

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { sanitize } from 'isomorphic-dompurify';
   import type { Anime } from '$lib/model/classes/Anime';
+  import { sanitize } from 'isomorphic-dompurify';
 
   export let anime: Anime;
 

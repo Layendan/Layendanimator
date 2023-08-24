@@ -5,7 +5,7 @@
   import ThemeButton from '$lib/components/ThemeButton.svelte';
   import ThemeCreator from '$lib/components/ThemeCreator.svelte';
   import { animeCache } from '$lib/model/cache';
-  import { getVersion, getArch, getOS, checkUpdate } from '$lib/model/info';
+  import { checkUpdate, getArch, getOS, getVersion } from '$lib/model/info';
   import { settings, tauriData, webData } from '$lib/model/settings';
   import { providers } from '$lib/model/source';
   import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';

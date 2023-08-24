@@ -3,12 +3,12 @@ import type { UpdateResult } from '@tauri-apps/api/updater';
 import { clearCache } from './cache';
 import { connections } from './connections';
 import { downloads } from './downloads';
+import { notifications } from './notifications';
 import { searchHistory } from './searchHistory';
 import { settings } from './settings';
 import { providers } from './source';
 import { subscriptions, unwatchedSubscriptions } from './subscriptions';
 import { watching } from './watch';
-import { notifications } from './notifications';
 
 export async function getVersion(): Promise<string | 'Unknown'> {
   const { getVersion } = await import('@tauri-apps/api/app');

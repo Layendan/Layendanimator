@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Fa from 'svelte-fa';
+  import { source as storeSource, type Provider } from '$lib/model/source';
   import { faBookmark, faCog } from '@fortawesome/free-solid-svg-icons';
-  import SourceButton from './SourceButton.svelte';
+  import Fa from 'svelte-fa';
   import NavigationComponents from './NavigationComponents.svelte';
-  import { type Provider, source as storeSource } from '$lib/model/source';
   import SearchBar from './SearchBar.svelte';
+  import SourceButton from './SourceButton.svelte';
 
   export let source: Provider;
 

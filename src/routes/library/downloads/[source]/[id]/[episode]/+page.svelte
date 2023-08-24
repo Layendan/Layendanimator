@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { sanitize } from 'isomorphic-dompurify';
-  import Player from '$lib/components/Player.svelte';
-  import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
   import { afterNavigate, goto } from '$app/navigation';
-  import { fade } from 'svelte/transition';
-  import type { PageData } from './$types';
-  import { faInfoCircle, faTv } from '@fortawesome/free-solid-svg-icons';
-  import Fa from 'svelte-fa';
+  import AnimeInfo from '$lib/components/AnimeInfo.svelte';
+  import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
+  import Player from '$lib/components/Player.svelte';
   import {
     subscriptions,
     unwatchedSubscriptions
   } from '$lib/model/subscriptions';
   import { watching } from '$lib/model/watch';
-  import AnimeInfo from '$lib/components/AnimeInfo.svelte';
+  import { faInfoCircle, faTv } from '@fortawesome/free-solid-svg-icons';
+  import { sanitize } from 'isomorphic-dompurify';
+  import Fa from 'svelte-fa';
+  import { fade } from 'svelte/transition';
+  import type { PageData } from './$types';
 
   export let data: PageData;
 

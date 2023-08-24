@@ -1,17 +1,16 @@
 <script lang="ts">
-  import { preloadData } from '$app/navigation';
+  import Semaphore from '$lib/model/classes/Semaphore';
+  import { fetchAnime } from '$lib/model/fetch';
+  import { getSortMethod, settings } from '$lib/model/settings';
   import {
     subscriptions,
     unwatchedSubscriptions
   } from '$lib/model/subscriptions';
-  import Fa from 'svelte-fa';
-  import ScrollCarousel from './ScrollCarousel.svelte';
   import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
-  import AnimeCard from './AnimeCard.svelte';
-  import { getSortMethod, settings } from '$lib/model/settings';
-  import { animeCache } from '$lib/model/cache';
+  import Fa from 'svelte-fa';
   import { fade } from 'svelte/transition';
-  import Semaphore from '$lib/model/classes/Semaphore';
+  import AnimeCard from './AnimeCard.svelte';
+  import ScrollCarousel from './ScrollCarousel.svelte';
 
   $: sortMethod = ($settings.sortSubscriptions, getSortMethod());
 
@@ -34,6 +33,8 @@
         class="btn btn-ghost h-fit bg-base-300"
         out:fade={{ duration: 200 }}
         on:click={async () => {
+          if (loading) return;
+
           loading = true;
           const totalSubs = [
             ...Object.values($subscriptions).filter(
@@ -45,13 +46,10 @@
                 anime.status !== 'Completed' && anime.status !== 'Cancelled'
             )
           ];
-          totalSubs.forEach(anime =>
-            animeCache.delete(`${anime.source.id}/${anime.id}`)
-          );
           await Promise.allSettled(
             totalSubs.map(anime => {
               return semaphore.callFunction(
-                () => preloadData(`/${anime.source.id}/${anime.id}`),
+                () => fetchAnime(anime.id, anime.source),
                 `${anime.source.id}/${anime.id}`
               );
             })

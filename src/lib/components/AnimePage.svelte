@@ -1,23 +1,23 @@
 <script lang="ts">
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import CharacterCard from '$lib/components/CharacterCard.svelte';
+  import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
+  import PlayNextButton from '$lib/components/PlayNextButton.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
-  import Fa from 'svelte-fa';
+  import ScrollHeader from '$lib/components/ScrollHeader.svelte';
+  import TotalAnimeInfo from '$lib/components/TotalAnimeInfo.svelte';
+  import type { Anime } from '$lib/model/classes/Anime';
+  import { downloading } from '$lib/model/downloads';
+  import { watching } from '$lib/model/watch';
   import {
-    faFilter,
-    faDownload,
+    faChevronDown,
+    faChevronUp,
     faClock,
     faCloudDownload,
-    faChevronDown,
-    faChevronUp
+    faDownload,
+    faFilter
   } from '@fortawesome/free-solid-svg-icons';
-  import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
-  import { watching } from '$lib/model/watch';
-  import { downloading } from '$lib/model/downloads';
-  import TotalAnimeInfo from '$lib/components/TotalAnimeInfo.svelte';
-  import PlayNextButton from '$lib/components/PlayNextButton.svelte';
-  import ScrollHeader from '$lib/components/ScrollHeader.svelte';
-  import type { Anime } from '$lib/model/classes/Anime';
+  import Fa from 'svelte-fa';
 
   export let data: Anime;
   export let showDownload = false;

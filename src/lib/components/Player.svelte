@@ -32,6 +32,10 @@
     $watching[`${anime.source.id}/${anime.id}`]?.watchedEpisodes[episode.id];
   $: state = player?.state;
 
+  const thumbnails = episodeData?.subtitles?.find(
+    track => track.lang.toLowerCase() === 'thumbnails'
+  );
+
   const dispatcher = createEventDispatcher();
 
   function requestNextEpisode() {
@@ -129,6 +133,7 @@
     preload="metadata"
     autoplay
     {disableRemotePlayback}
+    thumbnails={thumbnails?.url}
     bind:this={player}
     on:provider-change={providerChange}
     on:ended={requestNextEpisode}

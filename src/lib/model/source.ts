@@ -214,6 +214,168 @@ export const defaultProviders: { [key: string]: Provider } = {
     status: 'working',
     isNSFW: false,
     version: '1.0.1'
+  },
+  enime: {
+    name: 'Enime',
+    id: 'enime',
+    url: 'https://enime.moe',
+    updateUrl: '',
+    logo: 'https://enime.moe/favicon.ico',
+    description:
+      'Watch anime online in high quality for free with English subbed, dubbed. Update daily, No tracking, No paying, No registration required.',
+    scripts: {
+      search: (async (query: string, page = 1, perPage = 25) => {
+        const url = new URL(`https://api.consumet.org/meta/anilist/${query}`);
+        url.searchParams.set('page', String(page));
+        url.searchParams.set('perPage', String(perPage));
+
+        const results = (await fetch(url).then(r => r.json()))
+          .results as Anime[];
+        return results;
+      }).toString(),
+      fetchTrendingAnime: (async (page = 1, perPage = 25) => {
+        const trending = (
+          await fetch(
+            `https://api.consumet.org/meta/anilist/trending?page=${page}&perPage=${perPage}`
+          ).then(r => r.json())
+        ).results as Anime[];
+        return trending;
+      }).toString(),
+      fetchPopularAnime: (async (page = 1, perPage = 25) => {
+        const popular = (
+          await fetch(
+            `https://api.consumet.org/meta/anilist/popular?page=${page}&perPage=${perPage}`
+          ).then(r => r.json())
+        ).results as Anime[];
+        return popular;
+      }).toString(),
+      fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
+        const recent = (
+          await fetch(
+            `https://api.consumet.org/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+          ).then(r => r.json())
+        ).results as RecentAnime[];
+        return recent;
+      }).toString(),
+      fetchAiringSchedule: '',
+      fetchAnimeInfo: (async (
+        id: string,
+        isSub: boolean,
+        isFiller: boolean
+      ) => {
+        const url = new URL(`https://api.consumet.org/meta/anilist/info/${id}`);
+        url.searchParams.set('provider', 'enime');
+        url.searchParams.set('dub', String(!isSub));
+        url.searchParams.set('fetchFiller', String(isFiller));
+        const res = await fetch(url.toString());
+        const anime: Anime = await res.json();
+        return {
+          ...anime,
+          episodes: anime.episodes.sort((a, b) => a.number - b.number)
+        };
+      }).toString(),
+      fetchEpisodes: (async (id: string) => {
+        const res = await fetch(
+          `https://api.consumet.org/meta/anilist/watch/${id}?provider=enime`
+        );
+        const episode: EpisodeData = await res.json();
+        return episode;
+      }).toString()
+    },
+    shareLinks: {
+      anime: 'https://anilist.co/anime/{id}'
+    },
+    externalLinks: [
+      ['Website', 'https://enime.moe'],
+      ['Discord', 'https://discord.com/invite/nxr8be8WGa'],
+      ['Github', 'https://github.com/Enime-Project/enime.moe']
+    ],
+    languages: ['english'],
+    tags: ['anime', 'dubbed', 'subbed', 'enime'],
+    status: 'working',
+    isNSFW: false,
+    version: '1.0.0'
+  },
+  kickassanime: {
+    name: 'KickAssAnime',
+    id: 'kickassanime',
+    url: 'https://www2.kickassanime.ro',
+    updateUrl: '',
+    logo: 'https://user-images.githubusercontent.com/65111632/95666535-4f6dba80-0ba6-11eb-8583-e3a2074590e9.png',
+    description:
+      'Watch anime online in high quality for free with English subbed, dubbed. Update daily, No tracking, No paying, No registration required.',
+    scripts: {
+      search: (async (query: string, page = 1, perPage = 25) => {
+        const url = new URL(`https://api.consumet.org/meta/anilist/${query}`);
+        url.searchParams.set('page', String(page));
+        url.searchParams.set('perPage', String(perPage));
+
+        const results = (await fetch(url).then(r => r.json()))
+          .results as Anime[];
+        return results;
+      }).toString(),
+      fetchTrendingAnime: (async (page = 1, perPage = 25) => {
+        const trending = (
+          await fetch(
+            `https://api.consumet.org/meta/anilist/trending?page=${page}&perPage=${perPage}`
+          ).then(r => r.json())
+        ).results as Anime[];
+        return trending;
+      }).toString(),
+      fetchPopularAnime: (async (page = 1, perPage = 25) => {
+        const popular = (
+          await fetch(
+            `https://api.consumet.org/meta/anilist/popular?page=${page}&perPage=${perPage}`
+          ).then(r => r.json())
+        ).results as Anime[];
+        return popular;
+      }).toString(),
+      fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
+        const recent = (
+          await fetch(
+            `https://api.consumet.org/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+          ).then(r => r.json())
+        ).results as RecentAnime[];
+        return recent;
+      }).toString(),
+      fetchAiringSchedule: '',
+      fetchAnimeInfo: (async (
+        id: string,
+        isSub: boolean,
+        isFiller: boolean
+      ) => {
+        const url = new URL(`https://api.consumet.org/meta/anilist/info/${id}`);
+        url.searchParams.set('provider', 'enime');
+        url.searchParams.set('dub', String(!isSub));
+        url.searchParams.set('fetchFiller', String(isFiller));
+        const res = await fetch(url.toString());
+        const anime: Anime = await res.json();
+        return {
+          ...anime,
+          episodes: anime.episodes.sort((a, b) => a.number - b.number)
+        };
+      }).toString(),
+      fetchEpisodes: (async (id: string) => {
+        const res = await fetch(
+          `https://api.consumet.org/meta/anilist/watch/${id}?provider=enime`
+        );
+        const episode: EpisodeData = await res.json();
+        return episode;
+      }).toString()
+    },
+    shareLinks: {
+      anime: 'https://anilist.co/anime/{id}'
+    },
+    externalLinks: [
+      ['Website', 'https://www2.kickassanime.ro'],
+      ['Discord', 'https://discord.gg/qduzrvTG6p'],
+      ['Telegram', 'https://t.me/kickassanimev3']
+    ],
+    languages: ['english'],
+    tags: ['anime', 'dubbed', 'subbed', 'enime'],
+    status: 'working',
+    isNSFW: false,
+    version: '1.0.0'
   }
 };
 

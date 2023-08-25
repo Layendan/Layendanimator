@@ -16,14 +16,16 @@ export type DownloadedEpisode = {
   episode: EpisodeData;
 };
 
+export type DownloadedAnime = {
+  [key: string]: { anime: Anime; episodes: { [key: string]: EpisodeData } };
+};
+
 function createDownloads() {
-  const dict: {
-    [key: string]: { anime: Anime; episodes: { [key: string]: EpisodeData } };
-  } = {};
-  const { subscribe, set, update } = writable(dict);
+  const dict: DownloadedAnime = {};
+  const { subscribe, set, update } = writable<DownloadedAnime>(dict);
   return {
     subscribe,
-    set: (downloads: typeof dict) => {
+    set: (downloads: DownloadedAnime) => {
       set(downloads);
       store?.set('downloads', downloads);
     },
@@ -96,7 +98,7 @@ function createDownloads() {
     initialize: async () => {
       const StoreImport = (await import('tauri-plugin-store-api')).Store;
       store ??= new StoreImport('.downloads.dat');
-      const data = await store.get<typeof dict>('downloads');
+      const data = await store.get<DownloadedAnime>('downloads');
       if (data) {
         set(data);
       } else {

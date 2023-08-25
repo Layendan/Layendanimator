@@ -3,8 +3,31 @@
   import PlaceholderAnimeCard from '$lib/components/PlaceholderAnimeCard.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
   import SubscriptionCarousel from '$lib/components/SubscriptionCarousel.svelte';
-  import { convertAnime, downloads } from '$lib/model/downloads';
+  import {
+    convertAnime,
+    downloads,
+    type DownloadedAnime
+  } from '$lib/model/downloads';
   import { watching } from '$lib/model/watch';
+  import { derived } from 'svelte/store';
+
+  const animes = derived<typeof downloads, DownloadedAnime>(
+    downloads,
+    ($downloads, set) => {
+      Promise.all(
+        Object.entries($downloads).map(async ([id, download]) => {
+          const anime = await convertAnime(download.anime);
+          return { id, result: { ...download, anime } };
+        })
+      ).then(async data => {
+        const animes = data.reduce((acc, { id, result }) => {
+          acc[id] = result;
+          return acc;
+        }, {} as DownloadedAnime);
+        set(animes);
+      });
+    }
+  );
 </script>
 
 <!-- Downloads -->
@@ -18,24 +41,26 @@
       Downloaded Animes
     </a>
 
-    {#each Object.entries($downloads) as [id, { anime }] (id)}
-      {#await convertAnime(anime)}
+    {#if !$animes}
+      {#each Object.keys($downloads) as { }}
         <PlaceholderAnimeCard />
-      {:then anime}
+      {:else}
+        <div class="flex items-center justify-center">
+          <p
+            class="text-xl font-semibold text-center text-base-content text-opacity-70"
+          >
+            No Downloads
+          </p>
+        </div>
+      {/each}
+    {:else}
+      {#each Object.entries($animes) as [id, { anime }] (id)}
         <AnimeCard
           {anime}
           href="/library/downloads/{anime.source.id}/{anime.id}"
         />
-      {/await}
-    {:else}
-      <div class="flex items-center justify-center">
-        <p
-          class="text-xl font-semibold text-center text-base-content text-opacity-70"
-        >
-          No Downloads
-        </p>
-      </div>
-    {/each}
+      {/each}
+    {/if}
   </ScrollCarousel>
 
   <div class="divider" />

@@ -108,7 +108,7 @@
       class:skeleton={showSkeleton}
     />
   {/key}
-  <div class="scrim pointer-events-none absolute inset-0" />
+  <div class="scrim pointer-events-none absolute inset-0 translate-y-1" />
   <div
     class="absolute inset-0 flex items-end bg-gradient-to-tr from-base-100/50
         {doFade ? 'motion-safe:!opacity-0' : 'motion-safe:opacity-100'}

@@ -6,7 +6,7 @@
   export let color: string | undefined = undefined;
 
   let imageLoaded = true;
-  let showSkeleton = true;
+  let skeleton = true;
 </script>
 
 <a
@@ -28,8 +28,8 @@
         src={imageLoaded ? character.image : '/assets/loading_failure.jpeg'}
         alt={character.name.full}
         on:error|once={() => (imageLoaded = false)}
-        on:load|once={() => (showSkeleton = false)}
-        class:skeleton={showSkeleton}
+        on:load|once={() => (skeleton = false)}
+        class:skeleton
       />
     </div>
   </div>

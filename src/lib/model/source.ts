@@ -220,7 +220,7 @@ export const defaultProviders: { [key: string]: Provider } = {
     id: 'enime',
     url: 'https://enime.moe',
     updateUrl: '',
-    logo: 'https://enime.moe/favicon.ico',
+    logo: 'https://avatars.githubusercontent.com/u/74993083',
     description:
       'Watch anime online in high quality for free with English subbed, dubbed. Update daily, No tracking, No paying, No registration required.',
     scripts: {

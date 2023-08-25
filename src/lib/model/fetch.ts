@@ -12,7 +12,7 @@ import { error } from '@sveltejs/kit';
 import { get } from 'svelte/store';
 import { notifications } from './notifications';
 import { settings } from './settings';
-import type { Provider } from './source';
+import { providers, type Provider } from './source';
 import { subscriptions, unwatchedSubscriptions } from './subscriptions';
 
 const timeout = 15_000;
@@ -22,8 +22,13 @@ export async function fetchRecentEpisodes(
   page?: number,
   perPage?: number
 ) {
+  const userSource = get(providers)[source.id];
+
+  if (!userSource?.scripts?.fetchRecentEpisodes)
+    throw error(500, 'Source script not found');
+
   const results = await safeEval<RecentAnime[]>(
-    source.scripts.fetchRecentEpisodes,
+    userSource.scripts.fetchRecentEpisodes,
     { args: [page, perPage] }
   );
   const recent = results.map(anime => ({
@@ -47,9 +52,17 @@ export async function fetchTrendingAnime(
   page?: number,
   perPage?: number
 ) {
-  const results = await safeEval<Anime[]>(source.scripts.fetchTrendingAnime, {
-    args: [page, perPage]
-  });
+  const userSource = get(providers)[source.id];
+
+  if (!userSource?.scripts?.fetchTrendingAnime)
+    throw error(500, 'Source script not found');
+
+  const results = await safeEval<Anime[]>(
+    userSource.scripts.fetchTrendingAnime,
+    {
+      args: [page, perPage]
+    }
+  );
   const trending = results.map(anime => ({
     ...anime,
     source
@@ -71,9 +84,17 @@ export async function fetchPopularAnime(
   page?: number,
   perPage?: number
 ) {
-  const results = await safeEval<Anime[]>(source.scripts.fetchPopularAnime, {
-    args: [page, perPage]
-  });
+  const userSource = get(providers)[source.id];
+
+  if (!userSource?.scripts?.fetchPopularAnime)
+    throw error(500, 'Source script not found');
+
+  const results = await safeEval<Anime[]>(
+    userSource.scripts.fetchPopularAnime,
+    {
+      args: [page, perPage]
+    }
+  );
   const popular = results.map(anime => ({
     ...anime,
     source
@@ -87,8 +108,13 @@ export async function fetchPopularAnime(
 }
 
 export async function fetchAnime(id: string, source: Provider): Promise<Anime> {
+  const userSource = get(providers)[source.id];
+
+  if (!userSource?.scripts?.fetchAnimeInfo)
+    throw error(500, 'Source script not found');
+
   const { isSubtitles, filler } = get(settings);
-  const res: Anime = await safeEval<Anime>(source.scripts.fetchAnimeInfo, {
+  const res: Anime = await safeEval<Anime>(userSource.scripts.fetchAnimeInfo, {
     args: [id, isSubtitles, filler]
   });
 
@@ -154,9 +180,17 @@ export async function fetchAnime(id: string, source: Provider): Promise<Anime> {
 }
 
 export async function fetchEpisode(id: string, source: Provider) {
-  const episode = await safeEval<EpisodeData>(source.scripts.fetchEpisodes, {
-    args: [id]
-  });
+  const userSource = get(providers)[source.id];
+
+  if (!userSource?.scripts?.fetchEpisodes)
+    throw error(500, 'Source script not found');
+
+  const episode = await safeEval<EpisodeData>(
+    userSource.scripts.fetchEpisodes,
+    {
+      args: [id]
+    }
+  );
 
   if (episode) {
     episodeCache.set(`${source.id}/${id}`, episode);
@@ -178,8 +212,12 @@ export async function fetchSearch(
   page?: number,
   perPage?: number
 ) {
+  const userSource = get(providers)[source.id];
+
+  if (!userSource?.scripts?.search) throw error(500, 'Source script not found');
+
   const results = (
-    await safeEval<Anime[]>(source.scripts.search, {
+    await safeEval<Anime[]>(userSource.scripts.search, {
       args: [query, page, perPage]
     })
   ).map(anime => ({

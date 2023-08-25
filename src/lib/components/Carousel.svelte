@@ -65,11 +65,11 @@
   );
 
   let imageLoaded = true;
-  let showSkeleton = true;
+  let skeleton = true;
 
   $: if (animeIdx) {
     imageLoaded = true;
-    showSkeleton = true;
+    skeleton = true;
   }
 </script>
 
@@ -101,11 +101,11 @@
         : '/assets/loading_failure.jpeg'}
       alt={animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
       on:error|once={() => (imageLoaded = false)}
-      on:load|once={() => (showSkeleton = false)}
+      on:load|once={() => (skeleton = false)}
       class="h-[60vh] w-full object-cover
     {doFade ? 'motion-safe:opacity-0 ' : 'motion-safe:opacity-100 '}
      transition-opacity duration-300 ease-in-out"
-      class:skeleton={showSkeleton}
+      class:skeleton
     />
   {/key}
   <div class="scrim pointer-events-none absolute inset-0 translate-y-1" />

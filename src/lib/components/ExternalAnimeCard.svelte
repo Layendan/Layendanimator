@@ -6,12 +6,12 @@
   export let anime: Anime;
 
   let imageLoaded = true;
-  let showSkeleton = true;
+  let skeleton = true;
   let element: HTMLImageElement;
 
   $: if (anime.image) {
     imageLoaded = true;
-    showSkeleton = true;
+    skeleton = true;
   }
 </script>
 
@@ -25,13 +25,13 @@
     src={imageLoaded ? anime.image : '/assets/loading_failure.jpeg'}
     alt={anime.title.english ?? anime.title.romaji}
     on:error={() => (imageLoaded = false)}
-    on:load={() => (showSkeleton = false)}
+    on:load={() => (skeleton = false)}
     style:--anime-color={anime.color}
     class="w-full rounded-lg bg-base-200 object-cover shadow-xl ring ring-transparent transition-shadow duration-200
               {anime.color
       ? 'hover:ring-[--anime-color] group-focus-visible:ring-[--anime-color]'
       : 'hover:ring-accent group-focus-visible:ring-accent'}"
-    class:skeleton={showSkeleton}
+    class:skeleton
     bind:this={element}
   />
 </a>

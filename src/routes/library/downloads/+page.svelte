@@ -9,6 +9,7 @@
   } from '$lib/model/downloads';
   import { derived } from 'svelte/store';
 
+  // TODO: Make this only reduce and not map
   const animes = derived<typeof downloads, DownloadedAnime>(
     downloads,
     ($downloads, set) => {

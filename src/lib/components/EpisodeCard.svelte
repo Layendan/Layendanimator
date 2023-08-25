@@ -58,7 +58,7 @@
   }
 
   let imageLoaded = true;
-  let showSkeleton = true;
+  let skeleton = true;
 
   let image: HTMLElement;
   let background: HTMLElement;
@@ -83,10 +83,10 @@
         src={imageLoaded ? episode.image : '/assets/loading_failure.jpeg'}
         alt={episode.title ?? `Episode ${episode.number}`}
         on:error|once={() => (imageLoaded = false)}
-        on:load|once={() => (showSkeleton = false)}
+        on:load|once={() => (skeleton = false)}
         bind:this={image}
         class="card-body relative m-0 aspect-video h-full w-full rounded-md object-cover object-center p-0"
-        class:skeleton={showSkeleton}
+        class:skeleton
       />
       <div class="pointer-events-none relative mx-1">
         <div

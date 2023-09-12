@@ -10,7 +10,9 @@
   import type {
     HLSProvider,
     MediaPlayerElement,
-    MediaProviderChangeEvent
+    MediaProviderChangeEvent,
+    MediaTimeSliderElement,
+    MediaVolumeSliderElement
   } from 'vidstack';
   import { defineCustomElements } from 'vidstack/elements';
   import 'vidstack/styles/base.css';
@@ -69,6 +71,24 @@
     await defineCustomElements();
     player?.onAttach(async () => {
       try {
+        const time = player?.querySelector(
+          'media-time-slider:first-of-type'
+        ) as MediaTimeSliderElement;
+        // set custom seek duration
+        if (time) {
+          time.keyStep = 5;
+          time.shiftKeyMultiplier = 3;
+        }
+
+        const vol = player?.querySelector(
+          'media-volume-slider:first-of-type'
+        ) as MediaVolumeSliderElement;
+        // set custom volume step
+        if (vol) {
+          vol.keyStep = 5;
+          vol.shiftKeyMultiplier = 3;
+        }
+
         if (window.__TAURI__) {
           const os = await getOS();
           if (os !== 'Darwin' && os !== 'Unknown') {
@@ -84,15 +104,22 @@
       } catch (e) {
         console.error(e);
       }
-      if (player) {
-        player.currentTime =
-          (watchedObject?.time ?? 0) < (player.state.duration || anime.duration)
-            ? watchedObject?.time ?? 0
-            : 0;
-        player.enterFullscreen();
-        player.focus();
-      }
+      player?.focus();
     });
+
+    player?.addEventListener(
+      'loaded-data',
+      () => {
+        if (player) {
+          const time = watchedObject?.time ?? 0;
+          player.currentTime =
+            time < (player.state.duration || anime.duration) ? time : 0;
+        }
+      },
+      {
+        once: true
+      }
+    );
 
     console.debug(anime, episodeData, episode);
   });
@@ -123,51 +150,65 @@
 
 <svelte:window on:keydown={keyNext} />
 
-<div class="relative -m-4 mb-4 h-auto w-screen bg-black">
-  <media-player
-    {poster}
-    title={episode.title ?? `Episode ${episode.number}`}
-    aspect-ratio="16/9"
-    style:--video-brand={anime.color ?? 'hsl(var(--a))'}
-    class="mx-auto flex aspect-video w-screen items-center justify-center border-none object-cover md:w-[max(800px,70vw)]"
-    preload="metadata"
-    autoplay
-    {disableRemotePlayback}
-    thumbnails={thumbnails?.url}
-    bind:this={player}
-    on:provider-change={providerChange}
-    on:ended={requestNextEpisode}
-    on:pause={updateWatched}
-    on:error={() => invalidate(`${anime.source}/${anime.id}/${episode.id}`)}
-    on:hls-error={() => invalidate(`${anime.source}/${anime.id}/${episode.id}`)}
-    on:autoplay|once={() => {
-      if (player) {
-        const time = watchedObject?.time ?? 0;
-        player.currentTime =
-          time < (player.state.duration || anime.duration) ? time : 0;
-      }
-    }}
-  >
-    <media-poster alt={episode.description} />
-    <media-outlet>
-      {#each episodeData.sources as source}
-        <source src={source.url} />
-      {/each}
-      {#each episodeData.subtitles ?? [] as track}
-        <track
-          label={track.lang}
-          kind="captions"
-          src={track.url}
-          default={track.lang.toLowerCase() === 'english'}
-        />
-      {/each}
-    </media-outlet>
-    <media-community-skin />
-    <PlayerContextMenu
-      {anime}
-      {episode}
-      element={player}
-      {requestNextEpisode}
-    />
-  </media-player>
-</div>
+<svelte:head>
+  <meta name="referrer" content="no-referrer" />
+</svelte:head>
+
+{#if episodeData.sources}
+  <div class="relative -m-4 mb-4 h-auto w-screen bg-black">
+    <media-player
+      {poster}
+      title={episode.title ?? `Episode ${episode.number}`}
+      aspect-ratio="16/9"
+      style:--video-brand={anime.color ?? 'hsl(var(--a))'}
+      class="mx-auto flex aspect-video w-screen items-center justify-center border-none object-cover md:w-[max(800px,70vw)]"
+      preload="metadata"
+      {disableRemotePlayback}
+      thumbnails={thumbnails?.url}
+      bind:this={player}
+      on:provider-change={providerChange}
+      on:ended={requestNextEpisode}
+      on:pause={updateWatched}
+      on:error={() => invalidate(`${anime.source}/${anime.id}/${episode.id}`)}
+      on:hls-error={() =>
+        invalidate(`${anime.source}/${anime.id}/${episode.id}`)}
+    >
+      <media-poster alt={episode.description} />
+      <media-outlet>
+        {#each episodeData.sources as source}
+          <source
+            src={source.url}
+            type={source.type ||
+              (source.isM3U8 ? 'application/x-mpegURL' : 'video/mp4')}
+          />
+        {/each}
+        {#each episodeData.subtitles ?? [] as track}
+          <track
+            label={track.lang}
+            kind="captions"
+            src={track.url}
+            default={track.lang.toLowerCase() === 'english'}
+          />
+        {/each}
+      </media-outlet>
+      <media-community-skin />
+      <PlayerContextMenu
+        {anime}
+        {episode}
+        element={player}
+        {requestNextEpisode}
+      />
+    </media-player>
+  </div>
+{:else}
+  <div class="flex h-[calc(100vh-4rem)] flex-col items-center justify-center">
+    <p
+      class="text-center text-xl font-semibold text-base-content text-opacity-70"
+    >
+      No Video Urls Found
+    </p>
+    <button class="btn-link" on:click={() => window.history.back()}>
+      Go Back
+    </button>
+  </div>
+{/if}

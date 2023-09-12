@@ -23,7 +23,7 @@
   />
   <div class="flex flex-col justify-start">
     <span class="inline-flex items-center gap-2">
-      <h2 class="text-lg font-semibold">
+      <h2 class="text-left text-lg font-semibold leading-tight">
         {provider.name}
       </h2>
       {#if provider.status != 'unknown'}

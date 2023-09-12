@@ -8,7 +8,7 @@
   export let preHref = '';
   export let watchPercentage = 0.8;
 
-  $: href = `${preHref || `/${anime.source.id}/${anime.id}`}/${
+  $: href = `${preHref}/${anime.source.id}/${anime.id}/${
     hasLastEpisode && lastEpisodeFinished
       ? anime.episodes[0].id
       : nextEpisode.id

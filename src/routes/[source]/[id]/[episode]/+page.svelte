@@ -56,8 +56,9 @@
               replaceState: true
             }
           )
-        : // Maybe Replace State?
-          goto(`/${data.anime.source.id}/${data.anime.id}`));
+        : goto(`/${data.anime.source.id}/${data.anime.id}`, {
+            replaceState: true
+          }));
 
       detail();
     }}
@@ -110,7 +111,7 @@
 
     <AnimeInfo anime={data.anime} />
 
-    {#if data.anime.recommendations.length > 0}
+    {#if (data.anime.recommendations ?? []).length > 0}
       <div class="divider" />
 
       <!-- RECOMMENDATIONS -->
@@ -139,7 +140,7 @@
       </ScrollCarousel>
     {/if}
 
-    {#if data.anime.characters.length > 0}
+    {#if (data.anime.characters ?? []).length > 0}
       <div class="divider" />
 
       <!-- CHARACTERS -->

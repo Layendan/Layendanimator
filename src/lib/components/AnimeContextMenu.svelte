@@ -27,6 +27,7 @@
 
   export let anime: Anime;
   export let element: HTMLElement;
+  export let isDownload = false;
 
   let pos = { x: 0, y: 0 };
   let showMenu = false;
@@ -65,14 +66,22 @@
     </h2>
 
     <li>
-      <a href={`/${anime.source.id}/${anime.id}?autoplay=true`}>
+      <a
+        href={isDownload
+          ? `/library/downloads/${anime.source.id}/${anime.id}?autoplay=true`
+          : `/${anime.source.id}/${anime.id}?autoplay=true`}
+      >
         <Fa icon={faPlayCircle} class="h-3 w-3 text-accent" />
         Watch
       </a>
     </li>
 
     <li>
-      <a href={`/${anime.source.id}/${anime.id}`}>
+      <a
+        href={isDownload
+          ? `/library/downloads/${anime.source.id}/${anime.id}`
+          : `/${anime.source.id}/${anime.id}`}
+      >
         <Fa icon={faInfoCircle} class="h-3 w-3" />
         Details
       </a>

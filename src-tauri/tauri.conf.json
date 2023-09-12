@@ -8,7 +8,7 @@
 	},
 	"package": {
 		"productName": "Layendanimator",
-		"version": "0.1.21"
+		"version": "0.1.22"
 	},
 	"tauri": {
 		"allowlist": {
@@ -110,7 +110,9 @@
 				"decorations": true,
 				"skipTaskbar": true,
 				"contentProtected": false,
-				"additionalBrowserArgs": "--enable-features=OverlayScrollbar --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection"
+				"fileDropEnabled": false,
+				"additionalBrowserArgs": "--enable-features=OverlayScrollbar --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection",
+				"userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
 			}
 		]
 	}

@@ -54,7 +54,7 @@ export type Anime = {
     month: number;
     day: number;
   };
-  nextAiringEpisode: {
+  nextAiringEpisode?: {
     airingTime: number;
     timeUntilAiring: number;
     episode: number;
@@ -133,6 +133,7 @@ export type Source = {
   url: string;
   isM3U8: boolean;
   quality: string;
+  type?: string;
 };
 
 export type RecentAnime = Anime & { episodeNumber: number };

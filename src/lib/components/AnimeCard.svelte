@@ -7,6 +7,7 @@
   export let numUpdates = 0;
   export let extra = '';
   export let href = `/${anime.source.id}/${anime.id}`;
+  export let isDownload = false;
 
   let imageLoaded = true;
   let skeleton = true;
@@ -30,18 +31,20 @@
           {numUpdates}
         </div>
       {/if}
-      <img
-        src={imageLoaded ? anime.image : '/assets/loading_failure.jpeg'}
-        alt={anime.title.english ?? anime.title.romaji}
-        bind:this={element}
-        on:error|once={() => (imageLoaded = false)}
-        on:load|once={() => (skeleton = false)}
-        class="card-body relative m-0 h-full w-full rounded-md bg-base-300 bg-cover bg-center bg-no-repeat object-cover object-center p-0"
-        class:skeleton
-      />
+      {#key anime.image}
+        <img
+          src={imageLoaded ? anime.image : '/assets/loading_failure.jpeg'}
+          alt={anime.title.english ?? anime.title.romaji}
+          bind:this={element}
+          on:error|once={() => (imageLoaded = false)}
+          on:load|once={() => (skeleton = false)}
+          class="card-body relative m-0 h-full w-full rounded-md bg-base-300 bg-cover bg-center bg-no-repeat object-cover object-center p-0"
+          class:skeleton
+        />
+      {/key}
       {#if !!extra}
         <div
-          class="card-body pointer-events-none absolute bottom-3 left-0 right-0 m-0 mx-3 flex h-8 w-auto items-center justify-center rounded-lg bg-base-300 bg-opacity-60 p-0 backdrop-blur-xl"
+          class="card-body pointer-events-none absolute bottom-3 left-0 right-0 m-0 mx-3 flex h-8 w-auto items-center justify-center overflow-hidden rounded-lg bg-base-300 bg-opacity-60 p-0 backdrop-blur-xl"
         >
           <h2
             class="card-title text-center text-sm font-bold capitalize text-base-content mix-blend-luminosity"
@@ -59,5 +62,5 @@
     </h3>
   </a>
 
-  <AnimeContextMenu {anime} {element} />
+  <AnimeContextMenu {anime} {element} {isDownload} />
 {/if}

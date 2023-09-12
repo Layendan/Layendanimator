@@ -2,27 +2,28 @@
   import '../app.css';
   import '../nprogress.css';
 
+  import { goto, invalidateAll } from '$app/navigation';
   import { navigating, page } from '$app/stores';
+  import NavBar from '$lib/components/NavBar.svelte';
+  import NotificationPile from '$lib/components/NotificationPile.svelte';
+  import { animeCache, clearCache } from '$lib/model/cache';
+  import Semaphore from '$lib/model/classes/Semaphore';
+  import { connections } from '$lib/model/connections';
+  import { downloads } from '$lib/model/downloads';
+  import { fetchAnime } from '$lib/model/fetch';
+  import { getOS } from '$lib/model/info';
   import { searchHistory } from '$lib/model/searchHistory';
+  import { settings } from '$lib/model/settings';
   import { providers, source } from '$lib/model/source';
   import {
     subscriptions,
     unwatchedSubscriptions
   } from '$lib/model/subscriptions';
-  import { onDestroy, onMount } from 'svelte';
-
-  import { goto, invalidateAll, preloadData } from '$app/navigation';
-  import NavBar from '$lib/components/NavBar.svelte';
-  import NotificationPile from '$lib/components/NotificationPile.svelte';
-  import { animeCache, clearCache } from '$lib/model/cache';
-  import { connections } from '$lib/model/connections';
-  import { downloads } from '$lib/model/downloads';
-  import { getOS } from '$lib/model/info';
-  import { settings } from '$lib/model/settings';
   import { encodeName, toStyleString } from '$lib/model/theme';
   import { watching } from '$lib/model/watch';
   import type { UnlistenFn } from '@tauri-apps/api/event';
   import NProgress from 'nprogress';
+  import { onDestroy, onMount } from 'svelte';
 
   NProgress.configure({
     // Full list: https://github.com/rstacruz/nprogress#configuration
@@ -31,15 +32,14 @@
   });
 
   const MINUTE = 1000 * 60;
-  let unsubscribe: NodeJS.Timer | undefined = undefined;
+  const semaphore = new Semaphore(5, 1000);
+  let unsubscribe: NodeJS.Timeout | undefined = undefined;
   let tauriUnsubscribe: UnlistenFn;
 
-  $: {
-    if ($navigating) {
-      NProgress.start();
-    } else {
-      NProgress.done();
-    }
+  $: if ($navigating) {
+    NProgress.start();
+  } else {
+    NProgress.done();
   }
 
   let isMac = navigator?.platform?.includes('Mac') ?? false;
@@ -83,26 +83,35 @@
       isMac = (await getOS()) === 'Darwin';
     } catch {
       // Deprecated, would rather not use
-      isMac = navigator.platform.includes('Mac');
+      isMac = navigator?.platform?.includes('Mac');
     }
 
     if (unsubscribe) clearInterval(unsubscribe);
     unsubscribe = setInterval(
       () => {
-        Object.values($unwatchedSubscriptions).forEach(anime => {
-          if (anime.status !== 'Completed' && anime.status !== 'Cancelled')
-            unwatchedSubscriptions.updateDate(anime);
-          preloadData(`/${anime.source.id}/${anime.id}`);
-        });
-        Object.values($subscriptions).forEach(anime => {
-          if (anime.status !== 'Completed' && anime.status !== 'Cancelled')
-            subscriptions.updateDate(anime);
-          preloadData(`/${anime.source.id}/${anime.id}`);
+        const totalSubs = [
+          ...Object.values($subscriptions).filter(
+            anime =>
+              anime.status !== 'Completed' && anime.status !== 'Cancelled'
+          ),
+          ...Object.values($unwatchedSubscriptions).filter(
+            anime =>
+              anime.status !== 'Completed' && anime.status !== 'Cancelled'
+          )
+        ];
+        totalSubs.forEach(anime => {
+          semaphore.callFunction(
+            () => fetchAnime(anime.id, anime.source),
+            `${anime.source.id}/${anime.id}`
+          );
         });
       },
-      animeCache.ttl || MINUTE * 30
+      animeCache.ttl + MINUTE || MINUTE * 31
     );
-    console.debug('Subscriptions cache TTL:', animeCache.ttl || MINUTE * 30);
+    console.debug(
+      'Subscriptions cache TTL:',
+      animeCache.ttl + MINUTE || MINUTE * 31
+    );
   });
 
   onDestroy(() => {

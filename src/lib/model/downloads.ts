@@ -150,6 +150,16 @@ function createDownloading() {
     });
   };
 
+  const cancel = async (id: string) => {
+    videos.removeFunction(id);
+    subtitles.removeFunction(id);
+    images.removeFunction(id);
+
+    remove(id);
+    const { emit } = await import('@tauri-apps/api/event');
+    emit(`download-cancel-${encodeId(id)}`);
+  };
+
   return {
     subscribe,
     set,
@@ -209,10 +219,10 @@ function createDownloading() {
           }
 
           if (!episodeUrl) {
-            console.error('Source not found');
+            console.error('Video url not found');
             notifications.addNotification({
-              title: 'Source not found',
-              message: `Could not find source for ${
+              title: 'Video url not found',
+              message: `Could not find video url for ${
                 anime.title.english ?? anime.title.romaji
               } Episode ${episodeNumber}`,
               type: 'error'
@@ -543,17 +553,14 @@ function createDownloading() {
       }
     },
     remove,
-    cancel: async (id: string) => {
-      videos.removeFunction(id);
-      subtitles.removeFunction(id);
-      images.removeFunction(id);
-
-      remove(id);
-      const { emit } = await import('@tauri-apps/api/event');
-      emit(`download-cancel-${encodeId(id)}`);
-    },
+    cancel,
     clear: () => {
-      set({});
+      update(downloads => {
+        Object.keys(downloads).forEach(id => {
+          cancel(id);
+        });
+        return {};
+      });
     }
   };
 }

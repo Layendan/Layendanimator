@@ -36,7 +36,7 @@
     </h1>
   </slot>
   <div class="relative {useGrid ? 'useGrid' : 'scroll'}">
-    {#each episodes as episode (episode.id)}
+    {#each episodes ?? [] as episode (episode.id)}
       <EpisodeCard
         {anime}
         {episode}

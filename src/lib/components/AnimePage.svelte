@@ -28,7 +28,7 @@
   let showImage: boolean;
   $: reversedEpisodes = [...(data.episodes ?? [])].reverse();
   $: sortedEpisodes = isAscending ? data.episodes : reversedEpisodes;
-  $: relations = data.relations.filter(
+  $: relations = (data.relations ?? []).filter(
     a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT'
   );
   $: lastWatched = $watching[`${data.source.id}/${data.id}`];
@@ -55,6 +55,9 @@
             watchPercentage
           );
         })}
+    href={showDownload
+      ? undefined
+      : `/library/downloads/${data.source.id}/${data.id}`}
     bind:showImage
   >
     <div slot="header" class="flex justify-between">
@@ -65,7 +68,11 @@
           Episodes
         </h1>
         {#if data.episodes.length > 0}
-          <PlayNextButton anime={data} {watchPercentage} />
+          <PlayNextButton
+            anime={data}
+            {watchPercentage}
+            preHref={showDownload ? '' : '/library/downloads'}
+          />
         {/if}
       </div>
       {#if data.episodes.length > 0}
@@ -188,13 +195,13 @@
   </EpisodeCarousel>
 
   {#if showDownload}
-    {#if data.recommendations.length > 0}
+    {#if (data.recommendations ?? []).length > 0}
       <div class="divider" />
 
       <!-- RECOMMENDATIONS -->
       <ScrollCarousel>
         <svelte:fragment slot="title">Recommendations</svelte:fragment>
-        {#each data.recommendations as anime (anime.id)}
+        {#each data.recommendations ?? [] as anime (anime.id)}
           <AnimeCard {anime} />
         {/each}
       </ScrollCarousel>
@@ -217,7 +224,7 @@
       </ScrollCarousel>
     {/if}
 
-    {#if data.characters.length > 0}
+    {#if (data.characters ?? []).length > 0}
       <div class="divider" />
 
       <!-- CHARACTERS -->

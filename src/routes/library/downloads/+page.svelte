@@ -45,6 +45,7 @@
       <AnimeCard
         {anime}
         href="/library/downloads/{anime.source.id}/{anime.id}"
+        isDownload
       />
     {/each}
   {/if}

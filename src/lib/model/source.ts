@@ -96,9 +96,10 @@ export const defaultProviders: { [key: string]: Provider } = {
         url.searchParams.set('fetchFiller', String(isFiller));
         const res = await fetch(url.toString());
         const anime: Anime = await res.json();
+        if (!anime) return undefined;
         return {
           ...anime,
-          episodes: anime.episodes.sort((a, b) => a.number - b.number)
+          episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
         };
       }).toString(),
       fetchEpisodes: (async (id: string) => {
@@ -134,7 +135,7 @@ export const defaultProviders: { [key: string]: Provider } = {
     updateUrl: '',
     logo: '/assets/aniwatch-logo.png',
     description:
-      'Watch anime online in high quality for free with English subbed, dubbed. Update daily, No tracking, No paying, No registration required.',
+      'AniWatch.to is a free site to watch anime and you can even download subbed or dubbed anime in ultra HD quality without any registration or payment. By having only one ads in all kinds, we are trying to make it the safest site for free anime.',
     scripts: {
       search: (async (query: string, page = 1, perPage = 25) => {
         const url = new URL(`https://api.consumet.org/meta/anilist/${query}`);
@@ -181,9 +182,10 @@ export const defaultProviders: { [key: string]: Provider } = {
         url.searchParams.set('fetchFiller', String(isFiller));
         const res = await fetch(url.toString());
         const anime: Anime = await res.json();
+        if (!anime) return;
         return {
           ...anime,
-          episodes: anime.episodes.sort((a, b) => a.number - b.number)
+          episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
         };
       }).toString(),
       fetchEpisodes: (async (id: string) => {
@@ -222,7 +224,7 @@ export const defaultProviders: { [key: string]: Provider } = {
     updateUrl: '',
     logo: 'https://avatars.githubusercontent.com/u/74993083',
     description:
-      'Watch anime online in high quality for free with English subbed, dubbed. Update daily, No tracking, No paying, No registration required.',
+      'An anime streaming site based on Enime API. Just hop in and watch with speed without VPN or ads.',
     scripts: {
       search: (async (query: string, page = 1, perPage = 25) => {
         const url = new URL(`https://api.consumet.org/meta/anilist/${query}`);
@@ -269,9 +271,10 @@ export const defaultProviders: { [key: string]: Provider } = {
         url.searchParams.set('fetchFiller', String(isFiller));
         const res = await fetch(url.toString());
         const anime: Anime = await res.json();
+        if (!anime) return;
         return {
           ...anime,
-          episodes: anime.episodes.sort((a, b) => a.number - b.number)
+          episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
         };
       }).toString(),
       fetchEpisodes: (async (id: string) => {
@@ -350,9 +353,10 @@ export const defaultProviders: { [key: string]: Provider } = {
         url.searchParams.set('fetchFiller', String(isFiller));
         const res = await fetch(url.toString());
         const anime: Anime = await res.json();
+        if (!anime) return;
         return {
           ...anime,
-          episodes: anime.episodes.sort((a, b) => a.number - b.number)
+          episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
         };
       }).toString(),
       fetchEpisodes: (async (id: string) => {
@@ -369,10 +373,145 @@ export const defaultProviders: { [key: string]: Provider } = {
     externalLinks: [
       ['Website', 'https://www2.kickassanime.ro'],
       ['Discord', 'https://discord.gg/qduzrvTG6p'],
-      ['Telegram', 'https://t.me/kickassanimev3']
+      ['Telegram', 'https://t.me/kickassanimev3'],
+      ['YouTube', 'https://www.youtube.com/@real_kickassanime'],
+      ['Twitter', 'https://twitter.com/OfficalKaa'],
+      ['Reddit', 'https://www.reddit.com/r/KickAssAnime/'],
+      ['Instagram', 'https://www.instagram.com/officialkaa_real/'],
+      ['TikTok', 'https://www.tiktok.com/@officalkaa']
     ],
     languages: ['english'],
     tags: ['anime', 'dubbed', 'subbed', 'enime'],
+    status: 'working',
+    isNSFW: false,
+    version: '1.0.0'
+  },
+  aniwave: {
+    name: 'AniWave',
+    id: 'aniwave',
+    url: 'aniwave.to',
+    updateUrl: '',
+    logo: 'https://cdn2.steamgriddb.com/file/sgdb-cdn/icon_thumb/21b203a02c91d5272135dbbebe6afc00.png',
+    description:
+      'Aniwave is a free anime streaming site where you can watch anime online in HD quality for free with English subtitles or dubbing. You can also download any anime you want without registration or payment required. Everything is free!',
+    scripts: {
+      search: (async (query: string, page = 1, perPage = 25) => {
+        const url = new URL(`https://api.consumet.org/meta/anilist/${query}`);
+        url.searchParams.set('page', String(page));
+        url.searchParams.set('perPage', String(perPage));
+
+        const results = (await fetch(url).then(r => r.json()))
+          .results as Anime[];
+        return results;
+      }).toString(),
+      fetchTrendingAnime: (async (page = 1, perPage = 25) => {
+        const trending = (
+          await fetch(
+            `https://api.consumet.org/meta/anilist/trending?page=${page}&perPage=${perPage}`
+          ).then(r => r.json())
+        ).results as Anime[];
+        return trending;
+      }).toString(),
+      fetchPopularAnime: (async (page = 1, perPage = 25) => {
+        const popular = (
+          await fetch(
+            `https://api.consumet.org/meta/anilist/popular?page=${page}&perPage=${perPage}`
+          ).then(r => r.json())
+        ).results as Anime[];
+        return popular;
+      }).toString(),
+      fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
+        const recent = (
+          await fetch(
+            `https://api.consumet.org/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+          ).then(r => r.json())
+        ).results as RecentAnime[];
+        return recent;
+      }).toString(),
+      fetchAiringSchedule: '',
+      fetchAnimeInfo: (async (
+        id: string,
+        isSub: boolean,
+        isFiller: boolean
+      ) => {
+        const url = new URL(`https://api.consumet.org/meta/anilist/info/${id}`);
+        url.searchParams.set('provider', 'nineanime');
+        url.searchParams.set('dub', String(!isSub));
+        url.searchParams.set('fetchFiller', String(isFiller));
+        const res = await fetch(url.toString());
+        const anime: Anime = await res.json();
+        if (!anime) return;
+        return {
+          ...anime,
+          episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
+        };
+      }).toString(),
+      fetchEpisodes: (async (id: string) => {
+        const res = await fetch(
+          `https://api.consumet.org/meta/anilist/watch/${id}?provider=nineanime`
+        );
+        const episode: EpisodeData = await res.json();
+        return episode;
+      }).toString()
+    },
+    shareLinks: {
+      anime: 'https://anilist.co/anime/{id}'
+    },
+    externalLinks: [
+      ['Website', 'https://aniwave.to/home'],
+      ['Discord', 'https://discord.com/invite/KRQQKzQ6CS'],
+      ['Reddit', 'https://www.reddit.com/r/9anime/'],
+      ['Twitter', 'https://twitter.com/9animeOfficial']
+    ],
+    languages: ['english'],
+    tags: ['anime', 'dubbed', 'subbed', '9anime', 'aniwave'],
+    status: 'working',
+    isNSFW: false,
+    version: '1.0.0'
+  },
+  wco: {
+    name: 'Watch Cartoons Online',
+    id: 'wco',
+    url: 'https://www.wcostream.org',
+    updateUrl: '',
+    logo: 'https://www.wcostream.org/wp-content/themes/animewp78712/images/logo.gif',
+    description: 'Watch cartoons online, Watch anime online, English dub anime',
+    scripts: {
+      search: (async (query: string) => {
+        const url = new URL(`search/${query}`, 'http://4.157.182.195:3000/');
+        const results: Anime[] = await fetch(url).then(r => r.json());
+        return results;
+      }).toString(),
+      fetchTrendingAnime: '',
+      fetchPopularAnime: '',
+      fetchRecentEpisodes: (async () => {
+        const results: RecentAnime[] = await fetch(
+          'http://4.157.182.195:3000/recent'
+        ).then(r => r.json());
+        return results;
+      }).toString(),
+      fetchAiringSchedule: '',
+      fetchAnimeInfo: (async (id: string) => {
+        const results: Anime = await fetch(
+          `http://4.157.182.195:3000/${id}`
+        ).then(r => r.json());
+        return results;
+      }).toString(),
+      fetchEpisodes: (async (id: string) => {
+        const url = new URL(`watch/${id}`, 'http://4.157.182.195:3000/');
+        const episode: EpisodeData = await fetch(url.toString()).then(r =>
+          r.json()
+        );
+        return episode;
+      }).toString()
+    },
+    shareLinks: {
+      anime: 'https://www.wcostream.org/anime/{id}',
+      episode: 'https://www.wcostream.org/{episode}'
+    },
+    externalLinks: [['Website', 'https://www.wcostream.org/']],
+    languages: ['english'],
+    tags: ['anime', 'dubbed', 'subbed', 'wco', 'wcostream'],
     status: 'working',
     isNSFW: false,
     version: '1.0.0'

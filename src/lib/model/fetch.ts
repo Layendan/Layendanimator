@@ -121,11 +121,11 @@ export async function fetchAnime(id: string, source: Provider): Promise<Anime> {
   if (res) {
     const anime = {
       ...res,
-      recommendations: res.recommendations.map(r => ({
+      recommendations: (res.recommendations ?? []).map(r => ({
         ...r,
         source
       })),
-      relations: res.relations.map(r => ({
+      relations: (res.relations ?? []).map(r => ({
         ...r,
         source
       })),
@@ -145,12 +145,15 @@ export async function fetchAnime(id: string, source: Provider): Promise<Anime> {
           anime,
           anime.episodes.length - sub.episodes.length
         );
-      } else
+      } else {
         subscriptions.updateDate({
           ...anime,
-          nextAiringEpisode: sub.nextAiringEpisode ?? anime.nextAiringEpisode,
+          nextAiringEpisode: anime.nextAiringEpisode
+            ? sub.nextAiringEpisode ?? anime.nextAiringEpisode
+            : undefined,
           status: sub.status ?? anime.status
         });
+      }
     } else if (unwatched) {
       if (unwatched.episodes.length < anime.episodes.length)
         unwatchedSubscriptions.add(
@@ -159,13 +162,15 @@ export async function fetchAnime(id: string, source: Provider): Promise<Anime> {
             unwatched.episodes.length +
             unwatched.newEpisodes
         );
-      else
+      else {
         unwatchedSubscriptions.updateDate({
           ...anime,
-          nextAiringEpisode:
-            unwatched.nextAiringEpisode ?? anime.nextAiringEpisode,
+          nextAiringEpisode: anime.nextAiringEpisode
+            ? unwatched.nextAiringEpisode ?? anime.nextAiringEpisode
+            : undefined,
           status: unwatched.status ?? anime.status
         });
+      }
     }
 
     return anime;
@@ -253,9 +258,14 @@ export async function safeEval<T>(
           '(',
           function () {
             addEventListener('message', async (e: MessageEvent) => {
-              const functionStr = e.data.shift();
-              const functionObj = new Function(`return ${functionStr}`)();
-              postMessage(await functionObj(...e.data));
+              try {
+                const functionStr = e.data.shift();
+                const functionObj = new Function(`return ${functionStr}`)();
+                postMessage(await functionObj(...e.data));
+              } catch (err) {
+                console.error(err);
+                postMessage({ error: (err as Error).message });
+              }
             });
           }.toString(),
           ')()'
@@ -268,12 +278,13 @@ export async function safeEval<T>(
 
     URL.revokeObjectURL(blobURL);
 
-    worker.onmessage = function (evt) {
+    worker.onmessage = evt => {
       worker.terminate();
-      resolve(evt.data);
+      if (evt.data.error) reject(new Error(evt.data.error));
+      else resolve(evt.data);
     };
 
-    worker.onerror = function (evt) {
+    worker.onerror = evt => {
       worker.terminate();
       reject(new Error(evt.message));
     };
@@ -281,7 +292,7 @@ export async function safeEval<T>(
     worker.postMessage([code, ...(settings?.args ?? [])]);
 
     setTimeout(
-      function () {
+      () => {
         worker.terminate();
         reject(new Error('The worker timed out.'));
       },

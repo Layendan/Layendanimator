@@ -211,14 +211,13 @@ function createDownloading() {
             throw new Error('Episode not found');
           }
 
-          let episodeUrl = cache.sources?.find(s => s.quality === quality)?.url;
+          let episode = cache.sources?.find(s => s.quality === quality);
 
-          if (!episodeUrl) {
-            episodeUrl = cache.sources?.[0]?.url;
-            quality = cache.sources?.[0]?.quality;
+          if (!episode) {
+            episode = cache.sources?.[0];
           }
 
-          if (!episodeUrl) {
+          if (!episode || !episode?.url) {
             console.error('Video url not found');
             notifications.addNotification({
               title: 'Video url not found',
@@ -227,20 +226,31 @@ function createDownloading() {
               } Episode ${episodeNumber}`,
               type: 'error'
             });
-            return Promise.reject();
+            return Promise.reject('Video url not found');
           }
 
           const videoElement = document.createElement('video');
           let duration = 0;
-          if (Hls.isSupported()) {
+
+          if (Hls.isSupported() && episode.isM3U8) {
             const hls = new Hls();
-            hls.loadSource(episodeUrl);
+            hls.loadSource(episode.url);
             hls.attachMedia(videoElement);
             hls.once(Hls.Events.LEVEL_LOADED, (_, data) => {
               duration = data.details.totalduration;
               hls.destroy();
               videoElement.remove();
             });
+          } else if (episode.isM3U8) {
+            console.error('M3U8 not supported');
+            notifications.addNotification({
+              title: 'M3U8 not supported',
+              message: `Could not download the video for ${
+                anime.title.english ?? anime.title.romaji
+              } Episode ${episodeNumber}`,
+              type: 'error'
+            });
+            return Promise.reject('M3U8 not supported');
           }
 
           const path = await join(
@@ -249,66 +259,100 @@ function createDownloading() {
             `${anime.source.id}.${anime.id}.${episodeId}.mp4`
           );
 
-          // -i {input} -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 {output} -hwaccel auto -y
-          const command = Command.sidecar('bin/ffmpeg', [
-            '-i',
-            episodeUrl,
-            '-bsf:a',
-            'aac_adtstoasc',
-            '-vcodec',
-            'copy',
-            '-c',
-            'copy',
-            '-crf',
-            '50',
-            path,
-            '-hwaccel',
-            'auto',
-            '-progress',
-            '-',
-            '-nostats',
-            '-y'
-          ]);
-
-          command.stdout.on('data', data => {
-            const str = data.toString();
-            const match = str.match(/time=(\d+):(\d+):(\d+)/);
-            if (match) {
-              const [, hours, minutes, seconds] = match;
-              const totalSeconds =
-                parseInt(hours) * 3600 +
-                parseInt(minutes) * 60 +
-                parseInt(seconds);
-              update(downloads => {
-                downloads[id].progress = Math.min(
-                  totalSeconds / (duration || anime.duration * 60),
-                  1
-                );
-                return downloads;
-              });
-            }
-          });
-
-          const child = await command.spawn();
-          const unlisten = await once(`download-cancel-${encodeId(id)}`, () => {
-            console.debug('Killed: ', path);
-            command.emit('error', 'Killed');
-            child.kill();
-          });
-
           try {
-            await new Promise((resolve, reject) =>
-              command.once('close', resolve).once('error', reject)
-            );
-            console.debug('Downloaded: ', path);
-            return path;
+            await (episode.isM3U8
+              ? async () => {
+                  const options = [
+                    '-i',
+                    episode!.url,
+                    '-bsf:a',
+                    'aac_adtstoasc',
+                    '-vcodec',
+                    'copy',
+                    '-c',
+                    'copy',
+                    '-crf',
+                    '50',
+                    path,
+                    '-hwaccel',
+                    'auto',
+                    '-progress',
+                    '-',
+                    '-nostats',
+                    '-y'
+                  ];
+
+                  // -i {input} -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 {output} -hwaccel auto -y
+                  const command = Command.sidecar('bin/ffmpeg', options);
+
+                  command.stdout.on('data', data => {
+                    const str = data.toString();
+                    const match = str.match(/time=(\d+):(\d+):(\d+)/);
+                    if (match) {
+                      const [, hours, minutes, seconds] = match;
+                      const totalSeconds =
+                        parseInt(hours) * 3600 +
+                        parseInt(minutes) * 60 +
+                        parseInt(seconds);
+                      update(downloads => {
+                        downloads[id].progress = Math.min(
+                          totalSeconds / (duration || anime.duration * 60),
+                          1
+                        );
+                        return downloads;
+                      });
+                    }
+                  });
+
+                  const child = await command.spawn();
+                  const unlisten = await once(
+                    `download-cancel-${encodeId(id)}`,
+                    () => {
+                      console.debug('Killed: ', path);
+                      command.emit('error', 'Killed');
+                      child.kill();
+                    }
+                  );
+
+                  try {
+                    await new Promise((resolve, reject) =>
+                      command.once('close', resolve).once('error', reject)
+                    );
+                    console.debug('Downloaded: ', path);
+                    return path;
+                  } catch (e) {
+                    console.error(e);
+                    removeFile(path);
+                    return Promise.reject(e);
+                  } finally {
+                    unlisten();
+                  }
+                }
+              : async () => {
+                  const response = await fetch<Uint8Array>(episode!.url, {
+                    method: 'GET',
+                    responseType: ResponseType.Binary
+                  });
+
+                  if (!response.ok) {
+                    console.error(response);
+                    return Promise.reject();
+                  }
+
+                  const buffer = response.data;
+                  await writeBinaryFile(path, buffer);
+
+                  console.debug('Downloaded: ', path);
+
+                  return path;
+                })();
           } catch (e) {
             console.error(e);
             removeFile(path);
             return Promise.reject(e);
-          } finally {
-            unlisten();
           }
+
+          return path;
         }, id);
 
         const cache =
@@ -513,7 +557,8 @@ function createDownloading() {
             {
               url: video,
               quality,
-              isM3U8: false
+              isM3U8: false,
+              type: 'video/mp4'
             }
           ],
           subtitles: captionResults.map(path => ({

@@ -52,7 +52,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       'Watch anime online in high quality for free with English subbed, dubbed. Update daily, No tracking, No paying, No registration required.',
     scripts: {
       search: (async (query: string, page = 1, perPage = 25) => {
-        const url = new URL(`https://api.consumet.org/meta/anilist/${query}`);
+        const url = new URL(`http://20.83.84.203:3000/meta/anilist/${query}`);
         url.searchParams.set('page', String(page));
         url.searchParams.set('perPage', String(perPage));
 
@@ -63,7 +63,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchTrendingAnime: (async (page = 1, perPage = 25) => {
         const trending = (
           await fetch(
-            `https://api.consumet.org/meta/anilist/trending?page=${page}&perPage=${perPage}`
+            `http://20.83.84.203:3000/meta/anilist/trending?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return trending;
@@ -71,7 +71,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchPopularAnime: (async (page = 1, perPage = 25) => {
         const popular = (
           await fetch(
-            `https://api.consumet.org/meta/anilist/popular?page=${page}&perPage=${perPage}`
+            `http://20.83.84.203:3000/meta/anilist/popular?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return popular;
@@ -79,7 +79,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
         const recent = (
           await fetch(
-            `https://api.consumet.org/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+            `http://20.83.84.203:3000/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as RecentAnime[];
         return recent;
@@ -90,7 +90,7 @@ export const defaultProviders: { [key: string]: Provider } = {
         isSub: boolean,
         isFiller: boolean
       ) => {
-        const url = new URL(`https://api.consumet.org/meta/anilist/info/${id}`);
+        const url = new URL(`http://20.83.84.203:3000/meta/anilist/info/${id}`);
         url.searchParams.set('provider', 'gogoanime');
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
@@ -104,7 +104,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(
-          `https://api.consumet.org/meta/anilist/watch/${id}?provider=gogoanime`
+          `http://20.83.84.203:3000/meta/anilist/watch/${id}?provider=gogoanime`
         );
         const episodes: EpisodeData = await res.json();
         return episodes;
@@ -138,7 +138,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       'AniWatch.to is a free site to watch anime and you can even download subbed or dubbed anime in ultra HD quality without any registration or payment. By having only one ads in all kinds, we are trying to make it the safest site for free anime.',
     scripts: {
       search: (async (query: string, page = 1, perPage = 25) => {
-        const url = new URL(`https://api.consumet.org/meta/anilist/${query}`);
+        const url = new URL(`http://20.83.84.203:3000/meta/anilist/${query}`);
         url.searchParams.set('page', String(page));
         url.searchParams.set('perPage', String(perPage));
 
@@ -149,7 +149,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchTrendingAnime: (async (page = 1, perPage = 25) => {
         const trending = (
           await fetch(
-            `https://api.consumet.org/meta/anilist/trending?page=${page}&perPage=${perPage}`
+            `http://20.83.84.203:3000/meta/anilist/trending?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return trending;
@@ -157,7 +157,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchPopularAnime: (async (page = 1, perPage = 25) => {
         const popular = (
           await fetch(
-            `https://api.consumet.org/meta/anilist/popular?page=${page}&perPage=${perPage}`
+            `http://20.83.84.203:3000/meta/anilist/popular?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return popular;
@@ -165,7 +165,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
         const recent = (
           await fetch(
-            `https://api.consumet.org/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+            `http://20.83.84.203:3000/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as RecentAnime[];
         return recent;
@@ -176,7 +176,7 @@ export const defaultProviders: { [key: string]: Provider } = {
         isSub: boolean,
         isFiller: boolean
       ) => {
-        const url = new URL(`https://api.consumet.org/meta/anilist/info/${id}`);
+        const url = new URL(`http://20.83.84.203:3000/meta/anilist/info/${id}`);
         url.searchParams.set('provider', 'zoro');
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
@@ -190,7 +190,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(
-          `https://api.consumet.org/meta/anilist/watch/${id}?provider=zoro`
+          `http://20.83.84.203:3000/meta/anilist/watch/${id}?provider=zoro`
         );
         const episode: EpisodeData = await res.json();
         return {
@@ -227,7 +227,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       'An anime streaming site based on Enime API. Just hop in and watch with speed without VPN or ads.',
     scripts: {
       search: (async (query: string, page = 1, perPage = 25) => {
-        const url = new URL(`https://api.consumet.org/meta/anilist/${query}`);
+        const url = new URL(`http://20.83.84.203:3000/meta/anilist/${query}`);
         url.searchParams.set('page', String(page));
         url.searchParams.set('perPage', String(perPage));
 
@@ -238,7 +238,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchTrendingAnime: (async (page = 1, perPage = 25) => {
         const trending = (
           await fetch(
-            `https://api.consumet.org/meta/anilist/trending?page=${page}&perPage=${perPage}`
+            `http://20.83.84.203:3000/meta/anilist/trending?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return trending;
@@ -246,7 +246,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchPopularAnime: (async (page = 1, perPage = 25) => {
         const popular = (
           await fetch(
-            `https://api.consumet.org/meta/anilist/popular?page=${page}&perPage=${perPage}`
+            `http://20.83.84.203:3000/meta/anilist/popular?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return popular;
@@ -254,7 +254,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
         const recent = (
           await fetch(
-            `https://api.consumet.org/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+            `http://20.83.84.203:3000/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as RecentAnime[];
         return recent;
@@ -265,7 +265,7 @@ export const defaultProviders: { [key: string]: Provider } = {
         isSub: boolean,
         isFiller: boolean
       ) => {
-        const url = new URL(`https://api.consumet.org/meta/anilist/info/${id}`);
+        const url = new URL(`http://20.83.84.203:3000/meta/anilist/info/${id}`);
         url.searchParams.set('provider', 'enime');
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
@@ -279,7 +279,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(
-          `https://api.consumet.org/meta/anilist/watch/${id}?provider=enime`
+          `http://20.83.84.203:3000/meta/anilist/watch/${id}?provider=enime`
         );
         const episode: EpisodeData = await res.json();
         return episode;
@@ -309,7 +309,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       'Watch anime online in high quality for free with English subbed, dubbed. Update daily, No tracking, No paying, No registration required.',
     scripts: {
       search: (async (query: string, page = 1, perPage = 25) => {
-        const url = new URL(`https://api.consumet.org/meta/anilist/${query}`);
+        const url = new URL(`http://20.83.84.203:3000/meta/anilist/${query}`);
         url.searchParams.set('page', String(page));
         url.searchParams.set('perPage', String(perPage));
 
@@ -320,7 +320,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchTrendingAnime: (async (page = 1, perPage = 25) => {
         const trending = (
           await fetch(
-            `https://api.consumet.org/meta/anilist/trending?page=${page}&perPage=${perPage}`
+            `http://20.83.84.203:3000/meta/anilist/trending?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return trending;
@@ -328,7 +328,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchPopularAnime: (async (page = 1, perPage = 25) => {
         const popular = (
           await fetch(
-            `https://api.consumet.org/meta/anilist/popular?page=${page}&perPage=${perPage}`
+            `http://20.83.84.203:3000/meta/anilist/popular?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return popular;
@@ -336,7 +336,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
         const recent = (
           await fetch(
-            `https://api.consumet.org/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+            `http://20.83.84.203:3000/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as RecentAnime[];
         return recent;
@@ -347,7 +347,7 @@ export const defaultProviders: { [key: string]: Provider } = {
         isSub: boolean,
         isFiller: boolean
       ) => {
-        const url = new URL(`https://api.consumet.org/meta/anilist/info/${id}`);
+        const url = new URL(`http://20.83.84.203:3000/meta/anilist/info/${id}`);
         url.searchParams.set('provider', 'enime');
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
@@ -361,7 +361,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(
-          `https://api.consumet.org/meta/anilist/watch/${id}?provider=enime`
+          `http://20.83.84.203:3000/meta/anilist/watch/${id}?provider=enime`
         );
         const episode: EpisodeData = await res.json();
         return episode;
@@ -396,7 +396,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       'Aniwave is a free anime streaming site where you can watch anime online in HD quality for free with English subtitles or dubbing. You can also download any anime you want without registration or payment required. Everything is free!',
     scripts: {
       search: (async (query: string, page = 1, perPage = 25) => {
-        const url = new URL(`https://api.consumet.org/meta/anilist/${query}`);
+        const url = new URL(`http://20.83.84.203:3000/meta/anilist/${query}`);
         url.searchParams.set('page', String(page));
         url.searchParams.set('perPage', String(perPage));
 
@@ -407,7 +407,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchTrendingAnime: (async (page = 1, perPage = 25) => {
         const trending = (
           await fetch(
-            `https://api.consumet.org/meta/anilist/trending?page=${page}&perPage=${perPage}`
+            `http://20.83.84.203:3000/meta/anilist/trending?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return trending;
@@ -415,7 +415,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchPopularAnime: (async (page = 1, perPage = 25) => {
         const popular = (
           await fetch(
-            `https://api.consumet.org/meta/anilist/popular?page=${page}&perPage=${perPage}`
+            `http://20.83.84.203:3000/meta/anilist/popular?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return popular;
@@ -423,7 +423,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
         const recent = (
           await fetch(
-            `https://api.consumet.org/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+            `http://20.83.84.203:3000/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as RecentAnime[];
         return recent;
@@ -434,7 +434,7 @@ export const defaultProviders: { [key: string]: Provider } = {
         isSub: boolean,
         isFiller: boolean
       ) => {
-        const url = new URL(`https://api.consumet.org/meta/anilist/info/${id}`);
+        const url = new URL(`http://20.83.84.203:3000/meta/anilist/info/${id}`);
         url.searchParams.set('provider', 'nineanime');
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
@@ -448,7 +448,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(
-          `https://api.consumet.org/meta/anilist/watch/${id}?provider=nineanime`
+          `http://20.83.84.203:3000/meta/anilist/watch/${id}?provider=nineanime`
         );
         const episode: EpisodeData = await res.json();
         return episode;
@@ -478,7 +478,7 @@ export const defaultProviders: { [key: string]: Provider } = {
     description: 'Watch cartoons online, Watch anime online, English dub anime',
     scripts: {
       search: (async (query: string) => {
-        const url = new URL(`search/${query}`, 'http://4.157.182.195:3000/');
+        const url = new URL(`search/${query}`, 'http://20.252.57.110:3000/');
         const results: Anime[] = await fetch(url).then(r => r.json());
         return results;
       }).toString(),
@@ -486,14 +486,14 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchPopularAnime: '',
       fetchRecentEpisodes: (async () => {
         const results: RecentAnime[] = await fetch(
-          'http://4.157.182.195:3000/recent'
+          'http://20.252.57.110:3000/recent'
         ).then(r => r.json());
         return results;
       }).toString(),
       fetchAiringSchedule: '',
       fetchAnimeInfo: (async (id: string) => {
         const results: Anime = await fetch(
-          `http://4.157.182.195:3000/${id}`
+          `http://20.252.57.110:3000/${id}`
         ).then(r => r.json());
         return results;
       }).toString(),
@@ -512,7 +512,7 @@ export const defaultProviders: { [key: string]: Provider } = {
     externalLinks: [['Website', 'https://www.wcostream.org/']],
     languages: ['english'],
     tags: ['anime', 'dubbed', 'subbed', 'wco', 'wcostream'],
-    status: 'working',
+    status: 'broken',
     isNSFW: false,
     version: '1.0.0'
   }

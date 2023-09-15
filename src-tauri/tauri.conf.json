@@ -84,7 +84,7 @@
 			}
 		},
 		"security": {
-			"csp": "img-src 'self' https://* http://* data: asset: https://asset.localhost; media-src 'self' https://* http://* asset: blob: https://asset.localhost; worker-src 'self' blob:; script-src 'unsafe-eval'; connect-src 'self' https://* http://* http://*:*"
+			"csp": "img-src 'self' https://* http://* data: asset: https://asset.localhost; media-src 'self' https://* http://* asset: blob: https://asset.localhost; worker-src 'self' blob:; script-src 'unsafe-eval'; connect-src 'self' https://* http://* http://*:* asset: https://asset.localhost;"
 		},
 		"updater": {
 			"active": true,

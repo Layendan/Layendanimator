@@ -55,7 +55,6 @@
   "type": "module",
   "dependencies": {
     "@tauri-apps/api": "^1.4.0",
-    "@webcontainer/api": "^1.1.5",
     "colord": "^2.9.3",
     "hls.js": "^1.4.12",
     "isomorphic-dompurify": "^1.8.0",

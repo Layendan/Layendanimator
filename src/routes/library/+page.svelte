@@ -1,33 +1,9 @@
 <script lang="ts">
   import AnimeCard from '$lib/components/AnimeCard.svelte';
-  import PlaceholderAnimeCard from '$lib/components/PlaceholderAnimeCard.svelte';
+  import DownloadsData from '$lib/components/DownloadsData.svelte';
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
   import SubscriptionCarousel from '$lib/components/SubscriptionCarousel.svelte';
-  import {
-    convertAnime,
-    downloads,
-    type DownloadedAnime
-  } from '$lib/model/downloads';
   import { watching } from '$lib/model/watch';
-  import { derived } from 'svelte/store';
-
-  const animes = derived<typeof downloads, DownloadedAnime>(
-    downloads,
-    ($downloads, set) => {
-      Promise.all(
-        Object.entries($downloads).map(async ([id, download]) => {
-          const anime = await convertAnime(download.anime);
-          return { id, result: { ...download, anime } };
-        })
-      ).then(async data => {
-        const animes = data.reduce((acc, { id, result }) => {
-          acc[id] = result;
-          return acc;
-        }, {} as DownloadedAnime);
-        set(animes);
-      });
-    }
-  );
 </script>
 
 <!-- Downloads -->
@@ -41,27 +17,7 @@
       Downloaded Animes
     </a>
 
-    {#if !$animes}
-      {#each Object.keys($downloads) as { }}
-        <PlaceholderAnimeCard />
-      {:else}
-        <div class="flex items-center justify-center">
-          <p
-            class="text-xl font-semibold text-center text-base-content text-opacity-70"
-          >
-            No Downloads
-          </p>
-        </div>
-      {/each}
-    {:else}
-      {#each Object.entries($animes) as [id, { anime }] (id)}
-        <AnimeCard
-          {anime}
-          href="/library/downloads/{anime.source.id}/{anime.id}"
-          isDownload
-        />
-      {/each}
-    {/if}
+    <DownloadsData />
   </ScrollCarousel>
 
   <div class="divider" />

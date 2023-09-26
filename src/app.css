@@ -22,7 +22,7 @@ body {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  @apply min-h-[40px] min-w-[40px] rounded-lg bg-base-content/50 bg-clip-padding;
+  @apply min-h-[40px] min-w-[40px] rounded-lg bg-base-content bg-clip-padding;
 }
 
 a {

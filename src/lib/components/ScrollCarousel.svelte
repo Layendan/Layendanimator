@@ -17,22 +17,22 @@
   </div>
 </Content>
 
-<style lang="postcss">
-  ::-webkit-scrollbar {
+<style>
+  div::-webkit-scrollbar {
     @apply h-4 w-4;
   }
 
-  ::-webkit-scrollbar-corner {
+  div::-webkit-scrollbar-corner {
     @apply bg-transparent;
   }
 
   /* Track */
-  ::-webkit-scrollbar-track {
+  div::-webkit-scrollbar-track {
     @apply rounded-lg border-4 border-solid border-transparent bg-base-300 bg-clip-padding;
   }
 
   /* Handle */
-  ::-webkit-scrollbar-thumb {
+  div::-webkit-scrollbar-thumb {
     @apply min-h-[40px] min-w-[40px] rounded-lg border-4 border-solid border-transparent bg-base-content bg-clip-padding;
   }
 </style>

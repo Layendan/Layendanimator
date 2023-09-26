@@ -89,7 +89,7 @@
 <header
   in:fade
   bind:this={element}
-  class="relative -m-4 mb-4 h-[60vh] w-screen ease-in-out will-change-transform motion-reduce:!translate3d-y-0"
+  class="relative -m-4 mb-4 h-[60vh] w-[calc(100vw-0.5rem)] ease-in-out will-change-transform motion-reduce:!translate3d-y-0"
   class:!translate3d-y-0={!$settings.parallax}
   style="transform: translate3d(0, {Math.max(scrollY / 1.5, 0)}px, 0);"
 >

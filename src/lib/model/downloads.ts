@@ -185,7 +185,7 @@ function createDownloading() {
         const [
           { Command },
           { appDataDir, join },
-          { writeBinaryFile, writeFile, removeFile },
+          { writeBinaryFile, writeFile, removeFile, exists, createDir },
           { fetch, ResponseType },
           { once }
         ] = await Promise.all([
@@ -196,6 +196,9 @@ function createDownloading() {
           import('@tauri-apps/api/event')
         ]);
         const dataDir = await appDataDir();
+        const directoryPath = await join(dataDir, 'downloads');
+        if (!(await exists(directoryPath)))
+          await createDir(directoryPath, { recursive: true });
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const calls: Promise<any>[] = [];
@@ -254,8 +257,7 @@ function createDownloading() {
           }
 
           const path = await join(
-            dataDir,
-            'downloads',
+            directoryPath,
             `${anime.source.id}.${anime.id}.${episodeId}.mp4`
           );
 
@@ -368,8 +370,7 @@ function createDownloading() {
             calls.push(
               subtitles.callFunction(async () => {
                 const path = await join(
-                  dataDir,
-                  'downloads',
+                  directoryPath,
                   `${anime.source.id}.${anime.id}.${episodeId}.${subtitle.lang}.vtt`
                 );
 
@@ -403,8 +404,7 @@ function createDownloading() {
         imageCalls.push(
           images.callFunction(async () => {
             const path = await join(
-              dataDir,
-              'downloads',
+              directoryPath,
               `${anime.source.id}.${anime.id}.${anime.image.split('.').pop()}`
             );
 
@@ -446,8 +446,7 @@ function createDownloading() {
             }
 
             const path = await join(
-              dataDir,
-              'downloads',
+              directoryPath,
               `${anime.source.id}.${anime.id}.${episodeId}.${episodeImage
                 .split('.')
                 .pop()}`
@@ -484,8 +483,7 @@ function createDownloading() {
           imageCalls.push(
             images.callFunction(async () => {
               const path = await join(
-                dataDir,
-                'downloads',
+                directoryPath,
                 `${anime.source.id}.${anime.id}.cover.${anime.cover
                   .split('.')
                   .pop()}`

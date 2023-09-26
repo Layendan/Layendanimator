@@ -307,7 +307,7 @@ export const defaultProviders: { [key: string]: Provider } = {
     ],
     languages: ['english'],
     tags: ['anime', 'dubbed', 'subbed', 'enime'],
-    status: 'working',
+    status: 'broken',
     isNSFW: false,
     version: '1.0.0'
   },

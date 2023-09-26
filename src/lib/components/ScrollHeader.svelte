@@ -20,7 +20,7 @@
 <svelte:window bind:scrollY />
 
 <header
-  class="relative -m-4 mb-4 motion-reduce:!translate3d-y-0"
+  class="relative -m-4 mb-4 w-[calc(100vw-0.5rem)] motion-reduce:!translate3d-y-0"
   style="transform: translate3d(0, {Math.max(scrollY / 1.5, 0)}px, 0);"
   class:!translate3d-y-0={!$settings.parallax || removeParallax}
 >

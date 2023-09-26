@@ -69,26 +69,27 @@
 
   onMount(async () => {
     await defineCustomElements();
+
+    const time = player?.querySelector(
+      'media-time-slider:first-of-type'
+    ) as MediaTimeSliderElement;
+    // set custom seek duration
+    if (time) {
+      time.keyStep = 5;
+      time.shiftKeyMultiplier = 3;
+    }
+
+    const vol = player?.querySelector(
+      'media-volume-slider:first-of-type'
+    ) as MediaVolumeSliderElement;
+    // set custom volume step
+    if (vol) {
+      vol.keyStep = 5;
+      vol.shiftKeyMultiplier = 3;
+    }
+
     player?.onAttach(async () => {
       try {
-        const time = player?.querySelector(
-          'media-time-slider:first-of-type'
-        ) as MediaTimeSliderElement;
-        // set custom seek duration
-        if (time) {
-          time.keyStep = 5;
-          time.shiftKeyMultiplier = 3;
-        }
-
-        const vol = player?.querySelector(
-          'media-volume-slider:first-of-type'
-        ) as MediaVolumeSliderElement;
-        // set custom volume step
-        if (vol) {
-          vol.keyStep = 5;
-          vol.shiftKeyMultiplier = 3;
-        }
-
         if (window.__TAURI__) {
           const os = await getOS();
           if (os !== 'Darwin' && os !== 'Unknown') {
@@ -155,13 +156,13 @@
 </svelte:head>
 
 {#if episodeData.sources}
-  <div class="relative -m-4 mb-4 h-auto w-screen bg-black">
+  <div class="relative -m-4 mb-4 h-auto w-[calc(100vw-0.5rem)] bg-black">
     <media-player
       {poster}
       title={episode.title ?? `Episode ${episode.number}`}
       aspect-ratio="16/9"
       style:--video-brand={anime.color ?? 'hsl(var(--a))'}
-      class="mx-auto flex aspect-video w-screen items-center justify-center border-none object-cover md:w-[max(800px,70vw)]"
+      class="mx-auto flex aspect-video w-[calc(100vw-0.5rem)] items-center justify-center border-none object-cover md:w-[max(800px,70vw)]"
       preload="metadata"
       {disableRemotePlayback}
       thumbnails={thumbnails?.url}

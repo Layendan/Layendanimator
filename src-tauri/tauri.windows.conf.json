@@ -1,0 +1,122 @@
+{
+    "$schema": "../node_modules/@tauri-apps/cli/schema.json",
+    "build": {
+        "beforeBuildCommand": "vite build",
+        "beforeDevCommand": "vite dev",
+        "devPath": "http://localhost:5173",
+        "distDir": "../build"
+    },
+    "package": {
+        "productName": "Layendanimator",
+        "version": "0.1.32"
+    },
+    "tauri": {
+        "allowlist": {
+            "all": true,
+            "protocol": {
+                "all": true,
+                "assetScope": [
+                    "**/*.mp4",
+                    "**/*.vtt",
+                    "**/*.png",
+                    "**/*.jpeg",
+                    "**/*.jpg"
+                ]
+            },
+            "fs": {
+                "all": true,
+                "scope": [
+                    "$DATA/**/*"
+                ]
+            },
+            "shell": {
+                "sidecar": true,
+                "scope": [
+                    {
+                        "name": "bin/ffmpeg",
+                        "sidecar": true,
+                        "cmd": "bin/ffmpeg",
+                        "args": true
+                    }
+                ]
+            },
+            "http": {
+                "request": true,
+                "scope": [
+                    "https://**/*"
+                ]
+            }
+        },
+        "macOSPrivateApi": true,
+        "bundle": {
+            "active": true,
+            "category": "DeveloperTool",
+            "copyright": "",
+            "deb": {
+                "depends": []
+            },
+            "externalBin": [
+                "bin/ffmpeg"
+            ],
+            "icon": [
+                "icons/32x32.png",
+                "icons/128x128.png",
+                "icons/128x128@2x.png",
+                "icons/icon.icns",
+                "icons/icon.ico"
+            ],
+            "identifier": "com.layendan.dev",
+            "longDescription": "",
+            "macOS": {
+                "entitlements": null,
+                "exceptionDomain": "",
+                "frameworks": [],
+                "providerShortName": null,
+                "signingIdentity": null
+            },
+            "resources": [],
+            "shortDescription": "",
+            "targets": "all",
+            "windows": {
+                "certificateThumbprint": null,
+                "digestAlgorithm": "sha256",
+                "timestampUrl": ""
+            }
+        },
+        "security": {
+            "csp": "img-src 'self' https://* http://* data: asset: https://asset.localhost; media-src 'self' https://* http://* asset: blob: https://asset.localhost; worker-src 'self' blob:; script-src 'unsafe-eval'; connect-src 'self' https://* http://* http://*:* asset: https://asset.localhost;"
+        },
+        "updater": {
+            "active": true,
+            "endpoints": [
+                "https://github.com/Layendan/NineAnimator-Tauri/releases/latest/download/latest.json"
+            ],
+            "dialog": true,
+            "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDgzOTk3RDgwREVFQzIyQTMKUldTakl1emVnSDJaZzNoSVhjV2RhWSthR0xWZW9WQVRTUmI3YkU1MkNjYm1oVHpKdE9yZ0lKWVIK"
+        },
+        "windows": [
+            {
+                "fullscreen": false,
+                "minHeight": 600,
+                "height": 600,
+                "resizable": true,
+                "maximized": true,
+                "title": "Layendanimator",
+                "label": "main",
+                "minWidth": 800,
+                "width": 800,
+                "visible": false,
+                "acceptFirstMouse": true,
+                "decorations": false,
+                "skipTaskbar": true,
+                "contentProtected": false,
+                "fileDropEnabled": false,
+                "transparent": true,
+                "titleBarStyle": "Visible",
+                "hiddenTitle": false,
+                "additionalBrowserArgs": "--enable-features=OverlayScrollbar --disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection",
+                "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+            }
+        ]
+    }
+}

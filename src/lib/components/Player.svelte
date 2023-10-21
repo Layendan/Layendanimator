@@ -18,8 +18,9 @@
   import 'vidstack/player/layouts';
   import 'vidstack/player/ui';
   // Import styles.
-  import 'vidstack/player/styles/default/layouts/video.css';
+  // !!!!! IMPORTANT !!!!! KEEP THIS ORDER !!!!! Theme -> Layout
   import 'vidstack/player/styles/default/theme.css';
+  import 'vidstack/player/styles/default/layouts/video.css';
   import PlayerContextMenu from './PlayerContextMenu.svelte';
 
   export let episodeData: EpisodeData;

@@ -34,6 +34,7 @@
   import type { UnlistenFn } from '@tauri-apps/api/event';
   import NProgress from 'nprogress';
   import { onDestroy, onMount } from 'svelte';
+  import type { OsType } from '@tauri-apps/api/os';
 
   NProgress.configure({
     // Full list: https://github.com/rstacruz/nprogress#configuration
@@ -60,6 +61,7 @@
     NProgress.done();
   }
 
+  let os: OsType | 'Unknown' = 'Unknown';
   let isMac = navigator?.platform?.includes('Mac') ?? false;
 
   onMount(async () => {
@@ -98,7 +100,8 @@
     )[0];
 
     try {
-      isMac = (await getOS()) === 'Darwin';
+      os = await getOS();
+      isMac = os === 'Darwin';
     } catch {
       // Deprecated, would rather not use
       isMac = navigator?.platform?.includes('Mac');
@@ -187,7 +190,9 @@
 <span
   data-tauri-drag-region
   class="inline-flex h-screen w-screen gap-2 p-2
-        {window?.__TAURI__ ? 'bg-transparent' : 'bg-base-100'}"
+        {window?.__TAURI__ && os !== 'Linux'
+    ? 'bg-transparent'
+    : 'bg-base-100'}"
 >
   <NavBar />
   <main

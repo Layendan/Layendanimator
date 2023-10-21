@@ -5,7 +5,7 @@
 
 use tauri::Manager;
 #[allow(unused_imports)]
-use window_vibrancy::{apply_acrylic, apply_vibrancy, NSVisualEffectMaterial};
+use window_vibrancy::{apply_mica, apply_vibrancy, NSVisualEffectMaterial};
 
 #[derive(Clone, serde::Serialize)]
 struct SInst {
@@ -40,7 +40,7 @@ fn main() {
                 .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
 
             #[cfg(target_os = "windows")]
-            apply_acrylic(&window, None)
+            apply_mica(&window, None)
                 .expect("Unsupported platform! 'apply_mica' is only supported on Windows");
 
             Ok(())

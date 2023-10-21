@@ -105,24 +105,27 @@
       </li>
     {/if}
 
-    <li>
-      <button
-        on:click={async () => {
-          if (window.location.pathname != '/settings') await goto('/settings');
+    {#if window.__TAURI__}
+      <li>
+        <button
+          on:click={async () => {
+            if (window.location.pathname != '/settings')
+              await goto('/settings');
 
-          const element = document.getElementById(
-            `${encodeName(provider.id)}-info`
-          );
-          if (!element) return;
+            const element = document.getElementById(
+              `${encodeName(provider.id)}-info`
+            );
+            if (!element) return;
 
-          element.click();
-          element.scrollTo({ behavior: 'smooth' });
-        }}
-      >
-        <Fa icon={faPen} />
-        Edit
-      </button>
-    </li>
+            element.click();
+            element.scrollTo({ behavior: 'smooth' });
+          }}
+        >
+          <Fa icon={faPen} />
+          Edit
+        </button>
+      </li>
+    {/if}
 
     {#if provider.updateUrl}
       <li>
@@ -133,12 +136,14 @@
       </li>
     {/if}
 
-    <li>
-      <button on:click={exportSource}>
-        <Fa icon={faShare} />
-        Export
-      </button>
-    </li>
+    {#if window.__TAURI__}
+      <li>
+        <button on:click={exportSource}>
+          <Fa icon={faShare} />
+          Export
+        </button>
+      </li>
+    {/if}
 
     {#if !defaultProviders[provider.id]}
       <li>

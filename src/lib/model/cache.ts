@@ -29,6 +29,12 @@ export const popularAnimes = new LRUCache<string, Anime[]>({
   ttl: MINUTE * 60 * 24
 });
 
+export const scrollYCache = new LRUCache<string, number>({
+  max: 100
+});
+
+export const scrollY = writable<number>(0);
+
 const carouselDict: {
   [key: string]: number;
 } = {};
@@ -47,5 +53,6 @@ export function clearCache() {
   episodeCache.clear();
   carouselPage.set(carouselDict);
   searchCache.set(searchDict);
+  scrollYCache.clear();
   localStorage?.clear();
 }

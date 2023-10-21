@@ -56,7 +56,7 @@
   />
 {/key}
 
-<div class="tabs-boxed tabs mx-auto mb-4 w-fit gap-1 bg-opacity-80 p-4 px-8">
+<div class="tabs-boxed tabs mx-auto w-fit gap-1 bg-opacity-80 p-4 px-8">
   <button
     class="tab"
     class:tab-active={selectedTab === 'episodes'}
@@ -73,36 +73,38 @@
   </button>
 </div>
 
-{#if selectedTab === 'episodes'}
-  <EpisodeCarousel
-    anime={data.anime}
-    episodes={data.anime.episodes}
-    replaceState
-    href="/library/downloads/{data.anime.source.id}/{data.anime.id}"
-  >
-    <svelte:fragment slot="title">Next episodes</svelte:fragment>
-  </EpisodeCarousel>
-{:else if selectedTab === 'wiki'}
-  <main in:fade class="mt-4 block w-full px-4 lg:mt-0">
-    {#if data.episodeObject.title && data.episodeObject.description}
-      <section
-        class="card max-w-full bg-base-200 bg-opacity-80 bg-clip-padding p-8 shadow-xl backdrop-blur-xl backdrop-filter transition-colors duration-200"
-      >
-        <h1
-          class="mb-4 text-3xl font-extrabold leading-none tracking-tight transition-[font-size] duration-200 md:text-4xl lg:text-5xl"
+<div class="m-4">
+  {#if selectedTab === 'episodes'}
+    <EpisodeCarousel
+      anime={data.anime}
+      episodes={data.anime.episodes}
+      replaceState
+      href="/library/downloads/{data.anime.source.id}/{data.anime.id}"
+    >
+      <svelte:fragment slot="title">Next episodes</svelte:fragment>
+    </EpisodeCarousel>
+  {:else if selectedTab === 'wiki'}
+    <main in:fade class="mt-4 block w-full lg:mt-0">
+      {#if data.episodeObject.title && data.episodeObject.description}
+        <section
+          class="card max-w-full bg-base-200 bg-opacity-80 bg-clip-padding p-8 shadow-xl backdrop-blur-xl backdrop-filter transition-colors duration-200"
         >
-          {data.episodeObject.title}
-        </h1>
-        <p class="h-min w-fit">
-          {@html sanitize(data.episodeObject.description)}
-        </p>
-      </section>
+          <h1
+            class="mb-4 text-3xl font-extrabold leading-none tracking-tight transition-[font-size] duration-200 md:text-4xl lg:text-5xl"
+          >
+            {data.episodeObject.title}
+          </h1>
+          <p class="h-min w-fit">
+            {@html sanitize(data.episodeObject.description)}
+          </p>
+        </section>
 
-      <div class="divider" />
-    {/if}
+        <div class="divider" />
+      {/if}
 
-    <AnimeInfo anime={data.anime} />
-  </main>
-{:else}
-  You shouldn't be here
-{/if}
+      <AnimeInfo anime={data.anime} />
+    </main>
+  {:else}
+    You shouldn't be here
+  {/if}
+</div>

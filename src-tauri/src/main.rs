@@ -4,6 +4,8 @@
 )]
 
 use tauri::Manager;
+#[allow(unused_imports)]
+use window_vibrancy::{apply_mica, apply_vibrancy, NSVisualEffectMaterial};
 
 #[derive(Clone, serde::Serialize)]
 struct SInst {
@@ -18,6 +20,8 @@ fn main() {
             // If you need macOS support this must be called in .setup() !
             // Otherwise this could be called right after prepare() but then you don't have access to tauri APIs
             let handle = app.handle();
+            let window = app.get_window("main").unwrap();
+
             tauri_plugin_deep_link::register("layendanimator", move |request| {
                 dbg!(&request);
                 handle.emit_all("scheme-request-received", request).unwrap();
@@ -30,6 +34,14 @@ fn main() {
             if let Some(url) = std::env::args().nth(1) {
                 app.emit_all("scheme-request-received", url).unwrap();
             }
+
+            #[cfg(target_os = "macos")]
+            apply_vibrancy(&window, NSVisualEffectMaterial::Menu, None, None)
+                .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+
+            #[cfg(target_os = "windows")]
+            apply_mica(&window, None)
+                .expect("Unsupported platform! 'apply_mica' is only supported on Windows");
 
             Ok(())
         })

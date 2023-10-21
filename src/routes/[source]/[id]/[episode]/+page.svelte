@@ -83,15 +83,17 @@
 </div>
 
 {#if selectedTab === 'episodes'}
-  <EpisodeCarousel
-    anime={data.anime}
-    episodes={data.anime.episodes}
-    replaceState
-  >
-    <svelte:fragment slot="title">Next episodes</svelte:fragment>
-  </EpisodeCarousel>
+  <div class="m-4">
+    <EpisodeCarousel
+      anime={data.anime}
+      episodes={data.anime.episodes}
+      replaceState
+    >
+      <svelte:fragment slot="title">Next episodes</svelte:fragment>
+    </EpisodeCarousel>
+  </div>
 {:else if selectedTab === 'wiki'}
-  <main in:fade class="mt-4 block w-full px-4 lg:mt-0">
+  <main in:fade class="my-4 block w-full px-4 lg:mt-0">
     {#if data.episodeObject.title && data.episodeObject.description}
       <section
         class="card max-w-full bg-base-200 bg-opacity-80 bg-clip-padding p-8 shadow-xl backdrop-blur-xl backdrop-filter transition-colors duration-200"

@@ -7,36 +7,46 @@
   export let data: PageData;
 </script>
 
-{#each data.responses as { source, results }, i (source.id)}
-  <ScrollCarousel>
-    <a
-      slot="title"
-      class="btn btn-ghost -m-2 h-max gap-4 p-2 text-3xl font-extrabold normal-case leading-none tracking-tight md:text-4xl lg:text-5xl"
-      href="/{source.id}/search?q={data.query}"
-    >
-      {source.name}
-    </a>
+<div class="m-4">
+  {#each data.responses as { source, results }, i (source.id)}
+    <ScrollCarousel>
+      <a
+        slot="title"
+        class="btn btn-ghost -m-2 h-max gap-4 p-2 text-3xl font-extrabold normal-case leading-none tracking-tight md:text-4xl lg:text-5xl"
+        href="/{source.id}/search?q={data.query}"
+      >
+        {source.name}
+      </a>
 
-    {#await results}
-      {#each Array(25) as { }}
-        <PlaceholderAnimeCard />
-      {/each}
-    {:then results}
-      {#each results as anime}
-        <AnimeCard {anime} />
-      {:else}
+      {#await results}
+        {#each Array(25) as { }}
+          <PlaceholderAnimeCard />
+        {/each}
+      {:then results}
+        {#each results as anime}
+          <AnimeCard {anime} />
+        {:else}
+          <div class="flex items-center justify-center">
+            <p
+              class="text-xl font-semibold text-center text-base-content text-opacity-70"
+            >
+              No Results
+            </p>
+          </div>
+        {/each}
+      {:catch error}
         <div class="flex items-center justify-center">
           <p
-            class="text-xl font-semibold text-center text-base-content text-opacity-70"
+            class="text-center text-xl font-semibold text-base-content text-opacity-70"
           >
-            No Results
+            {error.message}
           </p>
         </div>
-      {/each}
-    {/await}
-  </ScrollCarousel>
+      {/await}
+    </ScrollCarousel>
 
-  {#if i < data.responses.length - 1}
-    <div class="divider" />
-  {/if}
-{/each}
+    {#if i < data.responses.length - 1}
+      <div class="divider" />
+    {/if}
+  {/each}
+</div>

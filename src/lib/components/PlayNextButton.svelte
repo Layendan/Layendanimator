@@ -36,7 +36,7 @@
 <a class="btn btn-secondary flex w-fit space-x-2" {href}>
   <Fa icon={faPlayCircle} size="lg" />
   <!-- Check if not user has watched anime yet -->
-  <span>
+  <span class="hidden lg:block">
     {lastWatched?.watchEpisode
       ? hasLastEpisode && lastEpisodeFinished
         ? 'Watch Again'

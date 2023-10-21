@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { scrollY } from '$lib/model/cache';
   import type { Anime } from '$lib/model/classes/Anime';
   import { settings } from '$lib/model/settings';
   import { fade } from 'svelte/transition';
@@ -13,15 +14,11 @@
     heroLoaded = true;
     skeleton = true;
   }
-
-  let scrollY: number;
 </script>
 
-<svelte:window bind:scrollY />
-
 <header
-  class="relative -m-4 mb-4 w-[calc(100vw-0.5rem)] motion-reduce:!translate3d-y-0"
-  style="transform: translate3d(0, {Math.max(scrollY / 1.5, 0)}px, 0);"
+  class="relative mb-2 h-[38vh] w-full overflow-hidden will-change-transform motion-reduce:!translate3d-y-0"
+  style="transform: translate3d(0, {$scrollY / 1.5}px, 0);"
   class:!translate3d-y-0={!$settings.parallax || removeParallax}
 >
   {#key anime.id}
@@ -33,9 +30,9 @@
       on:error|once={() => (heroLoaded = false)}
       on:load|once={() => (skeleton = false)}
       in:fade={{ duration: 200 }}
-      class="h-[38vh] w-full object-cover object-top"
+      class="h-full w-full object-cover object-top"
       class:skeleton
     />
   {/key}
-  <div class="scrim pointer-events-none absolute inset-0 translate-y-1" />
+  <div class="scrim pointer-events-none absolute inset-0" />
 </header>

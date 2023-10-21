@@ -39,7 +39,7 @@
 
 <ScrollHeader anime={data} {removeParallax} />
 
-<main class="relative">
+<main class="relative m-4 mt-0">
   <TotalAnimeInfo anime={data} />
 
   <div class="divider" />

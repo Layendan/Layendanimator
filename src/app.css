@@ -4,9 +4,10 @@
 
 html,
 body {
-  @apply overscroll-x-none;
+  @apply overflow-hidden overscroll-none bg-transparent bg-opacity-0;
 }
 
+/*
 ::-webkit-scrollbar {
   @apply h-2 w-2;
 }
@@ -15,15 +16,14 @@ body {
   @apply bg-transparent;
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
   @apply absolute right-2 top-0 rounded-lg bg-base-300 bg-clip-padding;
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
   @apply min-h-[40px] min-w-[40px] rounded-lg bg-base-content bg-clip-padding;
 }
+*/
 
 a {
   @apply outline-2 outline-offset-2 outline-current focus-visible:outline;

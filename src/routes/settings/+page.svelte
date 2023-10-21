@@ -17,7 +17,7 @@
   let selected = $settings.sortSubscriptions;
 </script>
 
-<section>
+<section class="m-4">
   {#if window?.__TAURI__}
     <Content>
       <h1

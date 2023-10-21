@@ -1,6 +1,6 @@
 <script lang="ts">
   import { preloadData } from '$app/navigation';
-  import { carouselPage } from '$lib/model/cache';
+  import { carouselPage, scrollY } from '$lib/model/cache';
   import type { Anime } from '$lib/model/classes/Anime';
   import { settings } from '$lib/model/settings';
   import type { Provider } from '$lib/model/source';
@@ -53,8 +53,7 @@
     clearInterval(interval);
   });
 
-  let scrollY = 0;
-  $: textOn = scrollY <= 0;
+  $: textOn = $scrollY <= 0;
 
   let element: HTMLElement;
 
@@ -73,8 +72,6 @@
   }
 </script>
 
-<svelte:window bind:scrollY />
-
 <svelte:document
   on:visibilitychange={() => {
     if (document.visibilityState === 'visible') {
@@ -89,9 +86,9 @@
 <header
   in:fade
   bind:this={element}
-  class="relative -m-4 mb-4 h-[60vh] w-[calc(100vw-0.5rem)] ease-in-out will-change-transform motion-reduce:!translate3d-y-0"
+  class="relative h-[60vh] w-full overflow-hidden bg-base-100/30 will-change-transform motion-reduce:!translate3d-y-0"
   class:!translate3d-y-0={!$settings.parallax}
-  style="transform: translate3d(0, {Math.max(scrollY / 1.5, 0)}px, 0);"
+  style="transform: translate3d(0, {$scrollY / 1.5}px, 0);"
 >
   {#key animeIdx}
     <img
@@ -108,7 +105,7 @@
       class:skeleton
     />
   {/key}
-  <div class="scrim pointer-events-none absolute inset-0 translate-y-1" />
+  <div class="scrim pointer-events-none absolute inset-0" />
   <div
     class="absolute inset-0 flex items-end bg-gradient-to-tr from-base-100/50
         {doFade ? 'motion-safe:!opacity-0' : 'motion-safe:opacity-100'}

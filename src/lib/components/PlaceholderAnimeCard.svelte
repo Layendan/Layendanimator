@@ -12,5 +12,7 @@
     <div class="skeleton card-body relative m-0 h-full w-full bg-repeat p-0" />
   </div>
 
-  <div class="skeleton h-9 2xl:h-11" />
+  <div
+    class="skeleton h-[calc(2.25rem-2px)] rounded-md 2xl:h-[calc(2.75rem-2px)]"
+  />
 </div>

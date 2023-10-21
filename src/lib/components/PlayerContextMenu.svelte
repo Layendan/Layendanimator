@@ -19,8 +19,7 @@
   } from '@fortawesome/free-solid-svg-icons';
   import { onDestroy, onMount } from 'svelte';
   import Fa from 'svelte-fa';
-  import type { MediaPlayerElement } from 'vidstack';
-  import { defineCustomElements } from 'vidstack/elements';
+  import type { MediaPlayerElement } from 'vidstack/elements';
   import ContextMenu from './ContextMenu.svelte';
 
   export let anime: Anime;
@@ -62,23 +61,20 @@
   let unsubFullscreen: () => void;
   let unsubUserIdle: () => void;
 
-  onMount(async () => {
-    await defineCustomElements();
-    element.onAttach(() => {
-      unsubPaused = element.subscribe(({ paused }) => {
-        statePaused = paused;
-      });
+  onMount(() => {
+    unsubPaused = element?.subscribe(({ paused }) => {
+      statePaused = paused;
+    });
 
-      unsubFullscreen = element.subscribe(({ fullscreen }) => {
-        stateFullscreen = fullscreen;
-      });
+    unsubFullscreen = element?.subscribe(({ fullscreen }) => {
+      stateFullscreen = fullscreen;
+    });
 
-      unsubUserIdle = element.subscribe(({ userIdle }) => {
-        if (userIdle) {
-          closeMenu();
-          element.focus();
-        }
-      });
+    unsubUserIdle = element?.subscribe(({ controlsVisible }) => {
+      if (!controlsVisible) {
+        closeMenu();
+        element.focus();
+      }
     });
   });
 

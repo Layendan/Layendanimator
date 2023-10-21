@@ -3,8 +3,10 @@
   import GridContent from '$lib/components/GridContent.svelte';
 </script>
 
-<GridContent>
-  <svelte:fragment slot="title">Downloaded Animes</svelte:fragment>
+<div class="m-4">
+  <GridContent>
+    <svelte:fragment slot="title">Downloaded Animes</svelte:fragment>
 
-  <DownloadsData />
-</GridContent>
+    <DownloadsData />
+  </GridContent>
+</div>

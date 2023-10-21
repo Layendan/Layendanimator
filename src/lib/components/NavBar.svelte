@@ -1,69 +1,114 @@
 <script lang="ts">
-  import { source as storeSource, type Provider } from '$lib/model/source';
+  import { page } from '$app/stores';
+  import { providers, source } from '$lib/model/source';
   import { faBookmark, faCog } from '@fortawesome/free-solid-svg-icons';
+  import type { UnlistenFn } from '@tauri-apps/api/event';
+  import type { Theme } from '@tauri-apps/api/window';
+  import { onDestroy, onMount } from 'svelte';
   import Fa from 'svelte-fa';
   import NavigationComponents from './NavigationComponents.svelte';
   import SearchBar from './SearchBar.svelte';
-  import SourceButton from './SourceButton.svelte';
 
-  export let source: Provider;
+  let systemTheme: Theme | null = null;
+  let unsubscribe: UnlistenFn;
 
-  function focusMain() {
-    const element = document
-      .getElementById('main')
-      ?.querySelector(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]'
-      );
-    if (element) {
-      (element as HTMLElement).focus();
-      scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+  async function getTheme() {
+    try {
+      const { appWindow } = await import('@tauri-apps/api/window');
+      return appWindow?.theme();
+    } catch {
+      return 'light';
     }
   }
+
+  if (window?.__TAURI__) {
+    onMount(async () => {
+      systemTheme = await getTheme();
+
+      const { listen } = await import('@tauri-apps/api/event');
+      unsubscribe = await listen?.<Theme>(
+        'tauri://theme-changed',
+        ({ payload }) => {
+          systemTheme = payload;
+        }
+      );
+    });
+  }
+
+  onDestroy(() => {
+    unsubscribe?.();
+  });
 </script>
 
-<div
-  class="navbar sticky left-0 right-0 top-0 z-50 bg-base-100 bg-opacity-80 backdrop-blur-xl backdrop-filter"
+<nav
+  class="pointer-events-none flex h-full w-[214px] flex-col gap-2 overflow-visible px-1"
+  data-theme={systemTheme}
 >
-  <button
-    class="center btn btn-primary pointer-events-none absolute left-2 z-20 justify-center opacity-0 focus-within:pointer-events-auto focus-within:opacity-100"
-    on:click={focusMain}
-  >
-    Skip to main content
-  </button>
-
-  <div class="navbar-start flex gap-2">
+  {#if window?.__TAURI__}
     <NavigationComponents />
+  {/if}
 
+  <a
+    href="/{$source.id}"
+    class="btn btn-ghost pointer-events-auto bg-base-content/10 text-xl normal-case"
+    aria-label="Home"
+  >
+    Layendanimator
+  </a>
+
+  <SearchBar />
+
+  <div class="divider my-0" />
+
+  <div
+    class="pointer-events-auto flex h-fit flex-col gap-2 overflow-y-scroll overscroll-contain"
+  >
     <a
-      href="/{$storeSource.id}"
-      class="btn btn-ghost text-xl normal-case"
-      aria-label="Home"
+      href="/library"
+      class="btn btn-ghost btn-sm normal-case"
+      class:transparent-base={$page.route.id?.startsWith('/library') &&
+        !$page.params.source}
+      aria-label="Library"
     >
-      Layendanimator
+      <Fa icon={faBookmark} size="1.2x" />
+      Library
     </a>
 
-    <SearchBar />
-  </div>
-
-  <div class="absolute bottom-2 right-2 top-2 flex gap-2">
-    <SourceButton currentSrc={source} />
-
-    <div class="tooltip tooltip-bottom" data-tip="Library">
-      <a href="/library" class="btn btn-ghost" aria-label="Library">
-        <Fa icon={faBookmark} size="1.2x" />
-      </a>
-    </div>
-
-    <div
-      class="tooltip tooltip-bottom before:left-[calc(50%-0.5rem)]"
-      data-tip="Settings"
+    <a
+      href="/settings"
+      class="btn btn-ghost btn-sm normal-case"
+      class:transparent-base={$page.route.id?.startsWith('/settings')}
+      aria-label="Settings"
     >
-      <a href="/settings" class="btn btn-ghost" aria-label="Settings">
-        <Fa icon={faCog} size="1.2x" />
+      <Fa icon={faCog} size="1.2x" />
+      Settings
+    </a>
+
+    <div class="divider my-0" />
+
+    {#each Object.entries($providers) as [id, provider] (id)}
+      <a
+        href="/{id}"
+        class="btn btn-ghost btn-sm w-full flex-nowrap normal-case"
+        class:transparent-base={id === $page.params.source}
+        aria-label="Change Source"
+        on:click={() => source.set(provider)}
+      >
+        <img
+          src={provider.logo}
+          alt={provider.name}
+          class="h-5 w-5 rounded-md"
+        />
+        <p class="overflow-hidden text-ellipsis whitespace-nowrap">
+          {provider.name}
+        </p>
       </a>
-    </div>
+    {/each}
   </div>
-</div>
+</nav>
+
+<style>
+  .transparent-base:not(:hover) {
+    @apply bg-base-content/10;
+  }
+</style>

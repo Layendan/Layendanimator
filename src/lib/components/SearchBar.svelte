@@ -39,12 +39,12 @@
     searchHistory.add(query);
     goto(`/library/search?q=${encodeURIComponent(query)}`);
   }}
-  class="relative z-10 flex h-12 w-full items-center focus-within:min-w-max"
+  class="relative z-10 flex h-12 w-full items-center"
 >
   <input
     type="search"
-    placeholder="Search an anime"
-    class="input input-ghost w-full bg-base-200 bg-opacity-30 pl-10 pr-16 capitalize transition-colors duration-200 focus-visible:min-w-max [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none
+    placeholder="Search"
+    class="input input-ghost pointer-events-auto w-full bg-base-content/10 pl-10 capitalize transition-colors duration-200 [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none
     {isMac ? 'pr-16' : 'pr-20'}"
     autocomplete="off"
     autocapitalize="words"
@@ -62,10 +62,10 @@
   />
 
   <div class="pointer-events-none absolute right-4 text-base-content">
-    <kbd class="kbd kbd-sm">
+    <kbd class="kbd kbd-sm bg-base-100/30">
       {isMac ? '⌘' : 'Ctrl'}
     </kbd>
-    <kbd class="kbd kbd-sm">K</kbd>
+    <kbd class="kbd kbd-sm bg-base-100/30">K</kbd>
   </div>
 
   <datalist id="search-history">

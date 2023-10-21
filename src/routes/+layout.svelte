@@ -2,11 +2,21 @@
   import '../app.css';
   import '../nprogress.css';
 
-  import { goto, invalidateAll } from '$app/navigation';
+  import {
+    afterNavigate,
+    beforeNavigate,
+    goto,
+    invalidateAll
+  } from '$app/navigation';
   import { navigating, page } from '$app/stores';
   import NavBar from '$lib/components/NavBar.svelte';
   import NotificationPile from '$lib/components/NotificationPile.svelte';
-  import { animeCache, clearCache } from '$lib/model/cache';
+  import {
+    animeCache,
+    clearCache,
+    scrollY,
+    scrollYCache
+  } from '$lib/model/cache';
   import Semaphore from '$lib/model/classes/Semaphore';
   import { connections } from '$lib/model/connections';
   import { downloads } from '$lib/model/downloads';
@@ -35,6 +45,14 @@
   const semaphore = new Semaphore(5, 1000);
   let unsubscribe: NodeJS.Timeout | undefined = undefined;
   let tauriUnsubscribe: UnlistenFn;
+
+  let obj: HTMLElement;
+
+  beforeNavigate(() => scrollYCache.set($page.url.pathname, obj.scrollTop));
+
+  afterNavigate(
+    () => (obj.scrollTop = scrollYCache.get($page.url.pathname) ?? 0)
+  );
 
   $: if ($navigating) {
     NProgress.start();
@@ -166,10 +184,20 @@
   on:contextmenu|preventDefault
 />
 
-<NavBar source={$providers[$page.params.source] ?? $source} />
-
-<main class="m-4" id="main">
-  <slot />
-</main>
+<span
+  data-tauri-drag-region
+  class="inline-flex h-screen w-screen gap-2 p-2
+        {window?.__TAURI__ ? 'bg-transparent' : 'bg-base-100'}"
+>
+  <NavBar />
+  <main
+    class="h-full w-[calc(100%-214px-0.5rem)] overflow-y-scroll overscroll-contain rounded-md bg-base-100 shadow-xl shadow-black/40"
+    id="main"
+    bind:this={obj}
+    on:scroll={() => ($scrollY = obj.scrollTop)}
+  >
+    <slot />
+  </main>
+</span>
 
 <NotificationPile />

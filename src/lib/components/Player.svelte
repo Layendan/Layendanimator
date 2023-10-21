@@ -7,19 +7,19 @@
   import { watching } from '$lib/model/watch';
   import Hls from 'hls.js';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import type { HLSProvider, MediaProviderChangeEvent } from 'vidstack';
   import type {
-    HLSProvider,
     MediaPlayerElement,
-    MediaProviderChangeEvent,
     MediaTimeSliderElement,
     MediaVolumeSliderElement
-  } from 'vidstack';
-  import { defineCustomElements } from 'vidstack/elements';
-  import 'vidstack/styles/base.css';
-  import 'vidstack/styles/community-skin/video.css';
-  import 'vidstack/styles/defaults.css';
-  import 'vidstack/styles/ui/buttons.css';
-  import 'vidstack/styles/ui/sliders.css';
+  } from 'vidstack/elements';
+  // Register elements.
+  import 'vidstack/player';
+  import 'vidstack/player/layouts';
+  import 'vidstack/player/ui';
+  // Import styles.
+  import 'vidstack/player/styles/default/layouts/video.css';
+  import 'vidstack/player/styles/default/theme.css';
   import PlayerContextMenu from './PlayerContextMenu.svelte';
 
   export let episodeData: EpisodeData;
@@ -28,7 +28,7 @@
   export let episode: Episode;
   export let disableRemotePlayback = false;
 
-  let player: MediaPlayerElement | undefined = undefined;
+  let player: MediaPlayerElement;
 
   $: watchedObject =
     $watching[`${anime.source.id}/${anime.id}`]?.watchedEpisodes[episode.id];
@@ -68,8 +68,6 @@
   }
 
   onMount(async () => {
-    await defineCustomElements();
-
     const time = player?.querySelector(
       'media-time-slider:first-of-type'
     ) as MediaTimeSliderElement;
@@ -88,25 +86,20 @@
       vol.shiftKeyMultiplier = 3;
     }
 
-    player?.onAttach(async () => {
-      try {
-        if (window.__TAURI__) {
-          const os = await getOS();
-          if (os !== 'Darwin' && os !== 'Unknown') {
-            player?.addEventListener(
-              'fullscreen-change',
-              async ({ detail }) => {
-                const { appWindow } = await import('@tauri-apps/api/window');
-                appWindow?.setFullscreen(detail);
-              }
-            );
-          }
+    try {
+      if (window.__TAURI__) {
+        const os = await getOS();
+        if (os !== 'Darwin' && os !== 'Unknown') {
+          player?.addEventListener('fullscreen-change', async ({ detail }) => {
+            const { appWindow } = await import('@tauri-apps/api/window');
+            appWindow?.setFullscreen(detail);
+          });
         }
-      } catch (e) {
-        console.error(e);
       }
-      player?.focus();
-    });
+    } catch (e) {
+      console.error(e);
+    }
+    player?.focus();
 
     player?.addEventListener(
       'loaded-data',
@@ -156,53 +149,49 @@
 </svelte:head>
 
 {#if episodeData.sources}
-  <div class="relative -m-4 mb-4 h-auto w-[calc(100vw-0.5rem)] bg-black">
-    <media-player
-      {poster}
-      title={episode.title ?? `Episode ${episode.number}`}
-      aspect-ratio="16/9"
-      style:--video-brand={anime.color ?? 'hsl(var(--a))'}
-      class="mx-auto flex aspect-video w-[calc(100vw-0.5rem)] items-center justify-center border-none object-cover md:w-[max(800px,70vw)]"
-      preload="metadata"
-      {disableRemotePlayback}
-      thumbnails={thumbnails?.url}
-      bind:this={player}
-      on:provider-change={providerChange}
-      on:ended={requestNextEpisode}
-      on:pause={updateWatched}
-      on:error={() => invalidate(`${anime.source}/${anime.id}/${episode.id}`)}
-      on:hls-error={() =>
-        invalidate(`${anime.source}/${anime.id}/${episode.id}`)}
-    >
-      <media-poster alt={episode.description} />
-      <media-outlet>
-        {#each episodeData.sources as source}
-          <source
-            src={source.url}
-            type={source.type ||
-              (source.isM3U8 ? 'application/x-mpegURL' : 'video/mp4')}
-          />
-        {/each}
-        {#each episodeData.subtitles ?? [] as track}
-          <track
-            label={track.lang}
-            kind="captions"
-            src={track.url}
-            default={track.lang.toLowerCase() === 'english'}
-          />
-        {/each}
-      </media-outlet>
-      <media-community-skin />
-      <PlayerContextMenu
-        {anime}
-        {episode}
-        element={player}
-        {requestNextEpisode}
-      />
-    </media-player>
-  </div>
+  <media-player
+    title={episode.title ?? `Episode ${episode.number}`}
+    style:--video-brand={anime.color ?? 'hsl(var(--a))'}
+    style:--video-border-radius="0px"
+    class="relative mb-4 flex aspect-video h-auto w-full items-center justify-center overflow-hidden border-none object-cover"
+    preload="metadata"
+    {disableRemotePlayback}
+    autoplay
+    bind:this={player}
+    on:provider-change={providerChange}
+    on:ended={requestNextEpisode}
+    on:pause={updateWatched}
+    on:error={() => invalidate(`${anime.source}/${anime.id}/${episode.id}`)}
+    on:hls-error={() => invalidate(`${anime.source}/${anime.id}/${episode.id}`)}
+  >
+    <media-provider>
+      {#each episodeData.sources as source}
+        <source
+          src={source.url}
+          type={source.type ||
+            (source.isM3U8 ? 'application/x-mpegURL' : 'video/mp4')}
+        />
+      {/each}
+      {#each episodeData.subtitles ?? [] as track}
+        <track
+          label={track.lang}
+          kind="captions"
+          src={track.url}
+          default={track.lang.toLowerCase() === 'english'}
+        />
+      {/each}
+      <media-poster class="vds-poster" src={poster} />
+    </media-provider>
+    <media-video-layout thumbnails={thumbnails?.url} />
+    <PlayerContextMenu
+      {anime}
+      {episode}
+      element={player}
+      {requestNextEpisode}
+    />
+  </media-player>
 {:else}
-  <div class="flex h-[calc(100vh-4rem)] flex-col items-center justify-center">
+  <div class="flex h-full flex-col items-center justify-center">
     <p
       class="text-center text-xl font-semibold text-base-content text-opacity-70"
     >

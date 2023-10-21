@@ -19,7 +19,7 @@
   }
 </script>
 
-<div class="stack fixed left-4 right-4 top-16 z-10">
+<div class="stack fixed left-4 right-4 top-1 z-10">
   {#each $notifications as notification (notification.id)}
     {#if ($settings.notifications || notification.type === 'error') && notification.show}
       <button

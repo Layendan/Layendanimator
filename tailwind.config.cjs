@@ -4,9 +4,13 @@ const plugin = require('tailwindcss/plugin');
 module.exports = {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   plugins: [
-    require('@tailwindcss/typography'),
     require('daisyui'),
-    require('vidstack/tailwind.cjs'),
+    require('vidstack/tailwind.cjs')({
+      // Change the media variants prefix.
+      prefix: 'media',
+      // Enables more efficient selectors.
+      webComponents: true
+    }),
     require('tailwindcss-scoped-groups')({
       groups: ['one', 'two']
     }),

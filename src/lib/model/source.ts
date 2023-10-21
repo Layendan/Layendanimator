@@ -78,14 +78,15 @@ export const defaultProviders: { [key: string]: Provider } = {
         ).results as Anime[];
         return popular;
       }).toString(),
-      fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
-        const recent = (
-          await fetch(
-            `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
-          ).then(r => r.json())
-        ).results as RecentAnime[];
-        return recent;
-      }).toString(),
+      // fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
+      //   const recent = (
+      //     await fetch(
+      //       `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+      //     ).then(r => r.json())
+      //   ).results as RecentAnime[];
+      //   return recent;
+      // }).toString(),
+      fetchRecentEpisodes: '',
       fetchAiringSchedule: '',
       fetchAnimeInfo: (async (
         id: string,
@@ -103,7 +104,12 @@ export const defaultProviders: { [key: string]: Provider } = {
         if (!anime) return undefined;
         return {
           ...anime,
-          episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
+          episodes: (anime.episodes ?? [])
+            .sort((a, b) => a.number - b.number)
+            .map(episode => ({
+              ...episode,
+              id: episode.id.replace('/', '')
+            }))
         };
       }).toString(),
       fetchEpisodes: (async (id: string) => {
@@ -168,14 +174,15 @@ export const defaultProviders: { [key: string]: Provider } = {
         ).results as Anime[];
         return popular;
       }).toString(),
-      fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
-        const recent = (
-          await fetch(
-            `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
-          ).then(r => r.json())
-        ).results as RecentAnime[];
-        return recent;
-      }).toString(),
+      // fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
+      //   const recent = (
+      //     await fetch(
+      //       `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+      //     ).then(r => r.json())
+      //   ).results as RecentAnime[];
+      //   return recent;
+      // }).toString(),
+      fetchRecentEpisodes: '',
       fetchAiringSchedule: '',
       fetchAnimeInfo: (async (
         id: string,
@@ -225,92 +232,93 @@ export const defaultProviders: { [key: string]: Provider } = {
     isNSFW: false,
     version: '1.0.1'
   },
-  enime: {
-    name: 'Enime',
-    id: 'enime',
-    url: 'https://enime.moe',
-    updateUrl: '',
-    logo: 'https://avatars.githubusercontent.com/u/74993083',
-    description:
-      'An anime streaming site based on Enime API. Just hop in and watch with speed without VPN or ads.',
-    scripts: {
-      search: (async (query: string, page = 1, perPage = 25) => {
-        const url = new URL(
-          `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/${query}`
-        );
-        url.searchParams.set('page', String(page));
-        url.searchParams.set('perPage', String(perPage));
+  // enime: {
+  //   name: 'Enime',
+  //   id: 'enime',
+  //   url: 'https://enime.moe',
+  //   updateUrl: '',
+  //   logo: 'https://avatars.githubusercontent.com/u/74993083',
+  //   description:
+  //     'An anime streaming site based on Enime API. Just hop in and watch with speed without VPN or ads.',
+  //   scripts: {
+  //     search: (async (query: string, page = 1, perPage = 25) => {
+  //       const url = new URL(
+  //         `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/${query}`
+  //       );
+  //       url.searchParams.set('page', String(page));
+  //       url.searchParams.set('perPage', String(perPage));
 
-        const results = (await fetch(url).then(r => r.json()))
-          .results as Anime[];
-        return results;
-      }).toString(),
-      fetchTrendingAnime: (async (page = 1, perPage = 25) => {
-        const trending = (
-          await fetch(
-            `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/trending?page=${page}&perPage=${perPage}`
-          ).then(r => r.json())
-        ).results as Anime[];
-        return trending;
-      }).toString(),
-      fetchPopularAnime: (async (page = 1, perPage = 25) => {
-        const popular = (
-          await fetch(
-            `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/popular?page=${page}&perPage=${perPage}`
-          ).then(r => r.json())
-        ).results as Anime[];
-        return popular;
-      }).toString(),
-      fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
-        const recent = (
-          await fetch(
-            `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
-          ).then(r => r.json())
-        ).results as RecentAnime[];
-        return recent;
-      }).toString(),
-      fetchAiringSchedule: '',
-      fetchAnimeInfo: (async (
-        id: string,
-        isSub: boolean,
-        isFiller: boolean
-      ) => {
-        const url = new URL(
-          `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/info/${id}`
-        );
-        url.searchParams.set('provider', 'enime');
-        url.searchParams.set('dub', String(!isSub));
-        url.searchParams.set('fetchFiller', String(isFiller));
-        const res = await fetch(url.toString());
-        const anime: Anime = await res.json();
-        if (!anime) return;
-        return {
-          ...anime,
-          episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
-        };
-      }).toString(),
-      fetchEpisodes: (async (id: string) => {
-        const res = await fetch(
-          `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/watch/${id}?provider=enime`
-        );
-        const episode: EpisodeData = await res.json();
-        return episode;
-      }).toString()
-    },
-    shareLinks: {
-      anime: 'https://anilist.co/anime/{id}'
-    },
-    externalLinks: [
-      ['Website', 'https://enime.moe'],
-      ['Discord', 'https://discord.com/invite/nxr8be8WGa'],
-      ['Github', 'https://github.com/Enime-Project/enime.moe']
-    ],
-    languages: ['english'],
-    tags: ['anime', 'dubbed', 'subbed', 'enime'],
-    status: 'broken',
-    isNSFW: false,
-    version: '1.0.0'
-  },
+  //       const results = (await fetch(url).then(r => r.json()))
+  //         .results as Anime[];
+  //       return results;
+  //     }).toString(),
+  //     fetchTrendingAnime: (async (page = 1, perPage = 25) => {
+  //       const trending = (
+  //         await fetch(
+  //           `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/trending?page=${page}&perPage=${perPage}`
+  //         ).then(r => r.json())
+  //       ).results as Anime[];
+  //       return trending;
+  //     }).toString(),
+  //     fetchPopularAnime: (async (page = 1, perPage = 25) => {
+  //       const popular = (
+  //         await fetch(
+  //           `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/popular?page=${page}&perPage=${perPage}`
+  //         ).then(r => r.json())
+  //       ).results as Anime[];
+  //       return popular;
+  //     }).toString(),
+  //     // fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
+  //     //   const recent = (
+  //     //     await fetch(
+  //     //       `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+  //     //     ).then(r => r.json())
+  //     //   ).results as RecentAnime[];
+  //     //   return recent;
+  //     // }).toString(),
+  //     fetchRecentEpisodes: '',
+  //     fetchAiringSchedule: '',
+  //     fetchAnimeInfo: (async (
+  //       id: string,
+  //       isSub: boolean,
+  //       isFiller: boolean
+  //     ) => {
+  //       const url = new URL(
+  //         `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/info/${id}`
+  //       );
+  //       url.searchParams.set('provider', 'enime');
+  //       url.searchParams.set('dub', String(!isSub));
+  //       url.searchParams.set('fetchFiller', String(isFiller));
+  //       const res = await fetch(url.toString());
+  //       const anime: Anime = await res.json();
+  //       if (!anime) return;
+  //       return {
+  //         ...anime,
+  //         episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
+  //       };
+  //     }).toString(),
+  //     fetchEpisodes: (async (id: string) => {
+  //       const res = await fetch(
+  //         `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/watch/${id}?provider=enime`
+  //       );
+  //       const episode: EpisodeData = await res.json();
+  //       return episode;
+  //     }).toString()
+  //   },
+  //   shareLinks: {
+  //     anime: 'https://anilist.co/anime/{id}'
+  //   },
+  //   externalLinks: [
+  //     ['Website', 'https://enime.moe'],
+  //     ['Discord', 'https://discord.com/invite/nxr8be8WGa'],
+  //     ['Github', 'https://github.com/Enime-Project/enime.moe']
+  //   ],
+  //   languages: ['english'],
+  //   tags: ['anime', 'dubbed', 'subbed', 'enime'],
+  //   status: 'broken',
+  //   isNSFW: false,
+  //   version: '1.0.0'
+  // },
   kickassanime: {
     name: 'KickAssAnime',
     id: 'kickassanime',
@@ -347,14 +355,15 @@ export const defaultProviders: { [key: string]: Provider } = {
         ).results as Anime[];
         return popular;
       }).toString(),
-      fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
-        const recent = (
-          await fetch(
-            `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
-          ).then(r => r.json())
-        ).results as RecentAnime[];
-        return recent;
-      }).toString(),
+      // fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
+      //   const recent = (
+      //     await fetch(
+      //       `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+      //     ).then(r => r.json())
+      //   ).results as RecentAnime[];
+      //   return recent;
+      // }).toString(),
+      fetchRecentEpisodes: '',
       fetchAiringSchedule: '',
       fetchAnimeInfo: (async (
         id: string,
@@ -438,14 +447,15 @@ export const defaultProviders: { [key: string]: Provider } = {
         ).results as Anime[];
         return popular;
       }).toString(),
-      fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
-        const recent = (
-          await fetch(
-            `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
-          ).then(r => r.json())
-        ).results as RecentAnime[];
-        return recent;
-      }).toString(),
+      // fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
+      //   const recent = (
+      //     await fetch(
+      //       `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+      //     ).then(r => r.json())
+      //   ).results as RecentAnime[];
+      //   return recent;
+      // }).toString(),
+      fetchRecentEpisodes: '',
       fetchAiringSchedule: '',
       fetchAnimeInfo: (async (
         id: string,
@@ -521,10 +531,7 @@ export const defaultProviders: { [key: string]: Provider } = {
         return results;
       }).toString(),
       fetchEpisodes: (async (id: string) => {
-        const url = new URL(
-          `watch/${id}`,
-          'https://wco-source.agreeablewater-9752305a.westus2.azurecontainerapps.io/'
-        );
+        const url = new URL(`watch/${id}`, 'http://localhost:3000/');
         const episode: EpisodeData = await fetch(url.toString()).then(r =>
           r.json()
         );

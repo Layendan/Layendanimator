@@ -109,7 +109,7 @@
 
     // Workaround for Windows bug where there's a white box in the background
     // Start with decorations off, then turn them on after showing the window
-    if (os === 'Windows_NT') appWindow.setDecorations(true);
+    // if (os === 'Windows_NT') await appWindow.setDecorations(true);
 
     if (unsubscribe) clearInterval(unsubscribe);
     unsubscribe = setInterval(

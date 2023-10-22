@@ -68,7 +68,7 @@
     }
   }
 
-  onMount(async () => {
+  function setSteps() {
     const time = player?.querySelector(
       'media-time-slider:first-of-type'
     ) as MediaTimeSliderElement;
@@ -86,6 +86,20 @@
       vol.keyStep = 5;
       vol.shiftKeyMultiplier = 3;
     }
+  }
+
+  onMount(async () => {
+    setSteps();
+
+    player?.addEventListener(
+      'playing',
+      () => {
+        setSteps();
+      },
+      {
+        once: true
+      }
+    );
 
     try {
       if (window.__TAURI__) {

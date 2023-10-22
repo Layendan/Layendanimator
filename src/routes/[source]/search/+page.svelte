@@ -7,13 +7,12 @@
 
   export let data: PageData;
 
-  let isUpdating = false;
   const perPage = 25;
   let page: number = Math.floor(data.animes.length / perPage) || 1;
   let hasMore: boolean = data.animes.length % perPage === 0;
+  const main = document.querySelector('main');
 
   async function update() {
-    isUpdating = true;
     page += 1;
     const result = await data.update(page, perPage);
     console.debug(result);
@@ -24,40 +23,45 @@
     if (result.length < perPage) {
       hasMore = false;
     }
-    isUpdating = false;
   }
 </script>
 
-<GridContent>
-  <svelte:fragment slot="title">
-    {data.source.name} - {data.query}
-  </svelte:fragment>
+<div class="m-4">
+  <GridContent>
+    <svelte:fragment slot="title">
+      {data.source.name} - {data.query}
+    </svelte:fragment>
 
-  {#await data.animes}
-    {#each Array(25) as { }}
-      <PlaceholderAnimeCard />
-    {/each}
-  {:then animes}
-    {#each animes as anime (anime.id)}
-      <AnimeCard {anime} />
-    {:else}
-      <div class="flex items-center justify-center">
-        <p
-          class="text-xl font-semibold text-center text-base-content text-opacity-70"
-        >
-          No results
-        </p>
-      </div>
-    {/each}
-  {/await}
-</GridContent>
+    {#await data.animes}
+      {#each Array(25) as { }}
+        <PlaceholderAnimeCard />
+      {/each}
+    {:then animes}
+      {#each animes as anime (anime.id)}
+        <AnimeCard {anime} />
+      {:else}
+        <div class="flex items-center justify-center">
+          <p
+            class="text-xl font-semibold text-center text-base-content text-opacity-70"
+          >
+            No results
+          </p>
+        </div>
+      {/each}
+    {/await}
+  </GridContent>
 
-{#if hasMore}
-  <div class="divider divider-vertical mt-8">
-    <button class="btn btn-ghost text-2xl font-bold" on:click={update}>
-      Scroll For More
-    </button>
-  </div>
-{/if}
+  {#if hasMore}
+    <div class="divider divider-vertical mt-8">
+      <button class="btn btn-ghost text-2xl font-bold" on:click={update}>
+        Scroll For More
+      </button>
+    </div>
+  {/if}
+</div>
 
-<InfiniteScroll window {hasMore} on:loadMore={update} />
+<InfiniteScroll
+  elementScroll={main ?? undefined}
+  {hasMore}
+  on:loadMore={update}
+/>

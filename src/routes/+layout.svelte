@@ -51,9 +51,10 @@
 
   beforeNavigate(() => scrollYCache.set($page.url.pathname, obj.scrollTop));
 
-  afterNavigate(
-    () => (obj.scrollTop = scrollYCache.get($page.url.pathname) ?? 0)
-  );
+  afterNavigate(() => {
+    obj.scrollTop = scrollYCache.get($page.url.pathname) ?? 0;
+    $scrollY = obj.scrollTop;
+  });
 
   $: if ($navigating) {
     NProgress.start();
@@ -109,10 +110,7 @@
 
     // Workaround for Windows bug where there's a white box in the background
     // Start with decorations off, then turn them on after showing the window
-    if (os === 'Windows_NT') {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      await appWindow.setDecorations(true);
-    }
+    if (os === 'Windows_NT') await appWindow.setDecorations(true);
 
     if (unsubscribe) clearInterval(unsubscribe);
     unsubscribe = setInterval(

@@ -11,6 +11,7 @@
   const perPage = 25;
   let page: number = Math.floor(data.data.length / perPage) || 1;
   let hasMore: boolean = data.data.length % perPage === 0;
+  const main = document.querySelector('main');
 
   async function update() {
     isUpdating = true;
@@ -31,26 +32,32 @@
   }
 </script>
 
-<GridContent>
-  <svelte:fragment slot="title">Recent Episodes</svelte:fragment>
+<div class="m-4">
+  <GridContent>
+    <svelte:fragment slot="title">Recent Episodes</svelte:fragment>
 
-  {#await data.data}
-    {#each new Array(25) as { }}
-      <PlaceholderAnimeCard />
-    {/each}
-  {:then results}
-    {#each results as anime (`${anime.id}/${anime.episodeNumber}`)}
-      <AnimeCard {anime} extra={`Episode ${anime.episodeNumber}`} />
-    {/each}
-  {/await}
-</GridContent>
+    {#await data.data}
+      {#each new Array(25) as { }}
+        <PlaceholderAnimeCard />
+      {/each}
+    {:then results}
+      {#each results as anime (`${anime.id}/${anime.episodeNumber}`)}
+        <AnimeCard {anime} extra={`Episode ${anime.episodeNumber}`} />
+      {/each}
+    {/await}
+  </GridContent>
 
-{#if hasMore}
-  <div class="divider divider-vertical mt-8">
-    <button class="btn btn-ghost text-2xl font-bold" on:click={update}>
-      Scroll For More
-    </button>
-  </div>
-{/if}
+  {#if hasMore}
+    <div class="divider divider-vertical mt-8">
+      <button class="btn btn-ghost text-2xl font-bold" on:click={update}>
+        Scroll For More
+      </button>
+    </div>
+  {/if}
+</div>
 
-<InfiniteScroll window {hasMore} on:loadMore={update} />
+<InfiniteScroll
+  elementScroll={main ?? undefined}
+  {hasMore}
+  on:loadMore={update}
+/>

@@ -5,6 +5,8 @@
   export let data: PageData;
 </script>
 
-<InfiniteScroll animes={data.data} dataUpdate={data.update}>
-  Trending Animes
-</InfiniteScroll>
+<div class="m-4">
+  <InfiniteScroll animes={data.data} dataUpdate={data.update}>
+    Trending Animes
+  </InfiniteScroll>
+</div>

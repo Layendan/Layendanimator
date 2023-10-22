@@ -11,6 +11,7 @@
   const perPage = 25;
   let page: number = Math.floor(animes.length / perPage) || 1;
   let hasMore: boolean = animes.length % perPage === 0;
+  const main = document.querySelector('main');
 
   async function update() {
     isUpdating = true;
@@ -44,4 +45,8 @@
   </div>
 {/if}
 
-<InfiniteScroll window {hasMore} on:loadMore={update} />
+<InfiniteScroll
+  elementScroll={main ?? undefined}
+  {hasMore}
+  on:loadMore={update}
+/>

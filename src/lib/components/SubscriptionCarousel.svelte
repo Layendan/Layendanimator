@@ -1,11 +1,13 @@
 <script lang="ts">
-  import Semaphore from '$lib/model/classes/Semaphore';
-  import { fetchAnime } from '$lib/model/fetch';
   import { getSortMethod, settings } from '$lib/model/settings';
   import {
     subscriptions,
     unwatchedSubscriptions
   } from '$lib/model/subscriptions';
+  import {
+    isUpdatingSubscriptions,
+    updateSubscriptions
+  } from '$lib/model/updates';
   import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
   import { fade } from 'svelte/transition';
@@ -13,10 +15,6 @@
   import ScrollCarousel from './ScrollCarousel.svelte';
 
   $: sortMethod = ($settings.sortSubscriptions, getSortMethod());
-
-  const semaphore = new Semaphore(5, 1000);
-
-  let loading = false;
 </script>
 
 <ScrollCarousel>
@@ -32,32 +30,9 @@
       <button
         class="btn btn-ghost h-fit bg-base-300"
         out:fade={{ duration: 200 }}
-        on:click={async () => {
-          if (loading) return;
-
-          loading = true;
-          const totalSubs = [
-            ...Object.values($subscriptions).filter(
-              anime =>
-                anime.status !== 'Completed' && anime.status !== 'Cancelled'
-            ),
-            ...Object.values($unwatchedSubscriptions).filter(
-              anime =>
-                anime.status !== 'Completed' && anime.status !== 'Cancelled'
-            )
-          ];
-          await Promise.allSettled(
-            totalSubs.map(anime => {
-              return semaphore.callFunction(
-                () => fetchAnime(anime.id, anime.source),
-                `${anime.source.id}/${anime.id}`
-              );
-            })
-          );
-          loading = false;
-        }}
+        on:click={updateSubscriptions}
       >
-        {#if loading}
+        {#if $isUpdatingSubscriptions}
           <span class="loading loading-ring" />
           fetching
         {:else}

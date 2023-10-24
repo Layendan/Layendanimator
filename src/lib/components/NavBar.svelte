@@ -1,16 +1,33 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { providers, source } from '$lib/model/source';
+  import { tasks } from '$lib/model/updates';
   import { faBookmark, faCog } from '@fortawesome/free-solid-svg-icons';
   import type { UnlistenFn } from '@tauri-apps/api/event';
   import type { Theme } from '@tauri-apps/api/window';
   import { onDestroy, onMount } from 'svelte';
   import Fa from 'svelte-fa';
+  import { cubicOut } from 'svelte/easing';
+  import { tweened } from 'svelte/motion';
+  import { fade } from 'svelte/transition';
   import NavigationComponents from './NavigationComponents.svelte';
   import SearchBar from './SearchBar.svelte';
 
   let systemTheme: Theme | null = null;
   let unsubscribe: UnlistenFn;
+  const taskValue = tweened(0, {
+    duration: 1000,
+    easing: cubicOut
+  });
+  const taskMax = tweened(0, {
+    duration: 1000,
+    easing: cubicOut
+  });
+  $: if ($tasks[0]) {
+    const { value = 0, max = 0 } = $tasks[0];
+    taskValue.set(value);
+    taskMax.set(max);
+  }
 
   async function getTheme() {
     try {
@@ -61,7 +78,7 @@
   <div class="divider my-0" />
 
   <div
-    class="pointer-events-auto flex h-fit flex-col gap-2 overflow-y-scroll overscroll-contain"
+    class="pointer-events-auto mb-auto flex h-fit flex-col gap-2 overflow-y-scroll overscroll-contain"
   >
     <a
       href="/library"
@@ -105,6 +122,16 @@
       </a>
     {/each}
   </div>
+
+  {#if $tasks.length > 0}
+    <div class="h-fit w-full rounded-lg bg-base-content/10 p-4" transition:fade>
+      <span class="mb-2 inline-flex h-fit w-full items-center justify-between">
+        <h3 class="text-lg font-semibold">{$tasks[0].title}</h3>
+        <p class="text-sm">{$tasks[0].value}/{$tasks[0].max}</p>
+      </span>
+      <progress class="progress w-full" value={$taskValue} max={$taskMax} />
+    </div>
+  {/if}
 </nav>
 
 <style>

@@ -8,6 +8,7 @@ import Semaphore from './classes/Semaphore';
 import { fetchEpisode } from './fetch';
 import { notifications } from './notifications';
 import type { Provider } from './source';
+import { tasks } from './updates';
 
 let store: Store | undefined = undefined;
 
@@ -137,6 +138,7 @@ function createDownloading() {
   const videos = new Semaphore<string>(5);
   const subtitles = new Semaphore<string>(10, 1000);
   const images = new Semaphore<string>(10, 1000);
+  const taskId = 'downloading';
 
   const dict: {
     [key: string]: { anime: Anime; quality: string; progress: number | null };
@@ -156,6 +158,19 @@ function createDownloading() {
     images.removeFunction(id);
 
     remove(id);
+    tasks.update(tasksList => {
+      const task = tasksList.find(task => task.id === taskId);
+      if (task) {
+        task.max--;
+        if (task.value >= task.max) {
+          setTimeout(() => {
+            if (task.value >= task.max)
+              tasks.update(tasks => tasks.filter(task => task.id !== taskId));
+          }, 500);
+        }
+      }
+      return tasksList;
+    });
     const { emit } = await import('@tauri-apps/api/event');
     emit(`download-cancel-${encodeId(id)}`);
   };
@@ -176,12 +191,26 @@ function createDownloading() {
 
       if (get(downloading)[id]) return;
 
-      try {
-        update(downloads => {
-          downloads[id] = { anime, quality, progress: null };
-          return downloads;
-        });
+      update(downloads => {
+        downloads[id] = { anime, quality, progress: null };
+        return downloads;
+      });
 
+      tasks.update(tasks => {
+        const task = tasks.find(task => task.id === taskId);
+        if (task) {
+          task.max++;
+        } else {
+          tasks.push({
+            id: taskId,
+            title: 'Downloading',
+            value: 0,
+            max: 1
+          });
+        }
+        return tasks;
+      });
+      try {
         const [
           { Command },
           { appDataDir, join },
@@ -578,6 +607,20 @@ function createDownloading() {
             anime.title.english ?? anime.title.romaji
           } Episode ${episodeNumber}`,
           type: 'success'
+        });
+
+        tasks.update(tasks => {
+          const task = tasks.find(task => task.id === taskId);
+          if (task) {
+            task.value++;
+            if (task.value >= task.max) {
+              setTimeout(() => {
+                if (task.value === task.max)
+                  tasks.splice(tasks.indexOf(task), 1);
+              }, 1000);
+            }
+          }
+          return tasks;
         });
       } catch (e) {
         console.error(e);

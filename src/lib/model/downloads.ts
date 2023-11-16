@@ -240,7 +240,7 @@ function createDownloading() {
             (await fetchEpisode(episodeId, anime.source));
 
           if (!cache) {
-            throw new Error('Episode not found');
+            return Promise.reject('Episode not found');
           }
 
           let episode = cache.sources?.find(s => s.quality === quality);
@@ -265,14 +265,18 @@ function createDownloading() {
           let duration = 0;
 
           if (Hls.isSupported() && episode.isM3U8) {
-            const hls = new Hls();
-            hls.loadSource(episode.url);
-            hls.attachMedia(videoElement);
-            hls.once(Hls.Events.LEVEL_LOADED, (_, data) => {
-              duration = data.details.totalduration;
-              hls.destroy();
-              videoElement.remove();
-            });
+            try {
+              const hls = new Hls();
+              hls.loadSource(episode.url);
+              hls.attachMedia(videoElement);
+              hls.once(Hls.Events.LEVEL_LOADED, (_, data) => {
+                duration = data.details.totalduration;
+                hls.destroy();
+                videoElement.remove();
+              });
+            } catch (e) {
+              return Promise.reject(e);
+            }
           } else if (episode.isM3U8) {
             console.error('M3U8 not supported');
             notifications.addNotification({
@@ -567,8 +571,8 @@ function createDownloading() {
             anime.cover && imageResults[2].status === 'fulfilled'
               ? imageResults[2].value
               : imageResults[0].status === 'fulfilled'
-              ? imageResults[0].value
-              : anime.cover ?? anime.image,
+                ? imageResults[0].value
+                : anime.cover ?? anime.image,
           episodes: anime.episodes.map(episode => ({
             ...episode,
             image:
@@ -609,18 +613,20 @@ function createDownloading() {
           type: 'success'
         });
 
-        tasks.update(tasks => {
-          const task = tasks.find(task => task.id === taskId);
+        tasks.update(tasksList => {
+          const task = tasksList.find(task => task.id === taskId);
           if (task) {
             task.value++;
             if (task.value >= task.max) {
               setTimeout(() => {
-                if (task.value === task.max)
-                  tasks.splice(tasks.indexOf(task), 1);
-              }, 1000);
+                if (task.value >= task.max)
+                  tasks.update(tasks =>
+                    tasks.filter(task => task.id !== taskId)
+                  );
+              }, 500);
             }
           }
-          return tasks;
+          return tasksList;
         });
       } catch (e) {
         console.error(e);

@@ -194,14 +194,14 @@
 
 <span
   data-tauri-drag-region
-  class="inline-flex h-screen w-screen gap-2 p-2
+  class="inline-flex h-screen w-screen gap-2 overflow-visible p-2
         {window?.__TAURI__ && os !== 'Linux'
     ? 'bg-transparent'
     : 'bg-base-100'}"
 >
   <NavBar />
   <main
-    class="h-full w-[calc(100%-214px-0.5rem)] overflow-y-scroll overscroll-contain rounded-md bg-base-100 shadow-xl shadow-black/40"
+    class="h-full w-[calc(100%-214px-0.5rem)] overflow-y-scroll overscroll-contain rounded-md bg-base-100 shadow-xl shadow-black/40 will-change-scroll"
     id="main"
     bind:this={obj}
     on:scroll={() => ($scrollY = obj.scrollTop)}

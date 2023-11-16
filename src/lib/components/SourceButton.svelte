@@ -28,7 +28,7 @@
   <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
   <ul
     tabindex="0"
-    class="dropdown-content rounded-box z-10 mt-3 w-72 bg-base-100 p-4 shadow-xl"
+    class="dropdown-content z-10 mt-3 w-72 rounded-box bg-base-100 p-4 shadow-xl"
   >
     <div class="max-h-96 overflow-y-scroll overscroll-contain">
       {#each Object.values($providers) as provider (provider.id)}

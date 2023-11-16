@@ -1,7 +1,15 @@
-import { colord, extend } from 'colord';
-import mixPlugin from 'colord/plugins/mix';
-
-extend([mixPlugin]);
+import {
+  convertLabToLch,
+  convertOkhslToOklab,
+  convertRgbToOklab,
+  formatHex,
+  interpolate,
+  okhsl,
+  parseHex,
+  rgb,
+  wcagContrast,
+  type Oklch
+} from 'culori';
 
 export type HSL = {
   h: number;
@@ -9,31 +17,64 @@ export type HSL = {
   l: number;
 };
 
+export type CSSInput = {
+  p: Oklch;
+  pf: Oklch;
+  pc: Oklch;
+  s: Oklch;
+  sf: Oklch;
+  sc: Oklch;
+  a: Oklch;
+  af: Oklch;
+  ac: Oklch;
+  n: Oklch;
+  nf: Oklch;
+  nc: Oklch;
+  b1: Oklch;
+  b2: Oklch;
+  b3: Oklch;
+  bc: Oklch;
+  in: Oklch;
+  inc: Oklch;
+  su: Oklch;
+  suc: Oklch;
+  wa: Oklch;
+  wac: Oklch;
+  er: Oklch;
+  erc: Oklch;
+};
+
+export type OKLCH = {
+  l: number;
+  c: number;
+  h: number;
+};
+
 export type CSS = {
-  p: HSL;
-  pf: HSL;
-  pc: HSL;
-  s: HSL;
-  sf: HSL;
-  sc: HSL;
-  a: HSL;
-  af: HSL;
-  ac: HSL;
-  n: HSL;
-  nf: HSL;
-  nc: HSL;
-  b1: HSL;
-  b2: HSL;
-  b3: HSL;
-  bc: HSL;
-  in: HSL;
-  inc: HSL;
-  su: HSL;
-  suc: HSL;
-  wa: HSL;
-  wac: HSL;
-  er: HSL;
-  erc: HSL;
+  p: OKLCH;
+  pf: OKLCH;
+  pc: OKLCH;
+  s: OKLCH;
+  sf: OKLCH;
+  sc: OKLCH;
+  a: OKLCH;
+  af: OKLCH;
+  ac: OKLCH;
+  n: OKLCH;
+  nf: OKLCH;
+  nc: OKLCH;
+  b1: OKLCH;
+  b2: OKLCH;
+  b3: OKLCH;
+  bc: OKLCH;
+  in: OKLCH;
+  inc: OKLCH;
+  su: OKLCH;
+  suc: OKLCH;
+  wa: OKLCH;
+  wac: OKLCH;
+  er: OKLCH;
+  erc: OKLCH;
 };
 
 export type Theme = {
@@ -43,118 +84,161 @@ export type Theme = {
   css?: CSS;
 };
 
-function stringifyHSL(hsl: HSL): string {
-  return `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+function colorObjToString(input: OKLCH) {
+  const cut = (num?: number) => {
+    if (!num) {
+      return 0;
+    }
+    return +num.toFixed(6);
+  };
+  const { l, c, h } = input;
+  return `${cut(l)} ${cut(c)} ${cut(h)}`;
 }
 
-function generateForegroundColorFrom(input: HSL, percentage = 0.8): HSL {
-  const stringified = stringifyHSL(input);
-  const hsl = colord(stringified)
-    .mix(colord(stringified).isDark() ? '#ffffff' : '#000000', percentage)
-    .toHsl();
-  return hsl;
+function generateForegroundColorFrom(input: Oklch, percentage = 0.8): OKLCH {
+  const result = interpolate(
+    [`oklch(${getOklch(input)})`, isDark(input) ? 'white' : 'black'],
+    'oklch'
+  )(percentage);
+  return {
+    l: result.l,
+    c: result.c,
+    h: result.h ?? 0
+  };
 }
 
-function generateDarkenColorFrom(input: HSL, percentage = 0.07): HSL {
-  const stringified = stringifyHSL(input);
-  const hsl = colord(stringified).darken(percentage).toHsl();
-  return hsl;
+function generateDarkenColorFrom(input: Oklch, percentage = 0.07): OKLCH {
+  const result = interpolate(
+    [`oklch(${getOklch(input)})`, 'black'],
+    'oklch'
+  )(percentage);
+  return {
+    l: result.l,
+    c: result.c,
+    h: result.h ?? 0
+  };
 }
 
-function isDark(input: HSL): boolean {
-  const stringified = stringifyHSL(input);
-  return colord(stringified).isDark();
+function isDark(input: Oklch): boolean {
+  return (
+    wcagContrast(`oklch(${getOklch(input)})`, 'black') <
+    wcagContrast(`oklch(${getOklch(input)})`, 'white')
+  );
 }
 
 export function createTheme(
   name: string,
-  css: Partial<CSS> & Pick<CSS, 'p' | 's' | 'a' | 'n' | 'b1'>
+  css: Partial<CSSInput> & Pick<CSSInput, 'p' | 's' | 'a' | 'n' | 'b1'>
 ): Theme {
   return {
     name,
     id: Date.now(),
     colorScheme: isDark(css.b1) ? 'dark' : 'light',
     css: {
-      ...css,
-      pf: css.pf ?? generateDarkenColorFrom(css.p),
-      pc: css.pc ?? generateForegroundColorFrom(css.p),
-      sf: css.sf ?? generateDarkenColorFrom(css.s),
-      sc: css.sc ?? generateForegroundColorFrom(css.s),
-      af: css.af ?? generateDarkenColorFrom(css.a),
-      ac: css.ac ?? generateForegroundColorFrom(css.a),
-      nf: css.nf ?? generateDarkenColorFrom(css.n),
-      nc: css.nc ?? generateForegroundColorFrom(css.n),
-      b2: css.b2 ?? generateDarkenColorFrom(css.b1),
-      b3:
-        css.b3 ??
-        (css.b2
-          ? generateDarkenColorFrom(css.b2)
-          : generateDarkenColorFrom(css.b1, 0.14)),
-      bc: css.bc ?? generateForegroundColorFrom(css.b1),
-      in: css.in ?? {
-        h: 198,
-        s: 93,
-        l: 60
-      },
-      inc:
-        css.inc ??
-        (css.in
-          ? generateForegroundColorFrom(css.in)
-          : {
-              h: 198,
-              s: 100,
-              l: 12
-            }),
-      su: css.su ?? {
-        h: 158,
-        s: 64,
-        l: 52
-      },
-      suc:
-        css.suc ??
-        (css.su
-          ? generateForegroundColorFrom(css.su)
-          : {
-              h: 158,
-              s: 100,
-              l: 10
-            }),
-      wa: css.wa ?? {
-        h: 43,
-        s: 96,
-        l: 56
-      },
-      wac:
-        css.wac ??
-        (css.wa
-          ? generateForegroundColorFrom(css.wa)
-          : {
-              h: 43,
-              s: 100,
-              l: 11
-            }),
-      er: css.er ?? {
-        h: 0,
-        s: 91,
-        l: 71
-      },
-      erc:
-        css.erc ??
-        (css.er
-          ? generateForegroundColorFrom(css.er)
-          : {
-              h: 0,
-              s: 100,
-              l: 14
-            })
+      p: OklchToOKLCH(css.p),
+      s: OklchToOKLCH(css.s),
+      a: OklchToOKLCH(css.a),
+      n: OklchToOKLCH(css.n),
+      b1: OklchToOKLCH(css.b1),
+      pf: css.pf ? OklchToOKLCH(css.pf) : generateDarkenColorFrom(css.p),
+      pc: css.pc ? OklchToOKLCH(css.pc) : generateForegroundColorFrom(css.p),
+      sf: css.sf ? OklchToOKLCH(css.sf) : generateDarkenColorFrom(css.s),
+      sc: css.sc ? OklchToOKLCH(css.sc) : generateForegroundColorFrom(css.s),
+      af: css.af ? OklchToOKLCH(css.af) : generateDarkenColorFrom(css.a),
+      ac: css.ac ? OklchToOKLCH(css.ac) : generateForegroundColorFrom(css.a),
+      nf: css.nf ? OklchToOKLCH(css.nf) : generateDarkenColorFrom(css.n),
+      nc: css.nc ? OklchToOKLCH(css.nc) : generateForegroundColorFrom(css.n),
+      b2: css.b2 ? OklchToOKLCH(css.b2) : generateDarkenColorFrom(css.b1, 0.07),
+      b3: css.b3
+        ? OklchToOKLCH(css.b3)
+        : css.b2
+          ? generateDarkenColorFrom(css.b2, 0.07)
+          : generateDarkenColorFrom(css.b1, 0.14),
+      bc: css.bc ? OklchToOKLCH(css.bc) : generateForegroundColorFrom(css.b1),
+      in: css.in
+        ? OklchToOKLCH(css.in)
+        : {
+            l: 0.7206,
+            c: 0.191,
+            h: 231.6
+          },
+      inc: css.inc
+        ? OklchToOKLCH(css.inc)
+        : generateForegroundColorFrom(
+            css.in ?? {
+              mode: 'oklch',
+              l: 0.7206,
+              c: 0.191,
+              h: 231.6
+            }
+          ),
+      su: css.su
+        ? OklchToOKLCH(css.su)
+        : {
+            l: 0.7441,
+            c: 0.213,
+            h: 164.75
+          },
+      suc: css.suc
+        ? OklchToOKLCH(css.suc)
+        : generateForegroundColorFrom(
+            css.su ?? {
+              mode: 'oklch',
+              l: 0.7441,
+              c: 0.213,
+              h: 164.75
+            }
+          ),
+      wa: css.wa
+        ? OklchToOKLCH(css.wa)
+        : {
+            l: 0.8471,
+            c: 0.199,
+            h: 83.87
+          },
+      wac: css.wac
+        ? OklchToOKLCH(css.wac)
+        : generateForegroundColorFrom(
+            css.wa ?? {
+              mode: 'oklch',
+              l: 0.8471,
+              c: 0.199,
+              h: 83.87
+            }
+          ),
+      er: css.er
+        ? OklchToOKLCH(css.er)
+        : {
+            l: 0.7176,
+            c: 0.221,
+            h: 22.18
+          },
+      erc: css.erc
+        ? OklchToOKLCH(css.erc)
+        : generateForegroundColorFrom(
+            css.er ?? {
+              mode: 'oklch',
+              l: 0.7176,
+              c: 0.221,
+              h: 22.18
+            }
+          )
     }
+  };
+}
+
+function OklchToOKLCH(input: Oklch): OKLCH {
+  return {
+    l: input.l,
+    c: input.c,
+    h: input.h ?? 0
   };
 }
 
 export function toStyleString(css: CSS, colorScheme: 'light' | 'dark') {
   let cssStr = `color-scheme: ${colorScheme};`;
   for (const [key, value] of Object.entries(css)) {
-    cssStr += `--${key}: ${getHSL(value)};`;
+    cssStr += `--${key}: ${colorObjToString(value)};`;
   }
   return cssStr;
 }
@@ -163,12 +247,50 @@ export function getHSL(hsl: HSL) {
   return `${hsl.h} ${hsl.s}% ${hsl.l}%`;
 }
 
-export function hexToHSL(hex: string): HSL {
-  return colord(hex).toHsl();
+export function getOklch(oklch: Oklch) {
+  return `${oklch.l} ${oklch.c} ${oklch.h ?? 0}`;
 }
 
-export function hslToHex(hsl: HSL): string {
-  return colord(hsl).toHex();
+export function hexToOklch(hex: string): Oklch {
+  return convertLabToLch(convertRgbToOklab(rgb(parseHex(hex))));
+}
+
+export function OKLCHToHex(input: OKLCH): string {
+  return formatHex({ mode: 'oklch', ...input });
+}
+
+export function hslToOklch(hsl: HSL): Oklch {
+  const okhslObj = okhsl(`hsl(${getHSL(hsl)})`);
+  if (!okhslObj) {
+    throw new Error('Invalid HSL');
+  }
+  return convertLabToLch(convertOkhslToOklab(okhslObj));
+}
+
+export function isHSL(input: unknown): input is HSL {
+  return (
+    typeof input === 'object' &&
+    input !== null &&
+    'h' in input &&
+    's' in input &&
+    'l' in input
+  );
+}
+
+export function checkAndConvertTheme(theme: Theme): Theme {
+  if (!theme.css) {
+    return theme;
+  }
+
+  const newValue = Object.entries(theme.css).reduce(
+    (acc, [key, value]) => {
+      acc[key] = isHSL(value) ? OklchToOKLCH(hslToOklch(value)) : value;
+      return acc;
+    },
+    {} as Record<string, OKLCH>
+  );
+
+  return { ...theme, css: newValue as Theme['css'] };
 }
 
 export function encodeName(name: string): string {

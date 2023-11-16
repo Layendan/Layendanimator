@@ -69,7 +69,7 @@
   {href}
   id={episode.id}
   bind:this={background}
-  style:--anime-color={anime.color ?? 'hsl(var(--a))'}
+  style:--anime-color={anime.color ?? 'oklch(var(--a))'}
   class="group-one indicator flex w-[168px] select-none flex-col gap-2 focus-visible:outline-transparent lg:w-[210px]"
   class:w-[210px]={!showImage}
   data-sveltekit-replacestate={replaceState ? '' : 'off'}
@@ -190,6 +190,6 @@
   }
 
   .group-one:focus-visible .noImageDesc {
-    --tw-ring-offset-color: hsl(var(--b2) / 1);
+    --tw-ring-offset-color: oklch(var(--b2) / 1);
   }
 </style>

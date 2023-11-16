@@ -26,8 +26,8 @@
   let isAscending = true;
   let showWatched = true;
   let showImage: boolean;
-  $: reversedEpisodes = [...(data.episodes ?? [])].reverse();
-  $: sortedEpisodes = isAscending ? data.episodes : reversedEpisodes;
+  $: reversedEpisodes = (data.episodes ?? []).toReversed();
+  $: sortedEpisodes = isAscending ? data.episodes ?? [] : reversedEpisodes;
   $: relations = (data.relations ?? []).filter(
     a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT'
   );
@@ -134,7 +134,7 @@
               <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
               <ul
                 tabindex="0"
-                class="dropdown-content rounded-box z-10 mt-1 w-52 bg-base-100 p-2 shadow"
+                class="dropdown-content z-10 mt-1 w-52 rounded-box bg-base-100 p-2 shadow"
               >
                 <li class="m-1">
                   <button

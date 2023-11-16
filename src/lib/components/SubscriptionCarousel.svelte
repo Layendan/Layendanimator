@@ -34,10 +34,10 @@
       >
         {#if $isUpdatingSubscriptions}
           <span class="loading loading-ring" />
-          fetching
+          Fetching
         {:else}
           <Fa icon={faArrowRotateRight} size="1.2x" />
-          fetch updates
+          Fetch Updates
         {/if}
       </button>
     {/if}

@@ -166,7 +166,7 @@
 {#if episodeData.sources}
   <media-player
     title={episode.title ?? `Episode ${episode.number}`}
-    style:--video-brand={anime.color ?? 'hsl(var(--a))'}
+    style:--video-brand={anime.color ?? 'oklch(var(--a))'}
     style:--video-border-radius="0px"
     class="relative mb-4 flex aspect-video h-auto w-full items-center justify-center overflow-hidden border-none object-cover"
     preload="metadata"

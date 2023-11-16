@@ -67,6 +67,6 @@
       descriptionCollapsed = !descriptionCollapsed;
     }}
   >
-    Show {descriptionCollapsed ? 'more' : 'less'}
+    Show {descriptionCollapsed ? 'More' : 'Less'}
   </button>
 </div>

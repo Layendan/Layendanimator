@@ -5,7 +5,7 @@ import { LRUCache } from 'lru-cache';
 import { get, writable } from 'svelte/store';
 import type { Store } from 'tauri-plugin-store-api';
 import { searchCache } from './cache';
-import type { Anime, Episode, EpisodeData, RecentAnime } from './classes/Anime';
+import type { Anime, Episode, EpisodeData } from './classes/Anime';
 import { notifications } from './notifications';
 
 /**
@@ -498,57 +498,57 @@ export const defaultProviders: { [key: string]: Provider } = {
     status: 'working',
     isNSFW: false,
     version: '1.0.0'
-  },
-  wco: {
-    name: 'Watch Cartoons Online',
-    id: 'wco',
-    url: 'https://www.wcostream.org',
-    updateUrl: '',
-    logo: 'https://www.wcostream.org/wp-content/themes/animewp78712/images/logo.gif',
-    description: 'Watch cartoons online, Watch anime online, English dub anime',
-    scripts: {
-      search: (async (query: string) => {
-        const url = new URL(
-          `search/${query}`,
-          'https://wco-source.agreeablewater-9752305a.westus2.azurecontainerapps.io/'
-        );
-        const results: Anime[] = await fetch(url).then(r => r.json());
-        return results;
-      }).toString(),
-      fetchTrendingAnime: '',
-      fetchPopularAnime: '',
-      fetchRecentEpisodes: (async () => {
-        const results: RecentAnime[] = await fetch(
-          'https://wco-source.agreeablewater-9752305a.westus2.azurecontainerapps.io/recent'
-        ).then(r => r.json());
-        return results;
-      }).toString(),
-      fetchAiringSchedule: '',
-      fetchAnimeInfo: (async (id: string) => {
-        const results: Anime = await fetch(
-          `https://wco-source.agreeablewater-9752305a.westus2.azurecontainerapps.io/${id}`
-        ).then(r => r.json());
-        return results;
-      }).toString(),
-      fetchEpisodes: (async (id: string) => {
-        const url = new URL(`watch/${id}`, 'http://localhost:3000/');
-        const episode: EpisodeData = await fetch(url.toString()).then(r =>
-          r.json()
-        );
-        return episode;
-      }).toString()
-    },
-    shareLinks: {
-      anime: 'https://www.wcostream.org/anime/{id}',
-      episode: 'https://www.wcostream.org/{episode}'
-    },
-    externalLinks: [['Website', 'https://www.wcostream.org/']],
-    languages: ['english'],
-    tags: ['anime', 'dubbed', 'subbed', 'wco', 'wcostream'],
-    status: 'broken',
-    isNSFW: false,
-    version: '1.0.0'
   }
+  // wco: {
+  //   name: 'Watch Cartoons Online',
+  //   id: 'wco',
+  //   url: 'https://www.wcostream.org',
+  //   updateUrl: '',
+  //   logo: 'https://www.wcostream.org/wp-content/themes/animewp78712/images/logo.gif',
+  //   description: 'Watch cartoons online, Watch anime online, English dub anime',
+  //   scripts: {
+  //     search: (async (query: string) => {
+  //       const url = new URL(
+  //         `search/${query}`,
+  //         'https://wco-source.agreeablewater-9752305a.westus2.azurecontainerapps.io/'
+  //       );
+  //       const results: Anime[] = await fetch(url).then(r => r.json());
+  //       return results;
+  //     }).toString(),
+  //     fetchTrendingAnime: '',
+  //     fetchPopularAnime: '',
+  //     fetchRecentEpisodes: (async () => {
+  //       const results: RecentAnime[] = await fetch(
+  //         'https://wco-source.agreeablewater-9752305a.westus2.azurecontainerapps.io/recent'
+  //       ).then(r => r.json());
+  //       return results;
+  //     }).toString(),
+  //     fetchAiringSchedule: '',
+  //     fetchAnimeInfo: (async (id: string) => {
+  //       const results: Anime = await fetch(
+  //         `https://wco-source.agreeablewater-9752305a.westus2.azurecontainerapps.io/${id}`
+  //       ).then(r => r.json());
+  //       return results;
+  //     }).toString(),
+  //     fetchEpisodes: (async (id: string) => {
+  //       const url = new URL(`watch/${id}`, 'https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/');
+  //       const episode: EpisodeData = await fetch(url.toString()).then(r =>
+  //         r.json()
+  //       );
+  //       return episode;
+  //     }).toString()
+  //   },
+  //   shareLinks: {
+  //     anime: 'https://www.wcostream.org/anime/{id}',
+  //     episode: 'https://www.wcostream.org/{episode}'
+  //   },
+  //   externalLinks: [['Website', 'https://www.wcostream.org/']],
+  //   languages: ['english'],
+  //   tags: ['anime', 'dubbed', 'subbed', 'wco', 'wcostream'],
+  //   status: 'broken',
+  //   isNSFW: false,
+  //   version: '1.0.0'
+  // }
 };
 
 // Prevent modification of default providers

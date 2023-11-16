@@ -13,7 +13,7 @@
 
 <button
   class="btn mt-4 w-full shadow-xl backdrop-blur-xl {subscribed
-    ? 'btn-error btn-outline'
+    ? 'btn-outline btn-error'
     : 'btn-primary'}"
   on:click={() => {
     if (subscribed) {

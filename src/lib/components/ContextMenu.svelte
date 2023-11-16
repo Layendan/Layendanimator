@@ -61,7 +61,7 @@
   transition:fade={{ duration: 200 }}
   bind:this={menuEl}
   style="top: {y}px; left: {x}px;"
-  class="menu rounded-box menu-sm fixed z-50 w-52 border-2 border-solid border-neutral/20 bg-base-200 shadow-lg"
+  class="menu menu-sm fixed z-50 w-52 rounded-box border-2 border-solid border-neutral/20 bg-base-200 shadow-lg"
 >
   <slot />
 </div>

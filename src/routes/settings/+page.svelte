@@ -264,7 +264,7 @@
           {#await getVersion() then version}
             {version}
             <button
-              class="btn btn-accent btn-outline btn-sm ml-2"
+              class="btn btn-outline btn-accent btn-sm ml-2"
               on:click={checkUpdate}
             >
               <Fa icon={faCloudArrowDown} />

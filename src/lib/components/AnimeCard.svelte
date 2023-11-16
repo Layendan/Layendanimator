@@ -20,7 +20,7 @@
     in:fade|global
     {href}
     id={anime.id}
-    style:--anime-color={anime.color ?? 'hsl(var(--a))'}
+    style:--anime-color={anime.color ?? 'oklch(var(--a))'}
     class="group indicator flex w-[168px] flex-col gap-2 focus-visible:outline-transparent lg:w-[210px]"
   >
     <div

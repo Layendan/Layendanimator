@@ -21,28 +21,34 @@ export async function updateSubscriptions() {
   isUpdatingSubscriptions.set(true);
   const id = 'updateSubscriptions';
 
+  const totalSubs = [
+    ...Object.values(get(subscriptions)).filter(
+      anime => anime.status !== 'Completed' && anime.status !== 'Cancelled'
+    ),
+    ...Object.values(get(unwatchedSubscriptions)).filter(
+      anime => anime.status !== 'Completed' && anime.status !== 'Cancelled'
+    )
+  ];
+  tasks.update(tasks => [
+    ...tasks,
+    { id, title: 'Fetching Subscriptions', value: 0, max: totalSubs.length }
+  ]);
+
   try {
-    const totalSubs = [
-      ...Object.values(get(subscriptions)).filter(
-        anime => anime.status !== 'Completed' && anime.status !== 'Cancelled'
-      ),
-      ...Object.values(get(unwatchedSubscriptions)).filter(
-        anime => anime.status !== 'Completed' && anime.status !== 'Cancelled'
-      )
-    ];
-    tasks.update(tasks => [
-      ...tasks,
-      { id, title: 'Fetching Subscriptions', value: 0, max: totalSubs.length }
-    ]);
     await Promise.allSettled(
       totalSubs.map(anime => {
         return semaphore.callFunction(async () => {
-          await fetchAnime(anime.id, anime.source);
-          tasks.update(tasks =>
-            tasks.map(task =>
-              task.id === id ? { ...task, value: task.value + 1 } : task
-            )
-          );
+          try {
+            await fetchAnime(anime.id, anime.source);
+          } catch (e) {
+            console.error(e);
+          } finally {
+            tasks.update(tasksList => {
+              const task = tasksList.find(task => task.id === id);
+              if (task) task.value++;
+              return tasksList;
+            });
+          }
         }, `${anime.source.id}/${anime.id}`);
       })
     );

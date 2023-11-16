@@ -12,7 +12,7 @@ import {
   unwatchedSubscriptions,
   type Subscription
 } from './subscriptions';
-import { defaultThemes, type Theme } from './theme';
+import { checkAndConvertTheme, defaultThemes, type Theme } from './theme';
 import { watching } from './watch';
 
 let store: Store | undefined = undefined;
@@ -70,10 +70,22 @@ function createSettings() {
       store ??= new StoreImport('.settings.dat');
       const data = await store.get<SettingsType>('settings');
       if (data) {
-        set({
-          ...defaultSettings,
-          ...data
-        });
+        const newData = { ...defaultSettings, ...data };
+
+        // TODO: Remove this in a few version updates
+        // if themes in newData are using old hsl, then convert to oklch
+        const themes = { ...defaultThemes, ...newData.themes };
+        const newThemes = Object.entries(themes).reduce(
+          (acc, [key, value]) => {
+            acc[key] = checkAndConvertTheme(value);
+            return acc;
+          },
+          {} as Record<string, Theme>
+        );
+
+        newData.themes = newThemes;
+        newData.theme = newThemes[newData.theme.name] ?? defaultThemes.system;
+        set(newData);
       } else {
         await store.set('settings', defaultSettings);
       }

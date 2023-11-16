@@ -148,6 +148,6 @@
     </div>
   </form>
   <form method="dialog" class="modal-backdrop">
-    <button tabindex="-1">close</button>
+    <button tabindex="-1">Close</button>
   </form>
 </dialog>

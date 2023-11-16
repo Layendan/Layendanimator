@@ -2,12 +2,16 @@
   import { notifications } from '$lib/model/notifications';
   import { settings } from '$lib/model/settings';
   import {
+    OKLCHToHex,
     createTheme,
-    getHSL,
-    hexToHSL,
-    hslToHex,
+    getOklch,
+    hexToOklch,
+    hslToOklch,
+    isHSL,
+    type CSSInput,
     type Theme
   } from '$lib/model/theme';
+  import type { Oklch } from 'culori';
 
   let modal: HTMLDialogElement;
   let hidden = true;
@@ -22,6 +26,8 @@
   let success = '';
   let warning = '';
   let error = '';
+
+  const testHex = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
 
   async function createThemeFromFile() {
     try {
@@ -52,7 +58,31 @@
         throw new Error('Theme already exists');
       }
 
-      const newTheme = createTheme(theme.name, theme.css);
+      if (
+        !theme.css.p ||
+        !theme.css.s ||
+        !theme.css.a ||
+        !theme.css.n ||
+        !theme.css.b1
+      ) {
+        throw new Error('Missing Theme Colors');
+      }
+
+      const newTheme = createTheme(
+        theme.name,
+        Object.entries(theme.css).reduce(
+          (acc, [key, value]) => {
+            acc[key] = isHSL(value)
+              ? hslToOklch(value)
+              : {
+                  mode: 'oklch',
+                  ...value
+                };
+            return acc;
+          },
+          {} as Record<string, Oklch>
+        ) as Partial<CSSInput> & Pick<CSSInput, 'p' | 's' | 'a' | 'n' | 'b1'>
+      );
 
       $settings.themes[theme.name] = newTheme;
       $settings.theme = newTheme;
@@ -114,15 +144,15 @@
       }
 
       const theme = createTheme(themeName, {
-        p: hexToHSL(primary),
-        s: hexToHSL(secondary),
-        a: hexToHSL(accent),
-        n: hexToHSL(neutral),
-        b1: hexToHSL(bg),
-        in: info ? hexToHSL(info) : undefined,
-        su: success ? hexToHSL(success) : undefined,
-        wa: warning ? hexToHSL(warning) : undefined,
-        er: error ? hexToHSL(error) : undefined
+        p: hexToOklch(primary),
+        s: hexToOklch(secondary),
+        a: hexToOklch(accent),
+        n: hexToOklch(neutral),
+        b1: hexToOklch(bg),
+        in: info ? hexToOklch(info) : undefined,
+        su: success ? hexToOklch(success) : undefined,
+        wa: warning ? hexToOklch(warning) : undefined,
+        er: error ? hexToOklch(error) : undefined
       });
       $settings.themes[themeName] = theme;
       $settings.theme = theme;
@@ -161,12 +191,12 @@
         type="text"
         id="primary"
         placeholder={$settings.theme.css
-          ? hslToHex($settings.theme.css.p)
+          ? OKLCHToHex($settings.theme.css.p)
           : '#661AE6'}
         required
         pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--p={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(primary)
-          ? getHSL(hexToHSL(primary))
+        style:--p={testHex.test(primary)
+          ? getOklch(hexToOklch(primary))
           : 'var(--primary)'}
         class="input input-bordered input-primary input-sm w-full uppercase transition-colors duration-200"
         bind:value={primary}
@@ -180,12 +210,12 @@
         type="text"
         id="secondary"
         placeholder={$settings.theme.css
-          ? hslToHex($settings.theme.css.s)
+          ? OKLCHToHex($settings.theme.css.s)
           : '#D926AA'}
         required
         pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--s={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(secondary)
-          ? getHSL(hexToHSL(secondary))
+        style:--s={testHex.test(secondary)
+          ? getOklch(hexToOklch(secondary))
           : 'var(--secondary)'}
         class="input input-bordered input-secondary input-sm w-full uppercase transition-colors duration-200"
         bind:value={secondary}
@@ -199,12 +229,12 @@
         type="text"
         id="accent"
         placeholder={$settings.theme.css
-          ? hslToHex($settings.theme.css.a)
+          ? OKLCHToHex($settings.theme.css.a)
           : '#1FB2A5'}
         required
         pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--a={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(accent)
-          ? getHSL(hexToHSL(accent))
+        style:--a={testHex.test(accent)
+          ? getOklch(hexToOklch(accent))
           : 'var(--accent)'}
         class="input input-bordered input-accent input-sm w-full uppercase transition-colors duration-200"
         bind:value={accent}
@@ -218,12 +248,12 @@
         type="text"
         id="neutral"
         placeholder={$settings.theme.css
-          ? hslToHex($settings.theme.css.n)
+          ? OKLCHToHex($settings.theme.css.n)
           : '#2A323C'}
         required
         pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--p={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(neutral)
-          ? getHSL(hexToHSL(neutral))
+        style:--p={testHex.test(neutral)
+          ? getOklch(hexToOklch(neutral))
           : 'var(--neutral)'}
         class="input input-primary input-sm w-full uppercase transition-colors duration-200"
         bind:value={neutral}
@@ -237,13 +267,11 @@
         type="text"
         id="bg"
         placeholder={$settings.theme.css
-          ? hslToHex($settings.theme.css.b1)
+          ? OKLCHToHex($settings.theme.css.b1)
           : '#1D232A'}
         required
         pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--p={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(bg)
-          ? getHSL(hexToHSL(bg))
-          : 'var(--bg)'}
+        style:--p={testHex.test(bg) ? getOklch(hexToOklch(bg)) : 'var(--bg)'}
         class="input input-primary input-sm w-full uppercase transition-colors duration-200"
         bind:value={bg}
         tabindex={hidden ? -1 : 0}
@@ -258,11 +286,11 @@
         type="text"
         id="info"
         placeholder={$settings.theme.css?.in
-          ? hslToHex($settings.theme.css.in)
+          ? OKLCHToHex($settings.theme.css.in)
           : '#3ABFF8'}
         pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--in={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(info)
-          ? getHSL(hexToHSL(info))
+        style:--in={testHex.test(info)
+          ? getOklch(hexToOklch(info))
           : 'var(--info)'}
         class="input input-info input-sm w-full uppercase transition-colors duration-200"
         bind:value={info}
@@ -278,11 +306,11 @@
         type="text"
         id="success"
         placeholder={$settings.theme.css?.su
-          ? hslToHex($settings.theme.css.su)
+          ? OKLCHToHex($settings.theme.css.su)
           : '#36D399'}
         pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--su={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(success)
-          ? getHSL(hexToHSL(success))
+        style:--su={testHex.test(success)
+          ? getOklch(hexToOklch(success))
           : 'var(--success)'}
         class="input input-success input-sm w-full uppercase transition-colors duration-200"
         bind:value={success}
@@ -298,11 +326,11 @@
         type="text"
         id="warning"
         placeholder={$settings.theme.css?.wa
-          ? hslToHex($settings.theme.css.wa)
+          ? OKLCHToHex($settings.theme.css.wa)
           : '#FBBD23'}
         pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--wa={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(warning)
-          ? getHSL(hexToHSL(warning))
+        style:--wa={testHex.test(warning)
+          ? getOklch(hexToOklch(warning))
           : 'var(--warning)'}
         class="input input-warning input-sm w-full uppercase transition-colors duration-200"
         bind:value={warning}
@@ -318,11 +346,11 @@
         type="text"
         id="error"
         placeholder={$settings.theme.css?.er
-          ? hslToHex($settings.theme.css.er)
+          ? OKLCHToHex($settings.theme.css.er)
           : '#F87272'}
         pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--er={/^#(?:[0-9a-fA-F]{3}){1,2}$/.test(error)
-          ? getHSL(hexToHSL(error))
+        style:--er={testHex.test(error)
+          ? getOklch(hexToOklch(error))
           : 'var(--error)'}
         class="input input-error input-sm w-full uppercase transition-colors duration-200"
         bind:value={error}
@@ -331,7 +359,7 @@
     </div>
     <div class="modal-action">
       <button class="btn btn-secondary" tabindex={hidden ? -1 : 0}>
-        create theme
+        Create Theme
       </button>
       <button
         class="btn"

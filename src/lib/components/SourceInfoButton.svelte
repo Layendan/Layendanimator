@@ -191,7 +191,7 @@
           <span class="label-text">Check for Updates</span>
         </label>
         <button
-          class="btn btn-primary btn-outline w-fit"
+          class="btn btn-outline btn-primary w-fit"
           on:click|preventDefault|stopPropagation={() => checkUpdate(source)}
           tabindex={hidden ? -1 : 0}
         >
@@ -204,7 +204,7 @@
         <div class="modal-action">
           <button class="btn btn-secondary">Update Source</button>
           <button
-            class="btn btn-error btn-outline"
+            class="btn btn-outline btn-error"
             on:click|preventDefault|stopPropagation={async () => {
               const { confirm } = await import('@tauri-apps/api/dialog');
               const confirmed = await confirm(

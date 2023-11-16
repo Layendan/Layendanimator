@@ -58,7 +58,7 @@
 </script>
 
 <nav
-  class="pointer-events-none flex h-full w-[214px] flex-col gap-2 overflow-visible px-1"
+  class="pointer-events-none flex h-full w-[214px] flex-col gap-2 overflow-visible !bg-transparent px-1"
   data-theme={systemTheme}
 >
   {#if window?.__TAURI__}
@@ -75,10 +75,13 @@
 
   <SearchBar />
 
-  <div class="divider my-0" />
-
   <div
-    class="pointer-events-auto mb-auto flex h-fit flex-col gap-2 overflow-y-scroll overscroll-contain"
+    class="divider my-0 before:bg-base-content before:bg-opacity-20 after:bg-base-content after:bg-opacity-20"
+  />
+
+  <!-- TODO: Overflow-visible will make tabbing focus visible, but not with overflow-y-auto for some reason -->
+  <div
+    class="pointer-events-auto mb-auto flex h-fit flex-col gap-2 overflow-y-auto overflow-x-visible overscroll-contain"
   >
     <a
       href="/library"
@@ -101,7 +104,9 @@
       Settings
     </a>
 
-    <div class="divider my-0" />
+    <div
+      class="divider my-0 before:bg-base-content before:bg-opacity-20 after:bg-base-content after:bg-opacity-20"
+    />
 
     {#each Object.entries($providers) as [id, provider] (id)}
       <a
@@ -116,7 +121,7 @@
           alt={provider.name}
           class="h-5 w-5 rounded-md"
         />
-        <p class="overflow-hidden text-ellipsis whitespace-nowrap">
+        <p class="overflow-hidden text-ellipsis whitespace-nowrap leading-4">
           {provider.name}
         </p>
       </a>

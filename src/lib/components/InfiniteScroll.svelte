@@ -40,7 +40,7 @@
 {#if hasMore}
   <div class="divider divider-vertical mt-8">
     <button class="btn btn-ghost text-2xl font-bold" on:click={update}>
-      Scroll For More
+      Scroll for More
     </button>
   </div>
 {/if}

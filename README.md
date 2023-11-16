@@ -4,10 +4,10 @@
   <a href="https://github.com/Layendan/Layendanimator/actions/workflows/publish.yml">
     <img src="https://github.com/Layendan/Layendanimator/actions/workflows/publish.yml/badge.svg" alt="Build and Publish">
   </a>
-  <a href="">
+  <a href="https://github.com/Layendan/Layendanimator/releases">
     <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/Layendan/Layendanimator/total?label=Downloads">
   </a>
-  <a href="https://discord.gg/qTPfvMxzNH">
+  <a href="https://discord.gg/dzTVzeW">
     <img alt="Discord" src="https://img.shields.io/discord/545740643247456267?logo=discord&label=Discord&color=%235865F2">
   </a>
   <a href="https://www.codefactor.io/repository/github/layendan/layendanimator">
@@ -41,6 +41,7 @@ Layendanimator is a free and open source anime watching app for Desktop (Windows
     - [Search](#search)
     - [Library](#library)
     - [Settings](#settings)
+  - [Contributions](#contributions)
   - [License](#license)
 
 ## Getting Started
@@ -151,6 +152,21 @@ Thanks to the following people for contributing to this project.
 <a href="https://github.com/Layendan/Layendanimator/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Layendan/Layendanimator&anon=1" />
 </a>
+
+<br />
+
+I also want to thank the following projects and people for ideas and inspiration.
+
+- [NineAnimator](https://github.com/SuperMarcus/NineAnimator)
+- [Anilist](https://anilist.co/home)
+- [Consumet API](https://github.com/consumet/api.consumet.org)
+- [DaisyUI](https://daisyui.com/)
+
+- [Vilian](https://github.com/Fractal-Tess)
+- [NotErik](https://github.com/ErrorErrorError)
+- [Inamaki](https://github.com/inumakieu)
+
+As well as everyone in the NineAnimator, Consumet, Tauri, and Svelte discord servers for their feedback and helping me squash bugs.
 
 ## License
 

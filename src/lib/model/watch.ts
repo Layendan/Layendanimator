@@ -55,11 +55,14 @@ function createWatching() {
         }
         subscriptions[`${anime.source.id}/${anime.id}`] = {
           ...subscriptions[`${anime.source.id}/${anime.id}`],
-          ...anime
+          ...anime,
+          watchedEpisodes: {
+            ...subscriptions[`${anime.source.id}/${anime.id}`].watchedEpisodes,
+            [data.episode.id]: data
+          },
+          watchEpisode: data.episode,
+          watchTime: Date.now()
         };
-        subscriptions[`${anime.source.id}/${anime.id}`].watchedEpisodes[
-          data.episode.id
-        ] = data;
         store?.set('watching', subscriptions);
         return subscriptions;
       });

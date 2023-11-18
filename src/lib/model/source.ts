@@ -53,7 +53,7 @@ export const defaultProviders: { [key: string]: Provider } = {
     scripts: {
       search: (async (query: string, page = 1, perPage = 25) => {
         const url = new URL(
-          `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/${query}`
+          `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/${query}`
         );
         url.searchParams.set('page', String(page));
         url.searchParams.set('perPage', String(perPage));
@@ -65,7 +65,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchTrendingAnime: (async (page = 1, perPage = 25) => {
         const trending = (
           await fetch(
-            `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/trending?page=${page}&perPage=${perPage}`
+            `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/trending?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return trending;
@@ -73,7 +73,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchPopularAnime: (async (page = 1, perPage = 25) => {
         const popular = (
           await fetch(
-            `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/popular?page=${page}&perPage=${perPage}`
+            `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/popular?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return popular;
@@ -81,7 +81,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       // fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
       //   const recent = (
       //     await fetch(
-      //       `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+      //       `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
       //     ).then(r => r.json())
       //   ).results as RecentAnime[];
       //   return recent;
@@ -94,7 +94,7 @@ export const defaultProviders: { [key: string]: Provider } = {
         isFiller: boolean
       ) => {
         const url = new URL(
-          `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/info/${id}`
+          `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/info/${id}`
         );
         url.searchParams.set('provider', 'gogoanime');
         url.searchParams.set('dub', String(!isSub));
@@ -114,7 +114,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(
-          `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/watch/${id}?provider=gogoanime`
+          `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/watch/${id}?provider=gogoanime`
         );
         const episodes: EpisodeData = await res.json();
         return episodes;
@@ -149,7 +149,7 @@ export const defaultProviders: { [key: string]: Provider } = {
     scripts: {
       search: (async (query: string, page = 1, perPage = 25) => {
         const url = new URL(
-          `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/${query}`
+          `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/${query}`
         );
         url.searchParams.set('page', String(page));
         url.searchParams.set('perPage', String(perPage));
@@ -161,7 +161,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchTrendingAnime: (async (page = 1, perPage = 25) => {
         const trending = (
           await fetch(
-            `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/trending?page=${page}&perPage=${perPage}`
+            `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/trending?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return trending;
@@ -169,7 +169,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchPopularAnime: (async (page = 1, perPage = 25) => {
         const popular = (
           await fetch(
-            `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/popular?page=${page}&perPage=${perPage}`
+            `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/popular?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return popular;
@@ -177,7 +177,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       // fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
       //   const recent = (
       //     await fetch(
-      //       `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+      //       `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
       //     ).then(r => r.json())
       //   ).results as RecentAnime[];
       //   return recent;
@@ -190,7 +190,7 @@ export const defaultProviders: { [key: string]: Provider } = {
         isFiller: boolean
       ) => {
         const url = new URL(
-          `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/info/${id}`
+          `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/info/${id}`
         );
         url.searchParams.set('provider', 'zoro');
         url.searchParams.set('dub', String(!isSub));
@@ -205,7 +205,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(
-          `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/watch/${id}?provider=zoro`
+          `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/watch/${id}?provider=zoro`
         );
         const episode: EpisodeData = await res.json();
         return {
@@ -243,7 +243,7 @@ export const defaultProviders: { [key: string]: Provider } = {
   //   scripts: {
   //     search: (async (query: string, page = 1, perPage = 25) => {
   //       const url = new URL(
-  //         `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/${query}`
+  //         `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/${query}`
   //       );
   //       url.searchParams.set('page', String(page));
   //       url.searchParams.set('perPage', String(perPage));
@@ -255,7 +255,7 @@ export const defaultProviders: { [key: string]: Provider } = {
   //     fetchTrendingAnime: (async (page = 1, perPage = 25) => {
   //       const trending = (
   //         await fetch(
-  //           `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/trending?page=${page}&perPage=${perPage}`
+  //           `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/trending?page=${page}&perPage=${perPage}`
   //         ).then(r => r.json())
   //       ).results as Anime[];
   //       return trending;
@@ -263,7 +263,7 @@ export const defaultProviders: { [key: string]: Provider } = {
   //     fetchPopularAnime: (async (page = 1, perPage = 25) => {
   //       const popular = (
   //         await fetch(
-  //           `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/popular?page=${page}&perPage=${perPage}`
+  //           `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/popular?page=${page}&perPage=${perPage}`
   //         ).then(r => r.json())
   //       ).results as Anime[];
   //       return popular;
@@ -271,7 +271,7 @@ export const defaultProviders: { [key: string]: Provider } = {
   //     // fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
   //     //   const recent = (
   //     //     await fetch(
-  //     //       `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+  //     //       `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
   //     //     ).then(r => r.json())
   //     //   ).results as RecentAnime[];
   //     //   return recent;
@@ -284,7 +284,7 @@ export const defaultProviders: { [key: string]: Provider } = {
   //       isFiller: boolean
   //     ) => {
   //       const url = new URL(
-  //         `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/info/${id}`
+  //         `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/info/${id}`
   //       );
   //       url.searchParams.set('provider', 'enime');
   //       url.searchParams.set('dub', String(!isSub));
@@ -299,7 +299,7 @@ export const defaultProviders: { [key: string]: Provider } = {
   //     }).toString(),
   //     fetchEpisodes: (async (id: string) => {
   //       const res = await fetch(
-  //         `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/watch/${id}?provider=enime`
+  //         `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/watch/${id}?provider=enime`
   //       );
   //       const episode: EpisodeData = await res.json();
   //       return episode;
@@ -330,7 +330,7 @@ export const defaultProviders: { [key: string]: Provider } = {
     scripts: {
       search: (async (query: string, page = 1, perPage = 25) => {
         const url = new URL(
-          `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/${query}`
+          `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/${query}`
         );
         url.searchParams.set('page', String(page));
         url.searchParams.set('perPage', String(perPage));
@@ -342,7 +342,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchTrendingAnime: (async (page = 1, perPage = 25) => {
         const trending = (
           await fetch(
-            `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/trending?page=${page}&perPage=${perPage}`
+            `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/trending?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return trending;
@@ -350,7 +350,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchPopularAnime: (async (page = 1, perPage = 25) => {
         const popular = (
           await fetch(
-            `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/popular?page=${page}&perPage=${perPage}`
+            `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/popular?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return popular;
@@ -358,7 +358,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       // fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
       //   const recent = (
       //     await fetch(
-      //       `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+      //       `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
       //     ).then(r => r.json())
       //   ).results as RecentAnime[];
       //   return recent;
@@ -371,7 +371,7 @@ export const defaultProviders: { [key: string]: Provider } = {
         isFiller: boolean
       ) => {
         const url = new URL(
-          `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/info/${id}`
+          `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/info/${id}`
         );
         url.searchParams.set('provider', 'enime');
         url.searchParams.set('dub', String(!isSub));
@@ -386,7 +386,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(
-          `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/watch/${id}?provider=enime`
+          `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/watch/${id}?provider=enime`
         );
         const episode: EpisodeData = await res.json();
         return episode;
@@ -422,7 +422,7 @@ export const defaultProviders: { [key: string]: Provider } = {
     scripts: {
       search: (async (query: string, page = 1, perPage = 25) => {
         const url = new URL(
-          `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/${query}`
+          `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/${query}`
         );
         url.searchParams.set('page', String(page));
         url.searchParams.set('perPage', String(perPage));
@@ -434,7 +434,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchTrendingAnime: (async (page = 1, perPage = 25) => {
         const trending = (
           await fetch(
-            `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/trending?page=${page}&perPage=${perPage}`
+            `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/trending?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return trending;
@@ -442,7 +442,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       fetchPopularAnime: (async (page = 1, perPage = 25) => {
         const popular = (
           await fetch(
-            `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/popular?page=${page}&perPage=${perPage}`
+            `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/popular?page=${page}&perPage=${perPage}`
           ).then(r => r.json())
         ).results as Anime[];
         return popular;
@@ -450,7 +450,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       // fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
       //   const recent = (
       //     await fetch(
-      //       `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
+      //       `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
       //     ).then(r => r.json())
       //   ).results as RecentAnime[];
       //   return recent;
@@ -463,7 +463,7 @@ export const defaultProviders: { [key: string]: Provider } = {
         isFiller: boolean
       ) => {
         const url = new URL(
-          `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/info/${id}`
+          `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/info/${id}`
         );
         url.searchParams.set('provider', 'nineanime');
         url.searchParams.set('dub', String(!isSub));
@@ -478,7 +478,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(
-          `https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/meta/anilist/watch/${id}?provider=nineanime`
+          `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/watch/${id}?provider=nineanime`
         );
         const episode: EpisodeData = await res.json();
         return episode;
@@ -531,7 +531,7 @@ export const defaultProviders: { [key: string]: Provider } = {
   //       return results;
   //     }).toString(),
   //     fetchEpisodes: (async (id: string) => {
-  //       const url = new URL(`watch/${id}`, 'https://consumet.agreeablewater-9752305a.westus2.azurecontainerapps.io/');
+  //       const url = new URL(`watch/${id}`, 'https://consumet-triwalmyfa-uc.a.run.app/');
   //       const episode: EpisodeData = await fetch(url.toString()).then(r =>
   //         r.json()
   //       );

@@ -13,7 +13,7 @@
   <a href="https://www.codefactor.io/repository/github/layendan/layendanimator">
     <img alt="CodeFactor Grade" src="https://img.shields.io/codefactor/grade/github/Layendan/Layendanimator?label=Codefactor">
   </a>
-  <a href="https://github.com/Layendan/Layendanimator/LICENSE.md">
+  <a href="https://github.com/Layendan/Layendanimator/blob/master/LICENSE.md">
     <img alt="GitHub License" src="https://img.shields.io/github/license/Layendan/Layendanimator?label=License">
   </a>
 </p>
@@ -167,6 +167,8 @@ I also want to thank the following projects and people for ideas and inspiration
 - [Inamaki](https://github.com/inumakieu)
 
 As well as everyone in the NineAnimator, Consumet, Tauri, and Svelte discord servers for their feedback and helping me squash bugs.
+
+Thank you to idiocymax for making the Layendanimator logo.
 
 ## License
 

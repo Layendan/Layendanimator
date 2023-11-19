@@ -122,7 +122,9 @@
         if (player) {
           const time = watchedObject?.time ?? 0;
           player.currentTime =
-            time < (player.state.duration || anime.duration) ? time : 0;
+            time < (player.state.duration || (anime.duration ?? Infinity))
+              ? time
+              : 0;
         }
       },
       {

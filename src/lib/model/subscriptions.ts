@@ -5,7 +5,8 @@ import { notifications } from './notifications';
 
 let store: Store | undefined = undefined;
 
-export type Subscription = Anime & { lastUpdated: number; added: number };
+export type Subscription = Pick<Anime, 'id' | 'title' | 'image' | 'source'> &
+  Partial<Anime> & { lastUpdated: number; added: number };
 
 function createSubscriptions() {
   const dict: { [key: string]: Subscription } = {};
@@ -16,10 +17,23 @@ function createSubscriptions() {
       set(subscriptions);
       store?.set('subscriptions', subscriptions);
     },
-    add: (anime: Anime) => {
+    add: (anime: Omit<Subscription, 'lastUpdated' | 'added'>) => {
       update(subscriptions => {
         subscriptions[`${anime.source.id}/${anime.id}`] = {
-          ...anime,
+          id: anime.id,
+          title: anime.title,
+          image: anime.image,
+          color: anime.color,
+          isAdult: anime.isAdult,
+          episodes: anime.episodes,
+          nextAiringEpisode: anime.nextAiringEpisode,
+          status: anime.status,
+          source: {
+            id: anime.source.id,
+            name: anime.source.name,
+            url: anime.source.url,
+            shareLinks: anime.source.shareLinks
+          },
           lastUpdated: Date.now(),
           added: Date.now()
         };
@@ -32,14 +46,27 @@ function createSubscriptions() {
       update(subscriptions => {
         subscriptions[`${anime.source.id}/${anime.id}`] = {
           ...subscriptions[`${anime.source.id}/${anime.id}`],
-          ...anime,
+          id: anime.id,
+          title: anime.title,
+          image: anime.image,
+          color: anime.color,
+          isAdult: anime.isAdult,
+          episodes: anime.episodes,
+          nextAiringEpisode: anime.nextAiringEpisode,
+          status: anime.status,
+          source: {
+            id: anime.source.id,
+            name: anime.source.name,
+            url: anime.source.url,
+            shareLinks: anime.source.shareLinks
+          },
           lastUpdated: Date.now()
         };
         store?.set('subscriptions', subscriptions);
         return subscriptions;
       });
     },
-    remove: (anime: Anime) => {
+    remove: (anime: Pick<Anime, 'id' | 'source'>) => {
       update(subscriptions => {
         delete subscriptions[`${anime.source.id}/${anime.id}`];
         store?.set('subscriptions', subscriptions);
@@ -55,7 +82,29 @@ function createSubscriptions() {
       store ??= new StoreImport('.subscriptions.dat');
       const data = await store.get<typeof dict>('subscriptions');
       if (data) {
-        set(data);
+        set(
+          Object.entries(data).reduce<typeof dict>((acc, [key, value]) => {
+            acc[key] = {
+              id: value.id,
+              title: value.title,
+              image: value.image,
+              color: value.color,
+              isAdult: value.isAdult,
+              episodes: value.episodes,
+              nextAiringEpisode: value.nextAiringEpisode,
+              status: value.status,
+              source: {
+                id: value.source.id,
+                name: value.source.name,
+                url: value.source.url,
+                shareLinks: value.source.shareLinks
+              },
+              lastUpdated: value.lastUpdated,
+              added: value.added
+            };
+            return acc;
+          }, {})
+        );
       } else {
         await store.set('subscriptions', {});
       }
@@ -102,7 +151,20 @@ function createUnwatchedSubscriptions() {
     add: (anime: Anime, newEpisodes: number) => {
       update(subscriptions => {
         subscriptions[`${anime.source.id}/${anime.id}`] = {
-          ...anime,
+          id: anime.id,
+          title: anime.title,
+          image: anime.image,
+          color: anime.color,
+          isAdult: anime.isAdult,
+          episodes: anime.episodes,
+          nextAiringEpisode: anime.nextAiringEpisode,
+          status: anime.status,
+          source: {
+            id: anime.source.id,
+            name: anime.source.name,
+            url: anime.source.url,
+            shareLinks: anime.source.shareLinks
+          },
           lastUpdated: Date.now(),
           added: Date.now(),
           newEpisodes
@@ -129,14 +191,27 @@ function createUnwatchedSubscriptions() {
       update(subscriptions => {
         subscriptions[`${anime.source.id}/${anime.id}`] = {
           ...subscriptions[`${anime.source.id}/${anime.id}`],
-          ...anime,
+          id: anime.id,
+          title: anime.title,
+          image: anime.image,
+          color: anime.color,
+          isAdult: anime.isAdult,
+          episodes: anime.episodes,
+          nextAiringEpisode: anime.nextAiringEpisode,
+          status: anime.status,
+          source: {
+            id: anime.source.id,
+            name: anime.source.name,
+            url: anime.source.url,
+            shareLinks: anime.source.shareLinks
+          },
           lastUpdated: Date.now()
         };
         store?.set('activeSubscriptions', subscriptions);
         return subscriptions;
       });
     },
-    remove: (anime: Anime) => {
+    remove: (anime: Pick<Anime, 'id' | 'source'>) => {
       update(subscriptions => {
         delete subscriptions[`${anime.source.id}/${anime.id}`];
         store?.set('activeSubscriptions', subscriptions);
@@ -152,7 +227,30 @@ function createUnwatchedSubscriptions() {
       store ??= new StoreImport('.subscriptions.dat');
       const data = await store.get<typeof dict>('activeSubscriptions');
       if (data) {
-        set(data);
+        set(
+          Object.entries(data).reduce<typeof dict>((acc, [key, value]) => {
+            acc[key] = {
+              id: value.id,
+              title: value.title,
+              image: value.image,
+              color: value.color,
+              isAdult: value.isAdult,
+              episodes: value.episodes,
+              nextAiringEpisode: value.nextAiringEpisode,
+              status: value.status,
+              source: {
+                id: value.source.id,
+                name: value.source.name,
+                url: value.source.url,
+                shareLinks: value.source.shareLinks
+              },
+              lastUpdated: value.lastUpdated,
+              added: value.added,
+              newEpisodes: value.newEpisodes
+            };
+            return acc;
+          }, {})
+        );
       } else {
         await store.set('activeSubscriptions', {});
       }

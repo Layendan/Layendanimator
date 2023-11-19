@@ -724,12 +724,15 @@ export function isProvider(source: unknown): boolean {
   return true;
 }
 
-export function encodeAnimeLink(anime: Anime): string {
+export function encodeAnimeLink(anime: Pick<Anime, 'id' | 'source'>): string {
   const link = anime.source.shareLinks?.anime ?? anime.source.url;
   return link.replace('{id}', anime.id);
 }
 
-export function encodeEpisodeLink(anime: Anime, episode: Episode): string {
+export function encodeEpisodeLink(
+  anime: Pick<Anime, 'id' | 'source'>,
+  episode: Pick<Episode, 'id' | 'number'>
+): string {
   const link = anime.source.shareLinks?.episode ?? anime.source.url;
   return link
     .replaceAll('{id}', anime.id)

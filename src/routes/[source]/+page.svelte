@@ -42,18 +42,6 @@
         source={data.source}
       />
     {/await}
-  {:else if data.source.scripts.fetchPopularAnime}
-    <!-- Heading carousel -->
-    {#await data.popular.data}
-      <PlaceholderCarousel />
-    {:then popular}
-      <Carousel
-        animes={popular
-          .slice(0, 25)
-          .filter(a => a.cover && a.cover !== a.image)}
-        source={data.source}
-      />
-    {/await}
   {/if}
 
   <div class="m-4">

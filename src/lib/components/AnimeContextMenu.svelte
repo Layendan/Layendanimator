@@ -25,7 +25,8 @@
   import Fa from 'svelte-fa';
   import ContextMenu from './ContextMenu.svelte';
 
-  export let anime: Anime;
+  export let anime: Pick<Anime, 'id' | 'title' | 'image' | 'source'> &
+    Partial<Anime>;
   export let element: HTMLElement;
   export let isDownload = false;
 

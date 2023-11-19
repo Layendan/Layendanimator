@@ -3,7 +3,8 @@
   import { fade } from 'svelte/transition';
   import AnimeContextMenu from './AnimeContextMenu.svelte';
 
-  export let anime: Anime;
+  export let anime: Pick<Anime, 'id' | 'title' | 'image' | 'source'> &
+    Partial<Anime>;
   export let numUpdates = 0;
   export let extra = '';
   export let href = `/${anime.source.id}/${anime.id}`;

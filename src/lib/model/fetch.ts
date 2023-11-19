@@ -152,8 +152,29 @@ export async function fetchAnime(
   });
 
   if (res) {
-    const anime = {
-      ...res,
+    const anime: Anime = {
+      id: res.id,
+      title: res.title,
+      description: res.description,
+      image: res.image,
+      cover: res.cover,
+      color: res.color,
+      isAdult: res.isAdult,
+      episodes: res.episodes.map(episode => ({
+        id: episode.id,
+        title: episode.title,
+        description: episode.description,
+        image: episode.image,
+        number: episode.number
+      })),
+      status: res.status,
+      nextAiringEpisode: res.nextAiringEpisode,
+      rating: res.rating,
+      genres: res.genres,
+      season: res.season,
+      subOrDub: res.subOrDub,
+      type: res.type,
+      characters: res.characters,
       recommendations: (res.recommendations ?? []).map(r => ({
         ...r,
         source: {
@@ -186,7 +207,7 @@ export async function fetchAnime(
     const unwatched = get(unwatchedSubscriptions)[
       `${anime.source.id}/${anime.id}`
     ];
-    if (sub) {
+    if (sub && sub.episodes) {
       if (sub.episodes.length < anime.episodes.length) {
         subscriptions.remove(anime);
         unwatchedSubscriptions.add(
@@ -202,7 +223,7 @@ export async function fetchAnime(
           status: sub.status ?? anime.status
         });
       }
-    } else if (unwatched) {
+    } else if (unwatched && unwatched.episodes) {
       if (unwatched.episodes.length < anime.episodes.length)
         unwatchedSubscriptions.add(
           anime,

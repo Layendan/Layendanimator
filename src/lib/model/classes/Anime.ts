@@ -28,29 +28,29 @@ export type Anime = {
     english: string;
     native: string;
   };
-  malId: number;
-  synonyms: string[];
-  isLicensed: boolean;
+  malId?: number;
+  synonyms?: string[];
+  isLicensed?: boolean;
   isAdult: boolean;
-  countryOfOrigin: string;
-  trailer: {
+  countryOfOrigin?: string;
+  trailer?: {
     id: string;
     site: string;
     thumbnail: string;
   };
   image: string;
-  popularity: number;
+  popularity?: number;
   color: string;
   cover: string;
   description: string;
   status: Status;
-  releaseDate: string;
-  startDate: {
+  releaseDate?: string;
+  startDate?: {
     year: number;
     month: number;
     day: number;
   };
-  endDate: {
+  endDate?: {
     year: number;
     month: number;
     day: number;
@@ -60,12 +60,12 @@ export type Anime = {
     timeUntilAiring: number;
     episode: number;
   };
-  totalEpisodes: number;
+  totalEpisodes?: number;
   rating: number;
-  duration: number;
+  duration?: number;
   genres: string[];
   season: 'WINTER' | 'SPRING' | 'SUMMER' | 'FALL';
-  studios: string[];
+  studios?: string[];
   subOrDub: 'sub' | 'dub';
   type: Type;
   recommendations: Anime[];
@@ -110,7 +110,7 @@ export type Episode = {
   description: string;
   number: number;
   image: string;
-  airDate: string;
+  airDate?: string;
 };
 
 export type EpisodeData = {

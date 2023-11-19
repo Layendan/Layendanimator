@@ -5,12 +5,15 @@ import type { Anime, Episode } from './classes/Anime';
 let store: Store | undefined = undefined;
 
 export type WatchType = {
-  episode: Episode;
+  episode: Pick<Episode, 'id' | 'title' | 'number'>;
   time: number;
   percentage: number;
 };
-type WatchingAnime = Anime & {
-  watchEpisode: Episode;
+type WatchingAnime = Pick<
+  Anime,
+  'id' | 'title' | 'image' | 'color' | 'source'
+> & {
+  watchEpisode: Pick<Episode, 'id' | 'number'>;
   watchTime: number;
   watchedEpisodes: { [episodeId: string]: WatchType };
 };
@@ -18,19 +21,38 @@ type WatchingAnime = Anime & {
 function createWatching() {
   const dict: { [animeId: string]: WatchingAnime } = {};
   const { subscribe, set, update } = writable<typeof dict>(dict);
-  function add(anime: Anime, episode: Episode) {
+  function add(anime: Anime, episode: WatchType['episode']) {
     update(subscriptions => {
       if (subscriptions[`${anime.source.id}/${anime.id}`]) {
-        subscriptions[`${anime.source.id}/${anime.id}`].watchEpisode = episode;
+        subscriptions[`${anime.source.id}/${anime.id}`].watchEpisode = {
+          id: episode.id,
+          number: episode.number
+        };
         subscriptions[`${anime.source.id}/${anime.id}`].watchTime = Date.now();
       } else {
         subscriptions[`${anime.source.id}/${anime.id}`] = {
-          ...anime,
-          watchEpisode: episode,
+          id: anime.id,
+          title: anime.title,
+          image: anime.image,
+          color: anime.color,
+          source: {
+            id: anime.source.id,
+            name: anime.source.name,
+            url: anime.source.url,
+            shareLinks: anime.source.shareLinks
+          },
+          watchEpisode: {
+            id: episode.id,
+            number: episode.number
+          },
           watchTime: Date.now(),
           watchedEpisodes: {
             [episode.id]: {
-              episode,
+              episode: {
+                id: episode.id,
+                title: episode.title,
+                number: episode.number
+              },
               time: 0,
               percentage: 0
             }
@@ -55,12 +77,24 @@ function createWatching() {
         }
         subscriptions[`${anime.source.id}/${anime.id}`] = {
           ...subscriptions[`${anime.source.id}/${anime.id}`],
-          ...anime,
+          id: anime.id,
+          title: anime.title,
+          image: anime.image,
+          color: anime.color,
+          source: {
+            id: anime.source.id,
+            name: anime.source.name,
+            url: anime.source.url,
+            shareLinks: anime.source.shareLinks
+          },
           watchedEpisodes: {
             ...subscriptions[`${anime.source.id}/${anime.id}`].watchedEpisodes,
             [data.episode.id]: data
           },
-          watchEpisode: data.episode,
+          watchEpisode: {
+            id: data.episode.id,
+            number: data.episode.number
+          },
           watchTime: Date.now()
         };
         store?.set('watching', subscriptions);
@@ -74,13 +108,26 @@ function createWatching() {
         }
         subscriptions[`${anime.source.id}/${anime.id}`] = {
           ...subscriptions[`${anime.source.id}/${anime.id}`],
-          ...anime
+          id: anime.id,
+          title: anime.title,
+          image: anime.image,
+          color: anime.color,
+          source: {
+            id: anime.source.id,
+            name: anime.source.name,
+            url: anime.source.url,
+            shareLinks: anime.source.shareLinks
+          }
         };
         const data =
           subscriptions[`${anime.source.id}/${anime.id}`].watchedEpisodes;
         episodes.forEach(episode => {
           data[episode.id] = {
-            episode,
+            episode: {
+              id: episode.id,
+              title: episode.title,
+              number: episode.number
+            },
             time: 0,
             percentage: 1
           };
@@ -96,14 +143,23 @@ function createWatching() {
         } else {
           subscriptions[`${anime.source.id}/${anime.id}`] = {
             ...subscriptions[`${anime.source.id}/${anime.id}`],
-            ...anime
+            id: anime.id,
+            title: anime.title,
+            image: anime.image,
+            color: anime.color,
+            source: {
+              id: anime.source.id,
+              name: anime.source.name,
+              url: anime.source.url,
+              shareLinks: anime.source.shareLinks
+            }
           };
         }
         store?.set('watching', subscriptions);
         return subscriptions;
       });
     },
-    remove: (anime: Anime) => {
+    remove: (anime: Pick<Anime, 'id' | 'source'>) => {
       update(subscriptions => {
         delete subscriptions[`${anime.source.id}/${anime.id}`];
         store?.set('watching', subscriptions);
@@ -136,7 +192,42 @@ function createWatching() {
       store ??= new StoreImport('.subscriptions.dat');
       const data = await store.get<typeof dict>('watching');
       if (data) {
-        set(data);
+        set(
+          Object.entries(data).reduce<typeof dict>((acc, [key, value]) => {
+            acc[key] = {
+              id: value.id,
+              title: value.title,
+              image: value.image,
+              color: value.color,
+              source: {
+                id: value.source.id,
+                name: value.source.name,
+                url: value.source.url,
+                shareLinks: value.source.shareLinks
+              },
+              watchEpisode: {
+                id: value.watchEpisode.id,
+                number: value.watchEpisode.number
+              },
+              watchTime: value.watchTime,
+              watchedEpisodes: Object.entries(value.watchedEpisodes).reduce<
+                WatchingAnime['watchedEpisodes']
+              >((acc, [key, value]) => {
+                acc[key] = {
+                  episode: {
+                    id: value.episode.id,
+                    title: value.episode.title,
+                    number: value.episode.number
+                  },
+                  time: value.time,
+                  percentage: value.percentage
+                };
+                return acc;
+              }, {})
+            };
+            return acc;
+          }, {})
+        );
       } else {
         await store.set('watching', {});
       }

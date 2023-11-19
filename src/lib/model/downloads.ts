@@ -17,20 +17,48 @@ export type DownloadedEpisode = {
   episode: EpisodeData;
 };
 
+export type DownloadedDict = {
+  [key: string]: DownloadedAnime;
+};
+
 export type DownloadedAnime = {
-  [key: string]: { anime: Anime; episodes: { [key: string]: EpisodeData } };
+  anime: Pick<
+    Anime,
+    | 'id'
+    | 'title'
+    | 'description'
+    | 'duration'
+    | 'status'
+    | 'nextAiringEpisode'
+    | 'rating'
+    | 'genres'
+    | 'season'
+    | 'subOrDub'
+    | 'type'
+    | 'color'
+    | 'isAdult'
+    | 'image'
+    | 'cover'
+    | 'episodes'
+  > &
+    Partial<Anime> & { source: Anime['source'] };
+  episodes: { [key: string]: EpisodeData };
 };
 
 function createDownloads() {
-  const dict: DownloadedAnime = {};
-  const { subscribe, set, update } = writable<DownloadedAnime>(dict);
+  const dict: DownloadedDict = {};
+  const { subscribe, set, update } = writable<DownloadedDict>(dict);
   return {
     subscribe,
-    set: (downloads: DownloadedAnime) => {
+    set: (downloads: DownloadedDict) => {
       set(downloads);
       store?.set('downloads', downloads);
     },
-    add: (anime: Anime, episodeId: string, episode: EpisodeData) => {
+    add: (
+      anime: DownloadedAnime['anime'],
+      episodeId: string,
+      episode: EpisodeData
+    ) => {
       update(downloads => {
         const episodes =
           downloads[`${anime.source.id}/${anime.id}`]?.anime.episodes ?? [];
@@ -58,7 +86,7 @@ function createDownloads() {
         return downloads;
       });
     },
-    remove: (anime: Anime, episodeId: string) => {
+    remove: (anime: Pick<Anime, 'id' | 'source'>, episodeId: string) => {
       update(downloads => {
         const data = downloads[`${anime.source.id}/${anime.id}`];
 
@@ -99,9 +127,35 @@ function createDownloads() {
     initialize: async () => {
       const StoreImport = (await import('tauri-plugin-store-api')).Store;
       store ??= new StoreImport('.downloads.dat');
-      const data = await store.get<DownloadedAnime>('downloads');
+      const data = await store.get<DownloadedDict>('downloads');
       if (data) {
-        set(data);
+        set(
+          Object.entries(data).reduce<DownloadedDict>((acc, [key, value]) => {
+            acc[key] = {
+              anime: {
+                id: value.anime.id,
+                title: value.anime.title,
+                description: value.anime.description,
+                duration: value.anime.duration,
+                status: value.anime.status,
+                nextAiringEpisode: value.anime.nextAiringEpisode,
+                rating: value.anime.rating,
+                genres: value.anime.genres,
+                season: value.anime.season,
+                subOrDub: value.anime.subOrDub,
+                type: value.anime.type,
+                color: value.anime.color,
+                isAdult: value.anime.isAdult,
+                source: value.anime.source,
+                image: value.anime.image,
+                cover: value.anime.cover,
+                episodes: value.anime.episodes
+              },
+              episodes: value.episodes
+            };
+            return acc;
+          }, {})
+        );
       } else {
         await store.set('downloads', {});
       }
@@ -331,7 +385,8 @@ function createDownloading() {
                         parseInt(seconds);
                       update(downloads => {
                         downloads[id].progress = Math.min(
-                          totalSeconds / (duration || anime.duration * 60),
+                          totalSeconds /
+                            (duration || (anime.duration ?? 0) * 60),
                           1
                         );
                         return downloads;
@@ -561,8 +616,21 @@ function createDownloading() {
           throw new Error('Download failed');
         }
 
-        const animeObj: Anime = {
-          ...anime,
+        const animeObj: DownloadedAnime['anime'] = {
+          id: anime.id,
+          title: anime.title,
+          description: anime.description,
+          duration: anime.duration,
+          status: anime.status,
+          nextAiringEpisode: anime.nextAiringEpisode,
+          rating: anime.rating,
+          genres: anime.genres,
+          season: anime.season,
+          subOrDub: anime.subOrDub,
+          type: anime.type,
+          color: anime.color,
+          isAdult: anime.isAdult,
+          source: anime.source,
           image:
             imageResults[0].status === 'fulfilled'
               ? imageResults[0].value
@@ -659,7 +727,9 @@ function createDownloading() {
 
 export const downloading = createDownloading();
 
-export async function convertAnime(anime: Anime): Promise<Anime> {
+export async function convertAnime(
+  anime: DownloadedAnime['anime']
+): Promise<DownloadedAnime['anime']> {
   const { convertFileSrc } = await import('@tauri-apps/api/tauri');
 
   return {

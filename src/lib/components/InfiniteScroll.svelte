@@ -4,17 +4,19 @@
   import type { Anime } from '$lib/model/classes/Anime';
   import InfiniteScroll from 'svelte-infinite-scroll';
 
-  export let animes: Anime[];
-  export let dataUpdate: (page: number, perPage: number) => Promise<Anime[]>;
+  export let animes: (Pick<Anime, 'id' | 'title' | 'image' | 'source'> &
+    Partial<Anime>)[];
+  export let dataUpdate: (
+    page: number,
+    perPage: number
+  ) => Promise<typeof animes>;
 
-  let isUpdating = false;
   const perPage = 25;
   let page: number = Math.floor(animes.length / perPage) || 1;
   let hasMore: boolean = animes.length % perPage === 0;
   const main = document.querySelector('main');
 
   async function update() {
-    isUpdating = true;
     page += 1;
     const result = await dataUpdate(page, perPage);
     console.debug(result);
@@ -25,7 +27,6 @@
     if (result.length < perPage) {
       hasMore = false;
     }
-    isUpdating = false;
   }
 </script>
 

@@ -14,7 +14,10 @@
   import { fade } from 'svelte/transition';
   import AnimeContextMenu from './AnimeContextMenu.svelte';
 
-  export let animes: Anime[];
+  export let animes: Pick<
+    Anime,
+    'id' | 'title' | 'description' | 'image' | 'cover' | 'source'
+  >[];
   export let source: Provider;
   export let fadeSpeed = 300;
   export let transitionTime = 10_000;

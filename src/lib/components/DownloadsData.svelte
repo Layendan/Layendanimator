@@ -4,12 +4,12 @@
   import {
     convertAnime,
     downloads,
-    type DownloadedAnime
+    type DownloadedDict
   } from '$lib/model/downloads';
   import { derived } from 'svelte/store';
 
   // TODO: Make this only reduce and not map
-  const animes = derived<typeof downloads, DownloadedAnime>(
+  const animes = derived<typeof downloads, DownloadedDict>(
     downloads,
     ($downloads, set) => {
       Promise.all(
@@ -17,11 +17,11 @@
           const anime = await convertAnime(download.anime);
           return { id, result: { ...download, anime } };
         })
-      ).then(async data => {
+      ).then(data => {
         const animes = data.reduce((acc, { id, result }) => {
           acc[id] = result;
           return acc;
-        }, {} as DownloadedAnime);
+        }, {} as DownloadedDict);
         set(animes);
       });
     }

@@ -33,7 +33,7 @@
   import { watching } from '$lib/model/watch';
   import type { UnlistenFn } from '@tauri-apps/api/event';
   import NProgress from 'nprogress';
-  import { onDestroy, onMount } from 'svelte';
+  import { onDestroy, onMount, tick } from 'svelte';
   import type { OsType } from '@tauri-apps/api/os';
 
   NProgress.configure({
@@ -110,7 +110,11 @@
 
     // Workaround for Windows bug where there's a white box in the background
     // Start with decorations off, then turn them on after showing the window
-    if (os === 'Windows_NT') await appWindow.setDecorations(true);
+    if (os === 'Windows_NT') {
+      console.log('Windows detected, reanabling decorations');
+      await tick();
+      await Promise.all([appWindow.setDecorations(true), appWindow.maximize()]);
+    }
 
     if (unsubscribe) clearInterval(unsubscribe);
     unsubscribe = setInterval(

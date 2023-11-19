@@ -18,7 +18,7 @@ import { subscriptions, unwatchedSubscriptions } from './subscriptions';
 const timeout = 15_000;
 
 export async function fetchRecentEpisodes(
-  source: Provider,
+  source: Anime['source'],
   page?: number,
   perPage?: number
 ) {
@@ -32,8 +32,18 @@ export async function fetchRecentEpisodes(
     { args: [page, perPage] }
   );
   const recent = results.map(anime => ({
-    ...anime,
-    source
+    id: anime.id,
+    title: anime.title,
+    image: anime.image,
+    episodeNumber: anime.episodeNumber,
+    color: anime.color,
+    isAdult: anime.isAdult,
+    source: {
+      id: userSource.id,
+      name: userSource.name,
+      url: userSource.url,
+      shareLinks: userSource.shareLinks
+    }
   }));
   const animes = [...(recentEpisodes.get(source.id) ?? []), ...recent].filter(
     (anime, index, self) =>
@@ -48,7 +58,7 @@ export async function fetchRecentEpisodes(
 }
 
 export async function fetchTrendingAnime(
-  source: Provider,
+  source: Anime['source'],
   page?: number,
   perPage?: number
 ) {
@@ -64,8 +74,19 @@ export async function fetchTrendingAnime(
     }
   );
   const trending = results.map(anime => ({
-    ...anime,
-    source
+    id: anime.id,
+    title: anime.title,
+    description: anime.description,
+    image: anime.image,
+    cover: anime.cover,
+    color: anime.color,
+    isAdult: anime.isAdult,
+    source: {
+      id: userSource.id,
+      name: userSource.name,
+      url: userSource.url,
+      shareLinks: userSource.shareLinks
+    }
   }));
   const animes = [...(trendingAnimes.get(source.id) ?? []), ...trending].filter(
     (anime, index, self) =>
@@ -80,7 +101,7 @@ export async function fetchTrendingAnime(
 }
 
 export async function fetchPopularAnime(
-  source: Provider,
+  source: Anime['source'],
   page?: number,
   perPage?: number
 ) {
@@ -96,8 +117,17 @@ export async function fetchPopularAnime(
     }
   );
   const popular = results.map(anime => ({
-    ...anime,
-    source
+    id: anime.id,
+    title: anime.title,
+    image: anime.image,
+    color: anime.color,
+    isAdult: anime.isAdult,
+    source: {
+      id: userSource.id,
+      name: userSource.name,
+      url: userSource.url,
+      shareLinks: userSource.shareLinks
+    }
   }));
   const animes = [...(popularAnimes.get(source.id) ?? []), ...popular].filter(
     (anime, index, self) =>
@@ -107,7 +137,10 @@ export async function fetchPopularAnime(
   return popular;
 }
 
-export async function fetchAnime(id: string, source: Provider): Promise<Anime> {
+export async function fetchAnime(
+  id: string,
+  source: Anime['source']
+): Promise<Anime> {
   const userSource = get(providers)[source.id];
 
   if (!userSource?.scripts?.fetchAnimeInfo)
@@ -123,13 +156,28 @@ export async function fetchAnime(id: string, source: Provider): Promise<Anime> {
       ...res,
       recommendations: (res.recommendations ?? []).map(r => ({
         ...r,
-        source
+        source: {
+          id: userSource.id,
+          name: userSource.name,
+          url: userSource.url,
+          shareLinks: userSource.shareLinks
+        }
       })),
       relations: (res.relations ?? []).map(r => ({
         ...r,
-        source
+        source: {
+          id: userSource.id,
+          name: userSource.name,
+          url: userSource.url,
+          shareLinks: userSource.shareLinks
+        }
       })),
-      source
+      source: {
+        id: userSource.id,
+        name: userSource.name,
+        url: userSource.url,
+        shareLinks: userSource.shareLinks
+      }
     };
 
     animeCache.set(`${source.id}/${id}`, anime);
@@ -184,7 +232,7 @@ export async function fetchAnime(id: string, source: Provider): Promise<Anime> {
   }
 }
 
-export async function fetchEpisode(id: string, source: Provider) {
+export async function fetchEpisode(id: string, source: Anime['source']) {
   const userSource = get(providers)[source.id];
 
   if (!userSource?.scripts?.fetchEpisodes)

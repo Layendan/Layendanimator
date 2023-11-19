@@ -1,6 +1,7 @@
 import { LRUCache } from 'lru-cache';
 import { writable } from 'svelte/store';
 import type { Anime, EpisodeData, RecentAnime } from './classes/Anime';
+import type { Provider } from './source';
 
 const MINUTE = 1000 * 60;
 
@@ -14,18 +15,52 @@ export const episodeCache = new LRUCache<string, EpisodeData>({
   ttl: MINUTE * 30
 });
 
-export const recentEpisodes = new LRUCache<string, RecentAnime[]>({
-  max: 100,
+export const recentEpisodes = new LRUCache<
+  string,
+  (Pick<
+    RecentAnime,
+    'id' | 'image' | 'title' | 'episodeNumber' | 'color' | 'isAdult' | 'source'
+  > &
+    Partial<RecentAnime> & {
+      source: Pick<Provider, 'id' | 'name' | 'url' | 'shareLinks'> &
+        Partial<Provider>;
+    })[]
+>({
+  max: 50,
   ttl: MINUTE * 15
 });
 
-export const trendingAnimes = new LRUCache<string, Anime[]>({
-  max: 100,
+export const trendingAnimes = new LRUCache<
+  string,
+  (Pick<
+    Anime,
+    | 'id'
+    | 'image'
+    | 'title'
+    | 'description'
+    | 'cover'
+    | 'color'
+    | 'isAdult'
+    | 'source'
+  > &
+    Partial<Anime> & {
+      source: Pick<Provider, 'id' | 'name' | 'url' | 'shareLinks'> &
+        Partial<Provider>;
+    })[]
+>({
+  max: 50,
   ttl: MINUTE * 15
 });
 
-export const popularAnimes = new LRUCache<string, Anime[]>({
-  max: 100,
+export const popularAnimes = new LRUCache<
+  string,
+  (Pick<Anime, 'id' | 'image' | 'title' | 'color' | 'isAdult'> &
+    Partial<Anime> & {
+      source: Pick<Provider, 'id' | 'name' | 'url' | 'shareLinks'> &
+        Partial<Provider>;
+    })[]
+>({
+  max: 50,
   ttl: MINUTE * 60 * 24
 });
 

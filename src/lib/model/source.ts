@@ -100,9 +100,9 @@ export const defaultProviders: { [key: string]: Provider } = {
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
         const res = await fetch(url.toString());
-        const anime: Anime = await res.json();
+        const anime: Anime & { artwork?: string[] } = await res.json();
         if (!anime) return undefined;
-        return {
+        const val = {
           ...anime,
           episodes: (anime.episodes ?? [])
             .sort((a, b) => a.number - b.number)
@@ -111,6 +111,8 @@ export const defaultProviders: { [key: string]: Provider } = {
               id: episode.id.replace('/', '')
             }))
         };
+        delete val.artwork;
+        return val;
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(
@@ -196,12 +198,14 @@ export const defaultProviders: { [key: string]: Provider } = {
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
         const res = await fetch(url.toString());
-        const anime: Anime = await res.json();
+        const anime: Anime & { artwork?: string[] } = await res.json();
         if (!anime) return;
-        return {
+        const val = {
           ...anime,
           episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
         };
+        delete val.artwork;
+        return val;
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(
@@ -377,12 +381,14 @@ export const defaultProviders: { [key: string]: Provider } = {
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
         const res = await fetch(url.toString());
-        const anime: Anime = await res.json();
+        const anime: Anime & { artwork?: string[] } = await res.json();
         if (!anime) return;
-        return {
+        const val = {
           ...anime,
           episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
         };
+        delete val.artwork;
+        return val;
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(
@@ -469,12 +475,14 @@ export const defaultProviders: { [key: string]: Provider } = {
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
         const res = await fetch(url.toString());
-        const anime: Anime = await res.json();
+        const anime: Anime & { artwork?: string[] } = await res.json();
         if (!anime) return;
-        return {
+        const val = {
           ...anime,
           episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
         };
+        delete val.artwork;
+        return val;
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(

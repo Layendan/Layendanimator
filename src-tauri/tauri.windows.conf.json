@@ -8,7 +8,7 @@
     },
     "package": {
         "productName": "Layendanimator",
-        "version": "0.1.42"
+        "version": "0.1.43"
     },
     "tauri": {
         "allowlist": {
@@ -100,15 +100,15 @@
                 "minHeight": 600,
                 "height": 600,
                 "resizable": true,
-                "maximized": true,
+                "maximized": false,
                 "title": "Layendanimator",
                 "label": "main",
                 "minWidth": 800,
                 "width": 800,
                 "visible": false,
                 "acceptFirstMouse": true,
-                "decorations": true,
-                "skipTaskbar": true,
+                "decorations": false,
+                "skipTaskbar": false,
                 "contentProtected": false,
                 "fileDropEnabled": false,
                 "transparent": true,

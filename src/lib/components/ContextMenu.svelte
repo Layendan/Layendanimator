@@ -1,6 +1,11 @@
 <script lang="ts">
   import { currentContextMenu } from '$lib/model/contextmenu';
-  import { createEventDispatcher, onDestroy, setContext } from 'svelte';
+  import {
+    createEventDispatcher,
+    onDestroy,
+    onMount,
+    setContext
+  } from 'svelte';
   import { fade } from 'svelte/transition';
 
   export let x: number;
@@ -42,14 +47,17 @@
 
   $: menuEl && global && document.body.append(menuEl);
 
+  onMount(() => {
+    document.getElementById('main')?.addEventListener('scroll', onScroll);
+  });
+
   onDestroy(() => {
     menuEl?.remove();
+    document.getElementById('main')?.removeEventListener('scroll', onScroll);
   });
 </script>
 
 <svelte:body on:click={onPageClick} />
-
-<svelte:window on:scroll={onScroll} />
 
 <svelte:document
   on:visibilitychange={() => {

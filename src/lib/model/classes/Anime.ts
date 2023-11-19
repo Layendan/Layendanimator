@@ -21,7 +21,8 @@ type Type =
 
 export type Anime = {
   id: string;
-  source: Provider;
+  source: Pick<Provider, 'id' | 'name' | 'url' | 'shareLinks'> &
+    Partial<Provider>;
   title: {
     romaji: string;
     english: string;

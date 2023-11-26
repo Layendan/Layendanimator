@@ -3,6 +3,11 @@
     windows_subsystem = "windows"
 )]
 
+mod discord;
+
+use discord::{clear_activity, pause_watching, reset_activity, set_watching, RPC};
+use discord_rich_presence::DiscordIpc;
+use std::thread;
 use tauri::Manager;
 #[allow(unused_imports)]
 use window_vibrancy::{apply_mica, apply_vibrancy, NSVisualEffectMaterial};
@@ -43,6 +48,11 @@ fn main() {
             apply_mica(&window, None)
                 .expect("Unsupported platform! 'apply_mica' is only supported on Windows");
 
+            thread::spawn(move || {
+                let mut client = RPC.lock().unwrap();
+                client.connect().unwrap();
+            });
+
             Ok(())
         })
         .plugin(tauri_plugin_store::Builder::default().build())
@@ -52,6 +62,12 @@ fn main() {
             app.emit_all("single-instance", SInst { args: argv, cwd })
                 .unwrap();
         }))
+        .invoke_handler(tauri::generate_handler![
+            set_watching,
+            pause_watching,
+            reset_activity,
+            clear_activity
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -25,6 +25,10 @@ Layendanimator is a free and open source anime watching app for Desktop (Windows
 
 - [Layendanimator](/#)
   - [Table of Contents](#table-of-contents)
+  - [Download & Install](#download--install)
+    - [Windows](#windows)
+    - [MacOS](#macos)
+    - [Linux](#linux)
   - [Getting Started](#getting-started)
   - [Features](#features)
   - [Picture in Picture Playback](#picture-in-picture-playback)
@@ -44,6 +48,30 @@ Layendanimator is a free and open source anime watching app for Desktop (Windows
   - [Contributions](#contributions)
   - [License](#license)
 
+## Download & Install
+
+Download the latest version of Layendanimator from the [releases page](https://github.com/Layendan/Layendanimator/releases/latest).
+
+### Windows
+
+Download the _(recommended)_ `Layendanimator_<version>_x64-setup.exe` or `Layendanimator_<version>_x64_en-US.msi` file and run it.
+
+The msi file will be depracted in the future, hence not recommended to install the application.
+
+### MacOS
+
+Download the `Layendanimator_<version>_x64.dmg` file and open it. Then, drag the application to your `Applications` folder.
+
+For Silicon _(M1/M2)_ based Macs, arm64 versions of the app will be available in the future if I move away from ffmpeg for downloading and github will make it easier to compile arm64 builds.
+
+### Linux
+
+Download the `Layendanimator_<version>_amd64.AppImage` file and run it.
+
+If using a Debian based distro, download the `Layendanimator_<version>_amd64.deb` file and run it.
+
+_Note: Linux is not tested and might not work, if you have problems using the app, please [create an issue](https://github.com/Layendan/Layendanimator/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=) on github._
+
 ## Getting Started
 
 - [Set up Tauri](https://tauri.app/v1/guides/getting-started/prerequisites)
@@ -60,7 +88,7 @@ Layendanimator is a free and open source anime watching app for Desktop (Windows
 - [ ] Chromecast/Google Cast integration
 - [x] Playback History & Auto Resumes
 - [ ] Support Custom Sources (WIP)
-- [ ] Discord Rich Presence integration
+- [x] Discord Rich Presence integration
 - [x] Download & play episodes offline
 - [ ] Third party anime
 - [ ] Custom anime lists, e.g. favorites and to-watch list

@@ -9,7 +9,11 @@
     <svelte:fragment slot="title">Watch History</svelte:fragment>
 
     {#each Object.entries($watching).sort(([, a], [, b]) => b.watchTime - a.watchTime) as [id, anime] (id)}
-      <AnimeCard {anime} extra={`Episode ${anime.watchEpisode.number}`} />
+      <AnimeCard
+        {anime}
+        extra={`Episode ${anime.watchEpisode.number}`}
+        showSource
+      />
     {:else}
       <p class="text-xl font-semibold text-base-content text-opacity-70">
         No Recent Animes

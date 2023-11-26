@@ -35,7 +35,11 @@
     </a>
 
     {#each Object.entries($watching).sort(([, a], [, b]) => b.watchTime - a.watchTime) as [id, anime] (id)}
-      <AnimeCard {anime} extra={`Episode ${anime.watchEpisode.number}`} />
+      <AnimeCard
+        {anime}
+        extra={`Episode ${anime.watchEpisode.number}`}
+        showSource
+      />
     {:else}
       <div class="flex items-center justify-center">
         <p

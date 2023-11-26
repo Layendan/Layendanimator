@@ -18,6 +18,7 @@
   import 'vidstack/player/layouts';
   import 'vidstack/player/ui';
   // Import styles.
+  import { encodeAnimeLink } from '$lib/model/source';
   // !!!!! IMPORTANT !!!!! KEEP THIS ORDER !!!!! Theme -> Layout
   import 'vidstack/player/styles/default/theme.css';
   import 'vidstack/player/styles/default/layouts/video.css';
@@ -135,7 +136,7 @@
     console.debug(anime, episodeData, episode);
   });
 
-  function updateWatched() {
+  async function updateWatched() {
     const state = player?.state;
     if (state) {
       watching.watch(anime, {
@@ -146,14 +147,42 @@
           1
         )
       });
+
+      if (window.__TAURI__ && $settings.discordRPC === 'enabled') {
+        const { invoke } = await import('@tauri-apps/api/tauri');
+        const { playing, currentTime, duration } = state;
+        console.log(playing, currentTime, duration);
+        if (playing && typeof currentTime === 'number' && duration) {
+          invoke('set_watching', {
+            title: anime.title.english ?? anime.title.romaji,
+            episode: episode.number,
+            episodeTitle: episode.title,
+            artwork: anime.image,
+            link: encodeAnimeLink(anime),
+            currentTime,
+            duration
+          });
+        } else {
+          invoke('pause_watching', {
+            title: anime.title.english ?? anime.title.romaji,
+            episodeTitle: episode.title,
+            artwork: anime.image,
+            link: encodeAnimeLink(anime)
+          });
+        }
+      }
     }
   }
 
-  const interval = setInterval(updateWatched, 15_000);
+  const interval = setInterval(updateWatched, 30_000);
 
-  onDestroy(() => {
+  onDestroy(async () => {
     clearInterval(interval);
     if (player) player.destroy();
+    if (window.__TAURI__ && $settings.discordRPC === 'enabled') {
+      const { invoke } = await import('@tauri-apps/api/tauri');
+      invoke('reset_activity');
+    }
   });
 
   beforeNavigate(updateWatched);
@@ -178,6 +207,7 @@
     on:provider-change={providerChange}
     on:ended={requestNextEpisode}
     on:pause={updateWatched}
+    on:playing={updateWatched}
     on:error={() => invalidate(`${anime.source}/${anime.id}/${episode.id}`)}
     on:hls-error={() => invalidate(`${anime.source}/${anime.id}/${episode.id}`)}
   >

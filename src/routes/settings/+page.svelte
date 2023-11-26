@@ -93,6 +93,37 @@
           on:change={() => ($settings.parallax = !$settings.parallax)}
         />
 
+        <!-- Show Source on Anime -->
+        <label class="label w-fit" for="showSourcesOnAnime">
+          <span class="label-text"> Show Source Image on Anime </span>
+        </label>
+        <input
+          type="checkbox"
+          id="showSourcesOnAnime"
+          class="toggle toggle-accent"
+          checked={$settings.showSourcesOnAnime}
+          on:change={() =>
+            ($settings.showSourcesOnAnime = !$settings.showSourcesOnAnime)}
+        />
+
+        <!-- DiscordRPC -->
+        <label class="label w-fit" for="discordRPC">
+          <span class="label-text"> Show Discord Rich Presence </span>
+        </label>
+        <input
+          type="checkbox"
+          id="discordRPC"
+          class="toggle toggle-accent"
+          checked={$settings.discordRPC === 'enabled'}
+          on:change={async () => {
+            $settings.discordRPC =
+              $settings.discordRPC === 'enabled' ? 'disabled' : 'enabled';
+            const { invoke } = await import('@tauri-apps/api/tauri');
+            if ($settings.discordRPC === 'enabled') invoke('reset_activity');
+            else invoke('clear_activity');
+          }}
+        />
+
         <!-- Subscription Sorting Algorithm -->
         <label class="label w-fit" for="subSort">
           <span class="label-text">Subscriptions Anime Sorting</span>

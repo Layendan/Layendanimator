@@ -2,6 +2,8 @@
   import type { Anime } from '$lib/model/classes/Anime';
   import { fade } from 'svelte/transition';
   import AnimeContextMenu from './AnimeContextMenu.svelte';
+  import { providers } from '$lib/model/source';
+  import { settings } from '$lib/model/settings';
 
   export let anime: Pick<Anime, 'id' | 'title' | 'image' | 'source'> &
     Partial<Anime>;
@@ -9,6 +11,9 @@
   export let extra = '';
   export let href = `/${anime.source.id}/${anime.id}`;
   export let isDownload = false;
+  export let showSource = false;
+
+  const sourceImg = $providers[anime.source.id]?.logo;
 
   let imageLoaded = true;
   let skeleton = true;
@@ -42,6 +47,13 @@
           class="card-body relative m-0 h-full w-full rounded-md bg-base-300 bg-cover bg-center bg-no-repeat object-cover object-center p-0"
           class:skeleton
         />
+        {#if showSource && $settings.showSourcesOnAnime && sourceImg}
+          <img
+            src={sourceImg}
+            alt={anime.source.name}
+            class="absolute left-2 top-2 h-6 w-6 rounded-md bg-base-300 bg-opacity-60 p-0 backdrop-blur-xl lg:h-8 lg:w-8"
+          />
+        {/if}
       {/key}
       {#if !!extra}
         <div

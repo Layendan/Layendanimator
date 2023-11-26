@@ -7,6 +7,10 @@ node_modules
 .env.*
 !.env.example
 
+# Ignore github files
+.github
+Misc
+
 # Ignore tauri files
 /src-tauri
 

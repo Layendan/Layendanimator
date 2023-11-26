@@ -10,6 +10,7 @@ import {
 import type { Anime, EpisodeData, RecentAnime } from '$lib/model/classes/Anime';
 import { error } from '@sveltejs/kit';
 import { get } from 'svelte/store';
+import Semaphore from './classes/Semaphore';
 import { notifications } from './notifications';
 import { settings } from './settings';
 import { providers, type Provider } from './source';
@@ -207,7 +208,7 @@ export async function fetchAnime(
     const unwatched = get(unwatchedSubscriptions)[
       `${anime.source.id}/${anime.id}`
     ];
-    if (sub && sub.episodes) {
+    if (sub && sub.episodes !== undefined) {
       if (sub.episodes.length < anime.episodes.length) {
         subscriptions.remove(anime);
         unwatchedSubscriptions.add(
@@ -223,7 +224,7 @@ export async function fetchAnime(
           status: sub.status ?? anime.status
         });
       }
-    } else if (unwatched && unwatched.episodes) {
+    } else if (unwatched && unwatched.episodes !== undefined) {
       if (unwatched.episodes.length < anime.episodes.length)
         unwatchedSubscriptions.add(
           anime,
@@ -349,7 +350,8 @@ export async function safeEval<T>(
 
     worker.onmessage = evt => {
       worker.terminate();
-      if (evt.data.error) reject(new Error(evt.data.error));
+      if (evt.data === undefined) reject(new Error('No data returned'));
+      if (evt.data?.error) reject(new Error(evt.data.error));
       else resolve(evt.data);
     };
 
@@ -369,3 +371,5 @@ export async function safeEval<T>(
     );
   });
 }
+
+export const taskScheduler = new Semaphore(5);

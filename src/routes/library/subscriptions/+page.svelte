@@ -16,7 +16,7 @@
       <svelte:fragment slot="title">New Updates</svelte:fragment>
 
       {#each Object.entries($unwatchedSubscriptions).sort(sortMethod) as [id, anime] (id)}
-        <AnimeCard {anime} bind:numUpdates={anime.newEpisodes} />
+        <AnimeCard {anime} bind:numUpdates={anime.newEpisodes} showSource />
       {/each}
     </GridContent>
   {/if}
@@ -30,7 +30,7 @@
       <svelte:fragment slot="title">Subscriptions</svelte:fragment>
 
       {#each Object.entries($subscriptions).sort(sortMethod) as [id, anime] (id)}
-        <AnimeCard {anime} />
+        <AnimeCard {anime} showSource />
       {/each}
     </GridContent>
   {/if}

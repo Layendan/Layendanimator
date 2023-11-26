@@ -94,7 +94,11 @@
         {#each Object.entries($watching)
           .sort(([, a], [, b]) => b.watchTime - a.watchTime)
           .slice(0, 10) as [id, anime] (id)}
-          <AnimeCard {anime} extra={`Episode ${anime.watchEpisode.number}`} />
+          <AnimeCard
+            {anime}
+            extra={`Episode ${anime.watchEpisode.number}`}
+            showSource
+          />
         {/each}
       </ScrollCarousel>
 

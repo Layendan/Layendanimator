@@ -23,7 +23,9 @@ export type SettingsType = {
   isSubtitles: boolean;
   filler: boolean;
   parallax: boolean;
+  showSourcesOnAnime: boolean;
   sortSubscriptions: 'lastUpdated' | 'timeAdded' | 'title' | 'nextEpisode';
+  discordRPC: 'enabled' | 'disabled'; // TODO: Update when watch2gether is added
   theme: Theme;
   themes: {
     [key: string]: Theme;
@@ -37,7 +39,9 @@ const defaultSettings: SettingsType = {
   isSubtitles: true,
   filler: true,
   parallax: true,
+  showSourcesOnAnime: true,
   sortSubscriptions: 'timeAdded',
+  discordRPC: 'enabled',
   theme: defaultThemes.system,
   themes: defaultThemes,
   version: '0.0.0'

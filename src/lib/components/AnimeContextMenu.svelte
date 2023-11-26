@@ -2,7 +2,7 @@
   import type { Anime } from '$lib/model/classes/Anime';
   import { currentContextMenu } from '$lib/model/contextmenu';
   import { downloading, downloads } from '$lib/model/downloads';
-  import { fetchAnime } from '$lib/model/fetch';
+  import { fetchAnime, taskScheduler } from '$lib/model/fetch';
   import { notifications } from '$lib/model/notifications';
   import { encodeAnimeLink } from '$lib/model/source';
   import {
@@ -192,14 +192,23 @@
     {:else}
       <li>
         <button
-          on:click|stopPropagation={async () => {
-            subscriptions.add(anime);
-            const res = await fetchAnime(anime.id, anime.source);
-            if (!res) {
-              subscriptions.remove(anime);
-              return;
-            }
-            subscriptions.add(res);
+          on:click|stopPropagation={() => {
+            taskScheduler.callFunction(async () => {
+              try {
+                subscriptions.add(anime);
+                const res = await fetchAnime(anime.id, anime.source);
+                if (!res) throw new Error('Could not find anime');
+                subscriptions.add(res);
+              } catch (e) {
+                console.error(e);
+                subscriptions.remove(anime);
+                notifications.addNotification({
+                  title: 'Error',
+                  message: 'Could not add subscription',
+                  type: 'error'
+                });
+              }
+            }, `${anime.id}-contextmenu-subscription`);
           }}
         >
           <Fa icon={faPlusCircle} class="h-3 w-3 text-success" />

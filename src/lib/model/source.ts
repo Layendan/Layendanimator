@@ -43,9 +43,9 @@ export type Provider = {
 
 export const defaultProviders: { [key: string]: Provider } = {
   gogoanime: {
-    name: 'Gogoanime',
+    name: 'Anitaku',
     id: 'gogoanime',
-    url: 'https://gogoanimehd.to/',
+    url: 'https://anitaku.to/',
     updateUrl: '',
     logo: 'https://play-lh.googleusercontent.com/MaGEiAEhNHAJXcXKzqTNgxqRmhuKB1rCUgb15UrN_mWUNRnLpO5T1qja64oRasO7mn0',
     description:
@@ -100,8 +100,10 @@ export const defaultProviders: { [key: string]: Provider } = {
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
         const res = await fetch(url.toString());
+        if (res.status !== 200) return undefined;
         const anime: Anime & { artwork?: string[] } = await res.json();
         if (!anime) return undefined;
+        delete anime.artwork;
         const val = {
           ...anime,
           episodes: (anime.episodes ?? [])
@@ -111,7 +113,6 @@ export const defaultProviders: { [key: string]: Provider } = {
               id: episode.id.replace('/', '')
             }))
         };
-        delete val.artwork;
         return val;
       }).toString(),
       fetchEpisodes: (async (id: string) => {
@@ -124,10 +125,10 @@ export const defaultProviders: { [key: string]: Provider } = {
     },
     shareLinks: {
       anime: 'https://anilist.co/anime/{id}',
-      episode: 'https://gogoanimehd.to/{episode}'
+      episode: 'https://anitaku.to/{episode}'
     },
     externalLinks: [
-      ['Website', 'https://gogoanimehd.to/'],
+      ['Website', 'https://anitaku.to/'],
       ['Discord', 'https://discord.com/invite/gogo'],
       ['Reddit', 'https://www.reddit.com/r/AroundAnimeTV/'],
       ['Twitter', 'https://twitter.com/anime_around'],
@@ -198,13 +199,14 @@ export const defaultProviders: { [key: string]: Provider } = {
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
         const res = await fetch(url.toString());
+        if (res.status !== 200) return undefined;
         const anime: Anime & { artwork?: string[] } = await res.json();
-        if (!anime) return;
+        if (!anime) return undefined;
+        delete anime.artwork;
         const val = {
           ...anime,
           episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
         };
-        delete val.artwork;
         return val;
       }).toString(),
       fetchEpisodes: (async (id: string) => {
@@ -381,13 +383,14 @@ export const defaultProviders: { [key: string]: Provider } = {
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
         const res = await fetch(url.toString());
+        if (res.status !== 200) return undefined;
         const anime: Anime & { artwork?: string[] } = await res.json();
-        if (!anime) return;
+        if (!anime) return undefined;
+        delete anime.artwork;
         const val = {
           ...anime,
           episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
         };
-        delete val.artwork;
         return val;
       }).toString(),
       fetchEpisodes: (async (id: string) => {
@@ -475,13 +478,14 @@ export const defaultProviders: { [key: string]: Provider } = {
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
         const res = await fetch(url.toString());
+        if (res.status !== 200) return undefined;
         const anime: Anime & { artwork?: string[] } = await res.json();
-        if (!anime) return;
+        if (!anime) return undefined;
+        delete anime.artwork;
         const val = {
           ...anime,
           episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
         };
-        delete val.artwork;
         return val;
       }).toString(),
       fetchEpisodes: (async (id: string) => {

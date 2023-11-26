@@ -78,9 +78,10 @@
       downloads.initialize()
     ]);
 
-    const [{ listen }, { appWindow }] = await Promise.all([
+    const [{ listen }, { appWindow }, { invoke }] = await Promise.all([
       import('@tauri-apps/api/event'),
-      import('@tauri-apps/api/window')
+      import('@tauri-apps/api/window'),
+      import('@tauri-apps/api/tauri')
     ]);
 
     tauriUnsubscribe = (
@@ -99,6 +100,8 @@
         appWindow.setSkipTaskbar(false)
       ])
     )[0];
+
+    if ($settings.discordRPC === 'enabled') invoke('reset_activity');
 
     try {
       os = await getOS();

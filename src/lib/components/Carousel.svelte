@@ -16,7 +16,7 @@
 
   export let animes: Pick<
     Anime,
-    'id' | 'title' | 'description' | 'image' | 'cover' | 'source'
+    'id' | 'title' | 'description' | 'image' | 'cover' | 'source' | 'status'
   >[];
   export let source: Provider;
   export let fadeSpeed = 300;

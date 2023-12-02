@@ -8,6 +8,11 @@
   import TotalAnimeInfo from '$lib/components/TotalAnimeInfo.svelte';
   import type { Anime } from '$lib/model/classes/Anime';
   import { downloading } from '$lib/model/downloads';
+  import { settings } from '$lib/model/settings';
+  import {
+    subscriptions,
+    unwatchedSubscriptions
+  } from '$lib/model/subscriptions';
   import { watching } from '$lib/model/watch';
   import {
     faChevronDown,
@@ -23,11 +28,10 @@
   export let showDownload = false;
   export let removeParallax = false;
 
-  let isAscending = true;
-  let showWatched = true;
-  let showImage: boolean;
   $: reversedEpisodes = (data.episodes ?? []).toReversed();
-  $: sortedEpisodes = isAscending ? data.episodes ?? [] : reversedEpisodes;
+  $: sortedEpisodes = $settings.isEpisodeAscending
+    ? data.episodes ?? []
+    : reversedEpisodes;
   $: relations = (data.relations ?? []).filter(
     a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT'
   );
@@ -47,7 +51,7 @@
   <!-- EPISODES -->
   <EpisodeCarousel
     anime={data}
-    episodes={showWatched
+    episodes={$settings.showWatchedEpisodes
       ? sortedEpisodes
       : sortedEpisodes.filter(({ id }) => {
           return (
@@ -58,7 +62,6 @@
     href={showDownload
       ? undefined
       : `/library/downloads/${data.source.id}/${data.id}`}
-    bind:showImage
   >
     <div slot="header" class="flex justify-between">
       <div class="mb-4 flex items-center gap-1">
@@ -118,7 +121,13 @@
           <div class="tooltip tooltip-bottom" data-tip="Mark All as Watched">
             <button
               class="btn"
-              on:click={() => watching.watchAll(data, reversedEpisodes)}
+              on:click={() => {
+                watching.watchAll(data, reversedEpisodes);
+                if ($unwatchedSubscriptions[`${data.source.id}/${data.id}`]) {
+                  unwatchedSubscriptions.remove(data);
+                  subscriptions.add(data);
+                }
+              }}
             >
               <Fa icon={faClock} />
             </button>
@@ -139,33 +148,28 @@
                 <li class="m-1">
                   <button
                     class="btn btn-outline flex w-full flex-row items-center gap-1 text-base-content"
-                    class:btn-disabled={isAscending}
-                    disabled={isAscending}
-                    on:click={() => (isAscending = true)}
+                    on:click={() =>
+                      ($settings.isEpisodeAscending =
+                        !$settings.isEpisodeAscending)}
                   >
-                    <Fa icon={faChevronUp} />
-                    Episodes
-                  </button>
-                </li>
-                <li class="m-1">
-                  <button
-                    class="btn btn-outline flex w-full flex-row items-center gap-1 text-base-content"
-                    class:btn-disabled={!isAscending}
-                    disabled={!isAscending}
-                    on:click={() => (isAscending = false)}
-                  >
-                    <Fa icon={faChevronDown} />
-                    Episodes
+                    <Fa
+                      icon={$settings.isEpisodeAscending
+                        ? faChevronUp
+                        : faChevronDown}
+                    />
+                    Sort
                   </button>
                 </li>
                 <li class="m-1">
                   <button
                     class="btn btn-outline flex w-full flex-row items-center gap-2 text-base-content"
-                    on:click={() => (showWatched = !showWatched)}
+                    on:click={() =>
+                      ($settings.showWatchedEpisodes =
+                        !$settings.showWatchedEpisodes)}
                   >
                     <input
                       type="checkbox"
-                      checked={showWatched}
+                      checked={$settings.showWatchedEpisodes}
                       class="checkbox"
                       tabindex="-1"
                     />
@@ -175,11 +179,12 @@
                 <li class="m-1">
                   <button
                     class="btn btn-outline flex w-full flex-row items-center gap-2 text-base-content"
-                    on:click={() => (showImage = !showImage)}
+                    on:click={() =>
+                      ($settings.showThumbnail = !$settings.showThumbnail)}
                   >
                     <input
                       type="checkbox"
-                      checked={showImage}
+                      checked={$settings.showThumbnail}
                       class="checkbox"
                       tabindex="-1"
                     />

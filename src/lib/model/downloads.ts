@@ -2,10 +2,10 @@ import { invalidate } from '$app/navigation';
 import Hls from 'hls.js';
 import { get, writable } from 'svelte/store';
 import type { Store } from 'tauri-plugin-store-api';
-import { episodeCache } from './cache';
+import { animeCache, episodeCache } from './cache';
 import type { Anime, EpisodeData } from './classes/Anime';
 import Semaphore from './classes/Semaphore';
-import { fetchEpisode } from './fetch';
+import { fetchAnime, fetchEpisode } from './fetch';
 import { notifications } from './notifications';
 import type { Provider } from './source';
 import { tasks } from './updates';
@@ -40,8 +40,9 @@ export type DownloadedAnime = {
     | 'image'
     | 'cover'
     | 'episodes'
+    | 'source'
   > &
-    Partial<Anime> & { source: Anime['source'] };
+    Partial<Anime>;
   episodes: { [key: string]: EpisodeData };
 };
 
@@ -195,7 +196,11 @@ function createDownloading() {
   const taskId = 'downloading';
 
   const dict: {
-    [key: string]: { anime: Anime; quality: string; progress: number | null };
+    [key: string]: {
+      anime: Pick<Anime, 'id' | 'source'> & Partial<Anime>;
+      quality: string;
+      progress: number | null;
+    };
   } = {};
   const { subscribe, set, update } = writable(dict);
 
@@ -234,19 +239,23 @@ function createDownloading() {
     set,
     add: async (
       episodeId: string,
-      anime: Anime,
+      newAnime: Pick<Anime, 'id' | 'source' | 'title'> & Partial<Anime>,
       quality: string,
       episodeNumber: number
     ) => {
-      if (get(downloads)[`${anime.source.id}/${anime.id}`]?.episodes[episodeId])
+      if (
+        get(downloads)[`${newAnime.source.id}/${newAnime.id}`]?.episodes[
+          episodeId
+        ]
+      )
         return;
 
-      const id = `${anime.source.id}/${anime.id}/${episodeId}`;
+      const id = `${newAnime.source.id}/${newAnime.id}/${episodeId}`;
 
       if (get(downloading)[id]) return;
 
       update(downloads => {
-        downloads[id] = { anime, quality, progress: null };
+        downloads[id] = { anime: newAnime, quality, progress: null };
         return downloads;
       });
 
@@ -264,6 +273,7 @@ function createDownloading() {
         }
         return tasks;
       });
+
       try {
         const [
           { Command },
@@ -282,6 +292,10 @@ function createDownloading() {
         const directoryPath = await join(dataDir, 'downloads');
         if (!(await exists(directoryPath)))
           await createDir(directoryPath, { recursive: true });
+
+        const anime =
+          animeCache.get(`${newAnime.source.id}/${newAnime.id}`) ??
+          (await fetchAnime(newAnime.id, newAnime.source));
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const calls: Promise<any>[] = [];
@@ -704,9 +718,24 @@ function createDownloading() {
         notifications.addNotification({
           title: 'Download failed',
           message: `Could not download ${
-            anime.title.english ?? anime.title.romaji
+            newAnime.title.english ?? newAnime.title.romaji
           } Episode ${episodeNumber}`,
           type: 'error'
+        });
+        tasks.update(tasksList => {
+          const task = tasksList.find(task => task.id === taskId);
+          if (task) {
+            task.max--;
+            if (task.value >= task.max) {
+              setTimeout(() => {
+                if (task.value >= task.max)
+                  tasks.update(tasks =>
+                    tasks.filter(task => task.id !== taskId)
+                  );
+              }, 500);
+            }
+          }
+          return tasksList;
         });
       } finally {
         remove(id);

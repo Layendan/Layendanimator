@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import type { Store } from 'tauri-plugin-store-api';
 import type { Anime, Episode } from './classes/Anime';
+import { animeCache } from './cache';
 
 let store: Store | undefined = undefined;
 
@@ -70,25 +71,51 @@ function createWatching() {
       store?.set('watching', subscriptions);
     },
     add,
-    watch: (anime: Anime, data: WatchType) => {
+    watch: (
+      anime: Pick<Anime, 'id' | 'source'> & Partial<Anime>,
+      data: WatchType
+    ) => {
       update(subscriptions => {
-        if (!subscriptions[`${anime.source.id}/${anime.id}`]) {
-          add(anime, data.episode);
+        const cachedAnime =
+          animeCache.get(`${anime.source.id}/${anime.id}`) ??
+          subscriptions[`${anime.source.id}/${anime.id}`];
+
+        if (
+          !subscriptions[
+            `${cachedAnime?.source.id ?? anime.source.id}/${
+              cachedAnime?.id ?? anime.id
+            }`
+          ]
+        ) {
+          add((cachedAnime as Anime) ?? anime, data.episode);
         }
-        subscriptions[`${anime.source.id}/${anime.id}`] = {
-          ...subscriptions[`${anime.source.id}/${anime.id}`],
-          id: anime.id,
-          title: anime.title,
-          image: anime.image,
-          color: anime.color,
+        subscriptions[
+          `${cachedAnime?.source.id ?? anime.source.id}/${
+            cachedAnime?.id ?? anime.id
+          }`
+        ] = {
+          ...subscriptions[
+            `${cachedAnime?.source.id ?? anime.source.id}/${
+              cachedAnime?.id ?? anime.id
+            }`
+          ],
+          id: cachedAnime?.id ?? anime.id,
+          title: cachedAnime?.title ?? anime.title,
+          image: cachedAnime?.image ?? anime.image,
+          color: cachedAnime?.color ?? anime.color,
           source: {
-            id: anime.source.id,
-            name: anime.source.name,
-            url: anime.source.url,
-            shareLinks: anime.source.shareLinks
+            id: cachedAnime?.source.id ?? anime.source.id,
+            name: cachedAnime?.source.name ?? anime.source.name,
+            url: cachedAnime?.source.url ?? anime.source.url,
+            shareLinks:
+              cachedAnime?.source.shareLinks ?? anime.source.shareLinks
           },
           watchedEpisodes: {
-            ...subscriptions[`${anime.source.id}/${anime.id}`].watchedEpisodes,
+            ...subscriptions[
+              `${cachedAnime?.source.id ?? anime.source.id}/${
+                cachedAnime?.id ?? anime.id
+              }`
+            ].watchedEpisodes,
             [data.episode.id]: data
           },
           watchEpisode: {
@@ -166,7 +193,7 @@ function createWatching() {
         return subscriptions;
       });
     },
-    removeEpisode: (anime: Anime, episodeId: string) => {
+    removeEpisode: (anime: Pick<Anime, 'id' | 'source'>, episodeId: string) => {
       update(subscriptions => {
         delete subscriptions[`${anime.source.id}/${anime.id}`]?.watchedEpisodes[
           episodeId

@@ -29,12 +29,13 @@ Layendanimator is a free and open source anime watching app for Desktop (Windows
     - [Windows](#windows)
     - [MacOS](#macos)
     - [Linux](#linux)
-  - [Getting Started](#getting-started)
+  - [Contributing](#contributing)
   - [Features](#features)
   - [Picture in Picture Playback](#picture-in-picture-playback)
   - [Notifications & Subscription](#notifications--subscription)
   - [Download Episodes](#download-episodes)
   - [Google Cast](#google-cast)
+  - [Discord Rich Presence](#discord-rich-presence)
   - [Screenshots](#screenshots)
     - [Dark Theme](#dark-theme)
     - [Light Theme](#light-theme)
@@ -62,6 +63,8 @@ The msi file will be depracted in the future, hence not recommended to install t
 
 Download the `Layendanimator_<version>_x64.dmg` file and open it. Then, drag the application to your `Applications` folder.
 
+If the application does not want to open, then navigate to your Applications folder, right click on the application, and click open. Once you do that, you will be able to open the application normally.
+
 For Silicon _(M1/M2)_ based Macs, arm64 versions of the app will be available in the future if I move away from ffmpeg for downloading and github will make it easier to compile arm64 builds.
 
 ### Linux
@@ -72,7 +75,7 @@ If using a Debian based distro, download the `Layendanimator_<version>_amd64.deb
 
 _Note: Linux is not tested and might not work, if you have problems using the app, please [create an issue](https://github.com/Layendan/Layendanimator/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=) on github._
 
-## Getting Started
+## Contributing
 
 - [Set up Tauri](https://tauri.app/v1/guides/getting-started/prerequisites)
 
@@ -111,11 +114,25 @@ Download episodes to watch offline.
 
 To download an episode, click on the download button at the bottom right of an episode card.
 
-You can view your downloaded content in the settings tab.
+Downloaded episodes will automatically be used when watching anime online. You can also find your downloaded episodes in the downloads section in the Library tab.
+
+You can view your download folder in the settings tab.
 
 ## Google Cast
 
 WIP
+
+## Discord Rich Presence
+
+See what your friends are watching and what you are watching on Discord. You can turn off Rich Presence in the settings tab.
+
+![Main Page RPC](Misc/Media/discord_rpc3.png)
+
+![Profile RPC](Misc/Media/discord_rpc.png)
+
+![Activity RPC](Misc/Media/discord_rpc2.png)
+
+_Note: Rich Presence will only display your currently watching anime if you are using the online anime version (it will not work if you watch through library tab → downloads section)._
 
 ## Screenshots
 

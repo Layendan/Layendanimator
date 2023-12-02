@@ -49,8 +49,12 @@ fn main() {
                 .expect("Unsupported platform! 'apply_mica' is only supported on Windows");
 
             thread::spawn(move || {
-                let mut client = RPC.lock().unwrap();
-                client.connect().unwrap();
+                let mut client = RPC.lock().unwrap_or_else(|_| {
+                    panic!("Failed to create Discord IPC client - main");
+                });
+                client.connect().unwrap_or_else(|_| {
+                    panic!("Failed to connect to Discord IPC client - main");
+                });
             });
 
             Ok(())

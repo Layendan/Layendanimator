@@ -26,7 +26,10 @@
 
   export let episodeData: EpisodeData;
   export let poster: string;
-  export let anime: Anime;
+  export let anime: Pick<
+    Anime,
+    'source' | 'id' | 'title' | 'image' | 'color' | 'duration'
+  >;
   export let episode: Episode;
   export let disableRemotePlayback = false;
 
@@ -92,15 +95,9 @@
   onMount(async () => {
     setSteps();
 
-    player?.addEventListener(
-      'playing',
-      () => {
-        setSteps();
-      },
-      {
-        once: true
-      }
-    );
+    player?.addEventListener('playing', setSteps, {
+      once: true
+    });
 
     try {
       if (window.__TAURI__) {
@@ -133,13 +130,18 @@
       }
     );
 
+    if (player) {
+      player.volume = $settings.playerVolume;
+      player.muted = $settings.playerMuted;
+    }
+
     console.debug(anime, episodeData, episode);
   });
 
   async function updateWatched() {
     const state = player?.state;
     if (state) {
-      watching.watch(anime, {
+      watching.watch(anime as Anime, {
         episode,
         time: state.currentTime || (watchedObject?.time ?? 0),
         percentage: Math.min(
@@ -147,6 +149,9 @@
           1
         )
       });
+
+      $settings.playerVolume = state.volume;
+      $settings.playerMuted = state.muted;
 
       if (window.__TAURI__ && $settings.discordRPC === 'enabled') {
         const { invoke } = await import('@tauri-apps/api/tauri');
@@ -178,6 +183,9 @@
 
   onDestroy(async () => {
     clearInterval(interval);
+    console.log(state.volume);
+    if (state.volume) $settings.playerVolume = state.volume;
+    if (state.muted) $settings.playerMuted = state.muted;
     if (player) player.destroy();
     if (window.__TAURI__ && $settings.discordRPC === 'enabled') {
       const { invoke } = await import('@tauri-apps/api/tauri');

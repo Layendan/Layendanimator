@@ -2,7 +2,7 @@
   import type { Anime } from '$lib/model/classes/Anime';
   import { sanitize } from 'isomorphic-dompurify';
 
-  export let anime: Anime;
+  export let anime: Pick<Anime, 'id' | 'title'> & Partial<Anime>;
 
   $: descriptionCollapsed = (anime.id, true);
 </script>
@@ -39,7 +39,7 @@
         {anime.status}
       </div>
     {/if}
-    {#each anime.genres as genre}
+    {#each anime.genres ?? [] as genre}
       <div class="badge">{genre}</div>
     {/each}
     {#if anime.rating}

@@ -44,7 +44,7 @@
   </div>
 
   {#each Object.entries($unwatchedSubscriptions).sort(sortMethod) as [id, anime] (id)}
-    <AnimeCard {anime} bind:numUpdates={anime.newEpisodes} showSource />
+    <AnimeCard {anime} bind:numUpdates={anime.newEpisodes.size} showSource />
   {/each}
 
   {#if Object.entries($unwatchedSubscriptions).length > 0 && Object.entries($subscriptions).length > 0}

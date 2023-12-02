@@ -2,6 +2,7 @@ import { writable } from 'svelte/store';
 import type { Store } from 'tauri-plugin-store-api';
 import type { Anime } from './classes/Anime';
 import { notifications } from './notifications';
+import { animeCache } from './cache';
 
 let store: Store | undefined = undefined;
 
@@ -17,7 +18,11 @@ function createSubscriptions() {
       set(subscriptions);
       store?.set('subscriptions', subscriptions);
     },
-    add: (anime: Omit<Subscription, 'lastUpdated' | 'added'>) => {
+    add: (newAnime: Pick<Anime, 'id' | 'source'>) => {
+      const anime =
+        animeCache.get(`${newAnime.source.id}/${newAnime.id}`) ??
+        (newAnime as Anime);
+
       update(subscriptions => {
         subscriptions[`${anime.source.id}/${anime.id}`] = {
           id: anime.id,
@@ -137,7 +142,9 @@ async function sendNotification(title: string, body: string) {
   }
 }
 
-export type UnwatchedSubscriptions = Subscription & { newEpisodes: number };
+export type UnwatchedSubscriptions = Subscription & {
+  newEpisodes: Set<string>;
+};
 
 function createUnwatchedSubscriptions() {
   const dict: { [key: string]: UnwatchedSubscriptions } = {};
@@ -148,7 +155,11 @@ function createUnwatchedSubscriptions() {
       set(subscriptions);
       store?.set('activeSubscriptions', subscriptions);
     },
-    add: (anime: Anime, newEpisodes: number) => {
+    add: (newAnime: Pick<Anime, 'id' | 'source'>, newEpisodesId: string[]) => {
+      const anime =
+        animeCache.get(`${newAnime.source.id}/${newAnime.id}`) ??
+        (newAnime as Anime);
+
       update(subscriptions => {
         subscriptions[`${anime.source.id}/${anime.id}`] = {
           id: anime.id,
@@ -167,16 +178,19 @@ function createUnwatchedSubscriptions() {
           },
           lastUpdated: Date.now(),
           added: Date.now(),
-          newEpisodes
+          newEpisodes: new Set<string>(newEpisodesId)
         };
-        store?.set('activeSubscriptions', subscriptions);
+        store?.set(
+          'activeSubscriptions',
+          convertUnwatchedSubscriptions(subscriptions)
+        );
         store?.save();
 
         const animeTitle = anime.title.english ?? anime.title.native;
         const message =
-          newEpisodes === 1
+          newEpisodesId.length === 1
             ? `There is 1 new episode for ${animeTitle}`
-            : `There are ${newEpisodes} new episodes for ${animeTitle}`;
+            : `There are ${newEpisodesId.length} new episodes for ${animeTitle}`;
         const title = `New Episodes for ${animeTitle}`;
 
         notifications.addNotification({
@@ -207,14 +221,20 @@ function createUnwatchedSubscriptions() {
           },
           lastUpdated: Date.now()
         };
-        store?.set('activeSubscriptions', subscriptions);
+        store?.set(
+          'activeSubscriptions',
+          convertUnwatchedSubscriptions(subscriptions)
+        );
         return subscriptions;
       });
     },
     remove: (anime: Pick<Anime, 'id' | 'source'>) => {
       update(subscriptions => {
         delete subscriptions[`${anime.source.id}/${anime.id}`];
-        store?.set('activeSubscriptions', subscriptions);
+        store?.set(
+          'activeSubscriptions',
+          convertUnwatchedSubscriptions(subscriptions)
+        );
         return subscriptions;
       });
     },
@@ -227,8 +247,8 @@ function createUnwatchedSubscriptions() {
       store ??= new StoreImport('.subscriptions.dat');
       const data = await store.get<typeof dict>('activeSubscriptions');
       if (data) {
-        set(
-          Object.entries(data).reduce<typeof dict>((acc, [key, value]) => {
+        const newSubscriptions = Object.entries(data).reduce<typeof dict>(
+          (acc, [key, value]) => {
             acc[key] = {
               id: value.id,
               title: value.title,
@@ -246,11 +266,19 @@ function createUnwatchedSubscriptions() {
               },
               lastUpdated: value.lastUpdated,
               added: value.added,
-              newEpisodes: value.newEpisodes
+              newEpisodes: new Set(
+                typeof value.newEpisodes === 'number'
+                  ? value.episodes
+                      ?.slice(-value.newEpisodes ?? value.episodes.length)
+                      .map(({ id }) => id) ?? []
+                  : Array.from(value.newEpisodes)
+              )
             };
             return acc;
-          }, {})
+          },
+          {}
         );
+        set(newSubscriptions);
       } else {
         await store.set('activeSubscriptions', {});
       }
@@ -259,3 +287,22 @@ function createUnwatchedSubscriptions() {
 }
 
 export const unwatchedSubscriptions = createUnwatchedSubscriptions();
+
+function convertUnwatchedSubscriptions(subscriptions: {
+  [key: string]: UnwatchedSubscriptions;
+}) {
+  // Go through each item in the subscriptions object and convert newEpisodes from Set to Array
+  const newSubscriptions = Object.entries(subscriptions).reduce<{
+    [key: string]: Subscription & {
+      newEpisodes: string[];
+    };
+  }>((acc, [key, value]) => {
+    acc[key] = {
+      ...value,
+      newEpisodes: Array.from(value.newEpisodes)
+    };
+    return acc;
+  }, {});
+
+  return newSubscriptions;
+}

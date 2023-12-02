@@ -18,8 +18,12 @@
   } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
   import ContextMenu from './ContextMenu.svelte';
+  import {
+    subscriptions,
+    unwatchedSubscriptions
+  } from '$lib/model/subscriptions';
 
-  export let anime: Anime;
+  export let anime: Pick<Anime, 'id' | 'title' | 'source'> & Partial<Anime>;
   export let episode: Episode;
   export let element: HTMLElement;
 
@@ -123,8 +127,23 @@
     {:else}
       <li>
         <button
-          on:click|stopPropagation={() =>
-            watching.watch(anime, { episode, time: 0, percentage: 1 })}
+          on:click|stopPropagation={() => {
+            watching.watch(anime, { episode, time: 0, percentage: 1 });
+            if ($unwatchedSubscriptions[`${anime.source.id}/${anime.id}`]) {
+              $unwatchedSubscriptions[
+                `${anime.source.id}/${anime.id}`
+              ].newEpisodes.delete(episode.id);
+              if (
+                $unwatchedSubscriptions[`${anime.source.id}/${anime.id}`]
+                  .newEpisodes.size === 0
+              ) {
+                unwatchedSubscriptions.remove(anime);
+                subscriptions.add(anime);
+              }
+              // Update the store so that the component re-renders
+              else $unwatchedSubscriptions = $unwatchedSubscriptions;
+            }
+          }}
         >
           <Fa icon={faPlusCircle} />
           Mark as Watched

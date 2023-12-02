@@ -213,7 +213,9 @@ export async function fetchAnime(
         subscriptions.remove(anime);
         unwatchedSubscriptions.add(
           anime,
-          anime.episodes.length - sub.episodes.length
+          anime.episodes
+            .slice(-(anime.episodes.length - sub.episodes.length))
+            .map(({ id }) => id)
         );
       } else {
         subscriptions.updateDate({
@@ -226,12 +228,12 @@ export async function fetchAnime(
       }
     } else if (unwatched && unwatched.episodes !== undefined) {
       if (unwatched.episodes.length < anime.episodes.length)
-        unwatchedSubscriptions.add(
-          anime,
-          anime.episodes.length -
-            unwatched.episodes.length +
-            unwatched.newEpisodes
-        );
+        unwatchedSubscriptions.add(anime, [
+          ...anime.episodes
+            .slice(-(anime.episodes.length - unwatched.episodes.length))
+            .map(({ id }) => id),
+          ...Array.from(unwatched.newEpisodes)
+        ]);
       else {
         unwatchedSubscriptions.updateDate({
           ...anime,

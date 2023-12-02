@@ -2,6 +2,7 @@
   import { page } from '$app/stores';
   import type { Anime, Episode } from '$lib/model/classes/Anime';
   import { downloading, downloads } from '$lib/model/downloads';
+  import { settings } from '$lib/model/settings';
   import { unwatchedSubscriptions } from '$lib/model/subscriptions';
   import { watching } from '$lib/model/watch';
   import {
@@ -12,9 +13,8 @@
   import { fade } from 'svelte/transition';
   import EpisodeContextMenu from './EpisodeContextMenu.svelte';
 
-  export let anime: Anime;
+  export let anime: Pick<Anime, 'id' | 'title' | 'source'> & Partial<Anime>;
   export let episode: Episode;
-  export let showImage = true;
   export let replaceState = false;
   export let href = `/${anime.source.id}/${anime.id}/${episode.id}`;
 
@@ -24,8 +24,7 @@
   $: watchedObject = $watching[id]?.watchedEpisodes[episode.id];
 
   $: isNewEpisode =
-    Math.max(anime.episodes.length - episode.number, 0) <
-    ($unwatchedSubscriptions?.[id]?.newEpisodes ?? 0);
+    $unwatchedSubscriptions?.[id]?.newEpisodes.has(episode.id) ?? false;
 
   let downloadState: 'idle' | 'downloading' | 'downloaded' = 'idle';
 
@@ -71,13 +70,13 @@
   bind:this={background}
   style:--anime-color={anime.color ?? 'oklch(var(--a))'}
   class="group-one indicator flex w-[168px] select-none flex-col gap-2 focus-visible:outline-transparent lg:w-[210px]"
-  class:w-[210px]={!showImage}
+  class:w-[210px]={!$settings.showThumbnail}
   data-sveltekit-replacestate={replaceState ? '' : 'off'}
 >
-  {#if showImage}
+  {#if $settings.showThumbnail}
     <div
       class="card indicator relative m-0 h-[94px] w-[168px] rounded-md bg-base-300 p-0 ring ring-transparent ring-offset-2 ring-offset-transparent transition-all duration-200 hover:-translate3d-y-1 group-one-focus-visible:ring-[--anime-color] group-one-focus-visible:ring-offset-base-200 lg:h-[118px] lg:w-[210px]"
-      class:w-[210px]={!showImage}
+      class:w-[210px]={!$settings.showThumbnail}
     >
       <img
         src={imageLoaded ? episode.image : '/assets/loading_failure.jpeg'}
@@ -101,8 +100,8 @@
   {/if}
   <div
     class="relative flex h-full flex-col gap-1"
-    class:noImageDesc={!showImage}
-    class:pb-6={watchedObject?.percentage && !showImage}
+    class:noImageDesc={!$settings.showThumbnail}
+    class:pb-6={watchedObject?.percentage && !$settings.showThumbnail}
   >
     <div class="flex h-full w-full flex-row items-center justify-between gap-1">
       <div
@@ -160,7 +159,7 @@
         </button>
       {/if}
     </div>
-    {#if !showImage}
+    {#if !$settings.showThumbnail}
       <div class="pointer-events-none absolute bottom-1 left-0 right-0 mx-1">
         <div
           style="width: {(watchedObject?.percentage ?? 0) * 100}%;"
@@ -169,7 +168,7 @@
       </div>
     {/if}
   </div>
-  {#if isNewEpisode && !showImage}
+  {#if isNewEpisode && !$settings.showThumbnail}
     <div class="badge indicator-item badge-error" />
   {/if}
 </a>
@@ -177,7 +176,7 @@
 <EpisodeContextMenu
   {anime}
   {episode}
-  element={showImage ? image : background}
+  element={$settings.showThumbnail ? image : background}
 />
 
 <style>

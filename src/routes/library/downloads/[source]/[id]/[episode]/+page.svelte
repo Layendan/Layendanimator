@@ -3,6 +3,7 @@
   import AnimeInfo from '$lib/components/AnimeInfo.svelte';
   import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
   import Player from '$lib/components/Player.svelte';
+  import type { Anime } from '$lib/model/classes/Anime';
   import {
     subscriptions,
     unwatchedSubscriptions
@@ -28,7 +29,7 @@
       subscriptions.add(data.anime);
     }
 
-    watching.add(data.anime, data.episodeObject);
+    watching.add(data.anime as Anime, data.episodeObject);
   });
 </script>
 

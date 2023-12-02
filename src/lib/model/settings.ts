@@ -25,11 +25,21 @@ export type SettingsType = {
   parallax: boolean;
   showSourcesOnAnime: boolean;
   sortSubscriptions: 'lastUpdated' | 'timeAdded' | 'title' | 'nextEpisode';
+
   discordRPC: 'enabled' | 'disabled'; // TODO: Update when watch2gether is added
+
+  isEpisodeAscending: boolean;
+  showWatchedEpisodes: boolean;
+  showThumbnail: boolean;
+
+  playerVolume: number;
+  playerMuted: boolean;
+
   theme: Theme;
   themes: {
     [key: string]: Theme;
   };
+
   version: string;
 };
 
@@ -42,6 +52,11 @@ const defaultSettings: SettingsType = {
   showSourcesOnAnime: true,
   sortSubscriptions: 'timeAdded',
   discordRPC: 'enabled',
+  isEpisodeAscending: true,
+  showWatchedEpisodes: true,
+  showThumbnail: true,
+  playerVolume: 1,
+  playerMuted: false,
   theme: defaultThemes.system,
   themes: defaultThemes,
   version: '0.0.0'

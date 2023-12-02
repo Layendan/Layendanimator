@@ -22,7 +22,7 @@
   import type { MediaPlayerElement } from 'vidstack/elements';
   import ContextMenu from './ContextMenu.svelte';
 
-  export let anime: Anime;
+  export let anime: Pick<Anime, 'id' | 'title' | 'source'> & Partial<Anime>;
   export let episode: Episode;
   export let element: MediaPlayerElement;
   export let requestNextEpisode: () => void;

@@ -52,7 +52,7 @@
   beforeNavigate(() => scrollYCache.set($page.url.pathname, obj.scrollTop));
 
   afterNavigate(() => {
-    obj.scrollTop = scrollYCache.get($page.url.pathname) ?? 0;
+    obj.scrollTo(0, scrollYCache.get($page.url.pathname) ?? 0);
     $scrollY = obj.scrollTop;
   });
 

@@ -27,7 +27,7 @@ pub fn set_watching(
         Err(e) => {
             println!("Set Watching Activity Error: {}", e);
             let mut client = e.into_inner();
-            match client.reconnect() {
+            match client.connect() {
                 Ok(_) => {
                     println!("Reconnected to Discord");
                     Some(client)
@@ -108,7 +108,7 @@ pub fn pause_watching(title: &str, episode_title: &str, artwork: &str, link: &st
         Err(e) => {
             println!("Pause Watching Activity Error: {}", e);
             let mut client = e.into_inner();
-            match client.reconnect() {
+            match client.connect() {
                 Ok(_) => {
                     println!("Reconnected to Discord");
                     Some(client)
@@ -165,7 +165,7 @@ pub fn reset_activity() {
         Err(e) => {
             println!("Reset Activity Error: {}", e);
             let mut client = e.into_inner();
-            match client.reconnect() {
+            match client.connect() {
                 Ok(_) => {
                     println!("Reconnected to Discord");
                     Some(client)
@@ -227,7 +227,7 @@ pub fn clear_activity() {
         Err(e) => {
             println!("Clear Activity Error: {}", e);
             let mut client = e.into_inner();
-            match client.reconnect() {
+            match client.connect() {
                 Ok(_) => {
                     println!("Reconnected to Discord");
                     Some(client)
@@ -261,7 +261,7 @@ pub fn clear_activity() {
 
 fn login(mut rpc: MutexGuard<'_, DiscordIpcClient>) -> Result<(), String> {
     // Create new RPC
-    return match rpc.reconnect() {
+    return match rpc.connect() {
         Ok(_) => Ok(()),
         Err(e) => Err(e.to_string()),
     };

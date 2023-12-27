@@ -5,16 +5,16 @@ import { get } from 'svelte/store';
 import type { PageLoad } from './$types';
 
 export const load = (async ({ depends, params }) => {
-  depends(`/downloads/${params.source}/${params.id}/${params.episode}`);
+  depends(`downloads:${params.source}:${params.id}:${params.episode}`);
 
   const source = get(providers)[params.source];
 
-  if (!source) throw error(404, 'Source not found');
+  if (!source) error(404, 'Source not found');
 
   const download = get(downloads)[`${source.id}/${params.id}`];
 
   if (!download) {
-    throw redirect(300, '/library');
+    redirect(300, '/library');
   }
 
   const [anime, episode] = await Promise.all([
@@ -29,7 +29,7 @@ export const load = (async ({ depends, params }) => {
   console.debug(episodeObject);
 
   if (!episodeObject || !episode) {
-    throw error(404, 'Episode data not found');
+    error(404, 'Episode data not found');
   }
 
   return {

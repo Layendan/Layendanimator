@@ -1,6 +1,9 @@
 <script lang="ts">
+  import { page } from '$app/stores';
   import type { Anime } from '$lib/model/classes/Anime';
+  import { createAnimeCardContextMenu } from '$lib/model/contextmenu';
   import { encodeAnimeLink } from '$lib/model/source';
+  import { showMenu } from 'tauri-plugin-context-menu';
   import AnimeContextMenu from './AnimeContextMenu.svelte';
 
   export let anime: Anime;
@@ -13,6 +16,17 @@
     imageLoaded = true;
     skeleton = true;
   }
+
+  function contextMenu() {
+    if (window.__TAURI__) {
+      showMenu({
+        items: createAnimeCardContextMenu(
+          anime as Anime,
+          $page.route.id?.startsWith('/library') ?? false
+        )
+      });
+    }
+  }
 </script>
 
 <a
@@ -20,6 +34,7 @@
   target="_blank"
   rel="noopener noreferrer nofollow"
   class="group"
+  on:contextmenu={contextMenu}
 >
   <img
     src={imageLoaded ? anime.image : '/assets/loading_failure.jpeg'}
@@ -36,4 +51,6 @@
   />
 </a>
 
-<AnimeContextMenu {anime} {element} />
+{#if !window.__TAURI__}
+  <AnimeContextMenu {anime} {element} />
+{/if}

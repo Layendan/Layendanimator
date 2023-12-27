@@ -7,7 +7,7 @@ import type { Anime, EpisodeData } from './classes/Anime';
 import Semaphore from './classes/Semaphore';
 import { fetchAnime, fetchEpisode } from './fetch';
 import { notifications } from './notifications';
-import type { Provider } from './source';
+import { providers, type Provider } from './source';
 import { tasks } from './updates';
 
 let store: Store | undefined = undefined;
@@ -80,8 +80,8 @@ function createDownloads() {
             [episodeId]: episode
           }
         };
-        invalidate(`/downloads/${anime.source.id}/${anime.id}/${episodeId}`);
-        invalidate(`/downloads/${anime.source.id}/${anime.id}`);
+        invalidate(`downloads:${anime.source.id}:${anime.id}:${episodeId}`);
+        invalidate(`downloads:${anime.source.id}:${anime.id}`);
         store?.set('downloads', downloads);
         store?.save();
         return downloads;
@@ -111,8 +111,8 @@ function createDownloads() {
           delete downloads[`${anime.source.id}/${anime.id}`];
         }
         episodeCache.delete(`${anime.source.id}/${episodeId}`);
-        invalidate(`/downloads/${anime.source.id}/${anime.id}/${episodeId}`);
-        invalidate(`/downloads/${anime.source.id}/${anime.id}`);
+        invalidate(`downloads:${anime.source.id}:${anime.id}:${episodeId}`);
+        invalidate(`downloads:${anime.source.id}:${anime.id}`);
         store?.set('downloads', downloads);
         store?.save();
         return downloads;
@@ -292,6 +292,10 @@ function createDownloading() {
         const directoryPath = await join(dataDir, 'downloads');
         if (!(await exists(directoryPath)))
           await createDir(directoryPath, { recursive: true });
+
+        const source = get(providers)[newAnime.source.id];
+
+        if (!source) throw new Error('Source not found');
 
         const anime =
           animeCache.get(`${newAnime.source.id}/${newAnime.id}`) ??
@@ -644,7 +648,7 @@ function createDownloading() {
           type: anime.type,
           color: anime.color,
           isAdult: anime.isAdult,
-          source: anime.source,
+          source,
           image:
             imageResults[0].status === 'fulfilled'
               ? imageResults[0].value

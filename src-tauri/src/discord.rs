@@ -1,6 +1,7 @@
 use core::time::Duration;
 use discord_rich_presence::{activity, DiscordIpc, DiscordIpcClient};
 use lazy_static::lazy_static;
+use log::{info, warn};
 use std::ops::Add;
 use std::sync::{Mutex, MutexGuard};
 use std::time::SystemTime;
@@ -16,24 +17,25 @@ lazy_static! {
 pub fn set_watching(
     title: &str,
     episode: u64,
-    episode_title: &str,
+    episode_title: Option<&str>,
     current_time: f64,
     duration: f64,
-    artwork: &str,
+    artwork: Option<&str>,
     link: &str,
 ) {
     let client: Option<MutexGuard<'_, DiscordIpcClient>> = match RPC.lock() {
         Ok(l) => Some(l),
         Err(e) => {
-            println!("Set Watching Activity Error: {}", e);
+            warn!("Set Watching Client Activity Error: {}", e);
+
             let mut client = e.into_inner();
             match client.connect() {
                 Ok(_) => {
-                    println!("Reconnected to Discord");
+                    info!("Reconnected to Discord");
                     Some(client)
                 }
                 Err(e) => {
-                    println!("Reconnection Error: {}", e);
+                    warn!("Reconnection Error: {}", e);
                     None
                 }
             }
@@ -49,10 +51,16 @@ pub fn set_watching(
     let res = client.set_activity(
         activity::Activity::new()
             .state(format!("Episode {}", episode).as_str())
-            .details(format!("{} - {}", title, episode_title).as_str())
+            .details(
+                match episode_title {
+                    Some(e) => format!("{} - {}", title, e),
+                    None => title.to_string(),
+                }
+                .as_str(),
+            )
             .assets(
                 activity::Assets::new()
-                    .large_image(&artwork)
+                    .large_image(artwork.unwrap_or("image_error"))
                     .large_text(title)
                     .small_image("layendanimator_never_dies")
                     .small_text("Playing on Layendanimator"),
@@ -80,11 +88,11 @@ pub fn set_watching(
     );
 
     if let Err(e) = res {
-        println!("Set Watching Error: {}", e);
+        warn!("Set Watching Error: {}", e);
         match login(client) {
-            Err(e) => println!("Reconnection Error: {}", e),
+            Err(e) => warn!("Reconnection Error: {}", e),
             Ok(_) => {
-                println!("Reconnected to Discord");
+                info!("Reconnected to Discord");
                 set_watching(
                     title,
                     episode,
@@ -102,19 +110,20 @@ pub fn set_watching(
 }
 
 #[tauri::command]
-pub fn pause_watching(title: &str, episode_title: &str, artwork: &str, link: &str) {
+pub fn pause_watching(title: &str, episode_title: Option<&str>, artwork: Option<&str>, link: &str) {
     let client: Option<MutexGuard<'_, DiscordIpcClient>> = match RPC.lock() {
         Ok(l) => Some(l),
         Err(e) => {
-            println!("Pause Watching Activity Error: {}", e);
+            warn!("Pause Watching Client Activity Error: {}", e);
+
             let mut client = e.into_inner();
             match client.connect() {
                 Ok(_) => {
-                    println!("Reconnected to Discord");
+                    info!("Reconnected to Discord");
                     Some(client)
                 }
                 Err(e) => {
-                    println!("Reconnection Error: {}", e);
+                    warn!("Reconnection Error: {}", e);
                     None
                 }
             }
@@ -130,10 +139,16 @@ pub fn pause_watching(title: &str, episode_title: &str, artwork: &str, link: &st
     let res = client.set_activity(
         activity::Activity::new()
             .state("Idling")
-            .details(format!("{} - {}", title, episode_title).as_str())
+            .details(
+                match episode_title {
+                    Some(e) => format!("{} - {}", title, e),
+                    None => title.to_string(),
+                }
+                .as_str(),
+            )
             .assets(
                 activity::Assets::new()
-                    .large_image(&artwork)
+                    .large_image(artwork.unwrap_or("image_error"))
                     .large_text(title)
                     .small_image("layendanimator_never_dies")
                     .small_text("Playing on Layendanimator"),
@@ -145,11 +160,11 @@ pub fn pause_watching(title: &str, episode_title: &str, artwork: &str, link: &st
     );
 
     if let Err(e) = res {
-        println!("Pause Watching Error: {}", e);
+        warn!("Pause Watching Error: {}", e);
         match login(client) {
-            Err(e) => println!("Reconnection Error: {}", e),
+            Err(e) => warn!("Reconnection Error: {}", e),
             Ok(_) => {
-                println!("Reconnected to Discord");
+                info!("Reconnected to Discord");
                 pause_watching(title, episode_title, artwork, link);
             }
         }
@@ -163,15 +178,16 @@ pub fn reset_activity() {
     let client: Option<MutexGuard<'_, DiscordIpcClient>> = match RPC.lock() {
         Ok(l) => Some(l),
         Err(e) => {
-            println!("Reset Activity Error: {}", e);
+            warn!("Reset Client Activity Error: {}", e);
+
             let mut client = e.into_inner();
             match client.connect() {
                 Ok(_) => {
-                    println!("Reconnected to Discord");
+                    info!("Reconnected to Discord");
                     Some(client)
                 }
                 Err(e) => {
-                    println!("Reconnection Error: {}", e);
+                    warn!("Reconnection Error: {}", e);
                     None
                 }
             }
@@ -207,11 +223,12 @@ pub fn reset_activity() {
     );
 
     if let Err(e) = res {
-        println!("Reset Activity Error: {}", e);
+        warn!("Reset Activity Error: {}", e);
         match login(client) {
-            Err(e) => println!("Reconnection Error: {}", e),
+            Err(e) => warn!("Reconnection Error: {}", e),
+
             Ok(_) => {
-                println!("Reconnected to Discord");
+                info!("Reconnected to Discord");
                 reset_activity();
             }
         }
@@ -225,15 +242,16 @@ pub fn clear_activity() {
     let client: Option<MutexGuard<'_, DiscordIpcClient>> = match RPC.lock() {
         Ok(l) => Some(l),
         Err(e) => {
-            println!("Clear Activity Error: {}", e);
+            warn!("Clear Client Activity Error: {}", e);
+
             let mut client = e.into_inner();
             match client.connect() {
                 Ok(_) => {
-                    println!("Reconnected to Discord");
+                    info!("Reconnected to Discord");
                     Some(client)
                 }
                 Err(e) => {
-                    println!("Reconnection Error: {}", e);
+                    warn!("Reconnection Error: {}", e);
                     None
                 }
             }
@@ -249,10 +267,10 @@ pub fn clear_activity() {
     let res = client.clear_activity();
 
     if let Err(e) = res {
-        println!("Clear Activity Error: {}", e);
+        warn!("Clear Activity Error: {}", e);
         match login(client) {
-            Err(e) => println!("Reconnection Error: {}", e),
-            Ok(_) => println!("Reconnected to Discord"),
+            Err(e) => warn!("Reconnection Error: {}", e),
+            Ok(_) => info!("Reconnected to Discord"),
         }
     } else {
         res.unwrap();

@@ -6,16 +6,16 @@ import { get } from 'svelte/store';
 import type { PageLoad } from './$types';
 
 export const load = (async ({ depends, params, url }) => {
-  depends(`/downloads/${params.source}/${params.id}`);
+  depends(`downloads:${params.source}:${params.id}`);
 
   const source = get(providers)[params.source];
 
-  if (!source) throw error(404, 'Source not found');
+  if (!source) error(404, 'Source not found');
 
   const download = get(downloads)[`${source.id}/${params.id}`];
 
   if (!download) {
-    throw redirect(302, '/library');
+    redirect(302, '/library');
   }
 
   const anime = await convertAnime(download.anime);
@@ -45,7 +45,7 @@ export const load = (async ({ depends, params, url }) => {
         : nextEpisode.id
     }`;
 
-    throw redirect(302, href);
+    redirect(302, href);
   }
 
   return anime;

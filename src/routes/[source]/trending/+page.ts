@@ -8,7 +8,7 @@ import type { PageLoad } from './$types';
 export const load = (async ({ params }) => {
   const source = get(providers)[params.source];
 
-  if (!source) throw error(404, 'Source not found');
+  if (!source) error(404, 'Source not found');
 
   async function update(page: number, perPage: number) {
     return await fetchTrendingAnime(source, page, perPage);

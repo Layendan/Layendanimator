@@ -1,8 +1,8 @@
 import { writable } from 'svelte/store';
 import type { Store } from 'tauri-plugin-store-api';
+import { animeCache } from './cache';
 import type { Anime } from './classes/Anime';
 import { notifications } from './notifications';
-import { animeCache } from './cache';
 
 let store: Store | undefined = undefined;
 
@@ -228,6 +228,7 @@ function createUnwatchedSubscriptions() {
         return subscriptions;
       });
     },
+    update,
     remove: (anime: Pick<Anime, 'id' | 'source'>) => {
       update(subscriptions => {
         delete subscriptions[`${anime.source.id}/${anime.id}`];
@@ -269,7 +270,7 @@ function createUnwatchedSubscriptions() {
               newEpisodes: new Set(
                 typeof value.newEpisodes === 'number'
                   ? value.episodes
-                      ?.slice(-value.newEpisodes ?? value.episodes.length)
+                      ?.slice(-value.newEpisodes)
                       .map(({ id }) => id) ?? []
                   : Array.from(value.newEpisodes)
               )

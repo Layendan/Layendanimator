@@ -8,11 +8,11 @@ import { get } from 'svelte/store';
 import type { PageLoad } from './$types';
 
 export const load = (async ({ depends, params }) => {
-  depends(`${params.source}/${params.id}/${params.episode}`);
+  depends(`${params.source}:${params.id}:${params.episode}`);
 
   const source = get(providers)[params.source];
 
-  if (!source) throw error(404, 'Source not found');
+  if (!source) error(404, 'Source not found');
 
   const [anime, episode] = await Promise.all([
     animeCache.get(`${source.id}/${params.id}`) ??
@@ -30,7 +30,7 @@ export const load = (async ({ depends, params }) => {
       message: `The episode with id ${params.episode} was not found.`,
       type: 'error'
     });
-    throw error(404, 'Episode data not found');
+    error(404, 'Episode data not found');
   }
 
   return {

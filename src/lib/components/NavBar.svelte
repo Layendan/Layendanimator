@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores';
-  import { providers, source } from '$lib/model/source';
+  import { createSourceContextMenu } from '$lib/model/contextmenu';
+  import { providers, source, type Provider } from '$lib/model/source';
   import { tasks } from '$lib/model/updates';
   import { faBookmark, faCog } from '@fortawesome/free-solid-svg-icons';
   import type { UnlistenFn } from '@tauri-apps/api/event';
@@ -10,6 +11,7 @@
   import { cubicOut } from 'svelte/easing';
   import { tweened } from 'svelte/motion';
   import { fade } from 'svelte/transition';
+  import { showMenu } from 'tauri-plugin-context-menu';
   import NavigationComponents from './NavigationComponents.svelte';
   import SearchBar from './SearchBar.svelte';
 
@@ -55,6 +57,14 @@
   onDestroy(() => {
     unsubscribe?.();
   });
+
+  function contextMenu(provider: Provider) {
+    if (window.__TAURI__) {
+      showMenu({
+        items: createSourceContextMenu(provider)
+      });
+    }
+  }
 </script>
 
 <nav
@@ -115,6 +125,7 @@
         class:transparent-base={id === $page.params.source}
         aria-label="Change Source"
         on:click={() => source.set(provider)}
+        on:contextmenu={() => contextMenu(provider)}
       >
         <img
           src={provider.logo}

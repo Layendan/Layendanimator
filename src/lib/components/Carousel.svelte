@@ -2,6 +2,7 @@
   import { preloadData } from '$app/navigation';
   import { carouselPage, scrollY } from '$lib/model/cache';
   import type { Anime } from '$lib/model/classes/Anime';
+  import { createAnimeCardContextMenu } from '$lib/model/contextmenu';
   import { settings } from '$lib/model/settings';
   import type { Provider } from '$lib/model/source';
   import {
@@ -12,6 +13,7 @@
   import { onDestroy, onMount } from 'svelte';
   import Fa from 'svelte-fa';
   import { fade } from 'svelte/transition';
+  import { showMenu } from 'tauri-plugin-context-menu';
   import AnimeContextMenu from './AnimeContextMenu.svelte';
 
   export let animes: Pick<
@@ -73,6 +75,14 @@
     imageLoaded = true;
     skeleton = true;
   }
+
+  function contextMenu() {
+    if (window.__TAURI__) {
+      showMenu({
+        items: createAnimeCardContextMenu(animes[animeIdx] as Anime, false)
+      });
+    }
+  }
 </script>
 
 <svelte:document
@@ -86,12 +96,14 @@
   }}
 />
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <header
   in:fade
   bind:this={element}
   class="relative h-[60vh] w-full overflow-hidden bg-base-100/30 will-change-transform motion-reduce:!translate3d-y-0"
   class:!translate3d-y-0={!$settings.parallax}
   style="transform: translate3d(0, {$scrollY / 1.5}px, 0);"
+  on:contextmenu={contextMenu}
 >
   {#key animeIdx}
     <img
@@ -196,6 +208,8 @@
   {/if}
 </header>
 
-{#key tempId}
-  <AnimeContextMenu anime={animes[animeIdx]} {element} />
-{/key}
+{#if !window.__TAURI__}
+  {#key tempId}
+    <AnimeContextMenu anime={animes[animeIdx]} {element} />
+  {/key}
+{/if}

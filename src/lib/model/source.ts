@@ -238,93 +238,6 @@ export const defaultProviders: { [key: string]: Provider } = {
     isNSFW: false,
     version: '1.0.1'
   },
-  // enime: {
-  //   name: 'Enime',
-  //   id: 'enime',
-  //   url: 'https://enime.moe',
-  //   updateUrl: '',
-  //   logo: 'https://avatars.githubusercontent.com/u/74993083',
-  //   description:
-  //     'An anime streaming site based on Enime API. Just hop in and watch with speed without VPN or ads.',
-  //   scripts: {
-  //     search: (async (query: string, page = 1, perPage = 25) => {
-  //       const url = new URL(
-  //         `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/${query}`
-  //       );
-  //       url.searchParams.set('page', String(page));
-  //       url.searchParams.set('perPage', String(perPage));
-
-  //       const results = (await fetch(url).then(r => r.json()))
-  //         .results as Anime[];
-  //       return results;
-  //     }).toString(),
-  //     fetchTrendingAnime: (async (page = 1, perPage = 25) => {
-  //       const trending = (
-  //         await fetch(
-  //           `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/trending?page=${page}&perPage=${perPage}`
-  //         ).then(r => r.json())
-  //       ).results as Anime[];
-  //       return trending;
-  //     }).toString(),
-  //     fetchPopularAnime: (async (page = 1, perPage = 25) => {
-  //       const popular = (
-  //         await fetch(
-  //           `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/popular?page=${page}&perPage=${perPage}`
-  //         ).then(r => r.json())
-  //       ).results as Anime[];
-  //       return popular;
-  //     }).toString(),
-  //     // fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
-  //     //   const recent = (
-  //     //     await fetch(
-  //     //       `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
-  //     //     ).then(r => r.json())
-  //     //   ).results as RecentAnime[];
-  //     //   return recent;
-  //     // }).toString(),
-  //     fetchRecentEpisodes: '',
-  //     fetchAiringSchedule: '',
-  //     fetchAnimeInfo: (async (
-  //       id: string,
-  //       isSub: boolean,
-  //       isFiller: boolean
-  //     ) => {
-  //       const url = new URL(
-  //         `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/info/${id}`
-  //       );
-  //       url.searchParams.set('provider', 'enime');
-  //       url.searchParams.set('dub', String(!isSub));
-  //       url.searchParams.set('fetchFiller', String(isFiller));
-  //       const res = await fetch(url.toString());
-  //       const anime: Anime = await res.json();
-  //       if (!anime) return;
-  //       return {
-  //         ...anime,
-  //         episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
-  //       };
-  //     }).toString(),
-  //     fetchEpisodes: (async (id: string) => {
-  //       const res = await fetch(
-  //         `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/watch/${id}?provider=enime`
-  //       );
-  //       const episode: EpisodeData = await res.json();
-  //       return episode;
-  //     }).toString()
-  //   },
-  //   shareLinks: {
-  //     anime: 'https://anilist.co/anime/{id}'
-  //   },
-  //   externalLinks: [
-  //     ['Website', 'https://enime.moe'],
-  //     ['Discord', 'https://discord.com/invite/nxr8be8WGa'],
-  //     ['Github', 'https://github.com/Enime-Project/enime.moe']
-  //   ],
-  //   languages: ['english'],
-  //   tags: ['anime', 'dubbed', 'subbed', 'enime'],
-  //   status: 'broken',
-  //   isNSFW: false,
-  //   version: '1.0.0'
-  // },
   kickassanime: {
     name: 'KickAssAnime',
     id: 'kickassanime',
@@ -419,148 +332,7 @@ export const defaultProviders: { [key: string]: Provider } = {
     status: 'working',
     isNSFW: false,
     version: '1.0.0'
-  },
-  aniwave: {
-    name: 'AniWave',
-    id: 'aniwave',
-    url: 'aniwave.to',
-    updateUrl: '',
-    logo: 'https://cdn2.steamgriddb.com/file/sgdb-cdn/icon_thumb/21b203a02c91d5272135dbbebe6afc00.png',
-    description:
-      'Aniwave is a free anime streaming site where you can watch anime online in HD quality for free with English subtitles or dubbing. You can also download any anime you want without registration or payment required. Everything is free!',
-    scripts: {
-      search: (async (query: string, page = 1, perPage = 25) => {
-        const url = new URL(
-          `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/${query}`
-        );
-        url.searchParams.set('page', String(page));
-        url.searchParams.set('perPage', String(perPage));
-
-        const results = (await fetch(url).then(r => r.json()))
-          .results as Anime[];
-        return results;
-      }).toString(),
-      fetchTrendingAnime: (async (page = 1, perPage = 25) => {
-        const trending = (
-          await fetch(
-            `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/trending?page=${page}&perPage=${perPage}`
-          ).then(r => r.json())
-        ).results as Anime[];
-        return trending;
-      }).toString(),
-      fetchPopularAnime: (async (page = 1, perPage = 25) => {
-        const popular = (
-          await fetch(
-            `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/popular?page=${page}&perPage=${perPage}`
-          ).then(r => r.json())
-        ).results as Anime[];
-        return popular;
-      }).toString(),
-      // fetchRecentEpisodes: (async (page = 1, perPage = 25) => {
-      //   const recent = (
-      //     await fetch(
-      //       `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/recent-episodes?page=${page}&perPage=${perPage}`
-      //     ).then(r => r.json())
-      //   ).results as RecentAnime[];
-      //   return recent;
-      // }).toString(),
-      fetchRecentEpisodes: '',
-      fetchAiringSchedule: '',
-      fetchAnimeInfo: (async (
-        id: string,
-        isSub: boolean,
-        isFiller: boolean
-      ) => {
-        const url = new URL(
-          `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/info/${id}`
-        );
-        url.searchParams.set('provider', 'nineanime');
-        url.searchParams.set('dub', String(!isSub));
-        url.searchParams.set('fetchFiller', String(isFiller));
-        const res = await fetch(url.toString());
-        if (res.status !== 200) return undefined;
-        const anime: Anime & { artwork?: string[] } = await res.json();
-        if (!anime) return undefined;
-        delete anime.artwork;
-        const val = {
-          ...anime,
-          episodes: (anime.episodes ?? []).sort((a, b) => a.number - b.number)
-        };
-        return val;
-      }).toString(),
-      fetchEpisodes: (async (id: string) => {
-        const res = await fetch(
-          `https://consumet-triwalmyfa-uc.a.run.app/meta/anilist/watch/${id}?provider=nineanime`
-        );
-        const episode: EpisodeData = await res.json();
-        return episode;
-      }).toString()
-    },
-    shareLinks: {
-      anime: 'https://anilist.co/anime/{id}'
-    },
-    externalLinks: [
-      ['Website', 'https://aniwave.to/home'],
-      ['Discord', 'https://discord.com/invite/KRQQKzQ6CS'],
-      ['Reddit', 'https://www.reddit.com/r/9anime/'],
-      ['Twitter', 'https://twitter.com/9animeOfficial']
-    ],
-    languages: ['english'],
-    tags: ['anime', 'dubbed', 'subbed', '9anime', 'aniwave'],
-    status: 'working',
-    isNSFW: false,
-    version: '1.0.0'
   }
-  // wco: {
-  //   name: 'Watch Cartoons Online',
-  //   id: 'wco',
-  //   url: 'https://www.wcostream.org',
-  //   updateUrl: '',
-  //   logo: 'https://www.wcostream.org/wp-content/themes/animewp78712/images/logo.gif',
-  //   description: 'Watch cartoons online, Watch anime online, English dub anime',
-  //   scripts: {
-  //     search: (async (query: string) => {
-  //       const url = new URL(
-  //         `search/${query}`,
-  //         'https://wco-source.agreeablewater-9752305a.westus2.azurecontainerapps.io/'
-  //       );
-  //       const results: Anime[] = await fetch(url).then(r => r.json());
-  //       return results;
-  //     }).toString(),
-  //     fetchTrendingAnime: '',
-  //     fetchPopularAnime: '',
-  //     fetchRecentEpisodes: (async () => {
-  //       const results: RecentAnime[] = await fetch(
-  //         'https://wco-source.agreeablewater-9752305a.westus2.azurecontainerapps.io/recent'
-  //       ).then(r => r.json());
-  //       return results;
-  //     }).toString(),
-  //     fetchAiringSchedule: '',
-  //     fetchAnimeInfo: (async (id: string) => {
-  //       const results: Anime = await fetch(
-  //         `https://wco-source.agreeablewater-9752305a.westus2.azurecontainerapps.io/${id}`
-  //       ).then(r => r.json());
-  //       return results;
-  //     }).toString(),
-  //     fetchEpisodes: (async (id: string) => {
-  //       const url = new URL(`watch/${id}`, 'https://consumet-triwalmyfa-uc.a.run.app/');
-  //       const episode: EpisodeData = await fetch(url.toString()).then(r =>
-  //         r.json()
-  //       );
-  //       return episode;
-  //     }).toString()
-  //   },
-  //   shareLinks: {
-  //     anime: 'https://www.wcostream.org/anime/{id}',
-  //     episode: 'https://www.wcostream.org/{episode}'
-  //   },
-  //   externalLinks: [['Website', 'https://www.wcostream.org/']],
-  //   languages: ['english'],
-  //   tags: ['anime', 'dubbed', 'subbed', 'wco', 'wcostream'],
-  //   status: 'broken',
-  //   isNSFW: false,
-  //   version: '1.0.0'
-  // }
 };
 
 // Prevent modification of default providers
@@ -729,7 +501,9 @@ export function isProvider(source: unknown): boolean {
 }
 
 export function encodeAnimeLink(anime: Pick<Anime, 'id' | 'source'>): string {
-  const link = anime.source.shareLinks?.anime ?? anime.source.url;
+  const source = get(providers)[anime.source.id];
+  if (!source) return anime.source.url;
+  const link = source.shareLinks?.anime ?? source.url;
   return link.replace('{id}', anime.id);
 }
 
@@ -737,7 +511,9 @@ export function encodeEpisodeLink(
   anime: Pick<Anime, 'id' | 'source'>,
   episode: Pick<Episode, 'id' | 'number'>
 ): string {
-  const link = anime.source.shareLinks?.episode ?? anime.source.url;
+  const source = get(providers)[anime.source.id];
+  if (!source) return anime.source.url;
+  const link = source.shareLinks?.episode ?? source.url;
   return link
     .replaceAll('{id}', anime.id)
     .replaceAll('{episode}', episode.id)

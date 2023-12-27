@@ -214,6 +214,17 @@ export const tauriData: {
     }
   },
   {
+    label: 'Open Logs Folder',
+    danger: false,
+    action: async () => {
+      const [{ open }, { appLogDir }] = await Promise.all([
+        import('@tauri-apps/api/shell'),
+        import('@tauri-apps/api/path')
+      ]);
+      open(await appLogDir());
+    }
+  },
+  {
     label: 'Send Test Notification',
     danger: false,
     action: async () => {

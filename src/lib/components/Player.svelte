@@ -19,6 +19,8 @@
   import 'vidstack/player/ui';
   // Import styles.
   import { encodeAnimeLink } from '$lib/model/source';
+  import { createPlayerContextMenu } from '$lib/model/contextmenu';
+  import { showMenu } from 'tauri-plugin-context-menu';
   // !!!!! IMPORTANT !!!!! KEEP THIS ORDER !!!!! Theme -> Layout
   import 'vidstack/player/styles/default/theme.css';
   import 'vidstack/player/styles/default/layouts/video.css';
@@ -46,6 +48,7 @@
   const dispatcher = createEventDispatcher();
 
   function requestNextEpisode() {
+    if (state.loop) return;
     player?.exitFullscreen();
     player?.exitPictureInPicture();
     dispatcher('requestNextEpisode', () => {
@@ -159,7 +162,7 @@
         console.log(playing, currentTime, duration);
         if (playing && typeof currentTime === 'number' && duration) {
           invoke('set_watching', {
-            title: anime.title.english ?? anime.title.romaji,
+            title: anime.title.english ?? anime.title.romaji ?? 'Unknown',
             episode: episode.number,
             episodeTitle: episode.title,
             artwork: anime.image,
@@ -169,7 +172,7 @@
           });
         } else {
           invoke('pause_watching', {
-            title: anime.title.english ?? anime.title.romaji,
+            title: anime.title.english ?? anime.title.romaji ?? 'Unknown',
             episodeTitle: episode.title,
             artwork: anime.image,
             link: encodeAnimeLink(anime)
@@ -186,7 +189,11 @@
     console.log(state.volume);
     if (state.volume) $settings.playerVolume = state.volume;
     if (state.muted) $settings.playerMuted = state.muted;
-    if (player) player.destroy();
+    if (player) {
+      player.exitFullscreen();
+      player.exitPictureInPicture();
+      player.destroy();
+    }
     if (window.__TAURI__ && $settings.discordRPC === 'enabled') {
       const { invoke } = await import('@tauri-apps/api/tauri');
       invoke('reset_activity');
@@ -194,6 +201,19 @@
   });
 
   beforeNavigate(updateWatched);
+
+  function contextMenu() {
+    if (window.__TAURI__) {
+      showMenu({
+        items: createPlayerContextMenu(
+          anime as Anime,
+          episode,
+          player,
+          requestNextEpisode
+        )
+      });
+    }
+  }
 </script>
 
 <svelte:window on:keydown={keyNext} />
@@ -203,6 +223,7 @@
 </svelte:head>
 
 {#if episodeData.sources}
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
   <media-player
     title={episode.title ?? `Episode ${episode.number}`}
     style:--video-brand={anime.color ?? 'oklch(var(--a))'}
@@ -216,8 +237,9 @@
     on:ended={requestNextEpisode}
     on:pause={updateWatched}
     on:playing={updateWatched}
-    on:error={() => invalidate(`${anime.source}/${anime.id}/${episode.id}`)}
-    on:hls-error={() => invalidate(`${anime.source}/${anime.id}/${episode.id}`)}
+    on:error={() => invalidate(`${anime.source}:${anime.id}:${episode.id}`)}
+    on:hls-error={() => invalidate(`${anime.source}:${anime.id}:${episode.id}`)}
+    on:contextmenu={contextMenu}
   >
     <media-provider>
       {#each episodeData.sources as source}
@@ -238,12 +260,15 @@
       <media-poster class="vds-poster" src={poster} />
     </media-provider>
     <media-video-layout thumbnails={thumbnails?.url} />
-    <PlayerContextMenu
-      {anime}
-      {episode}
-      element={player}
-      {requestNextEpisode}
-    />
+
+    {#if !window.__TAURI__}
+      <PlayerContextMenu
+        {anime}
+        {episode}
+        element={player}
+        {requestNextEpisode}
+      />
+    {/if}
   </media-player>
 {:else}
   <div class="flex h-full flex-col items-center justify-center">

@@ -7,8 +7,10 @@ mod discord;
 
 use discord::{clear_activity, pause_watching, reset_activity, set_watching, RPC};
 use discord_rich_presence::DiscordIpc;
+use log::{error, info, LevelFilter};
 use std::thread;
 use tauri::Manager;
+use tauri_plugin_log::{fern::colors::ColoredLevelConfig, LogTarget};
 #[allow(unused_imports)]
 use window_vibrancy::{apply_mica, apply_vibrancy, NSVisualEffectMaterial};
 
@@ -41,18 +43,26 @@ fn main() {
             }
 
             #[cfg(target_os = "macos")]
-            apply_vibrancy(&window, NSVisualEffectMaterial::Menu, None, None)
-                .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+            apply_vibrancy(&window, NSVisualEffectMaterial::Menu, None, None).unwrap_or_else(
+                |_| {
+                    error!("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+                    panic!("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+                },
+            );
 
             #[cfg(target_os = "windows")]
-            apply_mica(&window, None)
-                .expect("Unsupported platform! 'apply_mica' is only supported on Windows");
+            apply_mica(&window, None).unwrap_or_else(|_| {
+                error!("Unsupported platform! 'apply_mica' is only supported on Windows");
+                panic!("Unsupported platform! 'apply_mica' is only supported on Windows");
+            });
 
             thread::spawn(move || {
                 let mut client = RPC.lock().unwrap_or_else(|_| {
+                    error!("Failed to create Discord IPC client - main");
                     panic!("Failed to create Discord IPC client - main");
                 });
                 client.connect().unwrap_or_else(|_| {
+                    error!("Failed to connect to Discord IPC client - main");
                     panic!("Failed to connect to Discord IPC client - main");
                 });
             });
@@ -61,11 +71,20 @@ fn main() {
         })
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
-            println!("{}, {argv:?}, {cwd}", app.package_info().name);
+            info!("{}, {argv:?}, {cwd}", app.package_info().name);
 
             app.emit_all("single-instance", SInst { args: argv, cwd })
                 .unwrap();
         }))
+        .plugin(
+            tauri_plugin_log::Builder::default()
+                .targets([LogTarget::Stdout, LogTarget::LogDir])
+                .with_colors(ColoredLevelConfig::default())
+                .level(LevelFilter::Info)
+                .build(),
+        )
+        .plugin(tauri_plugin_context_menu::init())
+        .plugin(tauri_plugin_clipboard::init())
         .invoke_handler(tauri::generate_handler![
             set_watching,
             pause_watching,

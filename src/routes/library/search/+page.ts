@@ -8,7 +8,7 @@ import type { PageLoad } from './$types';
 
 export const load = (({ url }) => {
   const query = url.searchParams.get('q');
-  if (!query) throw error(400, 'No query provided');
+  if (!query) error(400, 'No query provided');
   const formattedQuery = toUpperCase(decodeURIComponent(query).trim());
 
   return {

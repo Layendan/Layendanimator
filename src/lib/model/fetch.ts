@@ -26,7 +26,7 @@ export async function fetchRecentEpisodes(
   const userSource = get(providers)[source.id];
 
   if (!userSource?.scripts?.fetchRecentEpisodes)
-    throw error(500, 'Source script not found');
+    error(500, 'Source script not found');
 
   const results = await safeEval<RecentAnime[]>(
     userSource.scripts.fetchRecentEpisodes,
@@ -66,7 +66,7 @@ export async function fetchTrendingAnime(
   const userSource = get(providers)[source.id];
 
   if (!userSource?.scripts?.fetchTrendingAnime)
-    throw error(500, 'Source script not found');
+    error(500, 'Source script not found');
 
   const results = await safeEval<Anime[]>(
     userSource.scripts.fetchTrendingAnime,
@@ -109,7 +109,7 @@ export async function fetchPopularAnime(
   const userSource = get(providers)[source.id];
 
   if (!userSource?.scripts?.fetchPopularAnime)
-    throw error(500, 'Source script not found');
+    error(500, 'Source script not found');
 
   const results = await safeEval<Anime[]>(
     userSource.scripts.fetchPopularAnime,
@@ -145,7 +145,7 @@ export async function fetchAnime(
   const userSource = get(providers)[source.id];
 
   if (!userSource?.scripts?.fetchAnimeInfo)
-    throw error(500, 'Source script not found');
+    error(500, 'Source script not found');
 
   const { isSubtitles, filler } = get(settings);
   const res: Anime = await safeEval<Anime>(userSource.scripts.fetchAnimeInfo, {
@@ -252,7 +252,7 @@ export async function fetchAnime(
       message: `The anime with id ${id} was not found.`,
       type: 'error'
     });
-    throw error(404, 'Anime not found');
+    error(404, 'Anime not found');
   }
 }
 
@@ -260,7 +260,7 @@ export async function fetchEpisode(id: string, source: Anime['source']) {
   const userSource = get(providers)[source.id];
 
   if (!userSource?.scripts?.fetchEpisodes)
-    throw error(500, 'Source script not found');
+    error(500, 'Source script not found');
 
   const episode = await safeEval<EpisodeData>(
     userSource.scripts.fetchEpisodes,
@@ -277,7 +277,7 @@ export async function fetchEpisode(id: string, source: Anime['source']) {
       message: `The episode with id ${id} was not found.`,
       type: 'error'
     });
-    throw error(404, 'Episode not found');
+    error(404, 'Episode not found');
   }
 
   return episode;
@@ -291,7 +291,7 @@ export async function fetchSearch(
 ) {
   const userSource = get(providers)[source.id];
 
-  if (!userSource?.scripts?.search) throw error(500, 'Source script not found');
+  if (!userSource?.scripts?.search) error(500, 'Source script not found');
 
   const results = (
     await safeEval<Anime[]>(userSource.scripts.search, {

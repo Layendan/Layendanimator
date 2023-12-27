@@ -13,7 +13,10 @@
   export let data: PageData;
 
   const MINUTE = 1000 * 60;
-  const interval = setInterval(() => invalidate(data.source.id), MINUTE * 5);
+  const interval = setInterval(
+    () => invalidate(`layendanimator:${data.source.id}`),
+    MINUTE * 5
+  );
   const placeholderNum = 25;
 
   onMount(() => {

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { createSourceContextMenu } from '$lib/model/contextmenu';
   import { notifications } from '$lib/model/notifications';
   import {
     checkUpdate,
@@ -10,6 +11,7 @@
   import { encodeName } from '$lib/model/theme';
   import { faCloudArrowDown } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
+  import { showMenu } from 'tauri-plugin-context-menu';
   import SourceContextMenu from './SourceContextMenu.svelte';
 
   export let source: Provider;
@@ -25,6 +27,14 @@
   let description = source.description;
 
   let element: HTMLElement;
+
+  function contextMenu() {
+    if (window.__TAURI__) {
+      showMenu({
+        items: createSourceContextMenu(source)
+      });
+    }
+  }
 </script>
 
 <button
@@ -34,6 +44,7 @@
     modal.showModal();
     hidden = false;
   }}
+  on:contextmenu={contextMenu}
   bind:this={element}
 >
   <img src={source.logo} alt={source.name} class="mr-2 h-6 w-6 rounded-md" />
@@ -237,4 +248,6 @@
   </form>
 </dialog>
 
-<SourceContextMenu provider={source} {element} />
+{#if !window.__TAURI__}
+  <SourceContextMenu provider={source} {element} />
+{/if}

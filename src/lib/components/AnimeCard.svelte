@@ -1,9 +1,11 @@
 <script lang="ts">
   import type { Anime } from '$lib/model/classes/Anime';
-  import { fade } from 'svelte/transition';
-  import AnimeContextMenu from './AnimeContextMenu.svelte';
-  import { providers } from '$lib/model/source';
+  import { createAnimeCardContextMenu } from '$lib/model/contextmenu';
   import { settings } from '$lib/model/settings';
+  import { providers } from '$lib/model/source';
+  import { fade } from 'svelte/transition';
+  import { showMenu } from 'tauri-plugin-context-menu';
+  import AnimeContextMenu from './AnimeContextMenu.svelte';
 
   export let anime: Pick<Anime, 'id' | 'title' | 'image' | 'source'> &
     Partial<Anime>;
@@ -19,6 +21,14 @@
   let skeleton = true;
 
   let element: HTMLElement;
+
+  function contextMenu() {
+    if (window.__TAURI__) {
+      showMenu({
+        items: createAnimeCardContextMenu(anime as Anime, isDownload)
+      });
+    }
+  }
 </script>
 
 {#if anime.id}
@@ -28,6 +38,7 @@
     id={anime.id}
     style:--anime-color={anime.color ?? 'oklch(var(--a))'}
     class="group indicator flex w-[168px] flex-col gap-2 focus-visible:outline-transparent lg:w-[210px]"
+    on:contextmenu={contextMenu}
   >
     <div
       class="group-one card relative m-0 aspect-[0.7/1] h-[240px] w-[168px] rounded-md bg-base-300 p-0 ring ring-transparent ring-offset-2 ring-offset-transparent transition-all duration-200 hover:-translate3d-y-1 group-focus-visible:ring-[--anime-color] group-focus-visible:ring-offset-base-200 lg:h-[300px] lg:w-[210px]"
@@ -75,5 +86,7 @@
     </h3>
   </a>
 
-  <AnimeContextMenu {anime} {element} {isDownload} />
+  {#if !window.__TAURI__}
+    <AnimeContextMenu {anime} {element} {isDownload} />
+  {/if}
 {/if}

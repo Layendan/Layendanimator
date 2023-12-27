@@ -8,11 +8,11 @@ import type { PageLoad } from './$types';
 
 export const load = (async ({ url, params }) => {
   const query = url.searchParams.get('q');
-  if (!query) throw error(400, 'No query provided');
+  if (!query) error(400, 'No query provided');
   const formattedQuery = toUpperCase(decodeURIComponent(query).trim());
 
   const source = get(providers)[params.source];
-  if (!source) throw error(404, 'Source not found');
+  if (!source) error(404, 'Source not found');
 
   async function update(page: number, perPage: number) {
     return await fetchSearch(formattedQuery, source, page, perPage);

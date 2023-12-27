@@ -61,7 +61,9 @@
     class="pointer-events-none absolute left-4 text-base-content"
   />
 
-  <div class="pointer-events-none absolute right-4 text-base-content">
+  <div
+    class="shortcut pointer-events-none absolute right-4 text-base-content transition-opacity duration-200"
+  >
     <kbd class="kbd kbd-sm bg-base-100/30">
       {isMac ? '⌘' : 'Ctrl'}
     </kbd>
@@ -74,3 +76,13 @@
     {/each}
   </datalist>
 </form>
+
+<style>
+  form:focus-within input {
+    @apply pr-0;
+  }
+
+  form:focus-within .shortcut {
+    @apply opacity-0;
+  }
+</style>

@@ -14,11 +14,11 @@ import { get } from 'svelte/store';
 import type { PageLoad } from './$types';
 
 export const load = (async ({ params, depends }) => {
-  depends(params.source);
+  depends(`layendanimator:${params.source}`);
 
   const source = get(providers)[params.source];
 
-  if (!source) throw error(404, 'Source not found');
+  if (!source) error(404, 'Source not found');
 
   return {
     recent: {

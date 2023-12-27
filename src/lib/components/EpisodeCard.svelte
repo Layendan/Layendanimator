@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import type { Anime, Episode } from '$lib/model/classes/Anime';
+  import { createEpisodeContextMenu } from '$lib/model/contextmenu';
   import { downloading, downloads } from '$lib/model/downloads';
   import { settings } from '$lib/model/settings';
   import { unwatchedSubscriptions } from '$lib/model/subscriptions';
@@ -11,6 +12,7 @@
   } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
   import { fade } from 'svelte/transition';
+  import { showMenu } from 'tauri-plugin-context-menu';
   import EpisodeContextMenu from './EpisodeContextMenu.svelte';
 
   export let anime: Pick<Anime, 'id' | 'title' | 'source'> & Partial<Anime>;
@@ -61,6 +63,19 @@
 
   let image: HTMLElement;
   let background: HTMLElement;
+
+  function contextMenu() {
+    if (window.__TAURI__) {
+      showMenu({
+        items: createEpisodeContextMenu(
+          anime as Anime,
+          episode,
+          $page.route.id?.startsWith('/library') ?? false,
+          !!$page.params.episode
+        )
+      });
+    }
+  }
 </script>
 
 <a
@@ -72,6 +87,7 @@
   class="group-one indicator flex w-[168px] select-none flex-col gap-2 focus-visible:outline-transparent lg:w-[210px]"
   class:w-[210px]={!$settings.showThumbnail}
   data-sveltekit-replacestate={replaceState ? '' : 'off'}
+  on:contextmenu={contextMenu}
 >
   {#if $settings.showThumbnail}
     <div
@@ -173,11 +189,13 @@
   {/if}
 </a>
 
-<EpisodeContextMenu
-  {anime}
-  {episode}
-  element={$settings.showThumbnail ? image : background}
-/>
+{#if !window.__TAURI__}
+  <EpisodeContextMenu
+    {anime}
+    {episode}
+    element={$settings.showThumbnail ? image : background}
+  />
+{/if}
 
 <style>
   .noImageDesc {

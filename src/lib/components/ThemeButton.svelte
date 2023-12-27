@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { createThemeContextMenu } from '$lib/model/contextmenu';
   import { settings } from '$lib/model/settings';
   import { encodeName, toStyleString, type Theme } from '$lib/model/theme';
   import type { UnlistenFn } from '@tauri-apps/api/event';
   import type { Theme as TauriTheme } from '@tauri-apps/api/window';
   import { onDestroy, onMount } from 'svelte';
+  import { showMenu } from 'tauri-plugin-context-menu';
   import ThemeContextMenu from './ThemeContextMenu.svelte';
 
   export let theme: Theme;
@@ -39,6 +41,14 @@
   });
 
   let element: HTMLElement;
+
+  function contextMenu(defaultTheme: boolean) {
+    if (window.__TAURI__) {
+      showMenu({
+        items: createThemeContextMenu(theme, element, defaultTheme)
+      });
+    }
+  }
 </script>
 
 {#if theme.name === 'system'}
@@ -48,6 +58,7 @@
       ? 'border-accent/80 hover:border-accent/100 focus-visible:border-accent/100'
       : 'border-base-content/20 hover:border-base-content/40 focus-visible:border-base-content/40'}"
     on:click={() => ($settings.theme = theme)}
+    on:contextmenu={() => contextMenu(true)}
     bind:this={element}
   >
     <div
@@ -95,6 +106,7 @@
         ? 'border-accent/80 hover:border-accent/100 focus-visible:border-accent/100'
         : 'border-base-content/20 hover:border-base-content/40 focus-visible:border-base-content/40'}"
       on:click={() => ($settings.theme = theme)}
+      on:contextmenu={() => contextMenu(false)}
       bind:this={element}
     >
       <div
@@ -170,6 +182,7 @@
       ? 'border-accent/80 hover:border-accent/100 focus-visible:border-accent/100'
       : 'border-base-content/20 hover:border-base-content/40 focus-visible:border-base-content/40'}"
     on:click={() => ($settings.theme = theme)}
+    on:contextmenu={() => contextMenu(true)}
     bind:this={element}
   >
     <div
@@ -211,4 +224,6 @@
   </button>
 {/if}
 
-<ThemeContextMenu {theme} {element} />
+{#if !window.__TAURI__}
+  <ThemeContextMenu {theme} {element} />
+{/if}

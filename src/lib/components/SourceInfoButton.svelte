@@ -44,7 +44,7 @@
     modal.showModal();
     hidden = false;
   }}
-  on:contextmenu={contextMenu}
+  on:contextmenu|stopPropagation|preventDefault={contextMenu}
   bind:this={element}
 >
   <img src={source.logo} alt={source.name} class="mr-2 h-6 w-6 rounded-md" />

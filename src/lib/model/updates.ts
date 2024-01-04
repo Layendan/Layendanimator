@@ -1,6 +1,7 @@
 import { get, writable } from 'svelte/store';
 import Semaphore from './classes/Semaphore';
 import { fetchAnime } from './fetch';
+import { settings } from './settings';
 import { subscriptions, unwatchedSubscriptions } from './subscriptions';
 
 export type Task = {
@@ -14,21 +15,28 @@ export const tasks = writable<Task[]>([]);
 
 export const isUpdatingSubscriptions = writable(false);
 
-const semaphore = new Semaphore(5, 1000);
+const lowNumSemaphore = new Semaphore(5, 500);
+const highNumSemaphore = new Semaphore(5, 2000);
 export async function updateSubscriptions() {
   if (get(isUpdatingSubscriptions)) return;
 
   isUpdatingSubscriptions.set(true);
   const id = 'updateSubscriptions';
 
-  const totalSubs = [
-    ...Object.values(get(subscriptions)).filter(
-      anime => anime.status !== 'Completed' && anime.status !== 'Cancelled'
-    ),
-    ...Object.values(get(unwatchedSubscriptions)).filter(
-      anime => anime.status !== 'Completed' && anime.status !== 'Cancelled'
-    )
-  ];
+  const totalSubs = get(settings).checkCompletedUpdates
+    ? [
+        ...Object.values(get(unwatchedSubscriptions)),
+        ...Object.values(get(subscriptions))
+      ]
+    : [
+        ...Object.values(get(unwatchedSubscriptions)).filter(
+          anime => anime.status !== 'Completed' && anime.status !== 'Cancelled'
+        ),
+        ...Object.values(get(subscriptions)).filter(
+          anime => anime.status !== 'Completed' && anime.status !== 'Cancelled'
+        )
+      ];
+
   tasks.update(tasks => [
     ...tasks,
     { id, title: 'Fetching Subscriptions', value: 0, max: totalSubs.length }
@@ -37,7 +45,9 @@ export async function updateSubscriptions() {
   try {
     await Promise.allSettled(
       totalSubs.map(anime => {
-        return semaphore.callFunction(async () => {
+        return (
+          totalSubs.length > 30 ? highNumSemaphore : lowNumSemaphore
+        ).callFunction(async () => {
           try {
             await fetchAnime(anime.id, anime.source);
           } catch (e) {

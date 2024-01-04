@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { invalidate } from '$app/navigation';
   import AnimeCard from '$lib/components/AnimeCard.svelte';
   import CharacterCard from '$lib/components/CharacterCard.svelte';
   import EpisodeCarousel from '$lib/components/EpisodeCarousel.svelte';
@@ -6,6 +7,7 @@
   import ScrollCarousel from '$lib/components/ScrollCarousel.svelte';
   import ScrollHeader from '$lib/components/ScrollHeader.svelte';
   import TotalAnimeInfo from '$lib/components/TotalAnimeInfo.svelte';
+  import { animeCache } from '$lib/model/cache';
   import type { Anime } from '$lib/model/classes/Anime';
   import { downloading } from '$lib/model/downloads';
   import { settings } from '$lib/model/settings';
@@ -20,7 +22,8 @@
     faClock,
     faCloudDownload,
     faDownload,
-    faFilter
+    faFilter,
+    faLanguage
   } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
 
@@ -36,6 +39,11 @@
     a => a.type !== 'MANGA' && a.type !== 'NOVEL' && a.type !== 'ONE_SHOT'
   );
   $: lastWatched = $watching[`${data.source.id}/${data.id}`];
+  $: filteredEpisodes = sortedEpisodes.filter(({ id }) => {
+    return (
+      (lastWatched?.watchedEpisodes[id]?.percentage ?? 0) < watchPercentage
+    );
+  });
 
   const maxRelations = 15;
   const watchPercentage = 0.8;
@@ -51,14 +59,7 @@
   <!-- EPISODES -->
   <EpisodeCarousel
     anime={data}
-    episodes={$settings.showWatchedEpisodes
-      ? sortedEpisodes
-      : sortedEpisodes.filter(({ id }) => {
-          return (
-            (lastWatched?.watchedEpisodes[id]?.percentage ?? 0) <
-            watchPercentage
-          );
-        })}
+    episodes={$settings.showWatchedEpisodes ? sortedEpisodes : filteredEpisodes}
     href={showDownload
       ? undefined
       : `/library/downloads/${data.source.id}/${data.id}`}
@@ -70,7 +71,7 @@
         >
           Episodes
         </h1>
-        {#if data.episodes.length > 0}
+        {#if sortedEpisodes.length > 0}
           <PlayNextButton
             anime={data}
             {watchPercentage}
@@ -78,7 +79,7 @@
           />
         {/if}
       </div>
-      {#if data.episodes.length > 0}
+      {#if sortedEpisodes.length > 0}
         <div class="mb-4 flex items-center gap-1">
           {#if showDownload && window?.__TAURI__}
             <div
@@ -148,6 +149,8 @@
                 <li class="m-1">
                   <button
                     class="btn btn-outline flex w-full flex-row items-center gap-1 text-base-content"
+                    class:hidden={!$settings.showWatchedEpisodes &&
+                      filteredEpisodes.length === 0}
                     on:click={() =>
                       ($settings.isEpisodeAscending =
                         !$settings.isEpisodeAscending)}
@@ -181,6 +184,8 @@
                     class="btn btn-outline flex w-full flex-row items-center gap-2 text-base-content"
                     on:click={() =>
                       ($settings.showThumbnail = !$settings.showThumbnail)}
+                    class:hidden={!$settings.showWatchedEpisodes &&
+                      filteredEpisodes.length === 0}
                   >
                     <input
                       type="checkbox"
@@ -191,6 +196,22 @@
                     Thumbnails
                   </button>
                 </li>
+                {#if showDownload}
+                  <li class="m-1">
+                    <button
+                      class="btn btn-outline flex w-full flex-row items-center gap-2 text-base-content"
+                      on:click={() => {
+                        $settings.isSubtitles = !$settings.isSubtitles;
+                        data.episodes = [];
+                        animeCache.delete(`${data.source.id}/${data.id}`);
+                        invalidate(`${data.source.id}:${data.id}`);
+                      }}
+                    >
+                      <Fa icon={faLanguage} />
+                      {$settings.isSubtitles ? 'Subbed' : 'Dubbed'} Episodes
+                    </button>
+                  </li>
+                {/if}
               </ul>
             </div>
           </div>

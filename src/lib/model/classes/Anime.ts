@@ -28,6 +28,7 @@ export type Anime = {
     english: string;
     native: string;
   };
+  anilistId?: number;
   malId?: number;
   synonyms?: string[];
   isLicensed?: boolean;

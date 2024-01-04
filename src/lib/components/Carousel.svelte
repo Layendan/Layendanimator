@@ -103,7 +103,7 @@
   class="relative h-[60vh] w-full overflow-hidden bg-base-100/30 will-change-transform motion-reduce:!translate3d-y-0"
   class:!translate3d-y-0={!$settings.parallax}
   style="transform: translate3d(0, {$scrollY / 1.5}px, 0);"
-  on:contextmenu={contextMenu}
+  on:contextmenu|stopPropagation|preventDefault={contextMenu}
 >
   {#key animeIdx}
     <img

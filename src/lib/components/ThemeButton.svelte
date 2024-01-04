@@ -58,7 +58,7 @@
       ? 'border-accent/80 hover:border-accent/100 focus-visible:border-accent/100'
       : 'border-base-content/20 hover:border-base-content/40 focus-visible:border-base-content/40'}"
     on:click={() => ($settings.theme = theme)}
-    on:contextmenu={() => contextMenu(true)}
+    on:contextmenu|stopPropagation|preventDefault={() => contextMenu(true)}
     bind:this={element}
   >
     <div
@@ -106,7 +106,7 @@
         ? 'border-accent/80 hover:border-accent/100 focus-visible:border-accent/100'
         : 'border-base-content/20 hover:border-base-content/40 focus-visible:border-base-content/40'}"
       on:click={() => ($settings.theme = theme)}
-      on:contextmenu={() => contextMenu(false)}
+      on:contextmenu|stopPropagation|preventDefault={() => contextMenu(false)}
       bind:this={element}
     >
       <div
@@ -182,7 +182,7 @@
       ? 'border-accent/80 hover:border-accent/100 focus-visible:border-accent/100'
       : 'border-base-content/20 hover:border-base-content/40 focus-visible:border-base-content/40'}"
     on:click={() => ($settings.theme = theme)}
-    on:contextmenu={() => contextMenu(true)}
+    on:contextmenu|stopPropagation|preventDefault={() => contextMenu(true)}
     bind:this={element}
   >
     <div

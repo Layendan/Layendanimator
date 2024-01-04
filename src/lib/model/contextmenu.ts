@@ -1,9 +1,10 @@
-import { goto } from '$app/navigation';
+import { goto, invalidate, invalidateAll } from '$app/navigation';
 import { get, writable } from 'svelte/store';
 import type { MediaPlayerElement } from 'vidstack/elements';
+import { animeCache, clearCache } from './cache';
 import type { Anime, Episode } from './classes/Anime';
 import { downloading, downloads } from './downloads';
-import { fetchAnime, taskScheduler } from './fetch';
+import { fetchAnime } from './fetch';
 import { notifications } from './notifications';
 import { settings } from './settings';
 import {
@@ -56,9 +57,6 @@ export type MenuItemIcon = {
 };
 
 export function createAnimeCardContextMenu(anime: Anime, isDownload: boolean) {
-  console.log(anime);
-  console.log(get(providers)[anime.source.id]);
-
   const items: MenuItem[] = [
     {
       label: 'Watch',
@@ -119,50 +117,76 @@ export function createAnimeCardContextMenu(anime: Anime, isDownload: boolean) {
       }
     });
   } else if (get(unwatchedSubscriptions)[`${anime.source.id}/${anime.id}`]) {
-    items.push({
-      label: 'Unsubscribe',
-      event: () => {
-        unwatchedSubscriptions.remove(anime);
+    items.push(
+      {
+        label: 'Unsubscribe',
+        event: () => {
+          unwatchedSubscriptions.remove(anime);
+        }
+      },
+      {
+        label: 'Clear Updates',
+        event: () => {
+          subscriptions.add(anime);
+          unwatchedSubscriptions.remove(anime);
+        }
       }
-    });
+    );
   } else {
     items.push({
       label: 'Subscribe',
       event: async () => {
-        taskScheduler.callFunction(async () => {
-          try {
-            subscriptions.add(anime);
-            const res = await fetchAnime(anime.id, anime.source);
-            if (!res) throw new Error('Could not find anime');
-            subscriptions.add(res);
-          } catch (e) {
-            console.error(e);
-            subscriptions.remove(anime);
-            notifications.addNotification({
-              title: 'Error',
-              message: 'Could not add subscription',
-              type: 'error'
-            });
-          }
-        }, `${anime.id}-contextmenu-subscription`);
+        const res =
+          animeCache.get(`${anime.source.id}/${anime.id}`) ??
+          (await fetchAnime(anime.id, anime.source));
+        if (!res) {
+          notifications.addNotification({
+            title: 'Error',
+            message: 'Could not find anime',
+            type: 'error'
+          });
+          throw new Error('Could not find anime');
+        }
+
+        subscriptions.add(res);
       }
     });
   }
 
+  items.push({
+    label: '',
+    is_separator: true
+  });
   if (get(watching)[`${anime.source.id}/${anime.id}`]) {
-    items.push(
-      {
-        label: '',
-        is_separator: true
-      },
-      {
-        label: 'Clear Watch History',
-        event: () => {
-          watching.remove(anime);
-        }
+    items.push({
+      label: 'Clear Watch History',
+      event: () => {
+        watching.remove(anime);
       }
-    );
+    });
   }
+  items.push({
+    label: 'Mark All as Watched',
+    event: async () => {
+      const res =
+        animeCache.get(`${anime.source.id}/${anime.id}`) ??
+        (await fetchAnime(anime.id, anime.source));
+      if (!res) {
+        notifications.addNotification({
+          title: 'Error',
+          message: 'Could not find anime',
+          type: 'error'
+        });
+        throw new Error('Could not find anime');
+      }
+
+      watching.watchAll(res, res.episodes.toReversed());
+      if (get(unwatchedSubscriptions)[`${anime.source.id}/${anime.id}`]) {
+        unwatchedSubscriptions.remove(anime);
+        subscriptions.add(anime);
+      }
+    }
+  });
 
   items.push(
     {
@@ -175,8 +199,17 @@ export function createAnimeCardContextMenu(anime: Anime, isDownload: boolean) {
         {
           label: 'Download Episodes',
           event: async () => {
-            const res = await fetchAnime(anime.id, anime.source);
-            if (!res) return;
+            const res =
+              animeCache.get(`${anime.source.id}/${anime.id}`) ??
+              (await fetchAnime(anime.id, anime.source));
+            if (!res) {
+              notifications.addNotification({
+                title: 'Error',
+                message: 'Could not find anime',
+                type: 'error'
+              });
+              throw new Error('Could not find anime');
+            }
 
             notifications.addNotification({
               title: 'Downloading episodes...',
@@ -226,6 +259,8 @@ export function createAnimeCardContextMenu(anime: Anime, isDownload: boolean) {
               const res = await fetchAnime(anime.id, anime.source);
               if (!res) throw new Error('Could not find anime');
 
+              invalidate(`${anime.source.id}:${anime.id}`);
+
               if (get(watching)[`${anime.source.id}/${anime.id}`])
                 watching.updateAnime(res);
 
@@ -243,12 +278,7 @@ export function createAnimeCardContextMenu(anime: Anime, isDownload: boolean) {
                 type: 'error'
               });
             }
-          },
-          disabled: !(
-            get(watching)[`${anime.source.id}/${anime.id}`] ||
-            get(subscriptions)[`${anime.source.id}/${anime.id}`] ||
-            get(unwatchedSubscriptions)[`${anime.source.id}/${anime.id}`]
-          )
+          }
         }
       ]
     }
@@ -392,6 +422,7 @@ export function createPlayerContextMenu(
   anime: Anime,
   episode: Episode,
   player: MediaPlayerElement,
+  airplay: boolean,
   requestNextEpisode: () => void
 ) {
   const items: MenuItem[] = [
@@ -465,6 +496,8 @@ export function createPlayerContextMenu(
       label: 'Copy Video URL',
       event: async () => {
         const { writeText } = await import('@tauri-apps/api/clipboard');
+        console.log(player.state.source);
+        // @ts-expect-error - src typing is not defined
         writeText(player.state.source.src.toString());
       }
     },
@@ -472,8 +505,15 @@ export function createPlayerContextMenu(
       label: 'Copy Video Frame',
       event: async () => {
         try {
-          if (player.provider?.type === 'audio')
-            throw new Error('Cannot copy frame of audio');
+          if (
+            !player.provider ||
+            player.provider.type === 'audio' ||
+            player.provider.type === 'vimeo' ||
+            player.provider.type === 'youtube'
+          )
+            throw new Error(
+              'Cannot copy frame of audio or vimeo/youtube videos'
+            );
 
           const canvas = document.createElement('canvas');
           canvas.width = player.provider?.video.videoWidth ?? 0;
@@ -504,6 +544,25 @@ export function createPlayerContextMenu(
         }
       }
     }
+    // {
+    //   label: '',
+    //   is_separator: true
+    // },
+    // {
+    //   label: 'AirPlay',
+    //   event: () => {
+    //     if (airplay && player.provider && player.provider.type !== 'audio') {
+    //       // @ts-expect-error - webkitShowPlaybackTargetPicker is not defined
+    //       player.provider.video.webkitShowPlaybackTargetPicker();
+    //     }
+    //   },
+    //   disabled:
+    //     // @ts-expect-error - WebKitPlaybackTargetAvailabilityEvent is not defined
+    //     !window.WebKitPlaybackTargetAvailabilityEvent ||
+    //     !airplay ||
+    //     player.provider?.type === 'audio' ||
+    //     !player.provider
+    // }
   ];
 
   return items;
@@ -697,6 +756,88 @@ export function createThemeContextMenu(
       disabled: defaultTheme
     }
   ];
+
+  return items;
+}
+
+export async function createDefaultContextMenu() {
+  const items: MenuItem[] = [
+    {
+      label: 'Back',
+      event: () => {
+        window.history.back();
+      }
+    },
+    {
+      label: 'Forward',
+      event: () => {
+        window.history.forward();
+      }
+    },
+    {
+      label: 'Reload',
+      event: () => {
+        clearCache();
+        invalidateAll();
+      }
+    },
+    {
+      label: '',
+      is_separator: true
+    },
+    {
+      label: 'Home',
+      event: () => {
+        goto(`/${get(source).id}`);
+      }
+    },
+    {
+      label: 'Library',
+      event: () => {
+        goto('/library');
+      }
+    },
+    {
+      label: 'Settings',
+      event: () => {
+        goto('/settings');
+      }
+    }
+  ];
+
+  if (Object.keys(get(providers)).length > 1)
+    items.push(
+      {
+        label: '',
+        is_separator: true
+      },
+      {
+        label: 'Sources',
+        subitems: Object.values(get(providers)).map(provider => {
+          return {
+            label: provider.name,
+            event: () => {
+              source.set(provider);
+              goto(`/${provider.id}`);
+            },
+            disabled: provider.id === get(source).id
+          };
+        })
+      }
+    );
+
+  const { appWindow } = await import('@tauri-apps/api/window');
+  if (await appWindow.isFullscreen())
+    items.unshift(
+      {
+        label: 'Exit Fullscreen',
+        event: () => appWindow.setFullscreen(false)
+      },
+      {
+        label: '',
+        is_separator: true
+      }
+    );
 
   return items;
 }

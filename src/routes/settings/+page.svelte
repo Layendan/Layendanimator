@@ -82,6 +82,7 @@
         <label class="label w-fit" for="parallax">
           <span class="label-text">
             Cover Parallax
+            <br />
             <i class="text-xs">(disable for performance)</i>
           </span>
         </label>
@@ -104,6 +105,24 @@
           checked={$settings.showSourcesOnAnime}
           on:change={() =>
             ($settings.showSourcesOnAnime = !$settings.showSourcesOnAnime)}
+        />
+
+        <!-- Check for updates of animes that have already completed -->
+        <label class="label w-fit" for="checkCompletedUpdates">
+          <span class="label-text">
+            Check Updates for Completed Animes
+            <br />
+            <i class="text-xs"> (prone to getting rate limited) </i>
+          </span>
+        </label>
+        <input
+          type="checkbox"
+          id="checkCompletedUpdates"
+          class="toggle toggle-accent"
+          checked={$settings.checkCompletedUpdates}
+          on:change={() =>
+            ($settings.checkCompletedUpdates =
+              !$settings.checkCompletedUpdates)}
         />
 
         <!-- DiscordRPC -->

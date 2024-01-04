@@ -87,7 +87,7 @@
   class="group-one indicator flex w-[168px] select-none flex-col gap-2 focus-visible:outline-transparent lg:w-[210px]"
   class:w-[210px]={!$settings.showThumbnail}
   data-sveltekit-replacestate={replaceState ? '' : 'off'}
-  on:contextmenu={contextMenu}
+  on:contextmenu|stopPropagation|preventDefault={contextMenu}
 >
   {#if $settings.showThumbnail}
     <div

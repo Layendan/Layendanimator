@@ -34,7 +34,7 @@
   target="_blank"
   rel="noopener noreferrer nofollow"
   class="group"
-  on:contextmenu={contextMenu}
+  on:contextmenu|stopPropagation|preventDefault={contextMenu}
 >
   <img
     src={imageLoaded ? anime.image : '/assets/loading_failure.jpeg'}

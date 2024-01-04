@@ -36,6 +36,7 @@
   export let disableRemotePlayback = false;
 
   let player: MediaPlayerElement;
+  let airPlayEnabled = false;
 
   $: watchedObject =
     $watching[`${anime.source.id}/${anime.id}`]?.watchedEpisodes[episode.id];
@@ -126,6 +127,33 @@
             time < (player.state.duration || (anime.duration ?? Infinity))
               ? time
               : 0;
+
+          // Airplay
+          if (
+            // @ts-expect-error - WebKitPlaybackTargetAvailabilityEvent is not in the types
+            window.WebKitPlaybackTargetAvailabilityEvent &&
+            player.provider &&
+            (player.provider.type === 'video' || player.provider.type === 'hls')
+          ) {
+            const video = player.provider.video;
+            video.addEventListener(
+              'webkitplaybacktargetavailabilitychanged',
+              function (event) {
+                // @ts-expect-error - WebKitPlaybackTargetAvailabilityEvent is not in the types
+                switch (event.availability) {
+                  case 'available':
+                    airPlayEnabled = true;
+                    break;
+                  case 'not-available':
+                    airPlayEnabled = false;
+                    break;
+                  default:
+                    airPlayEnabled = false;
+                    break;
+                }
+              }
+            );
+          }
         }
       },
       {
@@ -209,6 +237,7 @@
           anime as Anime,
           episode,
           player,
+          airPlayEnabled,
           requestNextEpisode
         )
       });
@@ -232,6 +261,8 @@
     preload="metadata"
     {disableRemotePlayback}
     autoplay
+    load="eager"
+    view-type="video"
     bind:this={player}
     on:provider-change={providerChange}
     on:ended={requestNextEpisode}
@@ -239,7 +270,7 @@
     on:playing={updateWatched}
     on:error={() => invalidate(`${anime.source}:${anime.id}:${episode.id}`)}
     on:hls-error={() => invalidate(`${anime.source}:${anime.id}:${episode.id}`)}
-    on:contextmenu={contextMenu}
+    on:contextmenu|stopPropagation|preventDefault={contextMenu}
   >
     <media-provider>
       {#each episodeData.sources as source}
@@ -249,10 +280,10 @@
             (source.isM3U8 ? 'application/x-mpegURL' : 'video/mp4')}
         />
       {/each}
-      {#each episodeData.subtitles ?? [] as track}
+      {#each (episodeData.subtitles ?? []).filter(track => track.lang.toLowerCase() !== 'thumbnails') as track}
         <track
           label={track.lang}
-          kind="captions"
+          kind="subtitles"
           src={track.url}
           default={track.lang.toLowerCase() === 'english'}
         />
@@ -270,6 +301,41 @@
       />
     {/if}
   </media-player>
+
+  <!-- <button
+    id="airPlayButton"
+    class="btn btn-sm"
+    class:hidden={!airPlayEnabled}
+    hidden={!airPlayEnabled}
+    disabled={!airPlayEnabled}
+    on:click={() => {
+      if (
+        !player.provider ||
+        player.provider.type === 'audio' ||
+        player.provider.type === 'vimeo' ||
+        player.provider.type === 'youtube'
+      )
+        return;
+
+      const video = player.provider.video;
+      video.addEventListener(
+        'webkitcurrentplaybacktargetiswirelesschanged',
+        function (event) {
+          console.log(
+            'Device ' +
+              // @ts-expect-error - WebKitPlaybackTargetAvailabilityEvent is not in the types
+              (event.currentPlaybackTargetIsWireless ? 'is' : 'is not') +
+              ' wireless'
+          );
+        }
+      );
+
+      // @ts-expect-error - WebKitShowPlaybackTargetPicker is not in the types
+      video.webkitShowPlaybackTargetPicker();
+    }}
+  >
+    AirPlay
+  </button> -->
 {:else}
   <div class="flex h-full flex-col items-center justify-center">
     <p

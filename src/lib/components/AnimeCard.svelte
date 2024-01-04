@@ -38,7 +38,7 @@
     id={anime.id}
     style:--anime-color={anime.color ?? 'oklch(var(--a))'}
     class="group indicator flex w-[168px] flex-col gap-2 focus-visible:outline-transparent lg:w-[210px]"
-    on:contextmenu={contextMenu}
+    on:contextmenu|stopPropagation|preventDefault={contextMenu}
   >
     <div
       class="group-one card relative m-0 aspect-[0.7/1] h-[240px] w-[168px] rounded-md bg-base-300 p-0 ring ring-transparent ring-offset-2 ring-offset-transparent transition-all duration-200 hover:-translate3d-y-1 group-focus-visible:ring-[--anime-color] group-focus-visible:ring-offset-base-200 lg:h-[300px] lg:w-[210px]"

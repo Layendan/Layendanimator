@@ -125,7 +125,8 @@
         class:transparent-base={id === $page.params.source}
         aria-label="Change Source"
         on:click={() => source.set(provider)}
-        on:contextmenu={() => contextMenu(provider)}
+        on:contextmenu|stopPropagation|preventDefault={() =>
+          contextMenu(provider)}
       >
         <img
           src={provider.logo}

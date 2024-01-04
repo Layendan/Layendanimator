@@ -19,6 +19,7 @@
   } from '$lib/model/cache';
   import Semaphore from '$lib/model/classes/Semaphore';
   import { connections } from '$lib/model/connections';
+  import { createDefaultContextMenu } from '$lib/model/contextmenu';
   import { downloads } from '$lib/model/downloads';
   import { fetchAnime } from '$lib/model/fetch';
   import { getOS } from '$lib/model/info';
@@ -32,9 +33,10 @@
   import { encodeName, toStyleString } from '$lib/model/theme';
   import { watching } from '$lib/model/watch';
   import type { UnlistenFn } from '@tauri-apps/api/event';
+  import type { OsType } from '@tauri-apps/api/os';
   import NProgress from 'nprogress';
   import { onDestroy, onMount, tick } from 'svelte';
-  import type { OsType } from '@tauri-apps/api/os';
+  import { showMenu } from 'tauri-plugin-context-menu';
 
   NProgress.configure({
     // Full list: https://github.com/rstacruz/nprogress#configuration
@@ -185,6 +187,14 @@
       }
     }
   }
+
+  async function contextMenu() {
+    if (window.__TAURI__) {
+      showMenu({
+        items: await createDefaultContextMenu()
+      });
+    }
+  }
 </script>
 
 <svelte:window
@@ -196,7 +206,7 @@
       if (e.shiftKey) location.reload();
     }
   }}
-  on:contextmenu|preventDefault
+  on:contextmenu|preventDefault={contextMenu}
 />
 
 <span

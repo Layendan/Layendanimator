@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, windows-latest]
+        platform: [macos-latest, windows-latest, macos-latest-large]
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -65,6 +65,13 @@ jobs:
           curl -L https://evermeet.cx/ffmpeg/get/zip -o ffmpeg.zip
           unzip ffmpeg.zip -d src-tauri/bin/
           mv src-tauri/bin/ffmpeg src-tauri/bin/ffmpeg-x86_64-apple-darwin
+          
+      - name: Download FFmpeg (osx-aarch64)
+        if: matrix.platform == 'macos-latest-large'
+        run: |
+          curl -L https://evermeet.cx/ffmpeg/get/zip -o ffmpeg.zip
+          unzip ffmpeg.zip -d src-tauri/bin/
+          mv src-tauri/bin/ffmpeg src-tauri/bin/ffmpeg-aarch64-apple-darwin
 
       - name: Download FFmpeg (windows)
         if: matrix.platform == 'windows-latest'
@@ -84,3 +91,4 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: false
           prerelease: false
+          updaterJsonPreferNsis: true

@@ -50,14 +50,14 @@ pub fn set_watching(
 
     let res = client.set_activity(
         activity::Activity::new()
-            .state(format!("Episode {}", episode).as_str())
-            .details(
+            .state(
                 match episode_title {
-                    Some(e) => format!("{} - {}", title, e),
-                    None => title.to_string(),
+                    Some(e) => format!("{} ● Episode {}", e, episode),
+                    None => format!("Episode {}", episode),
                 }
                 .as_str(),
             )
+            .details(title)
             .assets(
                 activity::Assets::new()
                     .large_image(artwork.unwrap_or("image_error"))
@@ -110,7 +110,7 @@ pub fn set_watching(
 }
 
 #[tauri::command]
-pub fn pause_watching(title: &str, episode_title: Option<&str>, artwork: Option<&str>, link: &str) {
+pub fn pause_watching(title: &str, artwork: Option<&str>, link: &str) {
     let client: Option<MutexGuard<'_, DiscordIpcClient>> = match RPC.lock() {
         Ok(l) => Some(l),
         Err(e) => {
@@ -139,13 +139,7 @@ pub fn pause_watching(title: &str, episode_title: Option<&str>, artwork: Option<
     let res = client.set_activity(
         activity::Activity::new()
             .state("Idling")
-            .details(
-                match episode_title {
-                    Some(e) => format!("{} - {}", title, e),
-                    None => title.to_string(),
-                }
-                .as_str(),
-            )
+            .details(title)
             .assets(
                 activity::Assets::new()
                     .large_image(artwork.unwrap_or("image_error"))
@@ -165,7 +159,7 @@ pub fn pause_watching(title: &str, episode_title: Option<&str>, artwork: Option<
             Err(e) => warn!("Reconnection Error: {}", e),
             Ok(_) => {
                 info!("Reconnected to Discord");
-                pause_watching(title, episode_title, artwork, link);
+                pause_watching(title, artwork, link);
             }
         }
     } else {

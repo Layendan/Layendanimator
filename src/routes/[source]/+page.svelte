@@ -109,7 +109,7 @@
     {/if}
 
     <!-- Subscriptions -->
-    <SubscriptionCarousel />
+    <SubscriptionCarousel showAll={false} />
 
     {#if data.source.scripts.fetchTrendingAnime}
       <div class="divider" />

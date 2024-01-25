@@ -14,6 +14,8 @@
   import AnimeCard from './AnimeCard.svelte';
   import ScrollCarousel from './ScrollCarousel.svelte';
 
+  export let showAll = true;
+
   $: sortMethod = ($settings.sortSubscriptions, getSortMethod());
 </script>
 
@@ -51,7 +53,9 @@
     <div class="divider divider-horizontal" />
   {/if}
 
-  {#each Object.entries($subscriptions).sort(sortMethod) as [id, anime] (id)}
+  {#each showAll ? Object.entries($subscriptions).sort(sortMethod) : Object.entries($subscriptions)
+        .sort(sortMethod)
+        .slice(0, 15) as [id, anime] (id)}
     <AnimeCard {anime} showSource />
   {/each}
 

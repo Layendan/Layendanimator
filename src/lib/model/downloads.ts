@@ -367,93 +367,95 @@ function createDownloading() {
           );
 
           try {
-            await (episode.isM3U8
-              ? async () => {
-                  const options = [
-                    '-i',
-                    episode!.url,
-                    '-bsf:a',
-                    'aac_adtstoasc',
-                    '-vcodec',
-                    'copy',
-                    '-c',
-                    'copy',
-                    '-crf',
-                    '50',
-                    path,
-                    '-hwaccel',
-                    'auto',
-                    '-progress',
-                    '-',
-                    '-nostats',
-                    '-y'
-                  ];
+            await (
+              episode.isM3U8
+                ? async () => {
+                    const options = [
+                      '-i',
+                      episode!.url,
+                      '-bsf:a',
+                      'aac_adtstoasc',
+                      '-vcodec',
+                      'copy',
+                      '-c',
+                      'copy',
+                      '-crf',
+                      '50',
+                      path,
+                      '-hwaccel',
+                      'auto',
+                      '-progress',
+                      '-',
+                      '-nostats',
+                      '-y'
+                    ];
 
-                  // -i {input} -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 {output} -hwaccel auto -y
-                  const command = Command.sidecar('bin/ffmpeg', options);
+                    // -i {input} -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 {output} -hwaccel auto -y
+                    const command = Command.sidecar('bin/ffmpeg', options);
 
-                  command.stdout.on('data', data => {
-                    const str = data.toString();
-                    const match = str.match(/time=(\d+):(\d+):(\d+)/);
-                    if (match) {
-                      const [, hours, minutes, seconds] = match;
-                      const totalSeconds =
-                        parseInt(hours) * 3600 +
-                        parseInt(minutes) * 60 +
-                        parseInt(seconds);
-                      update(downloads => {
-                        downloads[id].progress = Math.min(
-                          totalSeconds /
-                            (duration || (anime.duration ?? 0) * 60),
-                          1
-                        );
-                        return downloads;
-                      });
-                    }
-                  });
+                    command.stdout.on('data', data => {
+                      const str = data.toString();
+                      const match = str.match(/time=(\d+):(\d+):(\d+)/);
+                      if (match) {
+                        const [, hours, minutes, seconds] = match;
+                        const totalSeconds =
+                          parseInt(hours) * 3600 +
+                          parseInt(minutes) * 60 +
+                          parseInt(seconds);
+                        update(downloads => {
+                          downloads[id].progress = Math.min(
+                            totalSeconds /
+                              (duration || (anime.duration ?? 0) * 60),
+                            1
+                          );
+                          return downloads;
+                        });
+                      }
+                    });
 
-                  const child = await command.spawn();
-                  const unlisten = await once(
-                    `download-cancel-${encodeId(id)}`,
-                    () => {
-                      console.debug('Killed: ', path);
-                      command.emit('error', 'Killed');
-                      child.kill();
-                    }
-                  );
-
-                  try {
-                    await new Promise((resolve, reject) =>
-                      command.once('close', resolve).once('error', reject)
+                    const child = await command.spawn();
+                    const unlisten = await once(
+                      `download-cancel-${encodeId(id)}`,
+                      () => {
+                        console.debug('Killed: ', path);
+                        command.emit('error', 'Killed');
+                        child.kill();
+                      }
                     );
+
+                    try {
+                      await new Promise((resolve, reject) =>
+                        command.once('close', resolve).once('error', reject)
+                      );
+                      console.debug('Downloaded: ', path);
+                      return path;
+                    } catch (e) {
+                      console.error(e);
+                      removeFile(path);
+                      return Promise.reject(e);
+                    } finally {
+                      unlisten();
+                    }
+                  }
+                : async () => {
+                    const response = await fetch<Uint8Array>(episode!.url, {
+                      method: 'GET',
+                      responseType: ResponseType.Binary
+                    });
+
+                    if (!response.ok) {
+                      console.error(response);
+                      return Promise.reject();
+                    }
+
+                    const buffer = response.data;
+                    await writeBinaryFile(path, buffer);
+
                     console.debug('Downloaded: ', path);
+
                     return path;
-                  } catch (e) {
-                    console.error(e);
-                    removeFile(path);
-                    return Promise.reject(e);
-                  } finally {
-                    unlisten();
                   }
-                }
-              : async () => {
-                  const response = await fetch<Uint8Array>(episode!.url, {
-                    method: 'GET',
-                    responseType: ResponseType.Binary
-                  });
-
-                  if (!response.ok) {
-                    console.error(response);
-                    return Promise.reject();
-                  }
-
-                  const buffer = response.data;
-                  await writeBinaryFile(path, buffer);
-
-                  console.debug('Downloaded: ', path);
-
-                  return path;
-                })();
+            )();
           } catch (e) {
             console.error(e);
             removeFile(path);

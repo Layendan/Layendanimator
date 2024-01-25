@@ -19,6 +19,7 @@ import {
 import { subscriptions, unwatchedSubscriptions } from './subscriptions';
 import { encodeName, type Theme } from './theme';
 import { watching } from './watch';
+import { getOS } from './info';
 
 export const currentContextMenu = writable<string | undefined>(undefined);
 
@@ -418,7 +419,7 @@ export function createEpisodeContextMenu(
   return items;
 }
 
-export function createPlayerContextMenu(
+export async function createPlayerContextMenu(
   anime: Anime,
   episode: Episode,
   player: MediaPlayerElement,
@@ -527,7 +528,10 @@ export function createPlayerContextMenu(
           canvasContext.drawImage(video, 0, 0);
           const dataUrl = canvas.toDataURL('image/png');
           // Apparently the clipboard api doesn't support data urls with padding
-          const data = dataUrl.split(',')[1].replace(/=/g, '');
+          const data =
+            (await getOS()) === 'Darwin'
+              ? dataUrl.split(',')[1].replace(/=/g, '')
+              : dataUrl.split(',')[1];
           const { writeImage } = await import('tauri-plugin-clipboard-api');
           await writeImage(data);
           //   notifications.addNotification({

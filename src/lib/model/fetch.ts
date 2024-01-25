@@ -364,13 +364,10 @@ export async function safeEval<T>(
 
     worker.postMessage([code, ...(settings?.args ?? [])]);
 
-    setTimeout(
-      () => {
-        worker.terminate();
-        reject(new Error('The worker timed out.'));
-      },
-      settings?.timeout ?? timeout
-    );
+    setTimeout(() => {
+      worker.terminate();
+      reject(new Error('The worker timed out.'));
+    }, settings?.timeout ?? timeout);
   });
 }
 

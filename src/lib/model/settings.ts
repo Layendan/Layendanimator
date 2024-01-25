@@ -25,6 +25,7 @@ export type SettingsType = {
   parallax: boolean;
   showSourcesOnAnime: boolean;
   checkCompletedUpdates: boolean;
+  showAllSubscriptions: boolean;
   sortSubscriptions: 'lastUpdated' | 'timeAdded' | 'title' | 'nextEpisode';
 
   discordRPC: 'enabled' | 'disabled'; // TODO: Update when watch2gether is added
@@ -52,6 +53,7 @@ const defaultSettings: SettingsType = {
   parallax: true,
   showSourcesOnAnime: true,
   checkCompletedUpdates: false,
+  showAllSubscriptions: false,
   sortSubscriptions: 'timeAdded',
   discordRPC: 'enabled',
   isEpisodeAscending: true,

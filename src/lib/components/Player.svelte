@@ -201,7 +201,6 @@
         } else {
           invoke('pause_watching', {
             title: anime.title.english ?? anime.title.romaji ?? 'Unknown',
-            episodeTitle: episode.title,
             artwork: anime.image,
             link: encodeAnimeLink(anime)
           });
@@ -230,10 +229,10 @@
 
   beforeNavigate(updateWatched);
 
-  function contextMenu() {
+  async function contextMenu() {
     if (window.__TAURI__) {
       showMenu({
-        items: createPlayerContextMenu(
+        items: await createPlayerContextMenu(
           anime as Anime,
           episode,
           player,

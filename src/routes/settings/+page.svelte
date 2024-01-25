@@ -9,7 +9,10 @@
   import { settings, tauriData, webData } from '$lib/model/settings';
   import { providers } from '$lib/model/source';
   import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
-  import { faCloudArrowDown } from '@fortawesome/free-solid-svg-icons';
+  import {
+    faCloudArrowDown,
+    faInfoCircle
+  } from '@fortawesome/free-solid-svg-icons';
   import Fa from 'svelte-fa';
 
   // const anilistClientId = '4602';
@@ -41,7 +44,16 @@
 
         <!-- In-App Notifications -->
         <label class="label w-fit" for="notifications">
-          <span class="label-text">In-App Notifications</span>
+          <span class="label-text">
+            In-App Notifications
+            <br />
+            <i
+              class="inline-flex items-center rounded-md bg-warning px-1 py-[0.1rem] text-xs text-warning-content"
+            >
+              <Fa icon={faInfoCircle} class="mr-1" />
+              enable for error messages
+            </i>
+          </span>
         </label>
         <input
           type="checkbox"
@@ -83,7 +95,12 @@
           <span class="label-text">
             Cover Parallax
             <br />
-            <i class="text-xs">(disable for performance)</i>
+            <i
+              class="inline-flex items-center rounded-md bg-warning px-1 py-[0.1rem] text-xs text-warning-content"
+            >
+              <Fa icon={faInfoCircle} class="mr-1" />
+              disable for performance
+            </i>
           </span>
         </label>
         <input
@@ -112,7 +129,12 @@
           <span class="label-text">
             Check Updates for Completed Animes
             <br />
-            <i class="text-xs"> (prone to getting rate limited) </i>
+            <i
+              class="inline-flex items-center rounded-md bg-warning px-1 py-[0.1rem] text-xs text-warning-content"
+            >
+              <Fa icon={faInfoCircle} class="mr-1" />
+              prone to getting rate limited
+            </i>
           </span>
         </label>
         <input
@@ -125,9 +147,31 @@
               !$settings.checkCompletedUpdates)}
         />
 
+        <!-- Check for updates of animes that have already completed -->
+        <label class="label w-fit" for="showAllSubscriptions">
+          <span class="label-text">
+            Show All Subscriptions on Main Page
+            <br />
+            <i
+              class="inline-flex items-center rounded-md bg-warning px-1 py-[0.1rem] text-xs text-warning-content"
+            >
+              <Fa icon={faInfoCircle} class="mr-1" />
+              disable for performance
+            </i>
+          </span>
+        </label>
+        <input
+          type="checkbox"
+          id="showAllSubscriptions"
+          class="toggle toggle-accent"
+          checked={$settings.showAllSubscriptions}
+          on:change={() =>
+            ($settings.showAllSubscriptions = !$settings.showAllSubscriptions)}
+        />
+
         <!-- DiscordRPC -->
         <label class="label w-fit" for="discordRPC">
-          <span class="label-text"> Show Discord Rich Presence </span>
+          <span class="label-text"> Enable Discord Rich Presence </span>
         </label>
         <input
           type="checkbox"

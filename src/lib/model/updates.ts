@@ -15,8 +15,7 @@ export const tasks = writable<Task[]>([]);
 
 export const isUpdatingSubscriptions = writable(false);
 
-const lowNumSemaphore = new Semaphore(5, 500);
-const highNumSemaphore = new Semaphore(5, 2000);
+const semaphore = new Semaphore(5, 1000);
 export async function updateSubscriptions() {
   if (get(isUpdatingSubscriptions)) return;
 
@@ -45,9 +44,7 @@ export async function updateSubscriptions() {
   try {
     await Promise.allSettled(
       totalSubs.map(anime => {
-        return (
-          totalSubs.length > 30 ? highNumSemaphore : lowNumSemaphore
-        ).callFunction(async () => {
+        return semaphore.callFunction(async () => {
           try {
             await fetchAnime(anime.id, anime.source);
           } catch (e) {

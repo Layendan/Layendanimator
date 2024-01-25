@@ -19,7 +19,7 @@
 </p>
 
 A simple yet elegant way of waching anime on your favorite anime websites.
-Layendanimator is a free and open source anime watching app for Desktop (Windows, MacOS, Linux), using [Sveltekit](https://github.com/sveltejs/kit) and [Tauri](https://github.com/tauri-apps/tauri).
+Layendanimator is a free and open source anime watching app for Desktop (Windows and MacOS), using [Sveltekit](https://github.com/sveltejs/kit) and [Tauri](https://github.com/tauri-apps/tauri).
 
 ## Table of Contents
 
@@ -34,7 +34,7 @@ Layendanimator is a free and open source anime watching app for Desktop (Windows
   - [Picture in Picture Playback](#picture-in-picture-playback)
   - [Notifications & Subscription](#notifications--subscription)
   - [Download Episodes](#download-episodes)
-  - [Google Cast](#google-cast)
+  - [Google Cast / Airplay](#google-cast--airplay)
   - [Discord Rich Presence](#discord-rich-presence)
   - [Screenshots](#screenshots)
     - [Dark Theme](#dark-theme)
@@ -55,13 +55,15 @@ Download the latest version of Layendanimator from the [releases page](https://g
 
 ### Windows
 
-Download the _(recommended)_ `Layendanimator_<version>_x64-setup.exe` or `Layendanimator_<version>_x64_en-US.msi` file and run it.
+Download `Layendanimator_<version>_x64-setup.exe` then run it.
 
-The msi file will be depracted in the future, hence not recommended to install the application.
+_Note: The msi install method will be depracted in the future, hence not recommended to install the application._
+
+Works for Windows 10 and above.
 
 ### MacOS
 
-Download the `Layendanimator_<version>_x64.dmg` file and open it. Then, drag the application to your `Applications` folder.
+Download `Layendanimator_<version>_x64.dmg` then open it. Then, drag the application to your `Applications` folder.
 
 If the application does not want to open, then navigate to your Applications folder, right click on the application, and click open. Once you do that, you will be able to open the application normally.
 
@@ -69,9 +71,11 @@ For Silicon _(M1/M2)_ based Macs, arm64 versions of the app will be available in
 
 ### Linux
 
-Download the `Layendanimator_<version>_amd64.AppImage` file and run it.
+**!IMPORTANT: Due to running into problems with the Linux build, I will not be releasing a Linux build for now. I might release a Linux build in the future if the issues are fixed, but I doubt it.**
 
-If using a Debian based distro, download the `Layendanimator_<version>_amd64.deb` file and run it.
+Download `Layendanimator_<version>_amd64.AppImage` then run it.
+
+If using a Debian based distro, download `Layendanimator_<version>_amd64.deb` then run it.
 
 _Note: Linux is not tested and might not work, if you have problems using the app, please [create an issue](https://github.com/Layendan/Layendanimator/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=) on github._
 
@@ -118,7 +122,7 @@ Downloaded episodes will automatically be used when watching anime online. You c
 
 You can view your download folder in the settings tab.
 
-## Google Cast
+## Google Cast / Airplay
 
 WIP
 

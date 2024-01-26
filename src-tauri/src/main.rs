@@ -12,36 +12,15 @@ use std::thread;
 use tauri::Manager;
 use tauri_plugin_log::{fern::colors::ColoredLevelConfig, LogTarget};
 
-#[cfg(target_os = "windows")]
-use std::mem;
-#[cfg(target_os = "windows")]
-use winapi::um::sysinfoapi::GetVersionExW;
-#[cfg(target_os = "windows")]
-use winapi::um::winnt::OSVERSIONINFOW;
-#[cfg(target_os = "windows")]
-use window_vibrancy::{apply_acrylic, apply_mica};
-
 #[cfg(target_os = "macos")]
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
+#[cfg(target_os = "windows")]
+use window_vibrancy::{apply_acrylic, apply_mica};
 
 #[derive(Clone, serde::Serialize)]
 struct SInst {
     args: Vec<String>,
     cwd: String,
-}
-
-#[cfg(target_os = "windows")]
-fn get_windows_version() -> Option<(u32, u32)> {
-    unsafe {
-        let mut info: OSVERSIONINFOW = mem::zeroed();
-        info.dwOSVersionInfoSize = mem::size_of::<OSVERSIONINFOW>() as u32;
-
-        if GetVersionExW(&mut info as *mut _) == 0 {
-            return None;
-        }
-
-        Some((info.dwMajorVersion, info.dwMinorVersion))
-    }
 }
 
 fn main() {
@@ -76,22 +55,34 @@ fn main() {
 
             #[cfg(target_os = "windows")]
             {
-                if let Some((major, minor)) = get_windows_version() {
-                    if major == 10 && minor >= 17763 && minor < 22000 {
-                        apply_acrylic(&window, None).unwrap_or_else(|_| {
-                            error!("Unsupported platform! 'apply_acrylic' is only supported on Windows 10");
-                            panic!("Unsupported platform! 'apply_acrylic' is only supported on Windows 10");
-                        });
-                    }
-                    else {
-                        apply_mica(&window, None).unwrap_or_else(|_| {
-                            error!("Unsupported platform! 'apply_mica' is only supported on Windows 11");
-                            panic!("Unsupported platform! 'apply_mica' is only supported on Windows 11");
-                        });
-                    }
+                let info = os_info::get();
+                // major.minor.build
+                let version = info.version().to_string();
+                let major_str = version.split(".").collect::<Vec<&str>>()[0];
+                let build_str = version.split(".").collect::<Vec<&str>>()[2];
+                let major = major_str.parse::<u32>().unwrap_or_else(|_| {
+                    error!("Failed to parse Windows version - main");
+                    panic!("Failed to parse Windows version - main");
+                });
+                let build = build_str.parse::<u32>().unwrap_or_else(|_| {
+                    error!("Failed to parse Windows build - main");
+                    panic!("Failed to parse Windows build - main");
+                });
+                println!("Windows version: {}.{}", major, build);
+                if major == 10 && build >= 17763 && build < 22000 {
+                    apply_acrylic(&window, None).unwrap_or_else(|_| {
+                        error!("Unsupported platform! 'apply_acrylic' is only supported on Windows 10");
+                        panic!("Unsupported platform! 'apply_acrylic' is only supported on Windows 10");
+                    });
+                }
+                else if major == 10 && build >= 22000 {
+                    apply_mica(&window, None).unwrap_or_else(|_| {
+                        error!("Unsupported platform! 'apply_mica' is only supported on Windows 11");
+                        panic!("Unsupported platform! 'apply_mica' is only supported on Windows 11");
+                    });
                 } else {
-                    error!("Unsupported platform! Windows 10 v1809+ and Windows 11 are the only supported versions");
-                    panic!("Unsupported platform! Windows 10 v1809+ and Windows 11 are the only supported versions");
+                    error!("Unsupported platform! This app is only supported on Windows 10 and 11");
+                    // panic!("Unsupported platform! This app is only supported on Windows 10 and 11");
                 }
             }
 

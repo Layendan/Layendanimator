@@ -80,6 +80,7 @@ dependencies = [
  "discord-rich-presence",
  "lazy_static",
  "log",
+ "os_info",
  "serde",
  "serde_json",
  "tauri",
@@ -90,7 +91,6 @@ dependencies = [
  "tauri-plugin-log",
  "tauri-plugin-single-instance",
  "tauri-plugin-store",
- "winapi",
  "window-vibrancy",
 ]
 

@@ -4,10 +4,11 @@ import type { Anime, EpisodeData, RecentAnime } from './classes/Anime';
 import type { Provider } from './source';
 
 const MINUTE = 1000 * 60;
+const HOUR = MINUTE * 60;
 
 export const animeCache = new LRUCache<string, Anime>({
   max: 100,
-  ttl: MINUTE * 60
+  ttl: HOUR
 });
 
 export const episodeCache = new LRUCache<string, EpisodeData>({
@@ -61,11 +62,12 @@ export const popularAnimes = new LRUCache<
     })[]
 >({
   max: 50,
-  ttl: MINUTE * 60 * 24
+  ttl: HOUR * 24
 });
 
 export const scrollYCache = new LRUCache<string, number>({
-  max: 100
+  max: 100,
+  ttl: HOUR
 });
 
 export const scrollY = writable<number>(0);

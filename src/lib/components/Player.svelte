@@ -40,23 +40,59 @@
 
   $: watchedObject =
     $watching[`${anime.source.id}/${anime.id}`]?.watchedEpisodes[episode.id];
-  $: state = player?.state;
 
   const thumbnails = episodeData?.subtitles?.find(
     track => track.lang.toLowerCase() === 'thumbnails'
   );
 
+  let defaultSource = episodeData?.sources?.find(
+    source =>
+      source.quality?.toLowerCase() === 'download' ||
+      source.quality?.toLowerCase() === 'default' ||
+      source.quality?.toLowerCase() === 'auto'
+  );
+
+  $: if (episodeData.sources) {
+    if (player) {
+      updateWatched();
+      const paused = player.paused;
+      if (
+        player?.state?.isAirPlayConnected ||
+        player?.state?.isGoogleCastConnected
+      ) {
+        defaultSource = episodeData.sources.find(
+          source =>
+            source.quality?.toLowerCase() === 'default' ||
+            source.quality?.toLowerCase() === 'auto'
+        );
+      } else {
+        defaultSource = episodeData.sources.find(
+          source =>
+            source.quality?.toLowerCase() === 'download' ||
+            source.quality?.toLowerCase() === 'default' ||
+            source.quality?.toLowerCase() === 'auto'
+        );
+      }
+      const time = watchedObject?.time ?? 0;
+      player.currentTime =
+        time < (player.state.duration || (anime.duration ?? Infinity))
+          ? time
+          : 0;
+      if (paused) player.pause();
+    }
+  }
+
   const dispatcher = createEventDispatcher();
 
   function requestNextEpisode() {
-    if (state.loop) return;
+    if (player.state.loop) return;
     player?.exitFullscreen();
     player?.exitPictureInPicture();
     dispatcher('requestNextEpisode', () => {
       if (
         $settings.deleteOnWatch &&
-        state &&
-        state.currentTime / state.duration >= 0.8
+        player.state &&
+        player.state.currentTime / player.state.duration >= 0.8
       )
         downloads.remove(anime, episode.id);
     });
@@ -76,7 +112,7 @@
     }
   }
 
-  function setSteps() {
+  function setStepsAndSession() {
     const time = player?.querySelector(
       'media-time-slider:first-of-type'
     ) as MediaTimeSliderElement;
@@ -94,24 +130,71 @@
       vol.keyStep = 5;
       vol.shiftKeyMultiplier = 3;
     }
+
+    // Set MediaSession metadata
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: episode.title ?? `Episode ${episode.number}`,
+        artist: anime.title.english ?? anime.title.romaji ?? 'Unknown',
+        album: `Episode ${episode.number}`,
+        artwork: [{ src: episode.image ?? anime.image }]
+      });
+
+      if (!player) return;
+
+      navigator.mediaSession.setActionHandler('play', () => {
+        player.play();
+        navigator.mediaSession.playbackState = 'playing';
+      });
+      navigator.mediaSession.setActionHandler('pause', () => {
+        player.pause();
+        navigator.mediaSession.playbackState = 'paused';
+      });
+      navigator.mediaSession.setActionHandler('seekbackward', () => {
+        player.currentTime = Math.max(player.currentTime - 10, 0);
+      });
+      navigator.mediaSession.setActionHandler('seekforward', () => {
+        player.currentTime = Math.min(
+          player.currentTime + 10,
+          player.state.duration || (anime.duration ?? Infinity)
+        );
+      });
+      navigator.mediaSession.setActionHandler('previoustrack', () => {
+        player.currentTime = 0;
+      });
+      navigator.mediaSession.setActionHandler('nexttrack', () => {
+        requestNextEpisode();
+      });
+    }
   }
 
-  onMount(async () => {
-    setSteps();
+  console.log(episodeData);
 
-    player?.addEventListener('playing', setSteps, {
+  onMount(async () => {
+    setStepsAndSession();
+
+    player?.addEventListener('playing', setStepsAndSession, {
       once: true
     });
 
     try {
       if (window.__TAURI__) {
-        const os = await getOS();
+        const [os, { appWindow }] = await Promise.all([
+          getOS(),
+          import('@tauri-apps/api/window')
+        ]);
+
         if (os !== 'Darwin' && os !== 'Unknown') {
           player?.addEventListener('fullscreen-change', async ({ detail }) => {
             const { appWindow } = await import('@tauri-apps/api/window');
             appWindow?.setFullscreen(detail);
           });
         }
+
+        player?.addEventListener('picture-in-picture-change', ({ detail }) => {
+          if (detail || player.paused) return;
+          appWindow.setFocus();
+        });
       }
     } catch (e) {
       console.error(e);
@@ -127,33 +210,6 @@
             time < (player.state.duration || (anime.duration ?? Infinity))
               ? time
               : 0;
-
-          // Airplay
-          if (
-            // @ts-expect-error - WebKitPlaybackTargetAvailabilityEvent is not in the types
-            window.WebKitPlaybackTargetAvailabilityEvent &&
-            player.provider &&
-            (player.provider.type === 'video' || player.provider.type === 'hls')
-          ) {
-            const video = player.provider.video;
-            video.addEventListener(
-              'webkitplaybacktargetavailabilitychanged',
-              function (event) {
-                // @ts-expect-error - WebKitPlaybackTargetAvailabilityEvent is not in the types
-                switch (event.availability) {
-                  case 'available':
-                    airPlayEnabled = true;
-                    break;
-                  case 'not-available':
-                    airPlayEnabled = false;
-                    break;
-                  default:
-                    airPlayEnabled = false;
-                    break;
-                }
-              }
-            );
-          }
         }
       },
       {
@@ -213,9 +269,9 @@
 
   onDestroy(async () => {
     clearInterval(interval);
-    console.log(state.volume);
-    if (state.volume) $settings.playerVolume = state.volume;
-    if (state.muted) $settings.playerMuted = state.muted;
+    console.log(player.state.volume);
+    if (player.state.volume) $settings.playerVolume = player.state.volume;
+    if (player.state.muted) $settings.playerMuted = player.state.muted;
     if (player) {
       player.exitFullscreen();
       player.exitPictureInPicture();
@@ -260,6 +316,8 @@
     preload="metadata"
     {disableRemotePlayback}
     autoplay
+    prefer-native-hls
+    stream-type="on-demand"
     load="eager"
     view-type="video"
     bind:this={player}
@@ -272,6 +330,13 @@
     on:contextmenu|stopPropagation|preventDefault={contextMenu}
   >
     <media-provider>
+      {#if defaultSource}
+        <source
+          src={defaultSource.url}
+          type={defaultSource.type ||
+            (defaultSource.isM3U8 ? 'application/x-mpegURL' : 'video/mp4')}
+        />
+      {/if}
       {#each episodeData.sources as source}
         <source
           src={source.url}
@@ -279,12 +344,12 @@
             (source.isM3U8 ? 'application/x-mpegURL' : 'video/mp4')}
         />
       {/each}
-      {#each (episodeData.subtitles ?? []).filter(track => track.lang.toLowerCase() !== 'thumbnails') as track}
+      {#each (episodeData.subtitles ?? []).filter(track => track.lang?.toLowerCase() !== 'thumbnails') as track, i}
         <track
           label={track.lang}
           kind="subtitles"
           src={track.url}
-          default={track.lang.toLowerCase() === 'english'}
+          default={i === 0}
         />
       {/each}
       <media-poster class="vds-poster" src={poster} />
@@ -300,41 +365,6 @@
       />
     {/if}
   </media-player>
-
-  <!-- <button
-    id="airPlayButton"
-    class="btn btn-sm"
-    class:hidden={!airPlayEnabled}
-    hidden={!airPlayEnabled}
-    disabled={!airPlayEnabled}
-    on:click={() => {
-      if (
-        !player.provider ||
-        player.provider.type === 'audio' ||
-        player.provider.type === 'vimeo' ||
-        player.provider.type === 'youtube'
-      )
-        return;
-
-      const video = player.provider.video;
-      video.addEventListener(
-        'webkitcurrentplaybacktargetiswirelesschanged',
-        function (event) {
-          console.log(
-            'Device ' +
-              // @ts-expect-error - WebKitPlaybackTargetAvailabilityEvent is not in the types
-              (event.currentPlaybackTargetIsWireless ? 'is' : 'is not') +
-              ' wireless'
-          );
-        }
-      );
-
-      // @ts-expect-error - WebKitShowPlaybackTargetPicker is not in the types
-      video.webkitShowPlaybackTargetPicker();
-    }}
-  >
-    AirPlay
-  </button> -->
 {:else}
   <div class="flex h-full flex-col items-center justify-center">
     <p

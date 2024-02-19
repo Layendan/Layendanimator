@@ -12,10 +12,10 @@ use std::thread;
 use tauri::Manager;
 use tauri_plugin_log::{fern::colors::ColoredLevelConfig, LogTarget};
 
-#[cfg(target_os = "macos")]
-use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 #[cfg(target_os = "windows")]
 use window_vibrancy::{apply_acrylic, apply_mica};
+#[cfg(target_os = "macos")]
+use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 #[derive(Clone, serde::Serialize)]
 struct SInst {
@@ -71,14 +71,21 @@ fn main() {
                 println!("Windows version: {}.{}", major, build);
                 if major == 10 && build >= 17763 && build < 22000 {
                     apply_acrylic(&window, None).unwrap_or_else(|_| {
-                        error!("Unsupported platform! 'apply_acrylic' is only supported on Windows 10");
-                        panic!("Unsupported platform! 'apply_acrylic' is only supported on Windows 10");
+                        error!(
+                            "Unsupported platform! 'apply_acrylic' is only supported on Windows 10"
+                        );
+                        panic!(
+                            "Unsupported platform! 'apply_acrylic' is only supported on Windows 10"
+                        );
                     });
-                }
-                else if major == 10 && build >= 22000 {
+                } else if major == 10 && build >= 22000 {
                     apply_mica(&window, None).unwrap_or_else(|_| {
-                        error!("Unsupported platform! 'apply_mica' is only supported on Windows 11");
-                        panic!("Unsupported platform! 'apply_mica' is only supported on Windows 11");
+                        error!(
+                            "Unsupported platform! 'apply_mica' is only supported on Windows 11"
+                        );
+                        panic!(
+                            "Unsupported platform! 'apply_mica' is only supported on Windows 11"
+                        );
                     });
                 } else {
                     error!("Unsupported platform! This app is only supported on Windows 10 and 11");

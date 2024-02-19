@@ -110,7 +110,7 @@ function createDownloads() {
           deleteFiles([data.anime.image, data.anime.cover]);
           delete downloads[`${anime.source.id}/${anime.id}`];
         }
-        episodeCache.delete(`${anime.source.id}/${episodeId}`);
+        // episodeCache.delete(`${anime.source.id}/${episodeId}`);
         invalidate(`downloads:${anime.source.id}:${anime.id}:${episodeId}`);
         invalidate(`downloads:${anime.source.id}:${anime.id}`);
         store?.set('downloads', downloads);
@@ -474,39 +474,41 @@ function createDownloading() {
         }
 
         if (cache.subtitles) {
-          cache.subtitles.forEach(subtitle => {
-            calls.push(
-              subtitles.callFunction(async () => {
-                const path = await join(
-                  directoryPath,
-                  `${anime.source.id}.${anime.id}.${episodeId}.${subtitle.lang}.vtt`
-                );
+          cache.subtitles
+            .filter(subtitle => subtitle.lang?.toLowerCase() !== 'thumbnails')
+            .forEach(subtitle => {
+              calls.push(
+                subtitles.callFunction(async () => {
+                  const path = await join(
+                    directoryPath,
+                    `${anime.source.id}.${anime.id}.${episodeId}.${subtitle.lang}.vtt`
+                  );
 
-                const response = await fetch<string>(subtitle.url, {
-                  method: 'GET',
-                  timeout: 30,
-                  responseType: ResponseType.Text
-                });
-
-                if (!response.ok) {
-                  console.error(response);
-                  notifications.addNotification({
-                    title: 'Subtitle download failed',
-                    message: `Could not download the ${subtitle.lang} subtitle for ${anime.title} Episode ${episodeNumber}`,
-                    type: 'error'
+                  const response = await fetch<string>(subtitle.url, {
+                    method: 'GET',
+                    timeout: 30,
+                    responseType: ResponseType.Text
                   });
-                  return Promise.reject();
-                }
 
-                const text = response.data;
-                await writeFile(path, text);
+                  if (!response.ok) {
+                    console.error(response);
+                    notifications.addNotification({
+                      title: 'Subtitle download failed',
+                      message: `Could not download the ${subtitle.lang} subtitle for ${anime.title} Episode ${episodeNumber}`,
+                      type: 'error'
+                    });
+                    return Promise.reject();
+                  }
 
-                console.debug('Downloaded: ', path);
+                  const text = response.data;
+                  await writeFile(path, text);
 
-                return path;
-              }, id)
-            );
-          });
+                  console.debug('Downloaded: ', path);
+
+                  return path;
+                }, id)
+              );
+            });
         }
 
         imageCalls.push(
@@ -682,7 +684,8 @@ function createDownloading() {
           ],
           subtitles: captionResults.map(path => ({
             url: path,
-            lang: path.split('.').slice(-2, -1)[0]
+            lang:
+              (path.split('.').slice(-2, -1)[0] || 'Unknown') + ' (Downloaded)'
           }))
         };
         console.debug(episodeObj);

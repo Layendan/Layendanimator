@@ -198,7 +198,7 @@
         style:--p={testHex.test(primary)
           ? getOklch(hexToOklch(primary))
           : 'var(--primary)'}
-        class="input input-bordered input-primary input-sm w-full uppercase transition-colors duration-200"
+        class="input input-sm input-bordered input-primary w-full uppercase transition-colors duration-200"
         bind:value={primary}
         tabindex={hidden ? -1 : 0}
       />
@@ -217,7 +217,7 @@
         style:--s={testHex.test(secondary)
           ? getOklch(hexToOklch(secondary))
           : 'var(--secondary)'}
-        class="input input-bordered input-secondary input-sm w-full uppercase transition-colors duration-200"
+        class="input input-sm input-bordered input-secondary w-full uppercase transition-colors duration-200"
         bind:value={secondary}
         tabindex={hidden ? -1 : 0}
       />
@@ -236,7 +236,7 @@
         style:--a={testHex.test(accent)
           ? getOklch(hexToOklch(accent))
           : 'var(--accent)'}
-        class="input input-bordered input-accent input-sm w-full uppercase transition-colors duration-200"
+        class="input input-sm input-bordered input-accent w-full uppercase transition-colors duration-200"
         bind:value={accent}
         tabindex={hidden ? -1 : 0}
       />
@@ -255,7 +255,7 @@
         style:--p={testHex.test(neutral)
           ? getOklch(hexToOklch(neutral))
           : 'var(--neutral)'}
-        class="input input-primary input-sm w-full uppercase transition-colors duration-200"
+        class="input input-sm input-primary w-full uppercase transition-colors duration-200"
         bind:value={neutral}
         tabindex={hidden ? -1 : 0}
       />
@@ -272,7 +272,7 @@
         required
         pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
         style:--p={testHex.test(bg) ? getOklch(hexToOklch(bg)) : 'var(--bg)'}
-        class="input input-primary input-sm w-full uppercase transition-colors duration-200"
+        class="input input-sm input-primary w-full uppercase transition-colors duration-200"
         bind:value={bg}
         tabindex={hidden ? -1 : 0}
       />
@@ -292,7 +292,7 @@
         style:--in={testHex.test(info)
           ? getOklch(hexToOklch(info))
           : 'var(--info)'}
-        class="input input-info input-sm w-full uppercase transition-colors duration-200"
+        class="input input-sm input-info w-full uppercase transition-colors duration-200"
         bind:value={info}
         tabindex={hidden ? -1 : 0}
       />
@@ -312,7 +312,7 @@
         style:--su={testHex.test(success)
           ? getOklch(hexToOklch(success))
           : 'var(--success)'}
-        class="input input-success input-sm w-full uppercase transition-colors duration-200"
+        class="input input-sm input-success w-full uppercase transition-colors duration-200"
         bind:value={success}
         tabindex={hidden ? -1 : 0}
       />
@@ -332,7 +332,7 @@
         style:--wa={testHex.test(warning)
           ? getOklch(hexToOklch(warning))
           : 'var(--warning)'}
-        class="input input-warning input-sm w-full uppercase transition-colors duration-200"
+        class="input input-sm input-warning w-full uppercase transition-colors duration-200"
         bind:value={warning}
         tabindex={hidden ? -1 : 0}
       />
@@ -352,7 +352,7 @@
         style:--er={testHex.test(error)
           ? getOklch(hexToOklch(error))
           : 'var(--error)'}
-        class="input input-error input-sm w-full uppercase transition-colors duration-200"
+        class="input input-sm input-error w-full uppercase transition-colors duration-200"
         bind:value={error}
         tabindex={hidden ? -1 : 0}
       />

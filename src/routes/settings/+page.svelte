@@ -48,7 +48,7 @@
             In-App Notifications
             <br />
             <i
-              class="inline-flex items-center rounded-md bg-warning px-1 py-[0.1rem] text-xs text-warning-content"
+              class="inline-flex items-center rounded-md bg-warning px-1 py-[0.1rem] text-xs text-warning-content shadow-md"
             >
               <Fa icon={faInfoCircle} class="mr-1" />
               enable for error messages
@@ -96,7 +96,7 @@
             Cover Parallax
             <br />
             <i
-              class="inline-flex items-center rounded-md bg-warning px-1 py-[0.1rem] text-xs text-warning-content"
+              class="inline-flex items-center rounded-md bg-warning px-1 py-[0.1rem] text-xs text-warning-content shadow-md"
             >
               <Fa icon={faInfoCircle} class="mr-1" />
               disable for performance
@@ -130,7 +130,7 @@
             Check Updates for Completed Animes
             <br />
             <i
-              class="inline-flex items-center rounded-md bg-warning px-1 py-[0.1rem] text-xs text-warning-content"
+              class="inline-flex items-center rounded-md bg-warning px-1 py-[0.1rem] text-xs text-warning-content shadow-md"
             >
               <Fa icon={faInfoCircle} class="mr-1" />
               prone to getting rate limited
@@ -153,7 +153,7 @@
             Show All Subscriptions on Main Page
             <br />
             <i
-              class="inline-flex items-center rounded-md bg-warning px-1 py-[0.1rem] text-xs text-warning-content"
+              class="inline-flex items-center rounded-md bg-warning px-1 py-[0.1rem] text-xs text-warning-content shadow-md"
             >
               <Fa icon={faInfoCircle} class="mr-1" />
               disable for performance

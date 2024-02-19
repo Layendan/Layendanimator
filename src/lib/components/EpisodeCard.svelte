@@ -140,7 +140,7 @@
           </h2>
         {/if}
       </div>
-      {#if window?.__TAURI__ && !$page.params.episode}
+      {#if window?.__TAURI__}
         <button
           class="group-two btn btn-ghost btn-sm aspect-video h-fit"
           class:no-animation={downloadState === 'downloading'}

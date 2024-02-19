@@ -30,7 +30,7 @@
       on:error|once={() => (heroLoaded = false)}
       on:load|once={() => (skeleton = false)}
       in:fade={{ duration: 200 }}
-      class="h-full w-full object-cover object-top"
+      class="h-full w-full rounded-none object-cover object-top"
       class:skeleton
     />
   {/key}

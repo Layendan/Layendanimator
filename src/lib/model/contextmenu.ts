@@ -510,7 +510,8 @@ export async function createPlayerContextMenu(
             !player.provider ||
             player.provider.type === 'audio' ||
             player.provider.type === 'vimeo' ||
-            player.provider.type === 'youtube'
+            player.provider.type === 'youtube' ||
+            player.provider.type === 'google-cast'
           )
             throw new Error(
               'Cannot copy frame of audio or vimeo/youtube videos'
@@ -547,26 +548,25 @@ export async function createPlayerContextMenu(
           //   });
         }
       }
+    },
+    {
+      label: '',
+      is_separator: true
+    },
+    {
+      label: 'AirPlay',
+      event: () => {
+        player.requestAirPlay();
+      },
+      disabled: !player.state.canAirPlay
+    },
+    {
+      label: 'Chromecast',
+      event: () => {
+        player.requestGoogleCast();
+      },
+      disabled: !player.state.canGoogleCast
     }
-    // {
-    //   label: '',
-    //   is_separator: true
-    // },
-    // {
-    //   label: 'AirPlay',
-    //   event: () => {
-    //     if (airplay && player.provider && player.provider.type !== 'audio') {
-    //       // @ts-expect-error - webkitShowPlaybackTargetPicker is not defined
-    //       player.provider.video.webkitShowPlaybackTargetPicker();
-    //     }
-    //   },
-    //   disabled:
-    //     // @ts-expect-error - WebKitPlaybackTargetAvailabilityEvent is not defined
-    //     !window.WebKitPlaybackTargetAvailabilityEvent ||
-    //     !airplay ||
-    //     player.provider?.type === 'audio' ||
-    //     !player.provider
-    // }
   ];
 
   return items;

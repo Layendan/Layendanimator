@@ -89,7 +89,7 @@
       episodes={data.anime.episodes}
       replaceState
     >
-      <svelte:fragment slot="title">Next episodes</svelte:fragment>
+      <svelte:fragment slot="title">Episodes</svelte:fragment>
     </EpisodeCarousel>
   </div>
 {:else if selectedTab === 'wiki'}

@@ -15,10 +15,13 @@ jobs:
         include:
           - platform: 'macos-latest'
             arch: 'x64'
+            flag: ''
           - platform: 'macos-latest'
             arch: 'arm64'
+            flag: '--target aarch64-apple-darwin'
           - platform: 'windows-latest'
             arch: 'x64'
+            flag: ''
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -55,6 +58,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
 
+      - name: install dependencies (m1 only)
+        if: matrix.platform == 'macos-latest' && matrix.arch == 'arm64'
+        run: |
+          rustup target add aarch64-apple-darwin
+
       - name: Install frontend dependencies
         run: yarn svelte:build
 
@@ -86,15 +94,11 @@ jobs:
           7z x ffmpeg.7z
           mv ffmpeg-*-git-*/bin/ffmpeg.exe src-tauri/bin/ffmpeg-x86_64-pc-windows-msvc.exe
 
-      - name: Set target flag
-        run: echo "TARGET_FLAG=$(if [ "${{ matrix.arch }}" = "arm64" ]; then echo "--target aarch64-apple-darwin"; else echo ""; fi)" >> $GITHUB_ENV
-
       - uses: tauri-apps/tauri-action@dev
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
-          TARGET_FLAG: ${{ env.TARGET_FLAG }}
         with:
           tagName: __VERSION__v
           releaseName: 'Layendanimator v__VERSION__'
@@ -102,4 +106,4 @@ jobs:
           releaseDraft: false
           prerelease: false
           updaterJsonPreferNsis: true
-          args: ${{ env.TARGET_FLAG }}
+          args: ${{ matrix.flag }}

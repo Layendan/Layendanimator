@@ -23,6 +23,7 @@
       subscriptions.add(anime);
     }
   }}
+  aria-label={subscribed ? 'Unsubscribe' : 'Add to Subscriptions'}
 >
   <svg
     xmlns="http://www.w3.org/2000/svg"

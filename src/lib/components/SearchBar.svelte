@@ -44,7 +44,7 @@
   <input
     type="search"
     placeholder="Search"
-    class="input input-ghost pointer-events-auto w-full bg-base-content/10 pl-10 capitalize transition-colors duration-200 [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none
+    class="input input-ghost pointer-events-auto w-full bg-base-content/10 pl-10 capitalize transition-colors duration-200 placeholder:text-base-content/50 [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none
     {isMac ? 'pr-16' : 'pr-20'}"
     autocomplete="off"
     autocapitalize="words"

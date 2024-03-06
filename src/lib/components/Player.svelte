@@ -88,11 +88,12 @@
     if (player.state.loop) return;
     player?.exitFullscreen();
     player?.exitPictureInPicture();
+    const state = player?.state;
     dispatcher('requestNextEpisode', () => {
       if (
         $settings.deleteOnWatch &&
-        player.state &&
-        player.state.currentTime / player.state.duration >= 0.8
+        state &&
+        state.currentTime / state.duration >= 0.8
       )
         downloads.remove(anime, episode.id);
     });

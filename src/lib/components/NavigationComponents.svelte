@@ -43,12 +43,14 @@
   <button
     class="btn btn-square btn-ghost btn-sm pointer-events-auto"
     on:click={() => window.history.back()}
+    aria-label="Navigate Backward"
   >
     <Fa icon={faArrowLeft} size="1.2x" />
   </button>
   <button
     class="btn btn-square btn-ghost btn-sm pointer-events-auto"
     on:click={() => window.history.forward()}
+    aria-label="Navigate Forward"
   >
     <Fa icon={faArrowRight} size="1.2x" />
   </button>
@@ -58,6 +60,7 @@
       clearCache();
       invalidateAll();
     }}
+    aria-label="Reload page"
   >
     <Fa icon={faRotateRight} size="1.2x" />
   </button>

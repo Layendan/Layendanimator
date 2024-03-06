@@ -92,6 +92,7 @@
                   data.episodes.forEach(episode =>
                     downloading.add(episode.id, data, '1080p', episode.number)
                   )}
+                aria-label="Download All Episodes"
               >
                 <Fa icon={faDownload} />
               </button>
@@ -113,6 +114,7 @@
                     .forEach(episode =>
                       downloading.add(episode.id, data, '1080p', episode.number)
                     )}
+                aria-label="Download Unwatched Episodes"
               >
                 <Fa icon={faCloudDownload} />
               </button>
@@ -129,6 +131,7 @@
                   subscriptions.add(data);
                 }
               }}
+              aria-label="Mark All Episodes as Watched"
             >
               <Fa icon={faClock} />
             </button>
@@ -154,6 +157,9 @@
                     on:click={() =>
                       ($settings.isEpisodeAscending =
                         !$settings.isEpisodeAscending)}
+                    aria-label="Sort Episodes by {$settings.isEpisodeAscending
+                      ? 'Descending'
+                      : 'Ascending'}"
                   >
                     <Fa
                       icon={$settings.isEpisodeAscending
@@ -169,6 +175,7 @@
                     on:click={() =>
                       ($settings.showWatchedEpisodes =
                         !$settings.showWatchedEpisodes)}
+                    aria-label="Show Watched Episodes"
                   >
                     <input
                       type="checkbox"
@@ -186,6 +193,7 @@
                       ($settings.showThumbnail = !$settings.showThumbnail)}
                     class:hidden={!$settings.showWatchedEpisodes &&
                       filteredEpisodes.length === 0}
+                    aria-label="Show Thumbnails"
                   >
                     <input
                       type="checkbox"
@@ -206,6 +214,9 @@
                         animeCache.delete(`${data.source.id}/${data.id}`);
                         invalidate(`${data.source.id}:${data.id}`);
                       }}
+                      aria-label="Change to {$settings.isSubtitles
+                        ? 'Dubbed'
+                        : 'Subbed'} Episodes"
                     >
                       <Fa icon={faLanguage} />
                       {$settings.isSubtitles ? 'Subbed' : 'Dubbed'} Episodes

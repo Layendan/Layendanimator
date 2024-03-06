@@ -17,11 +17,9 @@
     scrollY,
     scrollYCache
   } from '$lib/model/cache';
-  import Semaphore from '$lib/model/classes/Semaphore';
   import { connections } from '$lib/model/connections';
   import { createDefaultContextMenu } from '$lib/model/contextmenu';
   import { downloads } from '$lib/model/downloads';
-  import { fetchAnime } from '$lib/model/fetch';
   import { getOS } from '$lib/model/info';
   import { searchHistory } from '$lib/model/searchHistory';
   import { settings } from '$lib/model/settings';
@@ -31,6 +29,7 @@
     unwatchedSubscriptions
   } from '$lib/model/subscriptions';
   import { encodeName, toStyleString } from '$lib/model/theme';
+  import { updateSubscriptions } from '$lib/model/updates';
   import { watching } from '$lib/model/watch';
   import type { UnlistenFn } from '@tauri-apps/api/event';
   import type { OsType } from '@tauri-apps/api/os';
@@ -45,7 +44,6 @@
   });
 
   const MINUTE = 1000 * 60;
-  const semaphore = new Semaphore(5, 1000);
   let unsubscribe: NodeJS.Timeout | undefined = undefined;
   let tauriUnsubscribe: UnlistenFn;
 
@@ -123,29 +121,13 @@
 
     if (unsubscribe) clearInterval(unsubscribe);
     unsubscribe = setInterval(
-      () => {
-        const totalSubs = [
-          ...Object.values($subscriptions).filter(
-            anime =>
-              anime.status !== 'Completed' && anime.status !== 'Cancelled'
-          ),
-          ...Object.values($unwatchedSubscriptions).filter(
-            anime =>
-              anime.status !== 'Completed' && anime.status !== 'Cancelled'
-          )
-        ];
-        totalSubs.forEach(anime => {
-          semaphore.callFunction(
-            () => fetchAnime(anime.id, anime.source),
-            `${anime.source.id}/${anime.id}`
-          );
-        });
-      },
-      animeCache.ttl + MINUTE || MINUTE * 31
+      updateSubscriptions,
+      animeCache.ttl ? animeCache.ttl + MINUTE : MINUTE * 31
     );
+    updateSubscriptions();
     console.debug(
       'Subscriptions cache TTL:',
-      animeCache.ttl + MINUTE || MINUTE * 31
+      animeCache.ttl ? animeCache.ttl + MINUTE : MINUTE * 31
     );
   });
 
@@ -218,13 +200,12 @@
 >
   <NavBar />
   <main
-    class="h-full w-[calc(100%-214px-0.5rem)] overflow-y-scroll overscroll-contain rounded-md bg-base-100 shadow-xl shadow-black/40 will-change-scroll"
+    class="relative h-full w-[calc(100%-214px-0.5rem)] overflow-y-scroll overscroll-contain rounded-md bg-base-100 shadow-xl shadow-black/40 will-change-scroll"
     id="main"
     bind:this={obj}
     on:scroll={() => ($scrollY = obj.scrollTop)}
   >
+    <NotificationPile />
     <slot />
   </main>
 </span>
-
-<NotificationPile />

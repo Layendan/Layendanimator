@@ -300,6 +300,7 @@
         href="https://github.com/Layendan/NineAnimator-Tauri"
         target="_blank"
         rel="noopener noreferrer nofollow"
+        aria-label="GitHub Repository"
       >
         <Fa icon={faGithub} size="3x" />
       </a>
@@ -307,6 +308,7 @@
         href="https://discord.gg/dzTVzeW"
         target="_blank"
         rel="noopener noreferrer nofollow"
+        aria-label="Discord Server"
       >
         <Fa icon={faDiscord} size="3x" />
       </a>

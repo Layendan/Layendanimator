@@ -87,6 +87,9 @@
   class="group-one indicator flex w-[168px] select-none flex-col gap-2 focus-visible:outline-transparent lg:w-[210px]"
   class:w-[210px]={!$settings.showThumbnail}
   data-sveltekit-replacestate={replaceState ? '' : 'off'}
+  aria-label={episode.title
+    ? `${episode.title ?? 'Undefined Episode Name'} - Episode ${episode.number}`
+    : `Episode ${episode.number}`}
   on:contextmenu|stopPropagation|preventDefault={contextMenu}
 >
   {#if $settings.showThumbnail}
@@ -106,7 +109,7 @@
       <div class="pointer-events-none relative mx-1">
         <div
           style="width: {(watchedObject?.percentage ?? 0) * 100}%;"
-          class="absolute bottom-1 left-0 right-0 h-1 rounded-md bg-[--anime-color] shadow-lg shadow-black"
+          class="absolute bottom-1 left-0 right-0 h-1 rounded-md bg-[--anime-color] shadow-lg shadow-black transition-[width] delay-300 duration-1000 ease-in-out"
         />
       </div>
       {#if isNewEpisode}
@@ -145,6 +148,11 @@
           class="group-two btn btn-ghost btn-sm aspect-video h-fit"
           class:no-animation={downloadState === 'downloading'}
           on:click|stopPropagation|preventDefault={download}
+          aria-label={downloadState === 'downloading'
+            ? 'Cancel Download'
+            : downloadState === 'downloaded'
+              ? 'Remove Download'
+              : 'Download Episode'}
         >
           {#if downloadState === 'downloading'}
             {#if progress && progress < 1}

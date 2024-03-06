@@ -132,6 +132,7 @@
         class="input input-bordered input-primary w-full"
         bind:value={url}
         tabindex={hidden ? -1 : 0}
+        aria-label="Enter Source URL"
       />
       <div class="modal-action">
         <button class="btn btn-secondary" tabindex={hidden ? -1 : 0}>

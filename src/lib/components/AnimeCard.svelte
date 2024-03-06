@@ -38,6 +38,7 @@
     id={anime.id}
     style:--anime-color={anime.color ?? 'oklch(var(--a))'}
     class="group indicator flex w-[168px] flex-col gap-2 focus-visible:outline-transparent lg:w-[210px]"
+    aria-label={anime.title.english ?? anime.title.romaji}
     on:contextmenu|stopPropagation|preventDefault={contextMenu}
   >
     <div

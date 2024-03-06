@@ -16,6 +16,7 @@
   rel="noopener noreferrer nofollow"
   class="group-one flex w-32 flex-col items-center gap-2 focus-visible:outline-transparent"
   style:--anime-color={color}
+  aria-label="Character {character.name.full} - {character.name.native ?? ''}"
 >
   <div class="avatar">
     <div

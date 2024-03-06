@@ -46,6 +46,7 @@
   }}
   on:contextmenu|stopPropagation|preventDefault={contextMenu}
   bind:this={element}
+  aria-label="{source.name} Source Information"
 >
   <img src={source.logo} alt={source.name} class="mr-2 h-6 w-6 rounded-md" />
   {source.name}

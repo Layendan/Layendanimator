@@ -70,6 +70,7 @@
     class="tab"
     class:tab-active={selectedTab === 'episodes'}
     on:click={() => (selectedTab = 'episodes')}
+    aria-label="Show Episodes"
   >
     <Fa icon={faTv} />
   </button>
@@ -77,6 +78,7 @@
     class="tab"
     class:tab-active={selectedTab === 'wiki'}
     on:click={() => (selectedTab = 'wiki')}
+    aria-label="Show Anime Information"
   >
     <Fa icon={faInfoCircle} size="1.2x" />
   </button>

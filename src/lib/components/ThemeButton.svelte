@@ -60,6 +60,7 @@
     on:click={() => ($settings.theme = theme)}
     on:contextmenu|stopPropagation|preventDefault={() => contextMenu(true)}
     bind:this={element}
+    aria-label="{theme.name} Theme"
   >
     <div
       data-theme={systemTheme}
@@ -108,6 +109,7 @@
       on:click={() => ($settings.theme = theme)}
       on:contextmenu|stopPropagation|preventDefault={() => contextMenu(false)}
       bind:this={element}
+      aria-label="{theme.name} Theme"
     >
       <div
         style={toStyleString(theme.css, theme.colorScheme)}
@@ -171,6 +173,7 @@
           });
         }
       }}
+      aria-label="Delete {theme.name} Theme"
     >
       X
     </button>
@@ -184,6 +187,7 @@
     on:click={() => ($settings.theme = theme)}
     on:contextmenu|stopPropagation|preventDefault={() => contextMenu(true)}
     bind:this={element}
+    aria-label="{theme.name} Theme"
   >
     <div
       data-theme={theme.name}

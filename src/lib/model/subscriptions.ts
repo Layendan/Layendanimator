@@ -17,6 +17,7 @@ function createSubscriptions() {
     set: (subscriptions: typeof dict) => {
       set(subscriptions);
       store?.set('subscriptions', subscriptions);
+      store?.save();
     },
     add: (newAnime: Pick<Anime, 'id' | 'source'>) => {
       const anime =
@@ -68,6 +69,7 @@ function createSubscriptions() {
           lastUpdated: Date.now()
         };
         store?.set('subscriptions', subscriptions);
+        store?.save();
         return subscriptions;
       });
     },
@@ -75,6 +77,7 @@ function createSubscriptions() {
       update(subscriptions => {
         delete subscriptions[`${anime.source.id}/${anime.id}`];
         store?.set('subscriptions', subscriptions);
+        store?.save();
         return subscriptions;
       });
     },
@@ -154,6 +157,7 @@ function createUnwatchedSubscriptions() {
     set: (subscriptions: typeof dict) => {
       set(subscriptions);
       store?.set('activeSubscriptions', subscriptions);
+      store?.save();
     },
     add: (newAnime: Pick<Anime, 'id' | 'source'>, newEpisodesId: string[]) => {
       const anime =
@@ -225,6 +229,7 @@ function createUnwatchedSubscriptions() {
           'activeSubscriptions',
           convertUnwatchedSubscriptions(subscriptions)
         );
+        store?.save();
         return subscriptions;
       });
     },
@@ -236,6 +241,7 @@ function createUnwatchedSubscriptions() {
           'activeSubscriptions',
           convertUnwatchedSubscriptions(subscriptions)
         );
+        store?.save();
         return subscriptions;
       });
     },

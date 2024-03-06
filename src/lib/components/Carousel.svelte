@@ -148,6 +148,8 @@
           class="btn btn-primary flex gap-x-2 px-8"
           href="/{animes[animeIdx].source.id}/{animes[animeIdx]
             .id}?autoplay=true"
+          aria-label="Watch {animes[animeIdx].title.english ??
+            animes[animeIdx].title.romaji}"
         >
           <Fa icon={faPlayCircle} size="lg" />
           Watch
@@ -155,6 +157,8 @@
         <a
           class="btn btn-outline"
           href="/{animes[animeIdx].source.id}/{animes[animeIdx].id}"
+          aria-label="Details of {animes[animeIdx].title.english ??
+            animes[animeIdx].title.romaji}"
         >
           Details
         </a>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores';
+  import { scrollY } from '$lib/model/cache';
   import { createSourceContextMenu } from '$lib/model/contextmenu';
   import { providers, source, type Provider } from '$lib/model/source';
   import { tasks } from '$lib/model/updates';
@@ -65,12 +66,34 @@
       });
     }
   }
+
+  function focusMain() {
+    const main = document.getElementById('main');
+    if (main) {
+      const focusable = main.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstFocusable = focusable[0] as HTMLElement;
+      if (firstFocusable) {
+        firstFocusable.focus();
+        scrollY.set(0);
+        main.scrollTo(0, 0);
+      }
+    }
+  }
 </script>
 
 <nav
-  class="pointer-events-none flex h-full w-[214px] flex-col gap-2 overflow-visible !bg-transparent px-1"
+  class="pointer-events-none relative flex h-full w-[214px] flex-col gap-2 overflow-visible !bg-transparent px-1"
   data-theme={systemTheme}
 >
+  <button
+    class="btn btn-ghost pointer-events-none absolute left-2 right-2 top-2 opacity-0 focus-within:pointer-events-auto focus-within:opacity-100"
+    on:click={focusMain}
+  >
+    Main Content
+  </button>
+
   {#if window?.__TAURI__}
     <NavigationComponents />
   {/if}
@@ -123,7 +146,7 @@
         href="/{id}"
         class="btn btn-ghost btn-sm w-full flex-nowrap normal-case"
         class:transparent-base={id === $page.params.source}
-        aria-label="Change Source"
+        aria-label="Change Source - {provider.name}"
         on:click={() => source.set(provider)}
         on:contextmenu|stopPropagation|preventDefault={() =>
           contextMenu(provider)}

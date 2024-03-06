@@ -182,6 +182,7 @@
         class="input input-bordered w-full capitalize transition-colors duration-200"
         bind:value={name}
         tabindex={hidden ? -1 : 0}
+        aria-label="Enter Theme Name"
       />
 
       <label class="label" for="primary">

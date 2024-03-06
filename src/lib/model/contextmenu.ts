@@ -533,8 +533,10 @@ export async function createPlayerContextMenu(
             (await getOS()) === 'Darwin'
               ? dataUrl.split(',')[1].replace(/=/g, '')
               : dataUrl.split(',')[1];
-          const { writeImage } = await import('tauri-plugin-clipboard-api');
-          await writeImage(data);
+          const { writeImageBase64 } = await import(
+            'tauri-plugin-clipboard-api'
+          );
+          await writeImageBase64(data);
           //   notifications.addNotification({
           //     title: 'Copied',
           //     message: 'Copied video frame to clipboard'

@@ -13,17 +13,11 @@
     MediaTimeSliderElement,
     MediaVolumeSliderElement
   } from 'vidstack/elements';
-  // Register elements.
-  import 'vidstack/player';
-  import 'vidstack/player/layouts';
-  import 'vidstack/player/ui';
   // Import styles.
-  import { encodeAnimeLink } from '$lib/model/source';
   import { createPlayerContextMenu } from '$lib/model/contextmenu';
+  import { encodeAnimeLink } from '$lib/model/source';
   import { showMenu } from 'tauri-plugin-context-menu';
-  // !!!!! IMPORTANT !!!!! KEEP THIS ORDER !!!!! Theme -> Layout
-  import 'vidstack/player/styles/default/theme.css';
-  import 'vidstack/player/styles/default/layouts/video.css';
+  import 'vidstack/bundle';
   import PlayerContextMenu from './PlayerContextMenu.svelte';
 
   export let episodeData: EpisodeData;
@@ -40,6 +34,10 @@
 
   $: watchedObject =
     $watching[`${anime.source.id}/${anime.id}`]?.watchedEpisodes[episode.id];
+
+  $: $settings.preferNativeHls
+    ? player?.setAttribute('prefer-native-hls', '')
+    : player?.removeAttribute('prefer-native-hls');
 
   const thumbnails = episodeData?.subtitles?.find(
     track => track.lang.toLowerCase() === 'thumbnails'
@@ -218,6 +216,10 @@
       }
     );
 
+    player?.addEventListener('can-play', () => {
+      player?.play();
+    });
+
     if (player) {
       player.volume = $settings.playerVolume;
       player.muted = $settings.playerMuted;
@@ -317,7 +319,7 @@
     preload="metadata"
     {disableRemotePlayback}
     autoplay
-    prefer-native-hls
+    prefer-native-hls={$settings.preferNativeHls}
     stream-type="on-demand"
     load="eager"
     view-type="video"

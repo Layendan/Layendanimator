@@ -82,6 +82,7 @@ export async function fetchTrendingAnime(
     cover: anime.cover,
     color: anime.color,
     isAdult: anime.isAdult,
+    trailer: anime.trailer,
     source: {
       id: userSource.id,
       name: userSource.name,

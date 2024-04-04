@@ -187,6 +187,42 @@
           }}
         />
 
+        <!-- Background Video -->
+        <label class="label w-fit" for="backgroundVideo">
+          <span class="label-text"> Play Background Videos </span>
+        </label>
+        <input
+          type="checkbox"
+          id="backgroundVideo"
+          class="toggle toggle-accent"
+          checked={$settings.playVideoInBackground}
+          on:change={async () =>
+            ($settings.playVideoInBackground =
+              !$settings.playVideoInBackground)}
+        />
+
+        <!-- Airplay -->
+        <label class="label w-fit" for="preferNativeHls">
+          <span class="label-text">
+            Use Native HLS for Airplay
+            <br />
+            <i
+              class="inline-flex items-center rounded-md bg-warning px-1 py-[0.1rem] text-xs text-warning-content shadow-md"
+            >
+              <Fa icon={faInfoCircle} class="mr-1" />
+              macos only
+            </i>
+          </span>
+        </label>
+        <input
+          type="checkbox"
+          id="preferNativeHls"
+          class="toggle toggle-accent"
+          checked={$settings.preferNativeHls}
+          on:change={async () =>
+            ($settings.preferNativeHls = !$settings.preferNativeHls)}
+        />
+
         <!-- Subscription Sorting Algorithm -->
         <label class="label w-fit" for="subSort">
           <span class="label-text">Subscriptions Anime Sorting</span>

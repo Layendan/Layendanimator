@@ -7,7 +7,10 @@
   import { showMenu } from 'tauri-plugin-context-menu';
   import AnimeContextMenu from './AnimeContextMenu.svelte';
 
-  export let anime: Pick<Anime, 'id' | 'title' | 'image' | 'source'> &
+  export let anime: Pick<
+    Anime,
+    'id' | 'title' | 'image' | 'source' | 'trailer'
+  > &
     Partial<Anime>;
   export let numUpdates = 0;
   export let extra = '';

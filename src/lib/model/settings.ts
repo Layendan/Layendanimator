@@ -30,12 +30,15 @@ export type SettingsType = {
 
   discordRPC: 'enabled' | 'disabled'; // TODO: Update when watch2gether is added
 
+  playVideoInBackground: boolean;
+
   isEpisodeAscending: boolean;
   showWatchedEpisodes: boolean;
   showThumbnail: boolean;
 
   playerVolume: number;
   playerMuted: boolean;
+  preferNativeHls: boolean;
 
   theme: Theme;
   themes: {
@@ -56,11 +59,13 @@ const defaultSettings: SettingsType = {
   showAllSubscriptions: false,
   sortSubscriptions: 'timeAdded',
   discordRPC: 'enabled',
+  playVideoInBackground: true,
   isEpisodeAscending: true,
   showWatchedEpisodes: true,
   showThumbnail: true,
   playerVolume: 1,
   playerMuted: false,
+  preferNativeHls: true,
   theme: defaultThemes.system,
   themes: defaultThemes,
   version: '0.0.0'

@@ -10,6 +10,7 @@
     faDownload,
     faFileCircleCheck
   } from '@fortawesome/free-solid-svg-icons';
+  import { sanitize } from 'isomorphic-dompurify';
   import Fa from 'svelte-fa';
   import { fade } from 'svelte/transition';
   import { showMenu } from 'tauri-plugin-context-menu';
@@ -133,7 +134,14 @@
         <h3
           class="text-md line-clamp-2 overflow-hidden overflow-ellipsis whitespace-normal font-bold leading-tight transition-colors duration-200 group-hover:text-[--anime-color] group-one-focus-visible:text-[--anime-color]"
         >
-          {episode.title || `Episode ${episode.number}`}
+          <!-- Remove all html tags since title should not contain anything, 
+            have to use @html to add zero width space after / -->
+          {@html sanitize(
+            episode.title
+              ?.replaceAll(/<[^>]*>/g, '')
+              .replaceAll('/', '/&ZeroWidthSpace;') ||
+              `Episode ${episode.number}`
+          )}
         </h3>
         {#if episode.title && episode.number}
           <h2

@@ -15,14 +15,22 @@
   import { fade } from 'svelte/transition';
   import { showMenu } from 'tauri-plugin-context-menu';
   import AnimeContextMenu from './AnimeContextMenu.svelte';
+  import CarouselPlayer from './CarouselPlayer.svelte';
 
   export let animes: Pick<
     Anime,
-    'id' | 'title' | 'description' | 'image' | 'cover' | 'source' | 'status'
+    | 'id'
+    | 'title'
+    | 'description'
+    | 'image'
+    | 'cover'
+    | 'source'
+    | 'status'
+    | 'trailer'
   >[];
   export let source: Provider;
   export let fadeSpeed = 300;
-  export let transitionTime = 10_000;
+  export let transitionTime = $settings.playVideoInBackground ? 30_000 : 15_000;
   export let display: 'rails' | 'arrows' = 'arrows';
   $: animeIdx = ($carouselPage[source.id] ?? 0) % (animes.length - 1);
   $: tempId = animeIdx;
@@ -106,19 +114,27 @@
   on:contextmenu|stopPropagation|preventDefault={contextMenu}
 >
   {#key animeIdx}
-    <img
-      in:fade
-      src={imageLoaded
-        ? animes[animeIdx].cover
-        : '/assets/loading_failure.jpeg'}
-      alt={animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
-      on:error|once={() => (imageLoaded = false)}
-      on:load|once={() => (skeleton = false)}
-      class="h-[60vh] w-full object-cover
-    {doFade ? 'motion-safe:opacity-0 ' : 'motion-safe:opacity-100 '}
-     transition-opacity duration-300 ease-in-out"
-      class:skeleton
-    />
+    {#if $settings.playVideoInBackground && animes[animeIdx].trailer && animes[animeIdx].trailer?.site === 'youtube'}
+      <CarouselPlayer
+        id={animes[animeIdx].trailer?.id ?? ''}
+        thumbnail={animes[animeIdx].cover}
+        {doFade}
+      />
+    {:else}
+      <img
+        in:fade
+        src={imageLoaded
+          ? animes[animeIdx].cover
+          : '/assets/loading_failure.jpeg'}
+        alt={animes[animeIdx].title.english ?? animes[animeIdx].title.romaji}
+        on:error|once={() => (imageLoaded = false)}
+        on:load|once={() => (skeleton = false)}
+        class="h-[60vh] w-full object-cover
+      {doFade ? 'motion-safe:opacity-0 ' : 'motion-safe:opacity-100 '}
+      transition-opacity duration-300 ease-in-out"
+        class:skeleton
+      />
+    {/if}
   {/key}
   <div class="scrim pointer-events-none absolute inset-0" />
   <div

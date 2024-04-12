@@ -216,10 +216,6 @@
       }
     );
 
-    player?.addEventListener('can-play', () => {
-      player?.play();
-    });
-
     if (player) {
       player.volume = $settings.playerVolume;
       player.muted = $settings.playerMuted;

@@ -12,14 +12,6 @@
   let isPlaying = false;
 
   onMount(() => {
-    player?.addEventListener(
-      'can-play',
-      () => {
-        if (document.visibilityState === 'visible') player?.play();
-      },
-      { once: true }
-    );
-
     player?.addEventListener('playing', () => {
       isPlaying = true;
     });
@@ -52,6 +44,7 @@
     load="eager"
     muted
     autoplay
+    disablePictureInPicture
     bind:this={player}
   >
     <media-provider> </media-provider>

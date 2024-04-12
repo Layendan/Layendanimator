@@ -292,7 +292,7 @@ export const defaultProviders: { [key: string]: Provider } = {
         const url = new URL(
           `https://consumet-api-idyailhnsq-uc.a.run.app/meta/anilist/info/${id}`
         );
-        url.searchParams.set('provider', 'enime');
+        url.searchParams.set('provider', 'kickassanime');
         url.searchParams.set('dub', String(!isSub));
         url.searchParams.set('fetchFiller', String(isFiller));
         const res = await fetch(url.toString());
@@ -308,7 +308,7 @@ export const defaultProviders: { [key: string]: Provider } = {
       }).toString(),
       fetchEpisodes: (async (id: string) => {
         const res = await fetch(
-          `https://consumet-api-idyailhnsq-uc.a.run.app/meta/anilist/watch/${id}?provider=enime`
+          `https://consumet-api-idyailhnsq-uc.a.run.app/meta/anilist/watch/${id}?provider=kickassanime`
         );
         const episode: EpisodeData = await res.json();
         return episode;

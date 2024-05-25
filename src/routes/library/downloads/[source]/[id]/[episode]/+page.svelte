@@ -39,7 +39,6 @@
     poster={data.episodeObject.image ?? data.anime.image}
     anime={data.anime}
     episode={data.episodeObject}
-    disableRemotePlayback
     on:requestNextEpisode={async ({ detail }) => {
       await (data.nextEpisode
         ? goto(

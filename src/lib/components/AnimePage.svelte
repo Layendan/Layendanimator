@@ -84,22 +84,6 @@
           {#if showDownload && window?.__TAURI__}
             <div
               class="tooltip tooltip-bottom"
-              data-tip="Download All Episodes"
-            >
-              <button
-                class="btn"
-                on:click={() =>
-                  data.episodes.forEach(episode =>
-                    downloading.add(episode.id, data, '1080p', episode.number)
-                  )}
-                aria-label="Download All Episodes"
-              >
-                <Fa icon={faDownload} />
-              </button>
-            </div>
-
-            <div
-              class="tooltip tooltip-bottom"
               data-tip="Download Unwatched Episodes"
             >
               <button
@@ -116,7 +100,7 @@
                     )}
                 aria-label="Download Unwatched Episodes"
               >
-                <Fa icon={faCloudDownload} />
+                <Fa icon={faDownload} />
               </button>
             </div>
           {/if}

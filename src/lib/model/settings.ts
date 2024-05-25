@@ -67,7 +67,7 @@ const defaultSettings: SettingsType = {
   playerMuted: false,
   preferNativeHls: true,
   theme: defaultThemes.system,
-  themes: defaultThemes,
+  themes: Object.create(defaultThemes),
   version: '0.0.0'
 };
 
@@ -75,7 +75,9 @@ const defaultSettings: SettingsType = {
 Object.freeze(defaultSettings);
 
 function createSettings() {
-  const { subscribe, set, update } = writable<SettingsType>(defaultSettings);
+  const { subscribe, set, update } = writable<SettingsType>(
+    Object.create(defaultSettings)
+  );
   return {
     subscribe,
     update: (fn: (settings: SettingsType) => SettingsType) => {
@@ -281,7 +283,7 @@ export const tauriData: {
         settings.update(settings => {
           const newSettings = { ...settings };
           newSettings.theme = defaultThemes.system;
-          newSettings.themes = defaultThemes;
+          newSettings.themes = Object.create(defaultThemes);
           return newSettings;
         });
       }

@@ -8,6 +8,7 @@ import {
   trendingAnimes
 } from '$lib/model/cache';
 import type { Anime, EpisodeData, RecentAnime } from '$lib/model/classes/Anime';
+import { ANIME, META } from '@consumet/extensions';
 import { error } from '@sveltejs/kit';
 import { get } from 'svelte/store';
 import Semaphore from './classes/Semaphore';
@@ -68,6 +69,53 @@ export async function fetchTrendingAnime(
   if (!userSource?.scripts?.fetchTrendingAnime)
     error(500, 'Source script not found');
 
+  let provider;
+
+  switch (source.id) {
+    case 'gogoanime':
+      provider = new ANIME.Gogoanime();
+      break;
+    case 'zoro':
+      provider = new ANIME.Zoro();
+      break;
+  }
+
+  if (provider) {
+    const metaProvider = new META.Anilist(provider);
+    const trendingRes = (
+      await metaProvider.fetchTrendingAnime(page, perPage)
+    ).results.map(anime => ({
+      id: anime.id,
+      title: anime.title,
+      description: anime.description,
+      image: anime.image,
+      cover: anime.cover,
+      color: anime.color,
+      isAdult: anime.isAdult,
+      trailer: anime.trailer,
+      source: {
+        id: userSource.id,
+        name: userSource.name,
+        url: userSource.url,
+        shareLinks: userSource.shareLinks
+      }
+    })) as Anime[];
+
+    const animesRes = [
+      ...(trendingAnimes.get(source.id) ?? []),
+      ...trendingRes
+    ].filter(
+      (anime, index, self) =>
+        index === self.findIndex(({ id }) => id === anime.id)
+    );
+    trendingAnimes.set(source.id, animesRes);
+    carouselPage.update(page => ({
+      ...page,
+      [source.id]: 0
+    }));
+    return trendingRes;
+  }
+
   const results = await safeEval<Anime[]>(
     userSource.scripts.fetchTrendingAnime,
     {
@@ -112,6 +160,46 @@ export async function fetchPopularAnime(
   if (!userSource?.scripts?.fetchPopularAnime)
     error(500, 'Source script not found');
 
+  let provider;
+
+  switch (source.id) {
+    case 'gogoanime':
+      provider = new ANIME.Gogoanime();
+      break;
+    case 'zoro':
+      provider = new ANIME.Zoro();
+      break;
+  }
+
+  if (provider) {
+    const metaProvider = new META.Anilist(provider);
+    const popularRes = (
+      await metaProvider.fetchPopularAnime(page, perPage)
+    ).results.map(anime => ({
+      id: anime.id,
+      title: anime.title,
+      image: anime.image,
+      color: anime.color,
+      isAdult: anime.isAdult,
+      source: {
+        id: userSource.id,
+        name: userSource.name,
+        url: userSource.url,
+        shareLinks: userSource.shareLinks
+      }
+    })) as Anime[];
+
+    const animesRes = [
+      ...(popularAnimes.get(source.id) ?? []),
+      ...popularRes
+    ].filter(
+      (anime, index, self) =>
+        index === self.findIndex(({ id }) => id === anime.id)
+    );
+    popularAnimes.set(source.id, animesRes);
+    return popularRes;
+  }
+
   const results = await safeEval<Anime[]>(
     userSource.scripts.fetchPopularAnime,
     {
@@ -148,7 +236,122 @@ export async function fetchAnime(
   if (!userSource?.scripts?.fetchAnimeInfo)
     error(500, 'Source script not found');
 
+  let provider;
+
+  switch (source.id) {
+    case 'gogoanime':
+      provider = new ANIME.Gogoanime();
+      break;
+    case 'zoro':
+      provider = new ANIME.Zoro();
+      break;
+  }
+
   const { isSubtitles, filler } = get(settings);
+
+  if (provider) {
+    const metaProvider = new META.Anilist(provider);
+    const res = (await metaProvider.fetchAnimeInfo(
+      id,
+      !isSubtitles,
+      filler
+    )) as Anime;
+
+    const anime: Anime = {
+      id: res.id,
+      title: res.title,
+      description: res.description,
+      image: res.image,
+      cover: res.cover,
+      color: res.color,
+      isAdult: res.isAdult,
+      episodes: res.episodes.map(episode => ({
+        id: episode.id,
+        title: episode.title,
+        description: episode.description,
+        image: episode.image,
+        number: episode.number
+      })),
+      status: res.status,
+      nextAiringEpisode: res.nextAiringEpisode,
+      rating: res.rating,
+      genres: res.genres,
+      season: res.season,
+      subOrDub: res.subOrDub,
+      type: res.type,
+      characters: res.characters,
+      recommendations: (res.recommendations ?? []).map(r => ({
+        ...r,
+        source: {
+          id: userSource.id,
+          name: userSource.name,
+          url: userSource.url,
+          shareLinks: userSource.shareLinks
+        }
+      })),
+      relations: (res.relations ?? []).map(r => ({
+        ...r,
+        source: {
+          id: userSource.id,
+          name: userSource.name,
+          url: userSource.url,
+          shareLinks: userSource.shareLinks
+        }
+      })),
+      source: {
+        id: userSource.id,
+        name: userSource.name,
+        url: userSource.url,
+        shareLinks: userSource.shareLinks
+      }
+    };
+
+    animeCache.set(`${source.id}/${id}`, anime);
+
+    const sub = get(subscriptions)[`${anime.source.id}/${anime.id}`];
+    const unwatched = get(unwatchedSubscriptions)[
+      `${anime.source.id}/${anime.id}`
+    ];
+    if (sub && sub.episodes !== undefined) {
+      if (sub.episodes.length < anime.episodes.length) {
+        subscriptions.remove(anime);
+        unwatchedSubscriptions.add(
+          anime,
+          anime.episodes
+            .slice(-(anime.episodes.length - sub.episodes.length))
+            .map(({ id }) => id)
+        );
+      } else {
+        subscriptions.updateDate({
+          ...anime,
+          nextAiringEpisode: anime.nextAiringEpisode
+            ? sub.nextAiringEpisode ?? anime.nextAiringEpisode
+            : undefined,
+          status: sub.status ?? anime.status
+        });
+      }
+    } else if (unwatched && unwatched.episodes !== undefined) {
+      if (unwatched.episodes.length < anime.episodes.length)
+        unwatchedSubscriptions.add(anime, [
+          ...anime.episodes
+            .slice(-(anime.episodes.length - unwatched.episodes.length))
+            .map(({ id }) => id),
+          ...Array.from(unwatched.newEpisodes)
+        ]);
+      else {
+        unwatchedSubscriptions.updateDate({
+          ...anime,
+          nextAiringEpisode: anime.nextAiringEpisode
+            ? unwatched.nextAiringEpisode ?? anime.nextAiringEpisode
+            : undefined,
+          status: unwatched.status ?? anime.status
+        });
+      }
+    }
+
+    return anime;
+  }
+
   const res: Anime = await safeEval<Anime>(userSource.scripts.fetchAnimeInfo, {
     args: [id, isSubtitles, filler]
   });
@@ -263,6 +466,44 @@ export async function fetchEpisode(id: string, source: Anime['source']) {
   if (!userSource?.scripts?.fetchEpisodes)
     error(500, 'Source script not found');
 
+  let provider;
+
+  const { axiosTauriApiAdapter } = await import('axios-tauri-api-adapter');
+  switch (source.id) {
+    case 'gogoanime':
+      provider = new ANIME.Gogoanime(
+        undefined,
+        undefined,
+        axiosTauriApiAdapter
+      );
+      break;
+    case 'zoro':
+      provider = new ANIME.Zoro();
+      break;
+  }
+
+  if (provider) {
+    // provider.setProxy({ url: 'https://corsproxy.io/?' });
+    const metaProvider = new META.Anilist(provider);
+
+    metaProvider.setAxiosAdapter(axiosTauriApiAdapter);
+    provider.setAxiosAdapter(axiosTauriApiAdapter);
+
+    const res = (await metaProvider.fetchEpisodeSources(id)) as EpisodeData;
+
+    if (res) {
+      episodeCache.set(`${source.id}/${id}`, res);
+      return res;
+    } else {
+      notifications.addNotification({
+        title: 'Episode could not be found',
+        message: `The episode with id ${id} was not found.`,
+        type: 'error'
+      });
+      error(404, 'Episode not found');
+    }
+  }
+
   const episode = await safeEval<EpisodeData>(
     userSource.scripts.fetchEpisodes,
     {
@@ -293,6 +534,37 @@ export async function fetchSearch(
   const userSource = get(providers)[source.id];
 
   if (!userSource?.scripts?.search) error(500, 'Source script not found');
+
+  let provider;
+
+  switch (source.id) {
+    case 'gogoanime':
+      provider = new ANIME.Gogoanime();
+      break;
+    case 'zoro':
+      provider = new ANIME.Zoro();
+      break;
+  }
+
+  if (provider) {
+    const metaProvider = new META.Anilist(provider);
+    const results = (
+      await metaProvider.search(query, page, perPage)
+    ).results.map(anime => ({
+      ...anime,
+      source
+    })) as Anime[];
+
+    const animes = [
+      ...(get(searchCache)[source.id]?.get(query) ?? []),
+      ...results
+    ].filter(
+      (anime, index, self) =>
+        index === self.findIndex(({ id }) => id === anime.id)
+    );
+    get(searchCache)[source.id]?.set(query, animes);
+    return results;
+  }
 
   const results = (
     await safeEval<Anime[]>(userSource.scripts.search, {

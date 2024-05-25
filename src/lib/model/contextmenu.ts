@@ -198,7 +198,7 @@ export function createAnimeCardContextMenu(anime: Anime, isDownload: boolean) {
       label: 'Downloads',
       subitems: [
         {
-          label: 'Download Episodes',
+          label: 'Download All Episodes',
           event: async () => {
             const res =
               animeCache.get(`${anime.source.id}/${anime.id}`) ??
@@ -224,6 +224,45 @@ export function createAnimeCardContextMenu(anime: Anime, isDownload: boolean) {
               downloading.add(episode.id, res, '1080p', episode.number)
             );
           }
+        },
+        {
+          label: 'Download Unwatched',
+          event: async () => {
+            const res =
+              animeCache.get(`${anime.source.id}/${anime.id}`) ??
+              (await fetchAnime(anime.id, anime.source));
+            if (!res) {
+              notifications.addNotification({
+                title: 'Error',
+                message: 'Could not find anime',
+                type: 'error'
+              });
+              throw new Error('Could not find anime');
+            }
+
+            notifications.addNotification({
+              title: 'Downloading episodes...',
+              message: `Downloading episodes for ${
+                res.title.english ?? res.title.romaji
+              }`,
+              type: 'info'
+            });
+
+            res.episodes
+              .filter(
+                episode =>
+                  (get(watching)[`${res.source.id}/${res.id}`]?.watchedEpisodes[
+                    episode.id
+                  ]?.percentage ?? 0) < 0.8
+              )
+              .forEach(episode =>
+                downloading.add(episode.id, res, '1080p', episode.number)
+              );
+          }
+        },
+        {
+          label: '',
+          is_separator: true
         },
         {
           label: 'Remove Downloads',

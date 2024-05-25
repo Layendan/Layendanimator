@@ -17,15 +17,31 @@
   let hidden = true;
 
   let name = '';
-  let primary = '';
-  let secondary = '';
-  let accent = '';
-  let neutral = '';
-  let bg = '';
-  let info = '';
-  let success = '';
-  let warning = '';
-  let error = '';
+  let primary = $settings.theme.css
+    ? OKLCHToHex($settings.theme.css.p)
+    : '#661AE6';
+  let secondary = $settings.theme.css
+    ? OKLCHToHex($settings.theme.css.s)
+    : '#D926AA';
+  let accent = $settings.theme.css
+    ? OKLCHToHex($settings.theme.css.a)
+    : '#1FB2A5';
+  let neutral = $settings.theme.css
+    ? OKLCHToHex($settings.theme.css.n)
+    : '#2A323C';
+  let bg = $settings.theme.css ? OKLCHToHex($settings.theme.css.b1) : '#1D232A';
+  let info = $settings.theme.css?.in
+    ? OKLCHToHex($settings.theme.css.in)
+    : '#3ABFF8';
+  let success = $settings.theme.css?.su
+    ? OKLCHToHex($settings.theme.css.su)
+    : '#36D399';
+  let warning = $settings.theme.css?.wa
+    ? OKLCHToHex($settings.theme.css.wa)
+    : '#FBBD23';
+  let error = $settings.theme.css?.er
+    ? OKLCHToHex($settings.theme.css.er)
+    : '#F87272';
 
   const testHex = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
 
@@ -158,15 +174,31 @@
       $settings.theme = theme;
 
       name = '';
-      primary = '';
-      secondary = '';
-      accent = '';
-      neutral = '';
-      bg = '';
-      info = '';
-      success = '';
-      warning = '';
-      error = '';
+      primary = $settings.theme.css
+        ? OKLCHToHex($settings.theme.css.p)
+        : '#661AE6';
+      secondary = $settings.theme.css
+        ? OKLCHToHex($settings.theme.css.s)
+        : '#D926AA';
+      accent = $settings.theme.css
+        ? OKLCHToHex($settings.theme.css.a)
+        : '#1FB2A5';
+      neutral = $settings.theme.css
+        ? OKLCHToHex($settings.theme.css.n)
+        : '#2A323C';
+      bg = $settings.theme.css ? OKLCHToHex($settings.theme.css.b1) : '#1D232A';
+      info = $settings.theme.css?.in
+        ? OKLCHToHex($settings.theme.css.in)
+        : '#3ABFF8';
+      success = $settings.theme.css?.su
+        ? OKLCHToHex($settings.theme.css.su)
+        : '#36D399';
+      warning = $settings.theme.css?.wa
+        ? OKLCHToHex($settings.theme.css.wa)
+        : '#FBBD23';
+      error = $settings.theme.css?.er
+        ? OKLCHToHex($settings.theme.css.er)
+        : '#F87272';
     }}
   >
     <h1 class="mb-4 text-2xl font-bold">Create a New Theme</h1>
@@ -179,7 +211,7 @@
         id="name"
         placeholder="My Theme"
         required
-        class="input input-bordered w-full capitalize transition-colors duration-200"
+        class="input input-bordered w-full capitalize"
         bind:value={name}
         tabindex={hidden ? -1 : 0}
         aria-label="Enter Theme Name"
@@ -188,176 +220,240 @@
       <label class="label" for="primary">
         <span class="label-text">Primary Color</span>
       </label>
-      <input
-        type="text"
-        id="primary"
-        placeholder={$settings.theme.css
-          ? OKLCHToHex($settings.theme.css.p)
-          : '#661AE6'}
-        required
-        pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--p={testHex.test(primary)
-          ? getOklch(hexToOklch(primary))
-          : 'var(--primary)'}
-        class="input input-sm input-bordered input-primary w-full uppercase transition-colors duration-200"
-        bind:value={primary}
-        tabindex={hidden ? -1 : 0}
-      />
+      <span class="inline-flex items-center gap-2">
+        <input
+          type="color"
+          class="aspect-square h-8 w-8 cursor-pointer rounded-lg bg-transparent"
+          bind:value={primary}
+        />
+        <input
+          type="text"
+          id="primary"
+          placeholder={$settings.theme.css
+            ? OKLCHToHex($settings.theme.css.p)
+            : '#661AE6'}
+          required
+          pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
+          style:--p={testHex.test(primary)
+            ? getOklch(hexToOklch(primary))
+            : 'var(--primary)'}
+          class="input input-sm input-bordered input-primary w-full uppercase"
+          bind:value={primary}
+          tabindex={hidden ? -1 : 0}
+        />
+      </span>
 
       <label class="label" for="secondary">
         <span class="label-text">Secondary Color</span>
       </label>
-      <input
-        type="text"
-        id="secondary"
-        placeholder={$settings.theme.css
-          ? OKLCHToHex($settings.theme.css.s)
-          : '#D926AA'}
-        required
-        pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--s={testHex.test(secondary)
-          ? getOklch(hexToOklch(secondary))
-          : 'var(--secondary)'}
-        class="input input-sm input-bordered input-secondary w-full uppercase transition-colors duration-200"
-        bind:value={secondary}
-        tabindex={hidden ? -1 : 0}
-      />
+      <span class="inline-flex items-center gap-2">
+        <input
+          type="color"
+          class="aspect-square h-8 w-8 cursor-pointer rounded-lg bg-transparent"
+          bind:value={secondary}
+        />
+        <input
+          type="text"
+          id="secondary"
+          placeholder={$settings.theme.css
+            ? OKLCHToHex($settings.theme.css.s)
+            : '#D926AA'}
+          required
+          pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
+          style:--s={testHex.test(secondary)
+            ? getOklch(hexToOklch(secondary))
+            : 'var(--secondary)'}
+          class="input input-sm input-bordered input-secondary w-full uppercase"
+          bind:value={secondary}
+          tabindex={hidden ? -1 : 0}
+        />
+      </span>
 
       <label class="label" for="accent">
         <span class="label-text">Accent Color</span>
       </label>
-      <input
-        type="text"
-        id="accent"
-        placeholder={$settings.theme.css
-          ? OKLCHToHex($settings.theme.css.a)
-          : '#1FB2A5'}
-        required
-        pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--a={testHex.test(accent)
-          ? getOklch(hexToOklch(accent))
-          : 'var(--accent)'}
-        class="input input-sm input-bordered input-accent w-full uppercase transition-colors duration-200"
-        bind:value={accent}
-        tabindex={hidden ? -1 : 0}
-      />
+      <span class="inline-flex items-center gap-2">
+        <input
+          type="color"
+          class="aspect-square h-8 w-8 cursor-pointer rounded-lg bg-transparent"
+          bind:value={accent}
+        />
+        <input
+          type="text"
+          id="accent"
+          placeholder={$settings.theme.css
+            ? OKLCHToHex($settings.theme.css.a)
+            : '#1FB2A5'}
+          required
+          pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
+          style:--a={testHex.test(accent)
+            ? getOklch(hexToOklch(accent))
+            : 'var(--accent)'}
+          class="input input-sm input-bordered input-accent w-full uppercase"
+          bind:value={accent}
+          tabindex={hidden ? -1 : 0}
+        />
+      </span>
 
       <label class="label" for="neutral">
         <span class="label-text">Neutral Color</span>
       </label>
-      <input
-        type="text"
-        id="neutral"
-        placeholder={$settings.theme.css
-          ? OKLCHToHex($settings.theme.css.n)
-          : '#2A323C'}
-        required
-        pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--p={testHex.test(neutral)
-          ? getOklch(hexToOklch(neutral))
-          : 'var(--neutral)'}
-        class="input input-sm input-primary w-full uppercase transition-colors duration-200"
-        bind:value={neutral}
-        tabindex={hidden ? -1 : 0}
-      />
+      <span class="inline-flex items-center gap-2">
+        <input
+          type="color"
+          class="aspect-square h-8 w-8 cursor-pointer rounded-lg bg-transparent"
+          bind:value={neutral}
+        />
+        <input
+          type="text"
+          id="neutral"
+          placeholder={$settings.theme.css
+            ? OKLCHToHex($settings.theme.css.n)
+            : '#2A323C'}
+          required
+          pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
+          style:--p={testHex.test(neutral)
+            ? getOklch(hexToOklch(neutral))
+            : 'var(--neutral)'}
+          class="input input-sm input-primary w-full uppercase"
+          bind:value={neutral}
+          tabindex={hidden ? -1 : 0}
+        />
+      </span>
 
       <label class="label" for="bg">
         <span class="label-text">Background Color</span>
       </label>
-      <input
-        type="text"
-        id="bg"
-        placeholder={$settings.theme.css
-          ? OKLCHToHex($settings.theme.css.b1)
-          : '#1D232A'}
-        required
-        pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--p={testHex.test(bg) ? getOklch(hexToOklch(bg)) : 'var(--bg)'}
-        class="input input-sm input-primary w-full uppercase transition-colors duration-200"
-        bind:value={bg}
-        tabindex={hidden ? -1 : 0}
-      />
+      <span class="inline-flex items-center gap-2">
+        <input
+          type="color"
+          class="aspect-square h-8 w-8 cursor-pointer rounded-lg bg-transparent"
+          bind:value={bg}
+        />
+        <input
+          type="text"
+          id="bg"
+          placeholder={$settings.theme.css
+            ? OKLCHToHex($settings.theme.css.b1)
+            : '#1D232A'}
+          required
+          pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
+          style:--p={testHex.test(bg) ? getOklch(hexToOklch(bg)) : 'var(--bg)'}
+          class="input input-sm input-primary w-full uppercase"
+          bind:value={bg}
+          tabindex={hidden ? -1 : 0}
+        />
+      </span>
 
       <label class="label" for="info">
         <span class="label-text">
           Info Color <i class="text-xs">(optional)</i>
         </span>
       </label>
-      <input
-        type="text"
-        id="info"
-        placeholder={$settings.theme.css?.in
-          ? OKLCHToHex($settings.theme.css.in)
-          : '#3ABFF8'}
-        pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--in={testHex.test(info)
-          ? getOklch(hexToOklch(info))
-          : 'var(--info)'}
-        class="input input-sm input-info w-full uppercase transition-colors duration-200"
-        bind:value={info}
-        tabindex={hidden ? -1 : 0}
-      />
+      <span class="inline-flex items-center gap-2">
+        <input
+          type="color"
+          class="aspect-square h-8 w-8 cursor-pointer rounded-lg bg-transparent"
+          bind:value={info}
+        />
+        <input
+          type="text"
+          id="info"
+          placeholder={$settings.theme.css?.in
+            ? OKLCHToHex($settings.theme.css.in)
+            : '#3ABFF8'}
+          pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
+          style:--in={testHex.test(info)
+            ? getOklch(hexToOklch(info))
+            : 'var(--info)'}
+          class="input input-sm input-info w-full uppercase"
+          bind:value={info}
+          tabindex={hidden ? -1 : 0}
+        />
+      </span>
 
       <label class="label" for="success">
         <span class="label-text">
           Success Color <i class="text-xs">(optional)</i>
         </span>
       </label>
-      <input
-        type="text"
-        id="success"
-        placeholder={$settings.theme.css?.su
-          ? OKLCHToHex($settings.theme.css.su)
-          : '#36D399'}
-        pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--su={testHex.test(success)
-          ? getOklch(hexToOklch(success))
-          : 'var(--success)'}
-        class="input input-sm input-success w-full uppercase transition-colors duration-200"
-        bind:value={success}
-        tabindex={hidden ? -1 : 0}
-      />
+      <span class="inline-flex items-center gap-2">
+        <input
+          type="color"
+          class="aspect-square h-8 w-8 cursor-pointer rounded-lg bg-transparent"
+          bind:value={success}
+        />
+        <input
+          type="text"
+          id="success"
+          placeholder={$settings.theme.css?.su
+            ? OKLCHToHex($settings.theme.css.su)
+            : '#36D399'}
+          pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
+          style:--su={testHex.test(success)
+            ? getOklch(hexToOklch(success))
+            : 'var(--success)'}
+          class="input input-sm input-success w-full uppercase"
+          bind:value={success}
+          tabindex={hidden ? -1 : 0}
+        />
+      </span>
 
       <label class="label" for="warning">
         <span class="label-text">
           Warning Color <i class="text-xs">(optional)</i>
         </span>
       </label>
-      <input
-        type="text"
-        id="warning"
-        placeholder={$settings.theme.css?.wa
-          ? OKLCHToHex($settings.theme.css.wa)
-          : '#FBBD23'}
-        pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--wa={testHex.test(warning)
-          ? getOklch(hexToOklch(warning))
-          : 'var(--warning)'}
-        class="input input-sm input-warning w-full uppercase transition-colors duration-200"
-        bind:value={warning}
-        tabindex={hidden ? -1 : 0}
-      />
+      <span class="inline-flex items-center gap-2">
+        <input
+          type="color"
+          class="aspect-square h-8 w-8 cursor-pointer rounded-lg bg-transparent"
+          bind:value={warning}
+        />
+        <input
+          type="text"
+          id="warning"
+          placeholder={$settings.theme.css?.wa
+            ? OKLCHToHex($settings.theme.css.wa)
+            : '#FBBD23'}
+          pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
+          style:--wa={testHex.test(warning)
+            ? getOklch(hexToOklch(warning))
+            : 'var(--warning)'}
+          class="input input-sm input-warning w-full uppercase"
+          bind:value={warning}
+          tabindex={hidden ? -1 : 0}
+        />
+      </span>
 
       <label class="label" for="error">
         <span class="label-text">
           Error Color <i class="text-xs">(optional)</i>
         </span>
       </label>
-      <input
-        type="text"
-        id="error"
-        placeholder={$settings.theme.css?.er
-          ? OKLCHToHex($settings.theme.css.er)
-          : '#F87272'}
-        pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
-        style:--er={testHex.test(error)
-          ? getOklch(hexToOklch(error))
-          : 'var(--error)'}
-        class="input input-sm input-error w-full uppercase transition-colors duration-200"
-        bind:value={error}
-        tabindex={hidden ? -1 : 0}
-      />
+      <span class="inline-flex items-center gap-2">
+        <input
+          type="color"
+          class="aspect-square h-8 w-8 cursor-pointer rounded-lg bg-transparent"
+          bind:value={error}
+        />
+        <input
+          type="text"
+          id="error"
+          placeholder={$settings.theme.css?.er
+            ? OKLCHToHex($settings.theme.css.er)
+            : '#F87272'}
+          pattern={'^#(?:[0-9a-fA-F]{3}){1,2}$'}
+          style:--er={testHex.test(error)
+            ? getOklch(hexToOklch(error))
+            : 'var(--error)'}
+          class="input input-sm input-error w-full uppercase"
+          bind:value={error}
+          tabindex={hidden ? -1 : 0}
+        />
+      </span>
     </div>
+
     <div class="modal-action">
       <button class="btn btn-secondary" tabindex={hidden ? -1 : 0}>
         Create Theme

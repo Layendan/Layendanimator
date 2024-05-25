@@ -118,6 +118,7 @@ export type EpisodeData = {
   sources: Source[];
   subtitles?: Subtitle[];
   intro?: Intro;
+  outro?: Intro;
   download?: string;
 };
 

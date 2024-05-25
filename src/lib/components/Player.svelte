@@ -17,8 +17,14 @@
   import { createPlayerContextMenu } from '$lib/model/contextmenu';
   import { encodeAnimeLink } from '$lib/model/source';
   import { showMenu } from 'tauri-plugin-context-menu';
-  import 'vidstack/bundle';
   import PlayerContextMenu from './PlayerContextMenu.svelte';
+  // Import styles.
+  import 'vidstack/player/styles/default/theme.css';
+  import 'vidstack/player/styles/default/layouts/video.css';
+  // Register elements.
+  import 'vidstack/player';
+  import 'vidstack/player/layouts';
+  import 'vidstack/player/ui';
 
   export let episodeData: EpisodeData;
   export let poster: string;
@@ -27,7 +33,6 @@
     'source' | 'id' | 'title' | 'image' | 'color' | 'duration'
   >;
   export let episode: Episode;
-  export let disableRemotePlayback = false;
 
   let player: MediaPlayerElement;
   let airPlayEnabled = false;
@@ -148,18 +153,6 @@
       navigator.mediaSession.setActionHandler('pause', () => {
         player.pause();
         navigator.mediaSession.playbackState = 'paused';
-      });
-      navigator.mediaSession.setActionHandler('seekbackward', () => {
-        player.currentTime = Math.max(player.currentTime - 10, 0);
-      });
-      navigator.mediaSession.setActionHandler('seekforward', () => {
-        player.currentTime = Math.min(
-          player.currentTime + 10,
-          player.state.duration || (anime.duration ?? Infinity)
-        );
-      });
-      navigator.mediaSession.setActionHandler('previoustrack', () => {
-        player.currentTime = 0;
       });
       navigator.mediaSession.setActionHandler('nexttrack', () => {
         requestNextEpisode();
@@ -311,14 +304,13 @@
     title={episode.title ?? `Episode ${episode.number}`}
     style:--video-brand={anime.color ?? 'oklch(var(--a))'}
     style:--video-border-radius="0px"
-    class="relative mb-4 flex aspect-video h-auto w-full items-center justify-center overflow-hidden border-none object-cover"
+    class="relative mb-4 flex aspect-video h-auto w-full items-center justify-center overflow-hidden border-none bg-black object-cover"
     preload="metadata"
-    {disableRemotePlayback}
     autoplay
-    prefer-native-hls={$settings.preferNativeHls}
-    stream-type="on-demand"
+    streamType="on-demand"
+    preferNativeHLS={$settings.preferNativeHls}
     load="eager"
-    view-type="video"
+    viewType="video"
     bind:this={player}
     on:provider-change={providerChange}
     on:ended={requestNextEpisode}

@@ -16,9 +16,9 @@ jobs:
           - platform: 'macos-latest'
             arch: 'x64'
             flag: '--target x86_64-apple-darwin'
-          # - platform: 'macos-latest'
-          #   arch: 'arm64'
-          #   flag: '--target aarch64-apple-darwin'
+          - platform: 'macos-latest'
+            arch: 'arm64'
+            flag: '--target aarch64-apple-darwin'
           - platform: 'windows-latest'
             arch: 'x64'
             flag: ''
@@ -62,6 +62,11 @@ jobs:
         if: matrix.platform == 'macos-latest' && matrix.arch == 'arm64'
         run: |
           rustup target add aarch64-apple-darwin
+
+      - name: install dependencies (osx only)
+        if: matrix.platform == 'macos-latest' && matrix.arch == 'x64'
+        run: |
+          rustup target add x86_64-apple-darwin
 
       - name: Install frontend dependencies
         run: yarn svelte:build

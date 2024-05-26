@@ -15,7 +15,7 @@ jobs:
         include:
           - platform: 'macos-latest'
             arch: 'x64'
-            flag: ''
+            flag: '--target x86_64-apple-darwin'
           # - platform: 'macos-latest'
           #   arch: 'arm64'
           #   flag: '--target aarch64-apple-darwin'
@@ -58,10 +58,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
 
-      # - name: install dependencies (m1 only)
-      #   if: matrix.platform == 'macos-latest' && matrix.arch == 'arm64'
-      #   run: |
-      #     rustup target add aarch64-apple-darwin
+      - name: install dependencies (m1 only)
+        if: matrix.platform == 'macos-latest' && matrix.arch == 'arm64'
+        run: |
+          rustup target add aarch64-apple-darwin
 
       - name: Install frontend dependencies
         run: yarn svelte:build
@@ -80,12 +80,12 @@ jobs:
           unzip ffmpeg.zip -d src-tauri/bin/
           mv src-tauri/bin/ffmpeg src-tauri/bin/ffmpeg-x86_64-apple-darwin
 
-      # - name: Download FFmpeg (m1)
-      #   if: matrix.platform == 'macos-latest' && matrix.arch == 'arm64'
-      #   run: |
-      #     curl -L https://evermeet.cx/ffmpeg/get/zip -o ffmpeg.zip
-      #     unzip ffmpeg.zip -d src-tauri/bin/
-      #     mv src-tauri/bin/ffmpeg src-tauri/bin/ffmpeg-aarch64-apple-darwin
+      - name: Download FFmpeg (m1)
+        if: matrix.platform == 'macos-latest' && matrix.arch == 'arm64'
+        run: |
+          curl -L https://evermeet.cx/ffmpeg/get/zip -o ffmpeg.zip
+          unzip ffmpeg.zip -d src-tauri/bin/
+          mv src-tauri/bin/ffmpeg src-tauri/bin/ffmpeg-aarch64-apple-darwin
 
       - name: Download FFmpeg (windows)
         if: matrix.platform == 'windows-latest'
@@ -106,3 +106,4 @@ jobs:
           releaseDraft: false
           prerelease: false
           updaterJsonPreferNsis: true
+          args: ${{ matrix.flag }}

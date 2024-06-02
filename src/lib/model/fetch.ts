@@ -83,7 +83,7 @@ export async function fetchTrendingAnime(
   if (provider) {
     const metaProvider = new META.Anilist(provider);
     const trendingRes = (
-      await metaProvider.fetchTrendingAnime(page, perPage)
+      await metaProvider.fetchTrendingAnime(page, perPage ?? 25)
     ).results.map(anime => ({
       id: anime.id,
       title: anime.title,
@@ -174,7 +174,7 @@ export async function fetchPopularAnime(
   if (provider) {
     const metaProvider = new META.Anilist(provider);
     const popularRes = (
-      await metaProvider.fetchPopularAnime(page, perPage)
+      await metaProvider.fetchPopularAnime(page, perPage ?? 25)
     ).results.map(anime => ({
       id: anime.id,
       title: anime.title,
@@ -466,43 +466,43 @@ export async function fetchEpisode(id: string, source: Anime['source']) {
   if (!userSource?.scripts?.fetchEpisodes)
     error(500, 'Source script not found');
 
-  let provider;
+  // let provider;
 
-  const { axiosTauriApiAdapter } = await import('axios-tauri-api-adapter');
-  switch (source.id) {
-    case 'gogoanime':
-      provider = new ANIME.Gogoanime(
-        undefined,
-        undefined,
-        axiosTauriApiAdapter
-      );
-      break;
-    case 'zoro':
-      provider = new ANIME.Zoro();
-      break;
-  }
+  // const { axiosTauriApiAdapter } = await import('axios-tauri-api-adapter');
+  // switch (source.id) {
+  //   case 'gogoanime':
+  //     provider = new ANIME.Gogoanime(
+  //       undefined,
+  //       undefined,
+  //       axiosTauriApiAdapter
+  //     );
+  //     break;
+  //   case 'zoro':
+  //     provider = new ANIME.Zoro();
+  //     break;
+  // }
 
-  if (provider) {
-    // provider.setProxy({ url: 'https://corsproxy.io/?' });
-    const metaProvider = new META.Anilist(provider);
+  // if (provider) {
+  //   // provider.setProxy({ url: 'https://corsproxy.io/?' });
+  //   const metaProvider = new META.Anilist(provider);
 
-    metaProvider.setAxiosAdapter(axiosTauriApiAdapter);
-    provider.setAxiosAdapter(axiosTauriApiAdapter);
+  //   metaProvider.setAxiosAdapter(axiosTauriApiAdapter);
+  //   provider.setAxiosAdapter(axiosTauriApiAdapter);
 
-    const res = (await metaProvider.fetchEpisodeSources(id)) as EpisodeData;
+  //   const res = (await metaProvider.fetchEpisodeSources(id)) as EpisodeData;
 
-    if (res) {
-      episodeCache.set(`${source.id}/${id}`, res);
-      return res;
-    } else {
-      notifications.addNotification({
-        title: 'Episode could not be found',
-        message: `The episode with id ${id} was not found.`,
-        type: 'error'
-      });
-      error(404, 'Episode not found');
-    }
-  }
+  //   if (res) {
+  //     episodeCache.set(`${source.id}/${id}`, res);
+  //     return res;
+  //   } else {
+  //     notifications.addNotification({
+  //       title: 'Episode could not be found',
+  //       message: `The episode with id ${id} was not found.`,
+  //       type: 'error'
+  //     });
+  //     error(404, 'Episode not found');
+  //   }
+  // }
 
   const episode = await safeEval<EpisodeData>(
     userSource.scripts.fetchEpisodes,

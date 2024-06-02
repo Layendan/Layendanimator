@@ -29,6 +29,7 @@ discord-rich-presence = "0.2.3"
 lazy_static = "1.4.0"
 log = "0.4.20"
 os_info = "3.7.0"
+fix-path-env = { git = "https://github.com/tauri-apps/fix-path-env-rs" }
 
 [features]
 # by default Tauri runs in production mode

@@ -24,6 +24,8 @@ struct SInst {
 }
 
 fn main() {
+    let _ = fix_path_env::fix();
+
     tauri_plugin_deep_link::prepare("com.layendan.dev");
     tauri::Builder::default()
         .setup(|app| {
